@@ -128,7 +128,29 @@ dli:
     {% set day_length = states('sensor.day_length') | float(0) %}
     {{ (ppfd * 0.0036 * day_length) | round(2) }}
 
+rh_target:
+  friendly_name: "RH Target"
+  unit_of_measurement: "%"
+  value_template: >
+    {% set T = states('sensor.combined_temperature') | float %}
+    {% set LT = states('sensor.combined_temperature') | float - 2 %}
+    {% set ASVP = 610.78 * (2.71828 ** (T / (T + 237.3) * 17.2694)) %}
+    {% set LSVP = 610.78 * (2.71828 ** (LT / (LT + 237.3) * 17.2694)) %}
+    {% set LVPD_TARGET = states('input_number.vpd_target') | float %}
+    {% set RH_TARGET = (LSVP - LVPD_TARGET * 1000) / ASVP * 100 %}
+    {{ RH_TARGET | round(2)}}
 
+dew_point:
+  friendly_name: "Dew Point"
+  unit_of_measurement: "°C"
+  value_template: >
+    {% set T = states('sensor.combined_temperature') | float %}
+    {% set RH = states('sensor.combined_humidity') | float %}
+    {% set a = 17.27 %}
+    {% set b = 237.7 %}
+    {% set alpha = ((a * T) / (b + T)) + (RH / 100) | log %}
+    {% set dew_point = (b * alpha) / (a - alpha) %}
+    {{ dew_point | round(1) }}
 
 
 
