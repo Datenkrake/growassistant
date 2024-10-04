@@ -32,5 +32,4 @@
 # In this case, you could store the entity ID of a physical device (like a light) in input_text.living_room_light and use it globally across automations.
 
 
-input_text:
-  
+# input_text:
