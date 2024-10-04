@@ -27,15 +27,15 @@
     cultivar_height:
       friendly_name: "Cultivar Height"
       unit_of_measurement: "m"
-      value_template: "{{ states('input_number.gantry_null_position') | float - states('input_text.gantry_height') | float }}"
+      value_template: "{{ states('input_number.gantry_null_position') | float(0) - states('input_text.gantry_height') | float(0) }}"
 
     vpd:
       friendly_name: "VPD"
       unit_of_measurement: "kPa"
       value_template: >
-        {% set T = states('sensor.combined_temperature') | float %}
+        {% set T = states('sensor.combined_temperature') | float(0) %}
         {% set LT = T - 2 %}
-        {% set RH = states('sensor.combined_humidity') | float %}
+        {% set RH = states('sensor.combined_humidity') | float(0) %}
         {% set ASVP = 610.78 * (2.71828 ** (T / (T + 237.3) * 17.2694)) %}
         {% set LSVP = 610.78 * (2.71828 ** (LT / (LT + 237.3) * 17.2694)) %}
         {% set VPD = (ASVP * (1 - RH / 100)) / 1000 %}
@@ -46,14 +46,15 @@
       friendly_name: "VPD Intake"
       unit_of_measurement: "kPa"
       value_template: >
-        {% set T = states(states('input_text.intake_temperature')) | float %}
+        {% set T = states('input_text.intake_temperature') | float(0) %}
         {% set LT = T - 2 %}
-        {% set RH = states(states('input_text.intake_humidity')) | float %}
+        {% set RH = states('input_text.intake_humidity') | float(0) %}
         {% set ASVP = 610.78 * (2.71828 ** (T / (T + 237.3) * 17.2694)) %}
         {% set LSVP = 610.78 * (2.71828 ** (LT / (LT + 237.3) * 17.2694)) %}
         {% set VPD = (ASVP * (1 - RH / 100)) / 1000 %}
         {% set LVPD = (LSVP - (ASVP * RH / 100)) / 1000 %}
         {{ LVPD | round(2) }}
+
 
     # to make a PPFD guestimate, an ppfd = lux * 0.051872 - 85.209312
     # based on https://thecavepearlproject.org/2024/08/10/using-a-bh1750-lux-sensor-to-measure-par/
