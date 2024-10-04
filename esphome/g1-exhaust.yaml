@@ -1,0 +1,54 @@
+esphome:
+  name: g1-exhaust
+  friendly_name: G1_EXHAUST
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "aaV/nMCt7Z7pdNZHDtFvNoL7krSrnPvIY2ucu0MJ7fQ="
+
+ota:
+  - platform: esphome
+    password: "136bf7560393d6572af9c6feac1b12a7"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "G1-Exhaust Fallback Hotspot"
+    password: "Iu5Jmv8ML5Em"
+
+captive_portal:
+    
+output:
+  - platform: ledc
+    pin: GPIO7
+    id: fan1_pwm
+    frequency: 15000 Hz
+    inverted: True
+    max_power: 0.8
+
+  - platform: ledc
+    pin: GPIO8
+    id: fan2_pwm
+    frequency: 15000 Hz
+    inverted: True
+    max_power: 0.5
+
+fan:
+  - platform: speed
+    output: fan1_pwm
+    name: "Exhaust Fan 1"
+  - platform: speed
+    output: fan2_pwm
+    name: "Exhaust Fan 2"

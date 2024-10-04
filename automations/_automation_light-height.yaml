@@ -1,0 +1,21 @@
+# This automation reads sensor.esp1_g1_light_distance_sensor every minute
+
+
+
+
+- alias: "Light Height Automation"
+  description: "Adjust light height based on distance sensor after a 10-minute delay."
+  trigger:
+    - platform: state
+      entity_id: input_boolean.light_height_trigger
+      to: "on"
+  action:
+    - delay: "00:10:00"
+    - condition: numeric_state
+      entity_id: sensor.esp1_g1_light_distance_sensor
+      below: 0.30
+    - service: rest_command.move_light_distance
+    - service: system_log.write
+      data:
+        message: "Light height adjusted. Distance was {{ states('sensor.esp1_g1_light_distance_sensor') }}."
+        level: warning

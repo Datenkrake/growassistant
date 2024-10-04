@@ -1,0 +1,57 @@
+esphome:
+  name: g1-qbar1
+  friendly_name: G1_QBAR1
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "0pZoQWsj+fxA7UH5h8wWRvYo4CBaYNvgLR2B4o4s7wI="
+
+ota:
+  - platform: esphome
+    password: "5157826e92224d258b36f366a1b17de1"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "G1-Qbar1 Fallback Hotspot"
+    password: "svdO7P6q7ySX"
+
+captive_portal:
+    
+
+# PWM controlled LED on GPIO8
+output:
+  - platform: ledc
+    pin: GPIO8
+    id: led_pwm
+    frequency: 100 Hz 
+
+light:
+  - platform: monochromatic
+    output: led_pwm
+    name: "PWM QBAR1"
+
+# Ultrasonic sensor on GPIO9 (TRIG) and GPIO10 (ECHO)
+sensor:
+  - platform: ultrasonic
+    trigger_pin: GPIO9
+    echo_pin: GPIO10
+    name: "Ultrasonic Sensor"
+    update_interval: 10s
+    timeout: 2m
+    filters:
+      - sliding_window_moving_average:
+          window_size: 6   # Number of readings to average
+          send_every: 6    # How often to send the averaged result

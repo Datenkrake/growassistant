@@ -1,0 +1,91 @@
+esphome:
+  name: g1-sgp40
+  friendly_name: g1_sgp40
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "oV9SuiMJALho/PQfRa5IwtsKBJKho2WfwlT5C2YYNd4="
+
+ota:
+  - platform: esphome
+    password: "cb47ca291e887d01620e69b08aa00140"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "G1-Sgp40 Fallback Hotspot"
+    password: "jWLDamwJiNzd"
+
+captive_portal:
+
+
+
+# Example configuration entry
+i2c:
+  - id: bus_a
+    sda: GPIO20
+    scl: GPIO21
+    timeout: 1ms
+  # - id: bus_b
+  #   sda: GPIO1
+  #   scl: GPIO0
+  #   timeout: 13ms
+  # - id: bus_c
+  #   sda: GPIO4
+  #   scl: GPIO5
+  #   timeout: 1ms
+
+sensor:
+  - platform: homeassistant
+    id: canopy_temperature
+    entity_id: sensor.g1_voco_bme680_temperature
+
+  - platform: homeassistant
+    id: canopy_humidity
+    entity_id: sensor.g1_voco_bme680_humidity
+
+  - platform: ccs811
+    i2c_id: bus_a
+    eco2:
+      name: "CCS811 eCO2 Value"
+    tvoc:
+      name: "CCS811 Total Volatile Organic Compound"
+    address: 0x5A
+    update_interval: 60s
+    temperature: canopy_temperature
+    humidity: canopy_humidity
+
+
+
+  # - platform: sgp4x
+  #   i2c_id: bus_b
+  #   voc:
+  #     name: "VOC Index"
+  #   nox:
+  #     name: "NOx Index"
+
+  # - platform: bme680
+  #   i2c_id: bus_c
+  #   temperature:
+  #     name: "BME680 Temperature"
+  #     oversampling: 16x
+  #   pressure:
+  #     name: "BME680 Pressure"
+  #   humidity:
+  #     name: "BME680 Humidity"
+  #   gas_resistance:
+  #     name: "BME680 Gas Resistance"
+  #   address: 0x77
+  #   update_interval: 60s

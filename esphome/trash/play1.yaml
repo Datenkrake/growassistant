@@ -1,0 +1,167 @@
+
+esphome:
+  name: play1
+  friendly_name: play1
+
+preferences:
+  flash_write_interval: 30min
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "xIU+HWFcD4wOTvFD7KA4Vt5pSWZq/d8UyRn636rCYWg="
+
+ota:
+  password: "a796a362b4cffa0128bd14859091c98a"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Play1 Fallback Hotspot"
+    password: "b28AVpjmINFP"
+
+captive_portal:
+
+
+
+### RS485
+uart:
+  id: modbus_serial
+  rx_pin: 20
+  tx_pin: 21
+  baud_rate: 4800
+  stop_bits: 1
+
+modbus:
+  id: modbus1
+  uart_id: modbus_serial
+ 
+modbus_controller:
+  - id: con_modbus_name
+    update_interval: 20s
+    address: 0x1
+    command_throttle: 100ms
+    setup_priority: -10
+   
+
+sensor:
+####################################
+## H A R D W A R E  S E N S O R S ##
+####################################
+
+## THC-S Sensors ##
+# Raw moisture from 0-100 from the sensor
+  - platform: modbus_controller
+    name: "THC-S Moisture"  
+    id: WC
+    address: 0x0000
+    unit_of_measurement: "%"
+    register_type: holding
+    value_type: U_WORD
+    accuracy_decimals: 1
+    filters:
+      lambda: return (x / 10);
+    state_class: measurement
+
+
+# Temp in C from the THCS  
+  - platform: modbus_controller
+    name: "THC-S Temp"
+    id: C
+    address: 0x0001
+    unit_of_measurement: "°C"
+    register_type: holding
+    value_type: U_WORD
+    accuracy_decimals: 1
+    filters: 
+      lambda: return (x / 10);
+    state_class: measurement
+
+
+# Raw conductivity from the THCS, used for pwEC calculatiions
+  - platform: modbus_controller
+    name: "THC-S Conductivity"  
+    id: EC
+    address: 0x0002
+    unit_of_measurement: "ms/cm"
+    register_type: holding
+    value_type: U_WORD
+    accuracy_decimals: 1
+    filters:
+      lambda: return x;
+    state_class: measurement
+
+# This is a "TDS" output from the sensor in PPM, not sure what conversion or accuracy.    
+  - platform: modbus_controller
+    name: "THC-S TDS"  
+    disabled_by_default: True  # user has to enable it first
+    id: TDS
+    address: 0x0004
+    unit_of_measurement: "ppm"
+    register_type: holding
+    value_type: U_WORD
+    accuracy_decimals: 1
+    filters:
+      lambda: return x;
+    state_class: measurement
+
+
+# This template is estimating the VWC based on raw moisture and a 66.7% VWC Coco coir
+  # - platform: template
+  #   name: "THC-S VWC"  
+  #   internal: False
+  #   id: VWC
+  #   accuracy_decimals: 1
+  #   update_interval: 30s
+  #   lambda: |-
+  #     float soil_hum = id(WC).state;
+  #     float adjusted_vwc = -0.0020844495456097786 * soil_hum * soil_hum + 0.8758395803818368 * soil_hum - 0.007765958483453483;
+  #     return adjusted_vwc;
+  #   state_class: measurement
+  #   unit_of_measurement: "%"
+
+
+#  This calculation is estimating the pore water EC based on the hilhorst method, calibrated for coco
+  # - platform: template
+  #   name: "THC-S pwEC"
+  #   id: pw_ec
+  #   state_class: measurement
+  #   unit_of_measurement: "ms/cm"
+  #   accuracy_decimals: 1
+  #   update_interval: 30s
+  #   lambda: |-
+  #     float soil_ec = id(EC).state;
+  #     float soil_temp = id(C).state;
+  #     float soil_hum = id(WC).state;
+  #     soil_ec = 1.93 * soil_ec - 270.8;
+  #     //soil_ec = 0.0000014403 * soil_ec * soil_ec * soil_ec - 0.0036 * soil_ec * soil_ec + 3.7525 * soil_ec - 814.1833;
+  #     /**
+  #     * Bulk EC temperature correction. Test and use if necessary.
+  #     */
+  #     // Soil EC temp correction based on the Teros 12 manual. https://github.com/kromadg/soil-sensor/issues/1
+  #     soil_ec = soil_ec / (1.0 + 0.019 * (soil_temp - 25));
+  #     // the teros bulk_permittivity was calculated from the teros temperature, teros bulk ec and teros pwec by Hilhorst 2000 model
+  #     float soil_apparent_dieletric_constant = 1.3088 + 0.1439 * soil_hum + 0.0076 * soil_hum * soil_hum;
+
+  #     float soil_bulk_permittivity = soil_apparent_dieletric_constant;  /// Hamed 2015 (apparent_dieletric_constant is the real part of permittivity)
+  #     float soil_pore_permittivity = 80.3 - 0.37 * (soil_temp - 20); /// same as water 80.3 and corrected for temperature
+
+  #     // converting bulk EC to pore water EC
+  #     float soil_pw_ec;
+  #     if (soil_bulk_permittivity > 4.1)
+  #         soil_pw_ec = ((soil_pore_permittivity * soil_ec) / (soil_bulk_permittivity - 4.1) / 1000); /// from Hilhorst 2000.
+  #     else
+  #         soil_pw_ec = 0;
+  #     return soil_pw_ec;
+

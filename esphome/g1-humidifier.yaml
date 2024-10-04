@@ -1,0 +1,44 @@
+esphome:
+  name: g1-humidifier
+  friendly_name: G1_HUMIDIFIER
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "MyJ+A4snnb13Hhjtvzq5lpRLdvDePmLcLwOYc/IVnXE="
+
+ota:
+  - platform: esphome
+    password: "ecf5a31fa356f2d267c8f046e257160c"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "G1-Humidifier Fallback Hotspot"
+    password: "ngvELfWsYHo8"
+
+captive_portal:
+    
+output:
+  - platform: slow_pwm
+    pin: GPIO21
+    id: humidifier_pwm_output
+    period: 60s
+
+fan:
+  - platform: speed
+    output: humidifier_pwm_output
+    name: "Humidifier"
+    id: humidifier_fan
+    speed_count: 100  # Set the speed steps (0-100%)

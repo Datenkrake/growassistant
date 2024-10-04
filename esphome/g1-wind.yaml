@@ -1,0 +1,53 @@
+esphome:
+  name: g1-wind
+  friendly_name: G1_WIND
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "qwHe3/tI5GAL34g4BySb8Mvzv26WNyzSsgS18Dx/oH0="
+
+ota:
+  - platform: esphome
+    password: "0b45c8de2cc7e8951f42ac3bdaa7e4f6"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "G1-Wind Fallback Hotspot"
+    password: "G7vV59YrOf0x"
+
+captive_portal:
+    
+
+output:
+  - platform: ledc
+    pin: GPIO7
+    id: fan1_pwm
+    frequency: 15000 Hz
+    inverted: True
+
+  - platform: ledc
+    pin: GPIO8
+    id: fan2_pwm
+    frequency: 15000 Hz
+    inverted: True
+
+fan:
+  - platform: speed
+    output: fan1_pwm
+    name: "Wind Fan 1"
+  - platform: speed
+    output: fan2_pwm
+    name: "Wind Fan 2"

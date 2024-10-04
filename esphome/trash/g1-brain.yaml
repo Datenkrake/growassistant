@@ -1,0 +1,51 @@
+esphome:
+  name: g1-brain
+  friendly_name: g1-brain
+
+rp2040:
+  board: rpipicow
+  framework:
+    # Required until https://github.com/platformio/platform-raspberrypi/pull/36 is merged
+    platform_version: https://github.com/maxgerhardt/platform-raspberrypi.git
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "iU6/ct8firp0EF0mnpBvcUP6WrUIyLI1iBZ211xQWhE="
+
+ota:
+  - platform: esphome
+    password: "cb4f4c593de34876ed0b8a34b6ad1e6d"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot in case wifi connection fails
+  ap:
+    ssid: "G1-Brain Fallback Hotspot"
+    password: "ruN9kkmm0Jmp"
+    
+text_sensor:
+  - platform: version
+    name: "${upper_devicename} Version"
+    hide_timestamp: true
+  - platform: wifi_info
+    ip_address:
+      name: "${upper_devicename} IP"
+      icon: mdi:ip-network
+    mac_address:
+      name: "${upper_devicename} MAC"
+      icon: mdi:network
+  - platform: homeassistant
+    name: "Notification Display"
+    id: notification_display
+    entity_id: input_text.notification_display
+    attribute: state
+  - platform: homeassistant
+    name: "G1 Strain"
+    id: g1_strain
+    entity_id: input_text.g1_strain

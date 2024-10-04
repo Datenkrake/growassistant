@@ -1,0 +1,823 @@
+2024-09-30 14:15:21.895 ERROR (MainThread) [homeassistant.config] Invalid package configuration 'packages' at variables.yaml, line 3: expected dict for dictionary value @ data['canopy_temperature']
+2024-09-30 14:15:22.129 WARNING (SyncWorker_0) [homeassistant.loader] We found a custom integration hacs which has not been tested by Home Assistant. This component might cause stability problems, be sure to disable it if you experience issues with Home Assistant
+2024-09-30 14:15:22.132 WARNING (SyncWorker_0) [homeassistant.loader] We found a custom integration webrtc which has not been tested by Home Assistant. This component might cause stability problems, be sure to disable it if you experience issues with Home Assistant
+2024-09-30 14:15:22.135 WARNING (SyncWorker_0) [homeassistant.loader] We found a custom integration moonraker which has not been tested by Home Assistant. This component might cause stability problems, be sure to disable it if you experience issues with Home Assistant
+2024-09-30 14:15:22.138 WARNING (SyncWorker_0) [homeassistant.loader] We found a custom integration nodered which has not been tested by Home Assistant. This component might cause stability problems, be sure to disable it if you experience issues with Home Assistant
+2024-09-30 14:15:23.191 INFO (MainThread) [homeassistant.setup] Setup of domain system_log took 0.38 seconds
+2024-09-30 14:15:23.192 INFO (MainThread) [homeassistant.setup] Setup of domain logger took 0.38 seconds
+2024-09-30 14:15:23.193 INFO (MainThread) [homeassistant.bootstrap] Setting up frontend: {'frontend'}
+2024-09-30 14:15:23.194 INFO (MainThread) [homeassistant.setup] Setting up http
+2024-09-30 14:15:23.195 INFO (MainThread) [homeassistant.setup] Setting up device_automation
+2024-09-30 14:15:23.196 INFO (MainThread) [homeassistant.setup] Setup of domain device_automation took 0.00 seconds
+2024-09-30 14:15:23.247 INFO (MainThread) [homeassistant.setup] Setup of domain http took 0.05 seconds
+2024-09-30 14:15:23.248 INFO (MainThread) [homeassistant.setup] Setting up auth
+2024-09-30 14:15:23.253 INFO (MainThread) [homeassistant.setup] Setup of domain auth took 0.00 seconds
+2024-09-30 14:15:23.254 INFO (MainThread) [homeassistant.setup] Setting up config
+2024-09-30 14:15:23.262 INFO (MainThread) [homeassistant.setup] Setup of domain config took 0.01 seconds
+2024-09-30 14:15:23.263 INFO (MainThread) [homeassistant.setup] Setting up diagnostics
+2024-09-30 14:15:23.266 INFO (MainThread) [homeassistant.setup] Setup of domain diagnostics took 0.00 seconds
+2024-09-30 14:15:23.266 INFO (MainThread) [homeassistant.setup] Setting up file_upload
+2024-09-30 14:15:23.267 INFO (MainThread) [homeassistant.setup] Setup of domain file_upload took 0.00 seconds
+2024-09-30 14:15:23.268 INFO (MainThread) [homeassistant.setup] Setting up image_upload
+2024-09-30 14:15:23.271 INFO (MainThread) [homeassistant.setup] Setup of domain image_upload took 0.00 seconds
+2024-09-30 14:15:23.271 INFO (MainThread) [homeassistant.setup] Setting up repairs
+2024-09-30 14:15:23.273 INFO (MainThread) [homeassistant.setup] Setup of domain repairs took 0.00 seconds
+2024-09-30 14:15:23.274 INFO (MainThread) [homeassistant.setup] Setting up websocket_api
+2024-09-30 14:15:23.275 INFO (MainThread) [homeassistant.setup] Setup of domain websocket_api took 0.00 seconds
+2024-09-30 14:15:23.275 INFO (MainThread) [homeassistant.setup] Setting up api
+2024-09-30 14:15:23.281 INFO (MainThread) [homeassistant.setup] Setup of domain api took 0.00 seconds
+2024-09-30 14:15:23.283 INFO (MainThread) [homeassistant.setup] Setting up person
+2024-09-30 14:15:23.285 INFO (MainThread) [homeassistant.setup] Setting up search
+2024-09-30 14:15:23.285 INFO (MainThread) [homeassistant.setup] Setup of domain search took 0.00 seconds
+2024-09-30 14:15:23.289 INFO (MainThread) [homeassistant.setup] Setup of domain person took 0.01 seconds
+2024-09-30 14:15:23.290 INFO (MainThread) [homeassistant.setup] Setting up onboarding
+2024-09-30 14:15:23.290 INFO (MainThread) [homeassistant.setup] Setup of domain onboarding took 0.00 seconds
+2024-09-30 14:15:23.291 INFO (MainThread) [homeassistant.setup] Setting up lovelace
+2024-09-30 14:15:23.296 INFO (MainThread) [homeassistant.setup] Setup of domain lovelace took 0.00 seconds
+2024-09-30 14:15:23.297 INFO (MainThread) [homeassistant.setup] Setting up frontend
+2024-09-30 14:15:23.323 INFO (MainThread) [homeassistant.setup] Setup of domain frontend took 0.03 seconds
+2024-09-30 14:15:23.324 INFO (MainThread) [homeassistant.bootstrap] Setting up recorder: {'recorder'}
+2024-09-30 14:15:23.325 INFO (MainThread) [homeassistant.setup] Setting up recorder
+2024-09-30 14:15:23.332 INFO (MainThread) [homeassistant.components.http] Now listening on port 8123
+2024-09-30 14:15:23.333 INFO (MainThread) [homeassistant.setup] Setup of domain http took 0.01 seconds
+2024-09-30 14:15:23.475 INFO (MainThread) [homeassistant.setup] Setup of domain recorder took 0.15 seconds
+2024-09-30 14:15:23.475 INFO (MainThread) [homeassistant.bootstrap] Setting up stage 1: {'websocket_api', 'dhcp', 'api', 'cloud', 'hassio', 'webhook', 'usb', 'repairs', 'network', 'http', 'ssdp', 'auth', 'zeroconf', 'bluetooth'}
+2024-09-30 14:15:23.478 INFO (MainThread) [homeassistant.setup] Setting up webhook
+2024-09-30 14:15:23.480 INFO (MainThread) [homeassistant.setup] Setup of domain webhook took 0.00 seconds
+2024-09-30 14:15:23.482 INFO (MainThread) [homeassistant.setup] Setting up hassio
+2024-09-30 14:15:23.489 INFO (MainThread) [homeassistant.setup] Setting up network
+2024-09-30 14:15:23.495 INFO (MainThread) [homeassistant.setup] Setup of domain network took 0.01 seconds
+2024-09-30 14:15:23.504 WARNING (MainThread) [homeassistant.components.hassio.handler] Found incompatible HTTP option 'server_host'. Watchdog feature disabled
+2024-09-30 14:15:23.704 INFO (MainThread) [homeassistant.setup] Setup of domain hassio took 0.22 seconds
+2024-09-30 14:15:23.743 INFO (MainThread) [homeassistant.setup] Setting up dhcp
+2024-09-30 14:15:23.745 INFO (MainThread) [homeassistant.setup] Setup of domain dhcp took 0.00 seconds
+2024-09-30 14:15:23.750 INFO (MainThread) [homeassistant.components.websocket_api.http.connection] [547412158224] Received unknown command: history/stream
+2024-09-30 14:15:23.751 INFO (MainThread) [homeassistant.components.websocket_api.http.connection] [547412158224] Received unknown command: history/stream
+2024-09-30 14:15:23.813 INFO (MainThread) [homeassistant.components.websocket_api.http.connection] [547371696912] Received unknown command: hardware/subscribe_system_status
+2024-09-30 14:15:23.859 INFO (SyncWorker_3) [homeassistant.loader] Loaded tado from homeassistant.components.tado
+2024-09-30 14:15:23.914 INFO (SyncWorker_3) [homeassistant.loader] Loaded dlna_dmr from homeassistant.components.dlna_dmr
+2024-09-30 14:15:23.964 INFO (SyncWorker_3) [homeassistant.loader] Loaded samsungtv from homeassistant.components.samsungtv
+2024-09-30 14:15:23.962 INFO (MainThread) [homeassistant.setup] Setting up binary_sensor
+2024-09-30 14:15:23.967 INFO (MainThread) [homeassistant.setup] Setup of domain binary_sensor took 0.00 seconds
+2024-09-30 14:15:23.968 INFO (MainThread) [homeassistant.components.binary_sensor] Setting up hassio.binary_sensor
+2024-09-30 14:15:23.974 INFO (MainThread) [homeassistant.setup] Setting up sensor
+2024-09-30 14:15:23.975 INFO (MainThread) [homeassistant.setup] Setup of domain sensor took 0.00 seconds
+2024-09-30 14:15:23.976 INFO (MainThread) [homeassistant.components.sensor] Setting up hassio.sensor
+2024-09-30 14:15:23.982 INFO (SyncWorker_3) [homeassistant.loader] Loaded webostv from homeassistant.components.webostv
+2024-09-30 14:15:23.997 INFO (MainThread) [homeassistant.setup] Setting up update
+2024-09-30 14:15:24.001 INFO (MainThread) [homeassistant.setup] Setup of domain update took 0.00 seconds
+2024-09-30 14:15:24.002 INFO (MainThread) [homeassistant.components.update] Setting up hassio.update
+2024-09-30 14:15:24.035 INFO (SyncWorker_3) [homeassistant.loader] Loaded homekit_controller from homeassistant.components.homekit_controller
+2024-09-30 14:15:24.042 INFO (SyncWorker_3) [homeassistant.loader] Loaded apple_tv from homeassistant.components.apple_tv
+2024-09-30 14:15:24.055 INFO (SyncWorker_3) [homeassistant.loader] Loaded homekit from homeassistant.components.homekit
+2024-09-30 14:15:24.068 INFO (SyncWorker_3) [homeassistant.loader] Loaded ibeacon from homeassistant.components.ibeacon
+2024-09-30 14:15:24.951 INFO (MainThread) [homeassistant.setup] Setting up cloud
+2024-09-30 14:15:24.960 INFO (MainThread) [homeassistant.setup] Setting up ffmpeg
+2024-09-30 14:15:24.961 INFO (MainThread) [homeassistant.setup] Setup of domain ffmpeg took 0.00 seconds
+2024-09-30 14:15:24.962 INFO (MainThread) [homeassistant.setup] Setting up tts
+2024-09-30 14:15:24.962 INFO (MainThread) [homeassistant.setup] Setup of domain cloud took 0.01 seconds
+2024-09-30 14:15:24.987 INFO (MainThread) [homeassistant.setup] Setup of domain tts took 0.03 seconds
+2024-09-30 14:15:25.009 INFO (MainThread) [homeassistant.setup] Setting up usb
+2024-09-30 14:15:25.010 INFO (MainThread) [homeassistant.setup] Setup of domain usb took 0.00 seconds
+2024-09-30 14:15:25.130 INFO (MainThread) [homeassistant.setup] Setting up ssdp
+2024-09-30 14:15:25.140 INFO (MainThread) [homeassistant.setup] Setup of domain ssdp took 0.01 seconds
+2024-09-30 14:15:25.425 INFO (MainThread) [homeassistant.setup] Setting up zeroconf
+2024-09-30 14:15:25.449 INFO (MainThread) [homeassistant.components.zeroconf] Starting Zeroconf broadcast
+2024-09-30 14:15:25.450 INFO (MainThread) [homeassistant.setup] Setup of domain zeroconf took 0.02 seconds
+2024-09-30 14:15:25.928 INFO (MainThread) [homeassistant.setup] Setting up bluetooth
+2024-09-30 14:15:26.027 INFO (MainThread) [homeassistant.setup] Setup of domain bluetooth took 0.10 seconds
+2024-09-30 14:15:26.040 INFO (MainThread) [homeassistant.bootstrap] Setting up stage 2: {'input_boolean', 'zone', 'input_datetime', 'raspberry_pi', 'history', 'input_button', 'tag', 'timer', 'intent', 'hardware', 'config', 'template', 'application_credentials', 'homeassistant_alerts', 'energy', 'esphome', 'backup', 'device_automation', 'matter', 'scene', 'my', 'input_select', 'script', 'counter', 'person', 'conversation', 'rpi_power', 'map', 'logbook', 'sensor', 'input_number', 'lovelace', 'analytics', 'hacs', 'nodered', 'tts', 'trace', 'schedule', 'stream', 'stt', 'automation', 'input_text', 'ffmpeg', 'image_upload', 'file_upload', 'media_source', 'sun', 'blueprint', 'mobile_app', 'wake_word', 'default_config', 'system_health', 'search', 'onboarding', 'diagnostics', 'persistent_notification', 'rest_command', 'influxdb', 'assist_pipeline'}
+2024-09-30 14:15:26.043 INFO (MainThread) [homeassistant.setup] Setting up stt
+2024-09-30 14:15:26.045 INFO (MainThread) [homeassistant.setup] Setup of domain stt took 0.00 seconds
+2024-09-30 14:15:26.045 INFO (MainThread) [homeassistant.setup] Setting up scene
+2024-09-30 14:15:26.049 INFO (MainThread) [homeassistant.components.scene] Setting up homeassistant.scene
+2024-09-30 14:15:26.060 INFO (MainThread) [homeassistant.setup] Setup of domain scene took 0.01 seconds
+2024-09-30 14:15:26.060 INFO (MainThread) [homeassistant.setup] Setting up wake_word
+2024-09-30 14:15:26.061 INFO (MainThread) [homeassistant.setup] Setup of domain wake_word took 0.00 seconds
+2024-09-30 14:15:26.062 INFO (MainThread) [homeassistant.setup] Setting up input_boolean
+2024-09-30 14:15:26.064 INFO (MainThread) [homeassistant.setup] Setting up zone
+2024-09-30 14:15:26.068 INFO (MainThread) [homeassistant.setup] Setup of domain zone took 0.00 seconds
+2024-09-30 14:15:26.070 INFO (MainThread) [homeassistant.setup] Setting up logbook
+2024-09-30 14:15:26.072 INFO (MainThread) [homeassistant.setup] Setup of domain logbook took 0.00 seconds
+2024-09-30 14:15:26.073 INFO (MainThread) [homeassistant.setup] Setting up input_number
+2024-09-30 14:15:26.075 INFO (MainThread) [homeassistant.setup] Setting up trace
+2024-09-30 14:15:26.076 INFO (MainThread) [homeassistant.setup] Setup of domain trace took 0.00 seconds
+2024-09-30 14:15:26.077 INFO (MainThread) [homeassistant.setup] Setting up history
+2024-09-30 14:15:26.079 INFO (MainThread) [homeassistant.setup] Setup of domain history took 0.00 seconds
+2024-09-30 14:15:26.080 INFO (MainThread) [homeassistant.setup] Setting up stream
+2024-09-30 14:15:26.082 INFO (MainThread) [homeassistant.setup] Setting up input_button
+2024-09-30 14:15:26.087 INFO (MainThread) [homeassistant.setup] Setup of domain input_button took 0.00 seconds
+2024-09-30 14:15:26.088 INFO (MainThread) [homeassistant.setup] Setting up timer
+2024-09-30 14:15:26.094 INFO (MainThread) [homeassistant.setup] Setup of domain timer took 0.01 seconds
+2024-09-30 14:15:26.095 INFO (MainThread) [homeassistant.setup] Setting up blueprint
+2024-09-30 14:15:26.095 INFO (MainThread) [homeassistant.setup] Setup of domain blueprint took 0.00 seconds
+2024-09-30 14:15:26.098 ERROR (MainThread) [homeassistant.components.automation] Unnamed automation could not be validated and has been disabled: extra keys not allowed @ data['automation']. Got [{'alias': 'Light Height Automation', 'description': 'Adjust light height based on distance sensor after a 10-minute delay.', 'trigger': [{'platform': 'state', 'entity_id': 'input_boolean.light_height_trigger', 'to': 'on'}], 'action': [{'delay': '00:10:00'}, {'condition': 'numeric_state', 'entity_id': 'sensor.esp1_g1_light_distance_sensor', 'below': 0.3}, {'service': 'rest_command.move_light_distance'}, {'service': 'system_log.write', 'data': {'message': "Light height adjusted. Distance was {...
+required key not provided @ data['action']. Got None
+required key not provided @ data['trigger']. Got None
+2024-09-30 14:15:26.099 INFO (MainThread) [homeassistant.setup] Setting up automation
+2024-09-30 14:15:26.107 INFO (MainThread) [homeassistant.setup] Setup of domain automation took 0.01 seconds
+2024-09-30 14:15:26.109 INFO (MainThread) [homeassistant.setup] Setting up media_source
+2024-09-30 14:15:26.112 INFO (MainThread) [homeassistant.setup] Setup of domain media_source took 0.00 seconds
+2024-09-30 14:15:26.113 INFO (MainThread) [homeassistant.setup] Setting up input_select
+2024-09-30 14:15:26.119 INFO (MainThread) [homeassistant.setup] Setup of domain input_select took 0.01 seconds
+2024-09-30 14:15:26.120 INFO (MainThread) [homeassistant.setup] Setting up script
+2024-09-30 14:15:26.124 INFO (MainThread) [homeassistant.setup] Setup of domain script took 0.00 seconds
+2024-09-30 14:15:26.125 INFO (MainThread) [homeassistant.setup] Setting up system_health
+2024-09-30 14:15:26.126 INFO (MainThread) [homeassistant.setup] Setup of domain system_health took 0.00 seconds
+2024-09-30 14:15:26.149 INFO (MainThread) [homeassistant.setup] Setup of domain input_boolean took 0.09 seconds
+2024-09-30 14:15:28.200 INFO (MainThread) [homeassistant.setup] Setup of domain input_number took 2.13 seconds
+2024-09-30 14:15:28.226 INFO (MainThread) [homeassistant.setup] Setting up intent
+2024-09-30 14:15:28.227 INFO (MainThread) [homeassistant.setup] Setup of domain intent took 0.00 seconds
+2024-09-30 14:15:28.240 INFO (MainThread) [homeassistant.setup] Setting up conversation
+2024-09-30 14:15:28.242 INFO (MainThread) [homeassistant.setup] Setup of domain conversation took 0.00 seconds
+2024-09-30 14:15:28.259 INFO (MainThread) [homeassistant.setup] Setting up assist_pipeline
+2024-09-30 14:15:28.264 INFO (MainThread) [homeassistant.setup] Setup of domain assist_pipeline took 0.00 seconds
+2024-09-30 14:15:28.269 INFO (MainThread) [homeassistant.setup] Setting up map
+2024-09-30 14:15:28.270 INFO (MainThread) [homeassistant.setup] Setup of domain map took 0.00 seconds
+2024-09-30 14:15:28.308 INFO (MainThread) [homeassistant.setup] Setting up input_datetime
+2024-09-30 14:15:28.335 INFO (MainThread) [homeassistant.setup] Setup of domain input_datetime took 0.03 seconds
+2024-09-30 14:15:29.447 INFO (MainThread) [homeassistant.setup] Setup of domain stream took 3.37 seconds
+2024-09-30 14:15:30.304 INFO (MainThread) [homeassistant.setup] Setting up hacs
+2024-09-30 14:15:30.304 INFO (MainThread) [homeassistant.setup] Setup of domain hacs took 0.00 seconds
+2024-09-30 14:15:30.305 INFO (MainThread) [custom_components.hacs] 
+-------------------------------------------------------------------
+HACS (Home Assistant Community Store)
+
+Version: 1.34.0
+This is a custom integration
+If you have any issues with this you need to open an issue here:
+https://github.com/hacs/integration/issues
+-------------------------------------------------------------------
+
+2024-09-30 14:15:30.328 INFO (MainThread) [custom_components.hacs] <HacsData restore> Restore started
+2024-09-30 14:15:31.023 INFO (MainThread) [custom_components.hacs] <HacsData restore> Restore done
+2024-09-30 14:15:31.024 INFO (MainThread) [custom_components.hacs] Enable category: integration
+2024-09-30 14:15:31.025 INFO (MainThread) [custom_components.hacs] Enable category: plugin
+2024-09-30 14:15:31.025 INFO (MainThread) [custom_components.hacs] Enable category: template
+2024-09-30 14:15:31.026 INFO (MainThread) [custom_components.hacs] Enable category: theme
+2024-09-30 14:15:31.026 INFO (MainThread) [custom_components.hacs] <HacsFrontend> Using experimental frontend
+2024-09-30 14:15:31.106 WARNING (MainThread) [homeassistant.helpers.frame] Detected that custom integration 'hacs' calls hass.http.register_static_path which is deprecated because it does blocking I/O in the event loop, instead call `await hass.http.async_register_static_paths([StaticPathConfig("/hacsfiles/frontend", "/config/custom_components/hacs/hacs_frontend_experimental", False)])`; This function will be removed in 2025.7 at custom_components/hacs/frontend.py, line 49: hass.http.register_static_path(, please create a bug report at https://github.com/hacs/integration/issues
+2024-09-30 14:15:31.119 WARNING (MainThread) [homeassistant.helpers.frame] Detected that custom integration 'hacs' calls hass.http.register_static_path which is deprecated because it does blocking I/O in the event loop, instead call `await hass.http.async_register_static_paths([StaticPathConfig("/hacsfiles/iconset.js", "/config/custom_components/hacs/iconset.js", True)])`; This function will be removed in 2025.7 at custom_components/hacs/frontend.py, line 57: hass.http.register_static_path(, please create a bug report at https://github.com/hacs/integration/issues
+2024-09-30 14:15:31.125 WARNING (MainThread) [homeassistant.helpers.frame] Detected that custom integration 'hacs' accesses hass.components.frontend. This is deprecated and will stop working in Home Assistant 2024.9, it should be updated to import functions used from frontend directly at custom_components/hacs/frontend.py, line 68: hass.components.frontend.async_register_built_in_panel(, please create a bug report at https://github.com/hacs/integration/issues
+2024-09-30 14:15:31.127 INFO (MainThread) [custom_components.hacs] Setting up plugin endpoint
+2024-09-30 14:15:31.128 INFO (MainThread) [custom_components.hacs] <HacsFrontend> storage mode, cache for /hacsfiles/: True
+2024-09-30 14:15:31.136 WARNING (MainThread) [homeassistant.helpers.frame] Detected that custom integration 'hacs' calls hass.http.register_static_path which is deprecated because it does blocking I/O in the event loop, instead call `await hass.http.async_register_static_paths([StaticPathConfig("/hacsfiles", "/config/www/community", True)])`; This function will be removed in 2025.7 at custom_components/hacs/base.py, line 1162: self.hass.http.register_static_path(, please create a bug report at https://github.com/hacs/integration/issues
+2024-09-30 14:15:31.142 INFO (MainThread) [homeassistant.setup] Setting up hardware
+2024-09-30 14:15:31.146 INFO (MainThread) [homeassistant.setup] Setting up schedule
+2024-09-30 14:15:31.151 INFO (MainThread) [homeassistant.setup] Setup of domain schedule took 0.00 seconds
+2024-09-30 14:15:31.151 INFO (MainThread) [homeassistant.setup] Setting up tag
+2024-09-30 14:15:31.155 INFO (MainThread) [homeassistant.setup] Setup of domain tag took 0.00 seconds
+2024-09-30 14:15:31.224 INFO (MainThread) [homeassistant.setup] Setup of domain hardware took 0.08 seconds
+2024-09-30 14:15:32.266 INFO (MainThread) [homeassistant.setup] Setting up template
+2024-09-30 14:15:32.268 INFO (MainThread) [homeassistant.setup] Setup of domain template took 0.00 seconds
+2024-09-30 14:15:32.275 INFO (MainThread) [homeassistant.setup] Setting up input_text
+2024-09-30 14:15:32.286 INFO (MainThread) [homeassistant.setup] Setup of domain input_text took 0.01 seconds
+2024-09-30 14:15:32.294 INFO (MainThread) [homeassistant.setup] Setting up application_credentials
+2024-09-30 14:15:32.296 INFO (MainThread) [homeassistant.setup] Setup of domain application_credentials took 0.00 seconds
+2024-09-30 14:15:32.306 INFO (MainThread) [homeassistant.setup] Setting up homeassistant_alerts
+2024-09-30 14:15:32.307 INFO (MainThread) [homeassistant.setup] Setup of domain homeassistant_alerts took 0.00 seconds
+2024-09-30 14:15:32.337 INFO (MainThread) [homeassistant.setup] Setting up energy
+2024-09-30 14:15:32.338 INFO (MainThread) [homeassistant.setup] Setup of domain energy took 0.00 seconds
+2024-09-30 14:15:32.385 INFO (MainThread) [homeassistant.setup] Setting up backup
+2024-09-30 14:15:32.386 INFO (MainThread) [homeassistant.setup] Setup of domain backup took 0.00 seconds
+2024-09-30 14:15:36.692 INFO (MainThread) [homeassistant.setup] Setting up matter
+2024-09-30 14:15:36.693 INFO (MainThread) [homeassistant.setup] Setup of domain matter took 0.00 seconds
+2024-09-30 14:15:36.701 INFO (MainThread) [homeassistant.setup] Setting up my
+2024-09-30 14:15:36.701 INFO (MainThread) [homeassistant.setup] Setup of domain my took 0.00 seconds
+2024-09-30 14:15:36.716 INFO (MainThread) [homeassistant.setup] Setting up sun
+2024-09-30 14:15:36.716 INFO (MainThread) [homeassistant.setup] Setup of domain sun took 0.00 seconds
+2024-09-30 14:15:36.721 INFO (MainThread) [homeassistant.components.sensor] Setting up sun.sensor
+2024-09-30 14:15:36.750 INFO (MainThread) [homeassistant.setup] Setting up counter
+2024-09-30 14:15:36.759 INFO (MainThread) [homeassistant.setup] Setup of domain counter took 0.01 seconds
+2024-09-30 14:15:36.760 INFO (MainThread) [matter_server.client.connection] Connected to Matter Fabric 2 (44565964756695044), Schema version 10, CHIP SDK Version 2024.7.1
+2024-09-30 14:15:36.767 INFO (MainThread) [matter_server.client] Matter client initialized.
+2024-09-30 14:15:36.768 INFO (MainThread) [homeassistant.components.binary_sensor] Setting up matter.binary_sensor
+2024-09-30 14:15:36.769 INFO (MainThread) [homeassistant.setup] Setting up climate
+2024-09-30 14:15:36.777 INFO (MainThread) [homeassistant.setup] Setup of domain climate took 0.01 seconds
+2024-09-30 14:15:36.778 INFO (MainThread) [homeassistant.components.climate] Setting up matter.climate
+2024-09-30 14:15:36.779 INFO (MainThread) [homeassistant.setup] Setting up cover
+2024-09-30 14:15:36.782 INFO (MainThread) [homeassistant.setup] Setup of domain cover took 0.00 seconds
+2024-09-30 14:15:36.784 INFO (MainThread) [homeassistant.components.cover] Setting up matter.cover
+2024-09-30 14:15:36.785 INFO (MainThread) [homeassistant.setup] Setting up event
+2024-09-30 14:15:36.786 INFO (MainThread) [homeassistant.setup] Setup of domain event took 0.00 seconds
+2024-09-30 14:15:36.786 INFO (MainThread) [homeassistant.components.event] Setting up matter.event
+2024-09-30 14:15:36.787 INFO (MainThread) [homeassistant.setup] Setting up fan
+2024-09-30 14:15:36.793 INFO (MainThread) [homeassistant.setup] Setup of domain fan took 0.01 seconds
+2024-09-30 14:15:36.793 INFO (MainThread) [homeassistant.components.fan] Setting up matter.fan
+2024-09-30 14:15:36.794 INFO (MainThread) [homeassistant.setup] Setting up light
+2024-09-30 14:15:36.804 INFO (MainThread) [homeassistant.setup] Setup of domain light took 0.01 seconds
+2024-09-30 14:15:36.805 INFO (MainThread) [homeassistant.components.light] Setting up matter.light
+2024-09-30 14:15:36.813 INFO (MainThread) [homeassistant.setup] Setting up lock
+2024-09-30 14:15:36.814 INFO (MainThread) [homeassistant.setup] Setup of domain lock took 0.00 seconds
+2024-09-30 14:15:36.814 INFO (MainThread) [homeassistant.components.lock] Setting up matter.lock
+2024-09-30 14:15:36.815 INFO (MainThread) [homeassistant.setup] Setting up number
+2024-09-30 14:15:36.816 INFO (MainThread) [homeassistant.setup] Setup of domain number took 0.00 seconds
+2024-09-30 14:15:36.817 INFO (MainThread) [homeassistant.components.number] Setting up matter.number
+2024-09-30 14:15:36.820 INFO (MainThread) [homeassistant.setup] Setting up select
+2024-09-30 14:15:37.170 INFO (MainThread) [homeassistant.setup] Setup of domain select took 0.35 seconds
+2024-09-30 14:15:37.171 INFO (MainThread) [homeassistant.components.select] Setting up matter.select
+2024-09-30 14:15:37.171 INFO (MainThread) [homeassistant.components.sensor] Setting up matter.sensor
+2024-09-30 14:15:37.171 INFO (MainThread) [homeassistant.setup] Setting up switch
+2024-09-30 14:15:37.172 INFO (MainThread) [homeassistant.setup] Setup of domain switch took 0.00 seconds
+2024-09-30 14:15:37.173 INFO (MainThread) [homeassistant.components.switch] Setting up matter.switch
+2024-09-30 14:15:37.173 INFO (MainThread) [homeassistant.components.update] Setting up matter.update
+2024-09-30 14:15:37.177 INFO (MainThread) [homeassistant.setup] Setting up rest_command
+2024-09-30 14:15:37.180 INFO (MainThread) [homeassistant.setup] Setup of domain rest_command took 0.00 seconds
+2024-09-30 14:15:39.447 INFO (MainThread) [homeassistant.setup] Setting up influxdb
+2024-09-30 14:15:39.467 INFO (MainThread) [homeassistant.setup] Setting up rpi_power
+2024-09-30 14:15:39.467 INFO (MainThread) [homeassistant.setup] Setup of domain rpi_power took 0.00 seconds
+2024-09-30 14:15:39.494 INFO (MainThread) [homeassistant.setup] Setting up nodered
+2024-09-30 14:15:39.494 INFO (MainThread) [homeassistant.setup] Setup of domain nodered took 0.00 seconds
+2024-09-30 14:15:39.494 INFO (MainThread) [custom_components.nodered] 
+-------------------------------------------------------------------
+Node-RED Companion
+Version: 4.0.0
+This is a custom integration!
+If you have any issues with this you need to open an issue here:
+https://github.com/zachowj/hass-node-red/issues
+-------------------------------------------------------------------
+
+2024-09-30 14:15:39.503 INFO (MainThread) [homeassistant.components.sensor] Setting up hacs.sensor
+2024-09-30 14:15:39.503 INFO (MainThread) [homeassistant.components.update] Setting up hacs.update
+2024-09-30 14:15:39.518 INFO (MainThread) [custom_components.hacs] Stage changed: setup
+2024-09-30 14:15:39.520 INFO (MainThread) [custom_components.hacs] Stage changed: waiting
+2024-09-30 14:15:39.520 INFO (MainThread) [custom_components.hacs] Setup complete, waiting for Home Assistant before startup tasks starts
+2024-09-30 14:15:39.591 INFO (MainThread) [homeassistant.setup] Setup of domain influxdb took 0.14 seconds
+2024-09-30 14:15:39.614 INFO (MainThread) [homeassistant.setup] Setting up mobile_app
+2024-09-30 14:15:39.615 INFO (MainThread) [homeassistant.setup] Setting up notify
+2024-09-30 14:15:39.617 INFO (MainThread) [homeassistant.setup] Setup of domain notify took 0.00 seconds
+2024-09-30 14:15:39.618 INFO (MainThread) [homeassistant.setup] Setup of domain mobile_app took 0.00 seconds
+2024-09-30 14:15:39.618 INFO (MainThread) [homeassistant.components.notify] Setting up notify.mobile_app
+2024-09-30 14:15:39.619 INFO (MainThread) [homeassistant.setup] Setting up default_config
+2024-09-30 14:15:39.620 INFO (MainThread) [homeassistant.setup] Setup of domain default_config took 0.00 seconds
+2024-09-30 14:15:40.219 INFO (MainThread) [homeassistant.setup] Setting up esphome
+2024-09-30 14:15:40.236 INFO (MainThread) [homeassistant.setup] Setup of domain esphome took 0.02 seconds
+2024-09-30 14:15:40.250 INFO (MainThread) [homeassistant.setup] Setting up raspberry_pi
+2024-09-30 14:15:40.250 INFO (MainThread) [homeassistant.setup] Setup of domain raspberry_pi took 0.00 seconds
+2024-09-30 14:15:40.266 INFO (MainThread) [homeassistant.components.sensor] Setting up energy.sensor
+2024-09-30 14:15:40.294 INFO (MainThread) [homeassistant.setup] Setting up analytics
+2024-09-30 14:15:40.294 INFO (MainThread) [homeassistant.setup] Setup of domain analytics took 0.00 seconds
+2024-09-30 14:15:40.313 INFO (MainThread) [homeassistant.components.binary_sensor] Setting up rpi_power.binary_sensor
+2024-09-30 14:15:40.318 INFO (SyncWorker_9) [homeassistant.components.rpi_power.binary_sensor] Voltage normalized. Everything is working as intended.
+2024-09-30 14:15:40.332 INFO (MainThread) [homeassistant.components.update] Setting up esphome.update
+2024-09-30 14:15:40.333 INFO (MainThread) [homeassistant.components.sensor] Setting up esphome.sensor
+2024-09-30 14:15:40.337 INFO (MainThread) [homeassistant.components.update] Setting up esphome.update
+2024-09-30 14:15:40.337 INFO (MainThread) [homeassistant.components.sensor] Setting up esphome.sensor
+2024-09-30 14:15:40.352 INFO (MainThread) [homeassistant.components.update] Setting up esphome.update
+2024-09-30 14:15:40.352 INFO (MainThread) [homeassistant.components.fan] Setting up esphome.fan
+2024-09-30 14:15:40.353 INFO (MainThread) [homeassistant.components.sensor] Setting up esphome.sensor
+2024-09-30 14:15:40.361 INFO (MainThread) [homeassistant.components.update] Setting up esphome.update
+2024-09-30 14:15:40.362 INFO (MainThread) [homeassistant.components.fan] Setting up esphome.fan
+2024-09-30 14:15:40.366 INFO (MainThread) [homeassistant.components.sensor] Setting up esphome.sensor
+2024-09-30 14:15:40.367 INFO (MainThread) [homeassistant.components.update] Setting up esphome.update
+2024-09-30 14:15:40.367 INFO (MainThread) [homeassistant.components.fan] Setting up esphome.fan
+2024-09-30 14:15:40.383 INFO (MainThread) [homeassistant.components.update] Setting up esphome.update
+2024-09-30 14:15:40.384 INFO (MainThread) [homeassistant.setup] Setting up camera
+2024-09-30 14:15:40.397 INFO (MainThread) [homeassistant.setup] Setup of domain camera took 0.01 seconds
+2024-09-30 14:15:40.398 INFO (MainThread) [homeassistant.components.camera] Setting up esphome.camera
+2024-09-30 14:15:40.407 INFO (MainThread) [homeassistant.components.binary_sensor] Setting up esphome.binary_sensor
+2024-09-30 14:15:40.407 INFO (MainThread) [homeassistant.components.switch] Setting up esphome.switch
+2024-09-30 14:15:40.407 INFO (MainThread) [homeassistant.components.update] Setting up esphome.update
+2024-09-30 14:15:40.408 INFO (MainThread) [homeassistant.components.sensor] Setting up esphome.sensor
+2024-09-30 14:15:40.420 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-canopy @ 192.168.1.73 in 0.073s
+2024-09-30 14:15:40.427 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-exhaust @ 192.168.1.149 in 0.054s
+2024-09-30 14:15:40.429 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-wind @ 192.168.1.65 in 0.055s
+2024-09-30 14:15:40.433 INFO (MainThread) [homeassistant.components.light] Setting up esphome.light
+2024-09-30 14:15:40.434 INFO (MainThread) [homeassistant.components.update] Setting up esphome.update
+2024-09-30 14:15:40.434 INFO (MainThread) [homeassistant.components.fan] Setting up esphome.fan
+2024-09-30 14:15:40.442 INFO (MainThread) [homeassistant.components.light] Setting up esphome.light
+2024-09-30 14:15:40.443 INFO (MainThread) [homeassistant.components.update] Setting up esphome.update
+2024-09-30 14:15:40.443 INFO (MainThread) [homeassistant.components.sensor] Setting up esphome.sensor
+2024-09-30 14:15:40.446 INFO (MainThread) [homeassistant.components.light] Setting up esphome.light
+2024-09-30 14:15:40.447 INFO (MainThread) [homeassistant.components.update] Setting up esphome.update
+2024-09-30 14:15:40.448 INFO (MainThread) [homeassistant.components.sensor] Setting up esphome.sensor
+2024-09-30 14:15:40.452 INFO (MainThread) [homeassistant.components.light] Setting up esphome.light
+2024-09-30 14:15:40.452 INFO (MainThread) [homeassistant.components.update] Setting up esphome.update
+2024-09-30 14:15:40.453 INFO (MainThread) [homeassistant.components.sensor] Setting up esphome.sensor
+2024-09-30 14:15:40.467 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-intake @ 192.168.1.254 in 0.090s
+2024-09-30 14:15:40.470 INFO (MainThread) [homeassistant.bootstrap] Home Assistant initialized in 18.35s
+2024-09-30 14:15:40.472 INFO (MainThread) [homeassistant.core] Starting Home Assistant
+2024-09-30 14:15:40.481 INFO (MainThread) [custom_components.hacs] Stage changed: startup
+2024-09-30 14:15:40.491 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-canopy @ 192.168.1.73 in 0.071s
+2024-09-30 14:15:40.507 WARNING (MainThread) [homeassistant.helpers.frame] Detected that custom integration 'hacs' accesses hass.helpers.event. This is deprecated and will stop working in Home Assistant 2024.11, it should be updated to import functions used from event directly at custom_components/hacs/base.py, line 642: self.hass.helpers.event.async_track_time_interval(, please create a bug report at https://github.com/hacs/integration/issues
+2024-09-30 14:15:40.508 INFO (MainThread) [custom_components.hacs] Loading removed repositories
+2024-09-30 14:15:40.522 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-exhaust @ 192.168.1.149 in 0.095s
+2024-09-30 14:15:40.525 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-humidifier @ 192.168.1.104 in 0.069s
+2024-09-30 14:15:40.529 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-water @ 192.168.1.24 in 0.114s
+2024-09-30 14:15:40.531 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-qbar1 @ 192.168.1.54 in 0.070s
+2024-09-30 14:15:40.533 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-qbar2 @ 192.168.1.243 in 0.071s
+2024-09-30 14:15:40.534 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to fluxstrip-1 @ 192.168.1.112 in 0.072s
+2024-09-30 14:15:40.543 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-wind @ 192.168.1.65 in 0.114s
+2024-09-30 14:15:40.568 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-intake @ 192.168.1.254 in 0.100s
+2024-09-30 14:15:40.595 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-humidifier @ 192.168.1.104 in 0.070s
+2024-09-30 14:15:40.611 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-water @ 192.168.1.24 in 0.082s
+2024-09-30 14:15:40.618 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-qbar1 @ 192.168.1.54 in 0.087s
+2024-09-30 14:15:40.623 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with fluxstrip-1 @ 192.168.1.112 in 0.089s
+2024-09-30 14:15:40.632 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-qbar2 @ 192.168.1.243 in 0.100s
+2024-09-30 14:15:40.654 INFO (MainThread) [custom_components.hacs] Loading known repositories
+2024-09-30 14:15:40.849 INFO (MainThread) [custom_components.hacs] Stage changed: running
+2024-09-30 14:15:40.913 INFO (SyncWorker_14) [homeassistant.loader] Loaded bluetooth_adapters from homeassistant.components.bluetooth_adapters
+2024-09-30 14:15:40.915 INFO (SyncWorker_2) [homeassistant.loader] Loaded spotify from homeassistant.components.spotify
+2024-09-30 14:15:40.950 INFO (SyncWorker_12) [homeassistant.loader] Loaded ruuvi_gateway from homeassistant.components.ruuvi_gateway
+2024-09-30 14:15:41.132 INFO (SyncWorker_12) [homeassistant.loader] Loaded shelly from homeassistant.components.shelly
+2024-09-30 14:15:43.415 WARNING (MainThread) [aioesphomeapi.reconnect_logic] Can't connect to ESPHome API for g1-brain @ 192.168.1.137: Error connecting to [AddrInfo(family=<AddressFamily.AF_INET: 2>, type=<SocketKind.SOCK_STREAM: 1>, proto=6, sockaddr=IPv4Sockaddr(address='192.168.1.137', port=6053))]: [Errno 113] Connect call failed ('192.168.1.137', 6053) (SocketAPIError)
+2024-09-30 14:15:43.415 INFO (MainThread) [aioesphomeapi.reconnect_logic] Trying to connect to g1-brain @ 192.168.1.137 in the background
+2024-09-30 14:15:43.479 WARNING (MainThread) [aioesphomeapi.reconnect_logic] Can't connect to ESPHome API for g1-cam @ 192.168.1.167: Error connecting to [AddrInfo(family=<AddressFamily.AF_INET: 2>, type=<SocketKind.SOCK_STREAM: 1>, proto=6, sockaddr=IPv4Sockaddr(address='192.168.1.167', port=6053))]: [Errno 113] Connect call failed ('192.168.1.167', 6053) (SocketAPIError)
+2024-09-30 14:15:43.480 INFO (MainThread) [aioesphomeapi.reconnect_logic] Trying to connect to g1-cam @ 192.168.1.167 in the background
+2024-09-30 14:15:43.957 INFO (MainThread) [homeassistant.setup] Setting up bluetooth_adapters
+2024-09-30 14:15:43.980 INFO (SyncWorker_6) [homeassistant.loader] Loaded thread from homeassistant.components.thread
+2024-09-30 14:15:52.516 ERROR (MainThread) [frontend.js.modern.202409091] Uncaught error from Safari 18.0 on Mac OS 10.15.7
+Error: Failed to execute 'define' on 'CustomElementRegistry': the name "flex-horseshoe-card" has already been used with this registry
+message (node_modules/core-js/modules/web.dom-exception.stack.js:25:24)
+src/scoped-custom-element-registry.js:45:10
+module code (/hacsfiles/flex-horseshoe-card/flex-horseshoe-card.js:1976:24)
+2024-09-30 14:16:23.765 INFO (MainThread) [custom_components.nodered.discovery] Creating time 5188859a.d29b0c 19bbf5ca40a3d315
+2024-09-30 14:16:23.775 WARNING (MainThread) [homeassistant.helpers.frame] Detected that custom integration 'nodered' calls async_forward_entry_setup for integration, nodered with title: name and entry_id: e6a76296ba3b67ca198a5782163697e3, which is deprecated and will stop working in Home Assistant 2025.6, await async_forward_entry_setups instead at custom_components/nodered/discovery.py, line 95: await hass.config_entries.async_forward_entry_setup(, please create a bug report at https://github.com/zachowj/hass-node-red/issues
+2024-09-30 14:16:23.777 INFO (MainThread) [custom_components.nodered.discovery] Creating time 5188859a.d29b0c 0f47adc976f6e577
+2024-09-30 14:16:23.802 INFO (MainThread) [homeassistant.setup] Setting up time
+2024-09-30 14:16:23.814 INFO (MainThread) [homeassistant.components.time] Setting up nodered.time
+2024-09-30 14:26:19.744 ERROR (MainThread) [frontend.js.modern.202409091] Uncaught error from Safari 18.0 on Mac OS 10.15.7
+Error: Failed to execute 'define' on 'CustomElementRegistry': the name "flex-horseshoe-card" has already been used with this registry
+message (node_modules/core-js/modules/web.dom-exception.stack.js:25:24)
+src/scoped-custom-element-registry.js:45:10
+module code (/hacsfiles/flex-horseshoe-card/flex-horseshoe-card.js:1976:24)
+2024-09-30 14:30:10.643 WARNING (MainThread) [aioesphomeapi.connection] g1-water @ 192.168.1.24: Connection error occurred: Ping response not received after 90.0 seconds
+2024-09-30 14:30:10.645 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing unexpected disconnect from ESPHome API for g1-water @ 192.168.1.24
+2024-09-30 14:30:13.719 WARNING (MainThread) [aioesphomeapi.reconnect_logic] Can't connect to ESPHome API for g1-water @ 192.168.1.24: Error connecting to [AddrInfo(family=<AddressFamily.AF_INET: 2>, type=<SocketKind.SOCK_STREAM: 1>, proto=6, sockaddr=IPv4Sockaddr(address='192.168.1.24', port=6053))]: [Errno 113] Connect call failed ('192.168.1.24', 6053) (SocketAPIError)
+2024-09-30 14:30:13.719 INFO (MainThread) [aioesphomeapi.reconnect_logic] Trying to connect to g1-water @ 192.168.1.24 in the background
+2024-09-30 14:35:29.793 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-water @ 192.168.1.24 in 0.348s
+2024-09-30 14:35:29.867 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-water @ 192.168.1.24 in 0.074s
+2024-09-30 14:47:39.895 WARNING (MainThread) [aioesphomeapi.connection] g1-water @ 192.168.1.24: Connection error occurred: Ping response not received after 90.0 seconds
+2024-09-30 14:47:39.896 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing unexpected disconnect from ESPHome API for g1-water @ 192.168.1.24
+2024-09-30 14:47:40.632 WARNING (MainThread) [aioesphomeapi.reconnect_logic] Can't connect to ESPHome API for g1-water @ 192.168.1.24: Error connecting to [AddrInfo(family=<AddressFamily.AF_INET: 2>, type=<SocketKind.SOCK_STREAM: 1>, proto=6, sockaddr=IPv4Sockaddr(address='192.168.1.24', port=6053))]: [Errno 113] Connect call failed ('192.168.1.24', 6053) (SocketAPIError)
+2024-09-30 14:47:40.632 INFO (MainThread) [aioesphomeapi.reconnect_logic] Trying to connect to g1-water @ 192.168.1.24 in the background
+2024-09-30 14:48:29.398 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-water @ 192.168.1.24 in 2.118s
+2024-09-30 14:48:29.492 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-water @ 192.168.1.24 in 0.093s
+2024-09-30 14:48:53.070 ERROR (MainThread) [frontend.js.modern.202409091] Uncaught error from Mobile Safari 18.0 on iOS 18.0
+Error: Failed to execute 'define' on 'CustomElementRegistry': the name "flex-horseshoe-card" has already been used with this registry
+message (node_modules/core-js/modules/web.dom-exception.stack.js:25:24)
+src/scoped-custom-element-registry.js:45:10
+module code (/hacsfiles/flex-horseshoe-card/flex-horseshoe-card.js:1976:24)
+2024-09-30 14:50:04.889 ERROR (MainThread) [frontend.js.modern.202409091] Uncaught error from Mobile Safari 18.0 on iOS 18.0
+Error: Failed to execute 'define' on 'CustomElementRegistry': the name "flex-horseshoe-card" has already been used with this registry
+message (node_modules/core-js/modules/web.dom-exception.stack.js:25:24)
+src/scoped-custom-element-registry.js:45:10
+module code (/hacsfiles/flex-horseshoe-card/flex-horseshoe-card.js:1976:24)
+2024-09-30 15:28:12.560 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing expected disconnect from ESPHome API for g1-qbar1 @ 192.168.1.54
+2024-09-30 15:28:17.640 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-qbar1 @ 192.168.1.54 in 0.076s
+2024-09-30 15:28:17.702 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-qbar1 @ 192.168.1.54 in 0.062s
+2024-09-30 15:30:51.875 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing expected disconnect from ESPHome API for g1-qbar2 @ 192.168.1.243
+2024-09-30 15:30:56.978 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-qbar2 @ 192.168.1.243 in 0.099s
+2024-09-30 15:30:57.059 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-qbar2 @ 192.168.1.243 in 0.081s
+2024-09-30 15:39:02.056 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing expected disconnect from ESPHome API for g1-wind @ 192.168.1.65
+2024-09-30 15:39:07.180 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-wind @ 192.168.1.65 in 0.121s
+2024-09-30 15:39:07.250 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-wind @ 192.168.1.65 in 0.070s
+2024-09-30 15:41:39.255 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing expected disconnect from ESPHome API for g1-intake @ 192.168.1.254
+2024-09-30 15:41:44.313 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-intake @ 192.168.1.254 in 0.052s
+2024-09-30 15:41:44.384 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-intake @ 192.168.1.254 in 0.071s
+2024-09-30 17:09:43.709 INFO (MainThread) [custom_components.hacs] Starting update, 2.0.1
+2024-09-30 17:09:43.718 INFO (MainThread) [custom_components.hacs] <Integration hacs/integration> Running pre installation steps
+2024-09-30 17:09:43.718 INFO (MainThread) [custom_components.hacs] <Integration hacs/integration> Pre installation steps completed
+2024-09-30 17:09:43.719 INFO (MainThread) [custom_components.hacs] <Integration hacs/integration> Running installation steps
+2024-09-30 17:09:45.200 WARNING (MainThread) [homeassistant.util.json] json_loads was called from hacs, this is a deprecated function which will be removed in HA Core 2025.8. Use homeassistant.util.json.json_loads instead, please create a bug report at https://github.com/hacs/integration/issues
+2024-09-30 17:09:45.668 WARNING (MainThread) [homeassistant.util.json] json_loads was called from hacs, this is a deprecated function which will be removed in HA Core 2025.8. Use homeassistant.util.json.json_loads instead, please create a bug report at https://github.com/hacs/integration/issues
+2024-09-30 17:09:51.260 WARNING (MainThread) [homeassistant.util.loop] Detected blocking call to open with args ('/config/custom_components/hacs/data_client.py', 'wb') inside the event loop by custom integration 'hacs' at custom_components/hacs/repositories/base.py, line 600: ? (offender: /usr/local/lib/python3.12/zipfile/__init__.py, line 1801: open(targetpath, "wb") as target:), please create a bug report at https://github.com/hacs/integration/issues
+For developers, please see https://developers.home-assistant.io/docs/asyncio_blocking_operations/#open
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/usr/src/homeassistant/homeassistant/__main__.py", line 223, in <module>
+    sys.exit(main())
+  File "/usr/src/homeassistant/homeassistant/__main__.py", line 209, in main
+    exit_code = runner.run(runtime_conf)
+  File "/usr/src/homeassistant/homeassistant/runner.py", line 189, in run
+    return loop.run_until_complete(setup_and_run_hass(runtime_config))
+  File "/usr/local/lib/python3.12/asyncio/base_events.py", line 674, in run_until_complete
+    self.run_forever()
+  File "/usr/local/lib/python3.12/asyncio/base_events.py", line 641, in run_forever
+    self._run_once()
+  File "/usr/local/lib/python3.12/asyncio/base_events.py", line 1990, in _run_once
+    handle._run()
+  File "/usr/local/lib/python3.12/asyncio/events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+  File "/usr/src/homeassistant/homeassistant/components/update/__init__.py", line 154, in async_install
+    await entity.async_install_with_progress(version, backup)
+  File "/usr/src/homeassistant/homeassistant/components/update/__init__.py", line 458, in async_install_with_progress
+    await self.async_install(version, backup)
+  File "/config/custom_components/hacs/update.py", line 124, in async_install
+  File "/config/custom_components/hacs/repositories/base.py", line 893, in async_install
+  File "/config/custom_components/hacs/repositories/base.py", line 975, in async_install_repository
+  File "/config/custom_components/hacs/repositories/base.py", line 566, in download_zip_files
+  File "/config/custom_components/hacs/repositories/base.py", line 600, in async_download_zip_file
+
+2024-09-30 17:10:04.995 INFO (MainThread) [custom_components.hacs] <Integration hacs/integration> Download of hacs.zip completed
+2024-09-30 17:10:05.114 INFO (MainThread) [custom_components.hacs] <Integration hacs/integration> Installation steps completed
+2024-09-30 17:10:05.114 INFO (MainThread) [custom_components.hacs] <Integration hacs/integration> Running post installation steps
+2024-09-30 17:10:05.115 INFO (MainThread) [custom_components.hacs] <Integration hacs/integration> Post installation steps completed
+2024-09-30 17:15:53.724 INFO (MainThread) [custom_components.hacs] Starting update, v3.3.5
+2024-09-30 17:15:53.727 INFO (MainThread) [custom_components.hacs] <Plugin dbuezas/lovelace-plotly-graph-card> Running pre installation steps
+2024-09-30 17:15:53.727 INFO (MainThread) [custom_components.hacs] <Plugin dbuezas/lovelace-plotly-graph-card> Pre installation steps completed
+2024-09-30 17:15:53.728 INFO (MainThread) [custom_components.hacs] <Plugin dbuezas/lovelace-plotly-graph-card> Running installation steps
+2024-09-30 17:15:54.895 WARNING (MainThread) [homeassistant.util.json] json_loads was called from hacs, this is a deprecated function which will be removed in HA Core 2025.8. Use homeassistant.util.json.json_loads instead, please create a bug report at https://github.com/hacs/integration/issues
+2024-09-30 17:15:56.953 INFO (MainThread) [custom_components.hacs] <Plugin dbuezas/lovelace-plotly-graph-card> Download of plotly-graph-card.js completed
+2024-09-30 17:15:57.958 INFO (MainThread) [custom_components.hacs] <Plugin dbuezas/lovelace-plotly-graph-card> Installation steps completed
+2024-09-30 17:15:57.959 INFO (MainThread) [custom_components.hacs] <Plugin dbuezas/lovelace-plotly-graph-card> Running post installation steps
+2024-09-30 17:15:57.959 INFO (MainThread) [custom_components.hacs] <Plugin dbuezas/lovelace-plotly-graph-card> Post installation steps completed
+2024-09-30 17:16:13.647 INFO (MainThread) [custom_components.hacs] Starting update, 1.3.5
+2024-09-30 17:16:13.650 INFO (MainThread) [custom_components.hacs] <Integration marcolivierarsenault/moonraker-home-assistant> Running pre installation steps
+2024-09-30 17:16:13.650 INFO (MainThread) [custom_components.hacs] <Integration marcolivierarsenault/moonraker-home-assistant> Pre installation steps completed
+2024-09-30 17:16:13.656 INFO (MainThread) [custom_components.hacs] <Integration marcolivierarsenault/moonraker-home-assistant> Running installation steps
+2024-09-30 17:16:14.833 WARNING (MainThread) [homeassistant.util.json] json_loads was called from hacs, this is a deprecated function which will be removed in HA Core 2025.8. Use homeassistant.util.json.json_loads instead, please create a bug report at https://github.com/hacs/integration/issues
+2024-09-30 17:16:15.284 WARNING (MainThread) [homeassistant.util.json] json_loads was called from hacs, this is a deprecated function which will be removed in HA Core 2025.8. Use homeassistant.util.json.json_loads instead, please create a bug report at https://github.com/hacs/integration/issues
+2024-09-30 17:16:15.320 INFO (MainThread) [custom_components.hacs] <Integration marcolivierarsenault/moonraker-home-assistant> Trying experimental download
+2024-09-30 17:16:17.146 INFO (MainThread) [custom_components.hacs] <Integration marcolivierarsenault/moonraker-home-assistant> Content was extracted to /config/custom_components/moonraker
+2024-09-30 17:16:17.155 INFO (MainThread) [custom_components.hacs] <Integration marcolivierarsenault/moonraker-home-assistant> Installation steps completed
+2024-09-30 17:16:17.155 INFO (MainThread) [custom_components.hacs] <Integration marcolivierarsenault/moonraker-home-assistant> Running post installation steps
+2024-09-30 17:16:17.155 INFO (MainThread) [custom_components.hacs] Reloading custom_component cache
+2024-09-30 17:16:17.165 INFO (SyncWorker_33) [homeassistant.loader] Loaded hacs from custom_components.hacs
+2024-09-30 17:16:17.165 WARNING (SyncWorker_33) [homeassistant.loader] We found a custom integration hacs which has not been tested by Home Assistant. This component might cause stability problems, be sure to disable it if you experience issues with Home Assistant
+2024-09-30 17:16:17.170 INFO (SyncWorker_33) [homeassistant.loader] Loaded webrtc from custom_components.webrtc
+2024-09-30 17:16:17.170 WARNING (SyncWorker_33) [homeassistant.loader] We found a custom integration webrtc which has not been tested by Home Assistant. This component might cause stability problems, be sure to disable it if you experience issues with Home Assistant
+2024-09-30 17:16:17.171 INFO (SyncWorker_33) [homeassistant.loader] Loaded moonraker from custom_components.moonraker
+2024-09-30 17:16:17.172 WARNING (SyncWorker_33) [homeassistant.loader] We found a custom integration moonraker which has not been tested by Home Assistant. This component might cause stability problems, be sure to disable it if you experience issues with Home Assistant
+2024-09-30 17:16:17.176 INFO (SyncWorker_33) [homeassistant.loader] Loaded nodered from custom_components.nodered
+2024-09-30 17:16:17.176 WARNING (SyncWorker_33) [homeassistant.loader] We found a custom integration nodered which has not been tested by Home Assistant. This component might cause stability problems, be sure to disable it if you experience issues with Home Assistant
+2024-09-30 17:16:17.178 INFO (MainThread) [custom_components.hacs] Custom_component cache reloaded
+2024-09-30 17:16:17.180 INFO (MainThread) [custom_components.hacs] <Integration marcolivierarsenault/moonraker-home-assistant> Post installation steps completed
+2024-09-30 17:18:23.116 INFO (MainThread) [custom_components.nodered.discovery] Updating time 5188859a.d29b0c 19bbf5ca40a3d315
+2024-09-30 17:18:23.120 INFO (MainThread) [custom_components.nodered.discovery] Updating time 5188859a.d29b0c 0f47adc976f6e577
+2024-09-30 17:29:59.947 INFO (MainThread) [custom_components.hacs] Starting update, v4.1.1
+2024-09-30 17:29:59.950 INFO (MainThread) [custom_components.hacs] <Integration zachowj/hass-node-red> Running pre installation steps
+2024-09-30 17:29:59.953 INFO (MainThread) [custom_components.hacs] <Integration zachowj/hass-node-red> Pre installation steps completed
+2024-09-30 17:29:59.955 INFO (MainThread) [custom_components.hacs] <Integration zachowj/hass-node-red> Running installation steps
+2024-09-30 17:30:01.228 WARNING (MainThread) [homeassistant.util.json] json_loads was called from hacs, this is a deprecated function which will be removed in HA Core 2025.8. Use homeassistant.util.json.json_loads instead, please create a bug report at https://github.com/hacs/integration/issues
+2024-09-30 17:30:01.702 WARNING (MainThread) [homeassistant.util.json] json_loads was called from hacs, this is a deprecated function which will be removed in HA Core 2025.8. Use homeassistant.util.json.json_loads instead, please create a bug report at https://github.com/hacs/integration/issues
+2024-09-30 17:30:02.889 INFO (MainThread) [custom_components.hacs] <Integration zachowj/hass-node-red> Download of nodered.zip completed
+2024-09-30 17:30:02.898 INFO (MainThread) [custom_components.hacs] <Integration zachowj/hass-node-red> Installation steps completed
+2024-09-30 17:30:02.898 INFO (MainThread) [custom_components.hacs] <Integration zachowj/hass-node-red> Running post installation steps
+2024-09-30 17:30:02.898 INFO (MainThread) [custom_components.hacs] Reloading custom_component cache
+2024-09-30 17:30:02.907 INFO (SyncWorker_29) [homeassistant.loader] Loaded hacs from custom_components.hacs
+2024-09-30 17:30:02.907 WARNING (SyncWorker_29) [homeassistant.loader] We found a custom integration hacs which has not been tested by Home Assistant. This component might cause stability problems, be sure to disable it if you experience issues with Home Assistant
+2024-09-30 17:30:02.911 INFO (SyncWorker_29) [homeassistant.loader] Loaded webrtc from custom_components.webrtc
+2024-09-30 17:30:02.911 WARNING (SyncWorker_29) [homeassistant.loader] We found a custom integration webrtc which has not been tested by Home Assistant. This component might cause stability problems, be sure to disable it if you experience issues with Home Assistant
+2024-09-30 17:30:02.913 INFO (SyncWorker_29) [homeassistant.loader] Loaded moonraker from custom_components.moonraker
+2024-09-30 17:30:02.914 WARNING (SyncWorker_29) [homeassistant.loader] We found a custom integration moonraker which has not been tested by Home Assistant. This component might cause stability problems, be sure to disable it if you experience issues with Home Assistant
+2024-09-30 17:30:02.917 INFO (SyncWorker_29) [homeassistant.loader] Loaded nodered from custom_components.nodered
+2024-09-30 17:30:02.917 WARNING (SyncWorker_29) [homeassistant.loader] We found a custom integration nodered which has not been tested by Home Assistant. This component might cause stability problems, be sure to disable it if you experience issues with Home Assistant
+2024-09-30 17:30:02.918 INFO (MainThread) [custom_components.hacs] Custom_component cache reloaded
+2024-09-30 17:30:02.920 INFO (MainThread) [custom_components.hacs] <Integration zachowj/hass-node-red> Post installation steps completed
+2024-09-30 20:12:18.196 ERROR (MainThread) [frontend.js.modern.202409091] Uncaught error from Safari 18.0 on Mac OS 10.15.7
+Error: Failed to execute 'define' on 'CustomElementRegistry': the name "flex-horseshoe-card" has already been used with this registry
+message (node_modules/core-js/modules/web.dom-exception.stack.js:25:24)
+src/scoped-custom-element-registry.js:45:10
+module code (/hacsfiles/flex-horseshoe-card/flex-horseshoe-card.js:1976:24)
+2024-09-30 20:15:40.509 INFO (MainThread) [custom_components.hacs] Loading known repositories
+2024-09-30 20:18:32.695 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing expected disconnect from ESPHome API for g1-canopy @ 192.168.1.73
+2024-09-30 20:18:37.790 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-canopy @ 192.168.1.73 in 0.090s
+2024-09-30 20:18:37.864 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-canopy @ 192.168.1.73 in 0.074s
+2024-09-30 20:24:44.439 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing expected disconnect from ESPHome API for g1-canopy @ 192.168.1.73
+2024-09-30 20:24:49.512 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-canopy @ 192.168.1.73 in 0.068s
+2024-09-30 20:24:49.582 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-canopy @ 192.168.1.73 in 0.071s
+2024-09-30 20:24:49.694 INFO (MainThread) [homeassistant.helpers.entity_registry] Registered new sensor.esphome entity: sensor.g1_canopy_bme680_temperature
+2024-09-30 20:24:49.698 INFO (MainThread) [homeassistant.helpers.entity_registry] Registered new sensor.esphome entity: sensor.g1_canopy_bme680_pressure
+2024-09-30 20:24:49.700 INFO (MainThread) [homeassistant.helpers.entity_registry] Registered new sensor.esphome entity: sensor.g1_canopy_bme680_humidity
+2024-09-30 20:24:49.705 INFO (MainThread) [homeassistant.helpers.entity_registry] Registered new sensor.esphome entity: sensor.g1_canopy_bme680_gas_resistance
+2024-09-30 20:29:33.553 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing expected disconnect from ESPHome API for g1-canopy @ 192.168.1.73
+2024-09-30 20:29:38.682 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-canopy @ 192.168.1.73 in 0.123s
+2024-09-30 20:29:38.752 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-canopy @ 192.168.1.73 in 0.070s
+2024-09-30 20:29:38.891 INFO (MainThread) [homeassistant.helpers.entity_registry] Registered new sensor.esphome entity: sensor.g1_canopy_bme688_temperature
+2024-09-30 20:29:38.895 INFO (MainThread) [homeassistant.helpers.entity_registry] Registered new sensor.esphome entity: sensor.g1_canopy_bme688_pressure
+2024-09-30 20:29:38.897 INFO (MainThread) [homeassistant.helpers.entity_registry] Registered new sensor.esphome entity: sensor.g1_canopy_bme688_humidity
+2024-09-30 20:29:38.905 INFO (MainThread) [homeassistant.helpers.entity_registry] Registered new sensor.esphome entity: sensor.g1_canopy_bme688_gas_resistance
+2024-09-30 20:29:38.907 INFO (MainThread) [homeassistant.helpers.entity_registry] Registered new sensor.esphome entity: sensor.g1_canopy_bme688_iaq
+2024-09-30 20:29:38.911 INFO (MainThread) [homeassistant.helpers.entity_registry] Registered new sensor.esphome entity: sensor.g1_canopy_bme688_static_iaq
+2024-09-30 20:29:38.913 INFO (MainThread) [homeassistant.helpers.entity_registry] Registered new sensor.esphome entity: sensor.g1_canopy_bme688_co2_equivalent
+2024-09-30 20:29:38.918 INFO (MainThread) [homeassistant.helpers.entity_registry] Registered new sensor.esphome entity: sensor.g1_canopy_bme688_breath_voc_equivalent
+2024-09-30 20:34:17.447 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing expected disconnect from ESPHome API for g1-canopy @ 192.168.1.73
+2024-09-30 20:34:22.533 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-canopy @ 192.168.1.73 in 0.077s
+2024-09-30 20:34:22.602 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-canopy @ 192.168.1.73 in 0.069s
+2024-09-30 20:34:22.708 INFO (MainThread) [homeassistant.helpers.entity_registry] Registered new sensor.esphome entity: sensor.g1_canopy_bme680_temperature
+2024-09-30 20:34:22.710 INFO (MainThread) [homeassistant.helpers.entity_registry] Registered new sensor.esphome entity: sensor.g1_canopy_bme680_pressure
+2024-09-30 20:34:22.715 INFO (MainThread) [homeassistant.helpers.entity_registry] Registered new sensor.esphome entity: sensor.g1_canopy_bme680_humidity
+2024-09-30 20:34:22.717 INFO (MainThread) [homeassistant.helpers.entity_registry] Registered new sensor.esphome entity: sensor.g1_canopy_bme680_gas_resistance
+2024-09-30 20:45:30.462 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing expected disconnect from ESPHome API for g1-canopy @ 192.168.1.73
+2024-09-30 20:45:35.543 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-canopy @ 192.168.1.73 in 0.077s
+2024-09-30 20:45:35.624 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-canopy @ 192.168.1.73 in 0.081s
+2024-09-30 20:47:03.033 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing expected disconnect from ESPHome API for g1-canopy @ 192.168.1.73
+2024-09-30 20:47:08.041 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-canopy @ 192.168.1.73 in 0.003s
+2024-09-30 20:47:08.112 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-canopy @ 192.168.1.73 in 0.071s
+2024-09-30 20:51:29.378 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing expected disconnect from ESPHome API for g1-canopy @ 192.168.1.73
+2024-09-30 20:51:34.421 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-canopy @ 192.168.1.73 in 0.037s
+2024-09-30 20:51:34.499 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-canopy @ 192.168.1.73 in 0.078s
+2024-09-30 21:15:44.556 WARNING (MainThread) [aioesphomeapi.connection] g1-canopy @ 192.168.1.73: Connection error occurred: Ping response not received after 90.0 seconds
+2024-09-30 21:15:44.558 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing unexpected disconnect from ESPHome API for g1-canopy @ 192.168.1.73
+2024-09-30 21:15:46.647 WARNING (MainThread) [aioesphomeapi.reconnect_logic] Can't connect to ESPHome API for g1-canopy @ 192.168.1.73: Error connecting to [AddrInfo(family=<AddressFamily.AF_INET: 2>, type=<SocketKind.SOCK_STREAM: 1>, proto=6, sockaddr=IPv4Sockaddr(address='192.168.1.73', port=6053))]: [Errno 113] Connect call failed ('192.168.1.73', 6053) (SocketAPIError)
+2024-09-30 21:15:46.647 INFO (MainThread) [aioesphomeapi.reconnect_logic] Trying to connect to g1-canopy @ 192.168.1.73 in the background
+2024-09-30 21:31:14.004 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-canopy @ 192.168.1.73 in 0.387s
+2024-09-30 21:31:14.065 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-canopy @ 192.168.1.73 in 0.061s
+2024-09-30 21:33:38.977 ERROR (MainThread) [frontend.js.modern.202409091] Uncaught error from Mobile Safari 18.0 on iOS 18.0
+Error: Failed to execute 'define' on 'CustomElementRegistry': the name "flex-horseshoe-card" has already been used with this registry
+message (node_modules/core-js/modules/web.dom-exception.stack.js:25:24)
+src/scoped-custom-element-registry.js:45:10
+module code (/hacsfiles/flex-horseshoe-card/flex-horseshoe-card.js:1976:24)
+2024-09-30 21:33:42.090 ERROR (MainThread) [frontend.js.modern.202409091] Uncaught error from Mobile Safari 18.0 on iOS 18.0
+Error: Failed to execute 'define' on 'CustomElementRegistry': the name "flex-horseshoe-card" has already been used with this registry
+message (node_modules/core-js/modules/web.dom-exception.stack.js:25:24)
+src/scoped-custom-element-registry.js:45:10
+module code (/hacsfiles/flex-horseshoe-card/flex-horseshoe-card.js:1976:24)
+2024-09-30 21:49:08.687 ERROR (MainThread) [frontend.js.modern.202409091] Uncaught error from Safari 18.0 on Mac OS 10.15.7
+Error: Failed to execute 'define' on 'CustomElementRegistry': the name "flex-horseshoe-card" has already been used with this registry
+message (node_modules/core-js/modules/web.dom-exception.stack.js:25:24)
+src/scoped-custom-element-registry.js:45:10
+module code (/hacsfiles/flex-horseshoe-card/flex-horseshoe-card.js:1976:24)
+2024-09-30 21:55:04.134 WARNING (MainThread) [aioesphomeapi.connection] g1-canopy @ 192.168.1.73: Connection error occurred: Ping response not received after 90.0 seconds
+2024-09-30 21:55:04.136 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing unexpected disconnect from ESPHome API for g1-canopy @ 192.168.1.73
+2024-09-30 21:55:06.711 WARNING (MainThread) [aioesphomeapi.reconnect_logic] Can't connect to ESPHome API for g1-canopy @ 192.168.1.73: Error connecting to [AddrInfo(family=<AddressFamily.AF_INET: 2>, type=<SocketKind.SOCK_STREAM: 1>, proto=6, sockaddr=IPv4Sockaddr(address='192.168.1.73', port=6053))]: [Errno 113] Connect call failed ('192.168.1.73', 6053) (SocketAPIError)
+2024-09-30 21:55:06.711 INFO (MainThread) [aioesphomeapi.reconnect_logic] Trying to connect to g1-canopy @ 192.168.1.73 in the background
+2024-09-30 21:59:50.336 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-canopy @ 192.168.1.73 in 0.382s
+2024-09-30 21:59:50.407 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-canopy @ 192.168.1.73 in 0.071s
+2024-09-30 22:04:59.547 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing expected disconnect from ESPHome API for g1-canopy @ 192.168.1.73
+2024-09-30 22:05:04.593 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-canopy @ 192.168.1.73 in 0.040s
+2024-09-30 22:05:04.725 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-canopy @ 192.168.1.73 in 0.132s
+2024-09-30 22:05:04.841 INFO (MainThread) [homeassistant.helpers.entity_registry] Registered new sensor.esphome entity: sensor.g1_canopy_voc_index
+2024-09-30 22:05:04.844 INFO (MainThread) [homeassistant.helpers.entity_registry] Registered new sensor.esphome entity: sensor.g1_canopy_nox_index
+2024-09-30 22:05:04.857 INFO (MainThread) [homeassistant.helpers.entity_registry] Registered new sensor.esphome entity: sensor.g1_canopy_sht21_temperature
+2024-09-30 22:05:04.859 INFO (MainThread) [homeassistant.helpers.entity_registry] Registered new sensor.esphome entity: sensor.g1_canopy_sht21_humidity
+2024-09-30 22:09:09.252 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing expected disconnect from ESPHome API for g1-canopy @ 192.168.1.73
+2024-09-30 22:09:14.343 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-canopy @ 192.168.1.73 in 0.084s
+2024-09-30 22:09:14.480 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-canopy @ 192.168.1.73 in 0.137s
+2024-09-30 22:09:14.585 INFO (MainThread) [homeassistant.helpers.entity_registry] Registered new sensor.esphome entity: sensor.g1_canopy_canopy_temperature
+2024-09-30 22:09:14.590 INFO (MainThread) [homeassistant.helpers.entity_registry] Registered new sensor.esphome entity: sensor.g1_canopy_canopy_humidity
+2024-09-30 22:09:14.592 INFO (MainThread) [homeassistant.helpers.entity_registry] Registered new sensor.esphome entity: sensor.g1_canopy_heater
+2024-09-30 22:42:44.564 WARNING (MainThread) [aioesphomeapi.connection] g1-canopy @ 192.168.1.73: Connection error occurred: Ping response not received after 90.0 seconds
+2024-09-30 22:42:44.565 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing unexpected disconnect from ESPHome API for g1-canopy @ 192.168.1.73
+2024-09-30 22:42:46.711 WARNING (MainThread) [aioesphomeapi.reconnect_logic] Can't connect to ESPHome API for g1-canopy @ 192.168.1.73: Error connecting to [AddrInfo(family=<AddressFamily.AF_INET: 2>, type=<SocketKind.SOCK_STREAM: 1>, proto=6, sockaddr=IPv4Sockaddr(address='192.168.1.73', port=6053))]: [Errno 113] Connect call failed ('192.168.1.73', 6053) (SocketAPIError)
+2024-09-30 22:42:46.712 INFO (MainThread) [aioesphomeapi.reconnect_logic] Trying to connect to g1-canopy @ 192.168.1.73 in the background
+2024-09-30 22:48:58.239 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-canopy @ 192.168.1.73 in 0.378s
+2024-09-30 22:48:58.308 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-canopy @ 192.168.1.73 in 0.069s
+2024-09-30 22:54:39.191 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing expected disconnect from ESPHome API for g1-wind @ 192.168.1.65
+2024-09-30 22:54:44.240 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-wind @ 192.168.1.65 in 0.044s
+2024-09-30 22:54:44.310 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-wind @ 192.168.1.65 in 0.070s
+2024-09-30 22:54:44.379 INFO (MainThread) [homeassistant.helpers.entity_registry] Registered new fan.esphome entity: fan.g1_wind_wind_fan_1
+2024-09-30 22:54:44.383 INFO (MainThread) [homeassistant.helpers.entity_registry] Registered new fan.esphome entity: fan.g1_wind_wind_fan_2
+2024-09-30 22:56:19.009 ERROR (MainThread) [frontend.js.modern.202409091] Uncaught error from Safari 18.0 on Mac OS 10.15.7
+Error: Failed to execute 'define' on 'CustomElementRegistry': the name "flex-horseshoe-card" has already been used with this registry
+message (node_modules/core-js/modules/web.dom-exception.stack.js:25:24)
+src/scoped-custom-element-registry.js:45:10
+module code (/hacsfiles/flex-horseshoe-card/flex-horseshoe-card.js:1976:24)
+2024-09-30 23:04:20.308 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing expected disconnect from ESPHome API for g1-qbar1 @ 192.168.1.54
+2024-09-30 23:04:25.371 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-qbar1 @ 192.168.1.54 in 0.059s
+2024-09-30 23:04:25.438 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-qbar1 @ 192.168.1.54 in 0.067s
+2024-09-30 23:06:28.813 ERROR (MainThread) [frontend.js.modern.202409091] Uncaught error from Safari 18.0 on Mac OS 10.15.7
+Error: Failed to execute 'define' on 'CustomElementRegistry': the name "flex-horseshoe-card" has already been used with this registry
+message (node_modules/core-js/modules/web.dom-exception.stack.js:25:24)
+src/scoped-custom-element-registry.js:45:10
+module code (/hacsfiles/flex-horseshoe-card/flex-horseshoe-card.js:1976:24)
+2024-09-30 23:09:35.525 ERROR (MainThread) [frontend.js.modern.202409091] Uncaught error from Safari 18.0 on Mac OS 10.15.7
+Error: Failed to execute 'define' on 'CustomElementRegistry': the name "flex-horseshoe-card" has already been used with this registry
+message (node_modules/core-js/modules/web.dom-exception.stack.js:25:24)
+src/scoped-custom-element-registry.js:45:10
+module code (/hacsfiles/flex-horseshoe-card/flex-horseshoe-card.js:1976:24)
+2024-09-30 23:13:06.415 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-cam @ 192.168.1.167 in 0.097s
+2024-09-30 23:13:06.552 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-cam @ 192.168.1.167 in 0.137s
+2024-09-30 23:16:56.706 WARNING (MainThread) [aioesphomeapi.connection] g1-cam @ 192.168.1.167: Connection error occurred: Ping response not received after 90.0 seconds
+2024-09-30 23:16:56.717 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing unexpected disconnect from ESPHome API for g1-cam @ 192.168.1.167
+2024-09-30 23:16:59.788 WARNING (MainThread) [aioesphomeapi.reconnect_logic] Can't connect to ESPHome API for g1-cam @ 192.168.1.167: Error connecting to [AddrInfo(family=<AddressFamily.AF_INET: 2>, type=<SocketKind.SOCK_STREAM: 1>, proto=6, sockaddr=IPv4Sockaddr(address='192.168.1.167', port=6053))]: [Errno 113] Connect call failed ('192.168.1.167', 6053) (SocketAPIError)
+2024-09-30 23:16:59.789 INFO (MainThread) [aioesphomeapi.reconnect_logic] Trying to connect to g1-cam @ 192.168.1.167 in the background
+2024-09-30 23:19:19.944 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-cam @ 192.168.1.167 in 0.366s
+2024-09-30 23:19:20.034 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-cam @ 192.168.1.167 in 0.090s
+2024-09-30 23:20:07.049 WARNING (MainThread) [aioesphomeapi.connection] g1-cam @ 192.168.1.167: Connection error occurred: [Errno 104] Connection reset by peer
+2024-09-30 23:20:07.051 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing unexpected disconnect from ESPHome API for g1-cam @ 192.168.1.167
+2024-09-30 23:20:07.063 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-cam @ 192.168.1.167 in 0.010s
+2024-09-30 23:20:07.132 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-cam @ 192.168.1.167 in 0.069s
+2024-09-30 23:23:17.137 WARNING (MainThread) [aioesphomeapi.connection] g1-cam @ 192.168.1.167: Connection error occurred: Ping response not received after 90.0 seconds
+2024-09-30 23:23:17.138 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing unexpected disconnect from ESPHome API for g1-cam @ 192.168.1.167
+2024-09-30 23:23:20.215 WARNING (MainThread) [aioesphomeapi.reconnect_logic] Can't connect to ESPHome API for g1-cam @ 192.168.1.167: Error connecting to [AddrInfo(family=<AddressFamily.AF_INET: 2>, type=<SocketKind.SOCK_STREAM: 1>, proto=6, sockaddr=IPv4Sockaddr(address='192.168.1.167', port=6053))]: [Errno 113] Connect call failed ('192.168.1.167', 6053) (SocketAPIError)
+2024-09-30 23:23:20.215 INFO (MainThread) [aioesphomeapi.reconnect_logic] Trying to connect to g1-cam @ 192.168.1.167 in the background
+2024-09-30 23:34:43.720 ERROR (MainThread) [frontend.js.modern.202409091] Uncaught error from Safari 18.0 on Mac OS 10.15.7
+Error: Failed to execute 'define' on 'CustomElementRegistry': the name "flex-horseshoe-card" has already been used with this registry
+message (node_modules/core-js/modules/web.dom-exception.stack.js:25:24)
+src/scoped-custom-element-registry.js:45:10
+module code (/hacsfiles/flex-horseshoe-card/flex-horseshoe-card.js:1976:24)
+2024-09-30 23:38:54.480 ERROR (MainThread) [frontend.js.modern.202409091] Uncaught error from Safari 18.0 on Mac OS 10.15.7
+Error: Failed to execute 'define' on 'CustomElementRegistry': the name "flex-horseshoe-card" has already been used with this registry
+message (node_modules/core-js/modules/web.dom-exception.stack.js:25:24)
+src/scoped-custom-element-registry.js:45:10
+module code (/hacsfiles/flex-horseshoe-card/flex-horseshoe-card.js:1976:24)
+2024-09-30 23:50:01.608 ERROR (MainThread) [frontend.js.modern.202409091] Uncaught error from Safari 18.0 on Mac OS 10.15.7
+Error: Failed to execute 'define' on 'CustomElementRegistry': the name "flex-horseshoe-card" has already been used with this registry
+message (node_modules/core-js/modules/web.dom-exception.stack.js:25:24)
+src/scoped-custom-element-registry.js:45:10
+module code (/hacsfiles/flex-horseshoe-card/flex-horseshoe-card.js:1976:24)
+2024-10-01 00:05:20.727 WARNING (MainThread) [aioesphomeapi.connection] g1-humidifier @ 192.168.1.104: Connection error occurred: Ping response not received after 90.0 seconds
+2024-10-01 00:05:20.730 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing unexpected disconnect from ESPHome API for g1-humidifier @ 192.168.1.104
+2024-10-01 00:05:21.623 WARNING (MainThread) [aioesphomeapi.reconnect_logic] Can't connect to ESPHome API for g1-humidifier @ 192.168.1.104: Error connecting to [AddrInfo(family=<AddressFamily.AF_INET: 2>, type=<SocketKind.SOCK_STREAM: 1>, proto=6, sockaddr=IPv4Sockaddr(address='192.168.1.104', port=6053))]: [Errno 113] Connect call failed ('192.168.1.104', 6053) (SocketAPIError)
+2024-10-01 00:05:21.624 INFO (MainThread) [aioesphomeapi.reconnect_logic] Trying to connect to g1-humidifier @ 192.168.1.104 in the background
+2024-10-01 00:08:06.852 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-humidifier @ 192.168.1.104 in 0.369s
+2024-10-01 00:08:06.920 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-humidifier @ 192.168.1.104 in 0.068s
+2024-10-01 00:10:16.922 WARNING (MainThread) [aioesphomeapi.connection] g1-humidifier @ 192.168.1.104: Connection error occurred: Ping response not received after 90.0 seconds
+2024-10-01 00:10:16.924 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing unexpected disconnect from ESPHome API for g1-humidifier @ 192.168.1.104
+2024-10-01 00:10:19.991 WARNING (MainThread) [aioesphomeapi.reconnect_logic] Can't connect to ESPHome API for g1-humidifier @ 192.168.1.104: Error connecting to [AddrInfo(family=<AddressFamily.AF_INET: 2>, type=<SocketKind.SOCK_STREAM: 1>, proto=6, sockaddr=IPv4Sockaddr(address='192.168.1.104', port=6053))]: [Errno 113] Connect call failed ('192.168.1.104', 6053) (SocketAPIError)
+2024-10-01 00:10:19.992 INFO (MainThread) [aioesphomeapi.reconnect_logic] Trying to connect to g1-humidifier @ 192.168.1.104 in the background
+2024-10-01 00:22:06.740 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-humidifier @ 192.168.1.104 in 0.365s
+2024-10-01 00:22:06.818 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-humidifier @ 192.168.1.104 in 0.079s
+2024-10-01 00:23:57.025 WARNING (MainThread) [aioesphomeapi.connection] g1-humidifier @ 192.168.1.104: Connection error occurred: [Errno 104] Connection reset by peer
+2024-10-01 00:23:57.027 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing unexpected disconnect from ESPHome API for g1-humidifier @ 192.168.1.104
+2024-10-01 00:23:57.041 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-humidifier @ 192.168.1.104 in 0.012s
+2024-10-01 00:23:57.134 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-humidifier @ 192.168.1.104 in 0.093s
+2024-10-01 00:31:18.340 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing expected disconnect from ESPHome API for g1-humidifier @ 192.168.1.104
+2024-10-01 00:31:23.349 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-humidifier @ 192.168.1.104 in 0.007s
+2024-10-01 00:31:23.431 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-humidifier @ 192.168.1.104 in 0.082s
+2024-10-01 00:34:28.677 ERROR (MainThread) [frontend.js.modern.202409091] Uncaught error from Safari 18.0 on Mac OS 10.15.7
+Error: Failed to execute 'define' on 'CustomElementRegistry': the name "flex-horseshoe-card" has already been used with this registry
+message (node_modules/core-js/modules/web.dom-exception.stack.js:25:24)
+src/scoped-custom-element-registry.js:45:10
+module code (/hacsfiles/flex-horseshoe-card/flex-horseshoe-card.js:1976:24)
+2024-10-01 00:34:28.779 ERROR (MainThread) [frontend.js.modern.202409091] Uncaught error from Safari 18.0 on Mac OS 10.15.7
+TypeError: undefined is not an object (evaluating 'airTempState.attributes')
+hass (/hacsfiles/vpdchart-card/vpdchart-card.js:20:36)
+createCardElement (src/panels/lovelace/cards/hui-card.ts:99:20)
+ev.stopPropagation (src/panels/lovelace/cards/hui-card.ts:125:26)
+dispatchEvent ([native code]::)
+event (src/common/dom/fire_event.ts:76:21)
+tag.includes (src/panels/lovelace/create-element/create-element-base.ts:165:14)
+2024-10-01 00:34:28.780 ERROR (MainThread) [frontend.js.modern.202409091] Uncaught error from Safari 18.0 on Mac OS 10.15.7
+TypeError: undefined is not an object (evaluating 'airTempState.attributes')
+hass (/hacsfiles/vpdchart-card/vpdchart-card.js:20:36)
+createCardElement (src/panels/lovelace/cards/hui-card.ts:99:20)
+ev.stopPropagation (src/panels/lovelace/cards/hui-card.ts:125:26)
+dispatchEvent ([native code]::)
+event (src/common/dom/fire_event.ts:76:21)
+tag.includes (src/panels/lovelace/create-element/create-element-base.ts:165:14)
+2024-10-01 00:34:49.206 ERROR (MainThread) [frontend.js.modern.202409091] Uncaught error from Safari 18.0 on Mac OS 10.15.7
+Error: Failed to execute 'define' on 'CustomElementRegistry': the name "flex-horseshoe-card" has already been used with this registry
+message (node_modules/core-js/modules/web.dom-exception.stack.js:25:24)
+src/scoped-custom-element-registry.js:45:10
+module code (/hacsfiles/flex-horseshoe-card/flex-horseshoe-card.js:1976:24)
+2024-10-01 00:53:33.482 WARNING (MainThread) [aioesphomeapi.connection] g1-humidifier @ 192.168.1.104: Connection error occurred: Ping response not received after 90.0 seconds
+2024-10-01 00:53:33.484 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing unexpected disconnect from ESPHome API for g1-humidifier @ 192.168.1.104
+2024-10-01 00:53:36.215 WARNING (MainThread) [aioesphomeapi.reconnect_logic] Can't connect to ESPHome API for g1-humidifier @ 192.168.1.104: Error connecting to [AddrInfo(family=<AddressFamily.AF_INET: 2>, type=<SocketKind.SOCK_STREAM: 1>, proto=6, sockaddr=IPv4Sockaddr(address='192.168.1.104', port=6053))]: [Errno 113] Connect call failed ('192.168.1.104', 6053) (SocketAPIError)
+2024-10-01 00:53:36.216 INFO (MainThread) [aioesphomeapi.reconnect_logic] Trying to connect to g1-humidifier @ 192.168.1.104 in the background
+2024-10-01 00:56:25.308 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-humidifier @ 192.168.1.104 in 0.375s
+2024-10-01 00:56:25.376 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-humidifier @ 192.168.1.104 in 0.068s
+2024-10-01 01:04:02.671 WARNING (MainThread) [aioesphomeapi.connection] g1-humidifier @ 192.168.1.104: Connection error occurred: [Errno 104] Connection reset by peer
+2024-10-01 01:04:02.673 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing unexpected disconnect from ESPHome API for g1-humidifier @ 192.168.1.104
+2024-10-01 01:04:02.683 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-humidifier @ 192.168.1.104 in 0.008s
+2024-10-01 01:04:02.746 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-humidifier @ 192.168.1.104 in 0.063s
+2024-10-01 01:06:50.366 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing expected disconnect from ESPHome API for g1-humidifier @ 192.168.1.104
+2024-10-01 01:06:55.462 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-humidifier @ 192.168.1.104 in 0.093s
+2024-10-01 01:06:55.526 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-humidifier @ 192.168.1.104 in 0.065s
+2024-10-01 01:11:25.535 WARNING (MainThread) [aioesphomeapi.connection] g1-humidifier @ 192.168.1.104: Connection error occurred: Ping response not received after 90.0 seconds
+2024-10-01 01:11:25.537 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing unexpected disconnect from ESPHome API for g1-humidifier @ 192.168.1.104
+2024-10-01 01:11:28.023 WARNING (MainThread) [aioesphomeapi.reconnect_logic] Can't connect to ESPHome API for g1-humidifier @ 192.168.1.104: Error connecting to [AddrInfo(family=<AddressFamily.AF_INET: 2>, type=<SocketKind.SOCK_STREAM: 1>, proto=6, sockaddr=IPv4Sockaddr(address='192.168.1.104', port=6053))]: [Errno 113] Connect call failed ('192.168.1.104', 6053) (SocketAPIError)
+2024-10-01 01:11:28.024 INFO (MainThread) [aioesphomeapi.reconnect_logic] Trying to connect to g1-humidifier @ 192.168.1.104 in the background
+2024-10-01 01:16:29.117 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-humidifier @ 192.168.1.104 in 0.362s
+2024-10-01 01:16:29.222 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-humidifier @ 192.168.1.104 in 0.105s
+2024-10-01 01:19:18.690 WARNING (MainThread) [aioesphomeapi.connection] g1-humidifier @ 192.168.1.104: Connection error occurred: [Errno 104] Connection reset by peer
+2024-10-01 01:19:18.693 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing unexpected disconnect from ESPHome API for g1-humidifier @ 192.168.1.104
+2024-10-01 01:19:18.706 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-humidifier @ 192.168.1.104 in 0.010s
+2024-10-01 01:19:18.771 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-humidifier @ 192.168.1.104 in 0.065s
+2024-10-01 01:21:37.545 WARNING (MainThread) [aioesphomeapi.connection] g1-humidifier @ 192.168.1.104: Connection error occurred: [Errno 104] Connection reset by peer
+2024-10-01 01:21:37.546 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing unexpected disconnect from ESPHome API for g1-humidifier @ 192.168.1.104
+2024-10-01 01:21:37.559 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-humidifier @ 192.168.1.104 in 0.009s
+2024-10-01 01:21:37.636 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-humidifier @ 192.168.1.104 in 0.077s
+2024-10-01 02:15:40.510 INFO (MainThread) [custom_components.hacs] Loading known repositories
+2024-10-01 08:15:40.511 INFO (MainThread) [custom_components.hacs] Loading known repositories
+2024-10-01 09:38:16.083 WARNING (MainThread) [aioesphomeapi.connection] g1-qbar2 @ 192.168.1.243: Connection error occurred: [Errno 104] Connection reset by peer
+2024-10-01 09:38:16.084 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing unexpected disconnect from ESPHome API for g1-qbar2 @ 192.168.1.243
+2024-10-01 09:38:16.096 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-qbar2 @ 192.168.1.243 in 0.010s
+2024-10-01 09:38:16.186 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-qbar2 @ 192.168.1.243 in 0.090s
+2024-10-01 09:38:17.683 WARNING (MainThread) [aioesphomeapi.connection] g1-humidifier @ 192.168.1.104: Connection error occurred: [Errno 104] Connection reset by peer
+2024-10-01 09:38:17.684 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing unexpected disconnect from ESPHome API for g1-humidifier @ 192.168.1.104
+2024-10-01 09:38:17.721 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-humidifier @ 192.168.1.104 in 0.034s
+2024-10-01 09:38:17.790 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-humidifier @ 192.168.1.104 in 0.068s
+2024-10-01 09:38:18.429 WARNING (MainThread) [aioesphomeapi.connection] g1-water @ 192.168.1.24: Connection error occurred: [Errno 104] Connection reset by peer
+2024-10-01 09:38:18.431 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing unexpected disconnect from ESPHome API for g1-water @ 192.168.1.24
+2024-10-01 09:38:18.443 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-water @ 192.168.1.24 in 0.008s
+2024-10-01 09:38:18.507 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-water @ 192.168.1.24 in 0.064s
+2024-10-01 09:38:18.748 WARNING (MainThread) [aioesphomeapi.connection] fluxstrip-1 @ 192.168.1.112: Connection error occurred: [Errno 104] Connection reset by peer
+2024-10-01 09:38:18.750 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing unexpected disconnect from ESPHome API for fluxstrip-1 @ 192.168.1.112
+2024-10-01 09:38:18.761 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to fluxstrip-1 @ 192.168.1.112 in 0.007s
+2024-10-01 09:38:18.844 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with fluxstrip-1 @ 192.168.1.112 in 0.083s
+2024-10-01 09:38:21.297 WARNING (MainThread) [aioesphomeapi.connection] g1-intake @ 192.168.1.254: Connection error occurred: [Errno 104] Connection reset by peer
+2024-10-01 09:38:21.299 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing unexpected disconnect from ESPHome API for g1-intake @ 192.168.1.254
+2024-10-01 09:38:21.309 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-intake @ 192.168.1.254 in 0.006s
+2024-10-01 09:38:21.380 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-intake @ 192.168.1.254 in 0.071s
+2024-10-01 09:38:27.038 WARNING (MainThread) [aioesphomeapi.connection] g1-canopy @ 192.168.1.73: Connection error occurred: [Errno 104] Connection reset by peer
+2024-10-01 09:38:27.040 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing unexpected disconnect from ESPHome API for g1-canopy @ 192.168.1.73
+2024-10-01 09:38:27.057 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-canopy @ 192.168.1.73 in 0.007s
+2024-10-01 09:38:27.148 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-canopy @ 192.168.1.73 in 0.091s
+2024-10-01 09:38:30.923 WARNING (MainThread) [aioesphomeapi.connection] g1-wind @ 192.168.1.65: Connection error occurred: [Errno 104] Connection reset by peer
+2024-10-01 09:38:30.925 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing unexpected disconnect from ESPHome API for g1-wind @ 192.168.1.65
+2024-10-01 09:38:30.941 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-wind @ 192.168.1.65 in 0.012s
+2024-10-01 09:38:31.025 WARNING (MainThread) [aioesphomeapi.connection] g1-qbar1 @ 192.168.1.54: Connection error occurred: [Errno 104] Connection reset by peer
+2024-10-01 09:38:31.026 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing unexpected disconnect from ESPHome API for g1-qbar1 @ 192.168.1.54
+2024-10-01 09:38:31.035 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-wind @ 192.168.1.65 in 0.094s
+2024-10-01 09:38:31.038 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-qbar1 @ 192.168.1.54 in 0.010s
+2024-10-01 09:38:31.104 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-qbar1 @ 192.168.1.54 in 0.065s
+2024-10-01 09:38:31.744 WARNING (MainThread) [aioesphomeapi.connection] g1-exhaust @ 192.168.1.149: Connection error occurred: [Errno 104] Connection reset by peer
+2024-10-01 09:38:31.745 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing unexpected disconnect from ESPHome API for g1-exhaust @ 192.168.1.149
+2024-10-01 09:38:31.755 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-exhaust @ 192.168.1.149 in 0.008s
+2024-10-01 09:38:31.833 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-exhaust @ 192.168.1.149 in 0.078s
+2024-10-01 14:15:40.512 INFO (MainThread) [custom_components.hacs] Loading known repositories
+2024-10-01 14:22:51.154 ERROR (MainThread) [frontend.js.modern.202409091] Uncaught error from Mobile Safari 18.0 on iOS 18.0
+Error: Failed to execute 'define' on 'CustomElementRegistry': the name "flex-horseshoe-card" has already been used with this registry
+message (node_modules/core-js/modules/web.dom-exception.stack.js:25:24)
+src/scoped-custom-element-registry.js:45:10
+module code (/hacsfiles/flex-horseshoe-card/flex-horseshoe-card.js:1976:24)
+2024-10-01 20:15:40.513 INFO (MainThread) [custom_components.hacs] Loading known repositories
+2024-10-02 01:07:59.516 WARNING (MainThread) [aioesphomeapi.connection] g1-canopy @ 192.168.1.73: Connection error occurred: Ping response not received after 90.0 seconds
+2024-10-02 01:07:59.518 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing unexpected disconnect from ESPHome API for g1-canopy @ 192.168.1.73
+2024-10-02 01:07:59.959 WARNING (MainThread) [aioesphomeapi.reconnect_logic] Can't connect to ESPHome API for g1-canopy @ 192.168.1.73: Error connecting to [AddrInfo(family=<AddressFamily.AF_INET: 2>, type=<SocketKind.SOCK_STREAM: 1>, proto=6, sockaddr=IPv4Sockaddr(address='192.168.1.73', port=6053))]: [Errno 113] Connect call failed ('192.168.1.73', 6053) (SocketAPIError)
+2024-10-02 01:07:59.959 INFO (MainThread) [aioesphomeapi.reconnect_logic] Trying to connect to g1-canopy @ 192.168.1.73 in the background
+2024-10-02 01:09:53.362 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-canopy @ 192.168.1.73 in 0.125s
+2024-10-02 01:09:53.433 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-canopy @ 192.168.1.73 in 0.071s
+2024-10-02 01:12:23.436 WARNING (MainThread) [aioesphomeapi.connection] g1-canopy @ 192.168.1.73: Connection error occurred: Ping response not received after 90.0 seconds
+2024-10-02 01:12:23.438 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing unexpected disconnect from ESPHome API for g1-canopy @ 192.168.1.73
+2024-10-02 01:12:26.487 WARNING (MainThread) [aioesphomeapi.reconnect_logic] Can't connect to ESPHome API for g1-canopy @ 192.168.1.73: Error connecting to [AddrInfo(family=<AddressFamily.AF_INET: 2>, type=<SocketKind.SOCK_STREAM: 1>, proto=6, sockaddr=IPv4Sockaddr(address='192.168.1.73', port=6053))]: [Errno 113] Connect call failed ('192.168.1.73', 6053) (SocketAPIError)
+2024-10-02 01:12:26.488 INFO (MainThread) [aioesphomeapi.reconnect_logic] Trying to connect to g1-canopy @ 192.168.1.73 in the background
+2024-10-02 01:14:29.532 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-canopy @ 192.168.1.73 in 0.428s
+2024-10-02 01:14:29.602 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-canopy @ 192.168.1.73 in 0.069s
+2024-10-02 01:16:39.605 WARNING (MainThread) [aioesphomeapi.connection] g1-canopy @ 192.168.1.73: Connection error occurred: Ping response not received after 90.0 seconds
+2024-10-02 01:16:39.607 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing unexpected disconnect from ESPHome API for g1-canopy @ 192.168.1.73
+2024-10-02 01:16:42.679 WARNING (MainThread) [aioesphomeapi.reconnect_logic] Can't connect to ESPHome API for g1-canopy @ 192.168.1.73: Error connecting to [AddrInfo(family=<AddressFamily.AF_INET: 2>, type=<SocketKind.SOCK_STREAM: 1>, proto=6, sockaddr=IPv4Sockaddr(address='192.168.1.73', port=6053))]: [Errno 113] Connect call failed ('192.168.1.73', 6053) (SocketAPIError)
+2024-10-02 01:16:42.679 INFO (MainThread) [aioesphomeapi.reconnect_logic] Trying to connect to g1-canopy @ 192.168.1.73 in the background
+2024-10-02 01:18:46.044 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-canopy @ 192.168.1.73 in 0.427s
+2024-10-02 01:18:46.115 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-canopy @ 192.168.1.73 in 0.071s
+2024-10-02 01:19:37.942 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-cam @ 192.168.1.167 in 0.408s
+2024-10-02 01:19:38.018 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-cam @ 192.168.1.167 in 0.076s
+2024-10-02 01:27:36.134 WARNING (MainThread) [aioesphomeapi.connection] g1-canopy @ 192.168.1.73: Connection error occurred: Ping response not received after 90.0 seconds
+2024-10-02 01:27:36.137 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing unexpected disconnect from ESPHome API for g1-canopy @ 192.168.1.73
+2024-10-02 01:27:38.583 WARNING (MainThread) [aioesphomeapi.reconnect_logic] Can't connect to ESPHome API for g1-canopy @ 192.168.1.73: Error connecting to [AddrInfo(family=<AddressFamily.AF_INET: 2>, type=<SocketKind.SOCK_STREAM: 1>, proto=6, sockaddr=IPv4Sockaddr(address='192.168.1.73', port=6053))]: [Errno 113] Connect call failed ('192.168.1.73', 6053) (SocketAPIError)
+2024-10-02 01:27:38.583 INFO (MainThread) [aioesphomeapi.reconnect_logic] Trying to connect to g1-canopy @ 192.168.1.73 in the background
+2024-10-02 01:27:48.035 WARNING (MainThread) [aioesphomeapi.connection] g1-cam @ 192.168.1.167: Connection error occurred: Ping response not received after 90.0 seconds
+2024-10-02 01:27:48.037 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing unexpected disconnect from ESPHome API for g1-cam @ 192.168.1.167
+2024-10-02 01:27:49.079 WARNING (MainThread) [aioesphomeapi.reconnect_logic] Can't connect to ESPHome API for g1-cam @ 192.168.1.167: Error connecting to [AddrInfo(family=<AddressFamily.AF_INET: 2>, type=<SocketKind.SOCK_STREAM: 1>, proto=6, sockaddr=IPv4Sockaddr(address='192.168.1.167', port=6053))]: [Errno 113] Connect call failed ('192.168.1.167', 6053) (SocketAPIError)
+2024-10-02 01:27:49.079 INFO (MainThread) [aioesphomeapi.reconnect_logic] Trying to connect to g1-cam @ 192.168.1.167 in the background
+2024-10-02 01:29:36.337 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-canopy @ 192.168.1.73 in 0.375s
+2024-10-02 01:29:36.402 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-canopy @ 192.168.1.73 in 0.065s
+2024-10-02 01:30:15.095 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-cam @ 192.168.1.167 in 0.425s
+2024-10-02 01:30:15.167 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-cam @ 192.168.1.167 in 0.072s
+2024-10-02 01:33:55.666 WARNING (MainThread) [aioesphomeapi.connection] g1-cam @ 192.168.1.167: Connection error occurred: [Errno 104] Connection reset by peer
+2024-10-02 01:33:55.667 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing unexpected disconnect from ESPHome API for g1-cam @ 192.168.1.167
+2024-10-02 01:33:55.680 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-cam @ 192.168.1.167 in 0.010s
+2024-10-02 01:33:55.746 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-cam @ 192.168.1.167 in 0.065s
+2024-10-02 01:52:05.792 WARNING (MainThread) [aioesphomeapi.connection] g1-cam @ 192.168.1.167: Connection error occurred: Ping response not received after 90.0 seconds
+2024-10-02 01:52:05.794 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing unexpected disconnect from ESPHome API for g1-cam @ 192.168.1.167
+2024-10-02 01:52:08.855 WARNING (MainThread) [aioesphomeapi.reconnect_logic] Can't connect to ESPHome API for g1-cam @ 192.168.1.167: Error connecting to [AddrInfo(family=<AddressFamily.AF_INET: 2>, type=<SocketKind.SOCK_STREAM: 1>, proto=6, sockaddr=IPv4Sockaddr(address='192.168.1.167', port=6053))]: [Errno 113] Connect call failed ('192.168.1.167', 6053) (SocketAPIError)
+2024-10-02 01:52:08.856 INFO (MainThread) [aioesphomeapi.reconnect_logic] Trying to connect to g1-cam @ 192.168.1.167 in the background
+2024-10-02 01:52:34.806 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-cam @ 192.168.1.167 in 0.430s
+2024-10-02 01:52:34.897 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-cam @ 192.168.1.167 in 0.091s
+2024-10-02 02:02:14.337 WARNING (MainThread) [py.warnings] /usr/local/lib/python3.12/site-packages/turbojpeg.py:940: UserWarning: Corrupt JPEG data: premature end of data segment
+  warnings.warn(self.__get_error_string(handle))
+
+2024-10-02 02:15:40.513 INFO (MainThread) [custom_components.hacs] Loading known repositories
+2024-10-02 08:15:40.514 INFO (MainThread) [custom_components.hacs] Loading known repositories
+2024-10-02 12:24:40.376 ERROR (MainThread) [frontend.js.modern.202409091] Uncaught error from Mobile Safari 18.0 on iOS 18.0
+Error: Failed to execute 'define' on 'CustomElementRegistry': the name "flex-horseshoe-card" has already been used with this registry
+message (node_modules/core-js/modules/web.dom-exception.stack.js:25:24)
+src/scoped-custom-element-registry.js:45:10
+module code (/hacsfiles/flex-horseshoe-card/flex-horseshoe-card.js:1976:24)
+2024-10-02 14:15:40.508 INFO (MainThread) [custom_components.hacs] Starting recurring background task for downloaded custom repositories
+2024-10-02 14:15:40.515 INFO (MainThread) [custom_components.hacs] Loading known repositories
+2024-10-02 14:28:26.502 ERROR (MainThread) [frontend.js.modern.202409091] Uncaught error from Mobile Safari 18.0 on iOS 18.0
+Error: Failed to execute 'define' on 'CustomElementRegistry': the name "flex-horseshoe-card" has already been used with this registry
+message (node_modules/core-js/modules/web.dom-exception.stack.js:25:24)
+src/scoped-custom-element-registry.js:45:10
+module code (/hacsfiles/flex-horseshoe-card/flex-horseshoe-card.js:1976:24)
+2024-10-02 19:00:45.557 WARNING (MainThread) [py.warnings] /usr/local/lib/python3.12/site-packages/turbojpeg.py:940: UserWarning: Corrupt JPEG data: premature end of data segment
+  warnings.warn(self.__get_error_string(handle))
+
+2024-10-02 20:15:40.515 INFO (MainThread) [custom_components.hacs] Loading known repositories
+2024-10-02 22:44:30.125 ERROR (MainThread) [frontend.js.modern.202409091] Uncaught error from Safari 18.0 on Mac OS 10.15.7
+Error: Failed to execute 'define' on 'CustomElementRegistry': the name "flex-horseshoe-card" has already been used with this registry
+message (node_modules/core-js/modules/web.dom-exception.stack.js:25:24)
+src/scoped-custom-element-registry.js:45:10
+module code (/hacsfiles/flex-horseshoe-card/flex-horseshoe-card.js:1976:24)
+2024-10-02 22:44:41.041 WARNING (MainThread) [py.warnings] /usr/local/lib/python3.12/site-packages/turbojpeg.py:940: UserWarning: Corrupt JPEG data: premature end of data segment
+  warnings.warn(self.__get_error_string(handle))
+
+2024-10-02 22:45:18.008 ERROR (MainThread) [homeassistant.components.hassio.handler] Client error on /ingress/validate_session request 401, message='Attempt to decode JSON with unexpected mimetype: text/plain; charset=utf-8', url='http://172.30.32.2/ingress/validate_session'
+2024-10-02 22:45:18.009 ERROR (MainThread) [homeassistant.components.hassio] Failed to to call /ingress/validate_session - 
+2024-10-02 23:57:37.784 WARNING (MainThread) [py.warnings] /usr/local/lib/python3.12/site-packages/turbojpeg.py:940: UserWarning: Corrupt JPEG data: premature end of data segment
+  warnings.warn(self.__get_error_string(handle))
+
+2024-10-03 00:24:13.381 WARNING (MainThread) [py.warnings] /usr/local/lib/python3.12/site-packages/turbojpeg.py:940: UserWarning: Corrupt JPEG data: premature end of data segment
+  warnings.warn(self.__get_error_string(handle))
+
+2024-10-03 02:15:40.516 INFO (MainThread) [custom_components.hacs] Loading known repositories
+2024-10-03 08:15:40.517 INFO (MainThread) [custom_components.hacs] Loading known repositories
+2024-10-03 14:15:40.518 INFO (MainThread) [custom_components.hacs] Loading known repositories
+2024-10-03 18:32:26.947 ERROR (MainThread) [homeassistant.components.hassio.handler] Client error on /ingress/validate_session request 401, message='Attempt to decode JSON with unexpected mimetype: text/plain; charset=utf-8', url='http://172.30.32.2/ingress/validate_session'
+2024-10-03 18:32:26.948 ERROR (MainThread) [homeassistant.components.hassio] Failed to to call /ingress/validate_session - 
+2024-10-03 18:32:48.974 WARNING (MainThread) [py.warnings] /usr/local/lib/python3.12/site-packages/turbojpeg.py:940: UserWarning: Corrupt JPEG data: premature end of data segment
+  warnings.warn(self.__get_error_string(handle))
+
+2024-10-03 20:15:40.519 INFO (MainThread) [custom_components.hacs] Loading known repositories
+2024-10-04 02:15:40.520 INFO (MainThread) [custom_components.hacs] Loading known repositories
+2024-10-04 08:15:40.521 INFO (MainThread) [custom_components.hacs] Loading known repositories
+2024-10-04 10:23:54.459 ERROR (MainThread) [frontend.js.modern.202409091] Uncaught error from Mobile Safari 18.0 on iOS 18.0
+Error: Failed to execute 'define' on 'CustomElementRegistry': the name "flex-horseshoe-card" has already been used with this registry
+message (node_modules/core-js/modules/web.dom-exception.stack.js:25:24)
+src/scoped-custom-element-registry.js:45:10
+module code (/hacsfiles/flex-horseshoe-card/flex-horseshoe-card.js:1976:24)

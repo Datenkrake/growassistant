@@ -1,0 +1,25 @@
+# templates/combined.yaml
+
+template:
+  - sensor:
+      - name: "Combined Humidity"
+        unit_of_measurement: "%"
+        state: >
+          {% if not is_state('sensor.g1_voco_bme680_humidity', 'unavailable') and not is_state('sensor.g1_voco_bme680_humidity', 'unknown') %}
+            {{ states('sensor.g1_voco_bme680_humidity') }}
+          {% elif not is_state('sensor.air_rh_pot', 'unavailable') and not is_state('sensor.air_rh_pot', 'unknown') %}
+            {{ states('sensor.air_rh_pot') }}
+          {% else %}
+            unavailable
+          {% endif %}
+
+      - name: "Combined Temperature"
+        unit_of_measurement: "°C"
+        state: >
+          {% if not is_state('sensor.g1_voco_bme680_temperature', 'unavailable') and not is_state('sensor.g1_voco_bme680_temperature', 'unknown') %}
+            {{ states('sensor.g1_voco_bme680_temperature') }}
+          {% elif not is_state('sensor.air_temperature_pot', 'unavailable') and not is_state('sensor.air_temperature_pot', 'unknown') %}
+            {{ states('sensor.air_temperature_pot') }}
+          {% else %}
+            unavailable
+          {% endif %}

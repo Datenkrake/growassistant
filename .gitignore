@@ -1,0 +1,7 @@
+.storage/*
+*.db-wal
+*.db-shm
+*.db
+/custom_components/*
+/www/*
+secrets.yaml

@@ -1,0 +1,56 @@
+esphome:
+  name: fluxstrip-1
+  friendly_name: fluxstrip_1
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "9/+B0NG2vwCuxkn6YndrSfKW2tE+C370EbLV0dwFKOc="
+
+ota:
+- platform: esphome
+  password: "8678458ac3e8399b69f5215c3e9e413f"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  domain: .localdomain
+  
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Fluxstrip-1 Fallback Hotspot"
+    password: "HassXbdP9skF"
+
+captive_portal:
+    
+# Example configuration entry
+output:
+  - platform: ledc
+    frequency: 1000
+    pin: GPIO0
+    inverted: true
+    id: gpio_0
+
+# Example usage in a light
+light:
+  - platform: monochromatic
+    output: gpio_0
+    name: "fluxstrip_1"
+
+sensor:
+  - platform: dallas_temp
+    address: 0xc535fbd446e3c728  # Replace with your sensor's actual address
+    id: temperature_sensor_1
+    name: "Fluxstrip 1 Temperature"
+
+one_wire:
+  - platform: gpio
+    pin: GPIO20

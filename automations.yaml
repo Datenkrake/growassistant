@@ -1,0 +1,12 @@
+# - id: g1_update
+#   alias:  update g1_timestamp every 5 seconds
+#   trigger:    
+#     platform: time_pattern
+#     minutes: "/60"
+#   action:
+#     - service: input_text.set_value 
+#       data_template:
+#         entity_id: input_text.g1_timestamp
+#         value: "{{ now().strftime('%H:%M:%S') }}"
+
+automation: !include_dir_merge_list automations/

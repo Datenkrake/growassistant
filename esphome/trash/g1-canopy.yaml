@@ -1,0 +1,76 @@
+esphome:
+  name: g1-canopy
+  friendly_name: G1_CANOPY
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "mJcQu138Epsw6JbVbK2Dz0sm5X3sWCM2r6MNwBBZg5c="
+
+ota:
+  - platform: esphome
+    password: "34a09c71a4fd52c5c616fe922a2eaef5"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "G1-Canopy Fallback Hotspot"
+    password: "iegHCPKJt6W2"
+
+captive_portal:
+ 
+  # Example configuration entry for ESP32
+i2c:
+  sda: 7
+  scl: 6
+  scan: true
+  id: bus_a
+  # frequency: 400kHz 
+
+# Example configuration entry
+sensor:
+  - platform: bh1750
+    name: "G1 BH1750 Illuminance"
+    address: 0x23
+    update_interval: 60s
+    i2c_id: bus_a
+
+  # - platform: ultrasonic
+    # trigger_pin: 1
+    # echo_pin: 2
+    # update_interval: 10s
+    # pulse_time: 1000us
+    # name: "G1 Light Distance Sensor"
+    # filters:
+    # - sliding_window_moving_average:
+    #     window_size: 60
+    #     send_every: 60
+
+  # - platform: bme680
+  #   temperature:
+  #     name: "BME680 Temperature"
+  #     id: bme680_temperature
+  #     oversampling: 16x
+  #   pressure:
+  #     name: "BME680 Pressure"
+  #     id: bme680_pressure
+  #   humidity:
+  #     name: "BME680 Humidity"
+  #     id: bme680_humidity
+  #   gas_resistance:
+  #     name: "BME680 Gas Resistance"
+  #     id: bme680_gas
+  #   address: 0x77
+  #   update_interval: 60s
+  #   i2c_id: bus_a

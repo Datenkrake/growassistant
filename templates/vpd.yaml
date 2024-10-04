@@ -1,0 +1,27 @@
+# templates/vpd.yaml
+
+template:
+  - sensor:
+      - name: "G1 VPD"
+        unit_of_measurement: "kPa"
+        state: >
+          {% set T = states('sensor.air_temp_pot') | float %}
+          {% set LT = states('sensor.air_temp_pot') | float - 2 %}
+          {% set RH = states('sensor.air_rh_pot') | float %}
+          {% set ASVP = 610.78 * (2.71828 ** (T / (T + 237.3) * 17.2694)) %}
+          {% set LSVP = 610.78 * (2.71828 ** (LT / (LT + 237.3) * 17.2694)) %}
+          {% set VPD = (ASVP * (1 - RH / 100))/1000 %}
+          {% set LVPD = (LSVP - (ASVP * RH / 100))/1000 %}
+          {{ LVPD | round(2) }}
+
+      - name: "G1 VPD Intake"
+        unit_of_measurement: "kPa"
+        state: >
+          {% set T = states('sensor.g1_intake_bme680_temperature') | float %}
+          {% set LT = states('sensor.g1_intake_bme680_temperature') | float - 2 %}
+          {% set RH = states('sensor.g1_intake_bme680_humidity') | float %}
+          {% set ASVP = 610.78 * (2.71828 ** (T / (T + 237.3) * 17.2694)) %}
+          {% set LSVP = 610.78 * (2.71828 ** (LT / (LT + 237.3) * 17.2694)) %}
+          {% set VPD = (ASVP * (1 - RH / 100))/1000 %}
+          {% set LVPD = (LSVP - (ASVP * RH / 100))/1000 %}
+          {{ LVPD | round(2) }}

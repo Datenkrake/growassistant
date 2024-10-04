@@ -1,0 +1,44 @@
+esphome:
+  name: g1-led-fs1
+  friendly_name: g1_led_fs1
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "aisIjNplXB4qyLxYyAVOmlUXCFsd9mpzpY1EW86XcfU="
+
+ota:
+  password: "9c028206054db8e0eed5b2eafe300360"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "G1-Led-Fs1 Fallback Hotspot"
+    password: "hDp0Uur52DuV"
+
+captive_portal:
+
+# Example configuration entry
+output:
+  - platform: ledc
+    frequency: 1000
+    pin: GPIO4
+    inverted: true
+    id: gpio_4
+
+# Example usage in a light
+light:
+  - platform: monochromatic
+    output: gpio_4
+    name: "g1_led_fs1"
