@@ -1,11 +1,12 @@
 
 
-light_height_distance_sensor_threshold:
-  name: "Light Height Distance Sensor Threshold"
+cola_detection_distance_threshold:
+  name: "Cola Detection Distance Sensor Threshold"
   initial: 0.30
   min: 0.0
   max: 1.0
-  step: 0.01
+  step: 0.05
   mode: box
   unit_of_measurement: "m"
   icon: mdi:ruler
+
