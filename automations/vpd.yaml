@@ -37,7 +37,11 @@ condition:
     entity_id: input_text.door_switch
     state: "Closed"
 action:
-  - delay: "00:01:00"
+  # make a log entry 
+  - service: system_log.write
+    data:
+      message: "VPD Control Automation Triggered."
+      level: warning
   - variables:
       # Retrieve current values
       target_vpd: "{{ states('input_number.target_vpd') | float }}"
@@ -93,17 +97,27 @@ action:
       rh_potential: "{{ canopy_hum - intake_hum }}"
 
   - choose:
-      - conditions: "{{ d_canopy_target > 0 }}"
+      - conditions: "{{ d_canopy_target > 0 }}"      
         sequence:
           - choose:
               - conditions: "{{ rh_margin > 0 }}"
                 sequence:
+                  # log the action
+                  - service: system_log.write
+                    data:
+                      message: "Increasing Humidifier Duty Cycle."
+                      level: warning
                   - service: fan.set_percentage
                     data:
                       entity_id: fan.g1_humidifier_humidifier
                       percentage: "{{ humidifier_dutycycle + 1 }}"
               - conditions: "{{ rh_margin <= 0 }}"
                 sequence:
+                  # log the action  
+                  - service: system_log.write
+                    data:
+                      message: "Decreasing Humidifier Duty Cycle."
+                      level: warning
                   - service: fan.set_percentage
                     data:
                       entity_id: fan.g1_humidifier_humidifier
@@ -111,6 +125,11 @@ action:
           - choose:
               - conditions: "{{ t_margin < 0 }}"
                 sequence:
+                  # log the action
+                  - service: system_log.write
+                    data:
+                      message: "Increasing Intake and Exhaust Fan Speed."
+                      level: warning
                   - service: fan.set_percentage
                     data:
                       entity_id: fan.g1_intake_intake_fan
@@ -124,6 +143,11 @@ action:
                   - choose:
                       - conditions: "{{ rh_margin > 0 }}"
                         sequence:
+                          # log the action
+                          - service: system_log.write
+                            data:
+                              message: "Decreasing Intake and Exhaust Fan Speed."
+                              level: warning
                           - service: fan.set_percentage
                             data:
                               entity_id: fan.g1_intake_intake_fan
@@ -137,6 +161,11 @@ action:
           - choose:
               - conditions: "{{ rh_margin < 0 }}"
                 sequence:
+                  # log the action
+                  - service: system_log.write
+                    data:
+                      message: "Decreasing Humidifier Duty Cycle."
+                      level: warning
                   - service: fan.set_percentage
                     data:
                       entity_id: fan.g1_humidifier_humidifier
