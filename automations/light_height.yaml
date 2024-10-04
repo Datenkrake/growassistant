@@ -1,0 +1,30 @@
+# This automation control the light gantry height based on the cola_detection_distance value
+# If the cola_detection_distance is less than the cola_detection_distance_threshold, the gantry will be raised
+# If the cola_detection_distance is greater than the cola_detection_distance_threshold, the gantry will remain at the current height
+# The cola_detection_distance_threshold is a global variable that can be changed in the frontend
+# The cola_detection_distance_threshold is defined in the input_numbers.yaml file
+
+# The automation will only run if the global_enable input_boolean is on
+# The global_enable input_boolean is defined in the input_bools.yaml file
+
+# The automation will only run if the door is closed. Do not raise the gantry if the door is open. Door closed means that the door_switch is "Closed"
+# The door_switch entity is defined in the input_text_devices.yaml file as door_switch
+
+# The automation will only run if the service_mode input_boolean is off
+# The service_mode input_boolean is defined in the input_bools.yaml file
+
+# The automation will only run if the light_height_control_enable input_boolean is on
+# The light_height_control_enable input_boolean is defined in the input_bools.yaml file
+
+# The automation will only run if the cola_detection_distance is less than the cola_detection_distance_threshold
+# The cola_detection_distance is defined in the input_text_devices.yaml file as cola_detection_distance
+# The cola_detection_distance_threshold is defined in the input_numbers.yaml file
+
+# The automation will change the light_height input_number by the light_raise_distance value
+# The light_raise_distance is a global variable that can be changed in the frontend
+# The light_raise_distance is defined in the input_numbers.yaml file
+
+# The entity that controls the light gantry height is defined in the input_text_devices.yaml file as light_gantry
+# The light_gantry can be moved by rest command move_light_distance with input parameter distance in mm in the file _rest_commands.yaml
+
+# 

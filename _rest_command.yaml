@@ -1,3 +1,0 @@
-move_light_distance:
-  url: 'http://g1.local:7125/printer/gcode/script?script=move_light%20DISTANCE=10'
-  method: GET

@@ -49,6 +49,11 @@ condition:
   - condition: numeric_state
     entity_id: '{{ states(''input_text.canopy_illumination'') }}'
     above: '100'
+  # Only run if the door is closed. Do not take a snapshot if the door is open. Door closed means that the door_switch is "Closed"
+  # use the door entity_id from the input_text_devices.yaml file to get the entity_id of the door_switch
+  - condition: state
+    entity_id: '{{ states(''input_text.door_switch'') }}'
+    state: 'closed'
 action:
   - service: camera.snapshot
     data:

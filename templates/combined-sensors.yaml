@@ -1,0 +1,52 @@
+template:
+  - sensor:
+    - name: "Combined Humidity"
+      unit_of_measurement: "%"
+      state: >
+        {% if not is_state(states('input_text.canopy_humidity'), 'unavailable') and not is_state(states('input_text.canopy_humidity'), 'unknown') %}
+          {{ states(states('input_text.canopy_humidity')) }}
+        {% elif not is_state(states('input_text.intake_humidity'), 'unavailable') and not is_state(states('input_text.intake_humidity'), 'unknown') %}
+          {{ states(states('input_text.intake_humidity')) }}
+        {% else %}
+          unavailable
+        {% endif %}
+
+    - name: "Combined Temperature"
+      unit_of_measurement: "°C"
+      state: >
+        {% if not is_state(states('input_text.canopy_temperature'), 'unavailable') and not is_state(states('input_text.canopy_temperature'), 'unknown') %}
+          {{ states(states('input_text.canopy_temperature')) }}
+        {% elif not is_state(states('input_text.intake_temperature'), 'unavailable') and not is_state(states('input_text.intake_temperature'), 'unknown') %}
+          {{ states(states('input_text.intake_temperature')) }}
+        {% else %}
+          unavailable
+        {% endif %}
+
+    - name: "Cultivar Height"
+      state: "{{ states('input_number.gantry_null_position') | float - states('input_text.gantry_height') | float }}"
+      unit_of_measurement: "m"
+      icon: mdi:flower
+
+    - name: "VPD"
+      unit_of_measurement: "kPa"
+      state: >
+        {% set T = states('sensor.combined_temperature') | float %}
+        {% set LT = T - 2 %}
+        {% set RH = states('sensor.combined_humidity') | float %}
+        {% set ASVP = 610.78 * (2.71828 ** (T / (T + 237.3) * 17.2694)) %}
+        {% set LSVP = 610.78 * (2.71828 ** (LT / (LT + 237.3) * 17.2694)) %}
+        {% set VPD = (ASVP * (1 - RH / 100)) / 1000 %}
+        {% set LVPD = (LSVP - (ASVP * RH / 100)) / 1000 %}
+        {{ LVPD | round(2) }}
+
+    - name: "VPD Intake"
+      unit_of_measurement: "kPa"
+      state: >
+        {% set T = states(states('input_text.intake_temperature')) | float %}
+        {% set LT = T - 2 %}
+        {% set RH = states(states('input_text.intake_humidity')) | float %}
+        {% set ASVP = 610.78 * (2.71828 ** (T / (T + 237.3) * 17.2694)) %}
+        {% set LSVP = 610.78 * (2.71828 ** (LT / (LT + 237.3) * 17.2694)) %}
+        {% set VPD = (ASVP * (1 - RH / 100)) / 1000 %}
+        {% set LVPD = (LSVP - (ASVP * RH / 100)) / 1000 %}
+        {{ LVPD | round(2) }}

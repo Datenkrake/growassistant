@@ -1,0 +1,50 @@
+# This automation will control the water irrigation pump for the autopot system
+
+# The automation will only run if the global_enable input_boolean is on
+# The global_enable input_boolean is defined in the input_bools.yaml file
+
+# The automation will only run if the irrigation_enable input_boolean is on
+# The irrigation_enable input_boolean is defined in the input_bools.yaml file
+
+# The automation will only run if the service_mode input_boolean is off
+# The service_mode input_boolean is defined in the input_bools.yaml file
+
+# The automation will enable the irrigation pump for the duration of the irrigation_period
+# The irrigation_period is a global variable that can be changed in the frontend
+# The irrigation_period is defined in the input_numbers.yaml file
+
+# The automation will turn off the irrigation pump after the irrigation_period has elapsed
+
+# The automation will use the input_text_devices.yaml file to get the entity_id of the irrigation pump
+# The irrigation_pump entity is defined in the input_text_devices.yaml file as irrigation_pump
+
+
+alias: Water Autopot
+description: ''
+trigger:
+  - platform: time_pattern
+    minutes: /{{ states('input_number.irrigation_period') }}
+condition:
+  # Only run if global_enable is on
+  - condition: state
+    entity_id: input_boolean.global_enable
+    state: 'on'
+  # Only run if irrigation_enable is on
+  - condition: state
+    entity_id: input_boolean.irrigation_enable
+    state: 'on'
+  # Only run if service_mode is off
+  - condition: state
+    entity_id: input_boolean.service_mode
+    state: 'off'
+action:
+  - service: switch.turn_on
+    target:
+      entity_id: '{{ states(''input_text.irrigation_pump'') }}'
+  - delay: '{{ states(''input_number.irrigation_period'') }}'
+  - service: switch.turn_off
+    target:
+      entity_id: '{{ states(''input_text.irrigation_pump'') }}'
+
+
+
