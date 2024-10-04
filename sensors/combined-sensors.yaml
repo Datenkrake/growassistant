@@ -87,7 +87,6 @@
 # during generative (now > generative_start), the day_length shall be day_length_generative
 # during drying, the day shall always be 0 hours
 - name: "Day Length"
-  ID: "day_length"
   unit_of_measurement: "hours"
   state: >
     {% set start_vegetative = as_timestamp(states('input_datetime.vegetative_start')) %}
