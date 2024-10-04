@@ -26,7 +26,7 @@ input_number: !include entities/input_numbers.yaml
 # input_select: !include entities/input_selects.yaml
 
 automation: !include automations.yaml
-rest_command: !include _rest_command.yaml
+rest_command: !include rest_commands.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml
 
