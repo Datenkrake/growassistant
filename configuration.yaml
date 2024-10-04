@@ -1,8 +1,8 @@
 
 # Include the sensors/combined-sensors.yaml file
 template: 
-  sensors: !include sensors/combined-sensors.yaml
-  
+  sensor: !include sensors/combined-sensors.yaml
+
 # template: !include_dir_merge_list templates/
 
 # homeassistant:
