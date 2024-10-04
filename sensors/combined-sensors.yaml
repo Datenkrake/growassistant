@@ -1,5 +1,6 @@
 # template:
-- sensor:
+- platform: template
+  sensors:
   - name: "Combined Humidity"
     unit_of_measurement: "%"
     state: >

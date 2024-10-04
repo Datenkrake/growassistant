@@ -1,7 +1,7 @@
 
 # Include the entire sensors and templates folders
 sensor: !include_dir_merge_list sensors/
-template: !include_dir_merge_list templates/
+# template: !include_dir_merge_list templates/
 
 homeassistant:
   packages: !include variables.yaml
