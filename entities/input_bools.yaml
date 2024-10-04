@@ -41,3 +41,7 @@ light_height_control_enable:
   initial: "off"
   icon: mdi:flower
   
+vpd_control_enable:
+  name: VPD Control Enable
+  initial: "off"
+  icon: mdi:flower

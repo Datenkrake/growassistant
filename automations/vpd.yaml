@@ -1,3 +1,158 @@
+# This automation controls the vpd in the grow tent based on the target_vpd input_number
+# The target_vpd is defined in the input_numbers.yaml file
+
+# The automation will only run if the global_enable input_boolean is on
+# The global_enable input_boolean is defined in the input_bools.yaml file
+
+# The automation will only run if the service_mode input_boolean is off
+# The service_mode input_boolean is defined in the input_bools.yaml file
+
+# The automation will only run if the vpd_control_enable input_boolean is on
+# The vpd_control_enable input_boolean is defined in the input_bools.yaml file
+
+# The automation will only run if the door is closed. Do not adjust the vpd if the door is open. Door closed means that the door_switch is "Closed"
+# The door_switch entity is defined in the input_text_devices.yaml file as door_switch
+
+# an example vpd control is below. This is a simple example and should be adjusted to fit your specific needs.
+# the device names and sensor names will need to be adjusted to match your setup, they are defined in the input_text_devices.yaml file
+
+alias: "VPD Control Automation"
+description: "Adjust VPD based on target VPD after a 1-minute delay."
+trigger:
+  # once per minute
+  - platform: time_pattern
+    minutes: "/1"
+    seconds: 00
+condition:
+  - condition: state
+    entity_id: input_boolean.vpd_control_enable
+    state: "on"
+  - condition: state
+    entity_id: input_boolean.global_enable
+    state: "on"
+  - condition: state
+    entity_id: input_boolean.service_mode
+    state: "off"
+  - condition: state
+    entity_id: input_text.door_switch
+    state: "Closed"
+action:
+  - delay: "00:01:00"
+  - variables:
+      # Retrieve current values
+      target_vpd: "{{ states('input_number.target_vpd') | float }}"
+      intake_vpd: "{{ states('sensor.g1_vpd_intake') | float }}"
+      canopy_vpd: "{{ states('sensor.g1_vpd_canopy') | float }}"
+      intake_temp: "{{ states('sensor.g1_intake_bme680_temperature') | float }}"
+      intake_hum: "{{ states('sensor.g1_intake_bme680_humidity') | float }}"
+      canopy_temp: "{{ states('sensor.combined_temperature') | float }}"
+      canopy_hum: "{{ states('sensor.combined_humidity') | float }}"
+      rh_target: "{{ states('sensor.g1_rh_target') | float }}"
+      dayphase: "{{ states('sensor.dayphase') | int }}"
+
+      # PID controller variables
+      Kp: 1
+      Ki: 0.1
+      Kd: 0.01
+      dt: 0.01
+
+      # VPD differences
+      d_canopy_target: "{{ canopy_vpd - target_vpd }}"
+      d_intake_target: "{{ intake_vpd - target_vpd }}"
+      d_canopy_intake: "{{ canopy_vpd - intake_vpd }}"
+
+  - variables:
+      # Control logic calculations
+      intake_fan_speed: "{{ states('fan.g1_intake_intake_fan') | float / 100 }}"
+      exhaust_fan_speed: "{{ states('sensor.g1_exhaust_exhaust_fan') | float }}"
+      humidifier_dutycycle: "{{ states('fan.g1_humidifier_humidifier') | float }}"
+
+      # Calculate the proportional term
+      P_intake: "{{ Kp * d_canopy_target | abs }}"
+      P_exhaust: "{{ Kp * d_canopy_target | abs }}"
+
+      # Integral and derivative terms (clamped for windup)
+      integral_intake: "{{ states('input_number.integral_intake') | float + (d_canopy_target * dt) }}"
+      integral_exhaust: "{{ states('input_number.integral_exhaust') | float + (d_canopy_target * dt) }}"
+      integral_limit: 0.05
+      integral_intake_clamped: "{{ [integral_limit, integral_intake] | min }}"
+
+      D_intake: "{{ Kd * (d_canopy_target - (states('sensor.previous_d_canopy_target') | float)) / dt }}"
+      D_exhaust: "{{ Kd * (d_canopy_target - (states('sensor.previous_d_canopy_target') | float)) / dt }}"
+
+      # Fan speed adjustments based on control terms
+      control_intake: "{{ P_intake + Ki * integral_intake_clamped + D_intake }}"
+      control_exhaust: "{{ P_exhaust + Ki * integral_intake_clamped + D_exhaust }}"
+
+      # Temperature and humidity margins
+      min_temp: 15
+      max_temp: "{{ intake_temp + (1 if dayphase == 0 else 5) }}"
+      t_margin: "{{ max_temp - canopy_temp }}"
+      t_potential: "{{ canopy_temp - intake_temp }}"
+      rh_margin: "{{ rh_target - canopy_hum }}"
+      rh_potential: "{{ canopy_hum - intake_hum }}"
+
+  - choose:
+      - conditions: "{{ d_canopy_target > 0 }}"
+        sequence:
+          - choose:
+              - conditions: "{{ rh_margin > 0 }}"
+                sequence:
+                  - service: fan.set_percentage
+                    data:
+                      entity_id: fan.g1_humidifier_humidifier
+                      percentage: "{{ humidifier_dutycycle + 1 }}"
+              - conditions: "{{ rh_margin <= 0 }}"
+                sequence:
+                  - service: fan.set_percentage
+                    data:
+                      entity_id: fan.g1_humidifier_humidifier
+                      percentage: "{{ humidifier_dutycycle - 2 }}"
+          - choose:
+              - conditions: "{{ t_margin < 0 }}"
+                sequence:
+                  - service: fan.set_percentage
+                    data:
+                      entity_id: fan.g1_intake_intake_fan
+                      percentage: "{{ (intake_fan_speed + control_intake) * 100 }}"
+                  - service: fan.set_percentage
+                    data:
+                      entity_id: fan.exhaust_fan
+                      percentage: "{{ (exhaust_fan_speed + control_exhaust) * 100 }}"
+              - conditions: "{{ t_margin >= 0 }}"
+                sequence:
+                  - choose:
+                      - conditions: "{{ rh_margin > 0 }}"
+                        sequence:
+                          - service: fan.set_percentage
+                            data:
+                              entity_id: fan.g1_intake_intake_fan
+                              percentage: "{{ (intake_fan_speed - control_intake) * 100 }}"
+                          - service: fan.set_percentage
+                            data:
+                              entity_id: fan.exhaust_fan
+                              percentage: "{{ (exhaust_fan_speed - control_exhaust) * 100 }}"
+      - conditions: "{{ d_canopy_target <= 0 }}"
+        sequence:
+          - choose:
+              - conditions: "{{ rh_margin < 0 }}"
+                sequence:
+                  - service: fan.set_percentage
+                    data:
+                      entity_id: fan.g1_humidifier_humidifier
+                      percentage: "{{ humidifier_dutycycle - 2 }}"
+                  - service: fan.set_percentage
+                    data:
+                      entity_id: fan.g1_intake_intake_fan
+                      percentage: "{{ (intake_fan_speed + control_intake) * 100 }}"
+                  - service: fan.set_percentage
+                    data:
+                      entity_id: fan.exhaust_fan
+                      percentage: "{{ (exhaust_fan_speed + control_exhaust) * 100 }}"
+
+# Compare this snippet from automations/vpd.yaml:
+
+
 # alias: 'VPD Control Automation'
 # trigger:
 #   - platform: state
