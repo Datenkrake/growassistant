@@ -5,3 +5,4 @@
 /custom_components/*
 /www/*
 secrets.yaml
+*.log

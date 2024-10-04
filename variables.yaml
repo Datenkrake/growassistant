@@ -1,3 +1,36 @@
+# this is a homeasisstant variable file that can be used to store variables that are used in multiple places in your configuration
+# this is a good way to keep your configuration DRY (Don't Repeat Yourself)
+# this file maps variable to entities in your homeassistant configuration so that you can easily change the entity in one place and have it update everywhere
+
+# the concept is to use input helpers, like this:
+# 1. Using input_* Helpers for Global Variables
+# One of the most common ways to handle reusable values (that act like global variables) in Home Assistant is to define them as input_* helpers (input_boolean, input_number, input_text). Once defined, these are accessible globally, and you can update or use them in automations and scripts.
+
+# For example, let’s map device entities to input_text variables:
+
+# yaml
+# Copy code
+# input_text:
+#   living_room_light:
+#     name: Living Room Light
+#   bedroom_light:
+#     name: Bedroom Light
+# You can then use these input_text helpers in your automations or scripts to refer to the entity names globally:
+
+# yaml
+# Copy code
+# automation:
+#   - alias: Turn On Light Based on Variable
+#     trigger:
+#       - platform: state
+#         entity_id: input_boolean.some_trigger
+#         to: 'on'
+#     action:
+#       - service: light.turn_on
+#         target:
+#           entity_id: "{{ states('input_text.living_room_light') }}"
+# In this case, you could store the entity ID of a physical device (like a light) in input_text.living_room_light and use it globally across automations.
 
 
-canopy_temperature: sensor.g1_canopy_
+input_text:
+  
