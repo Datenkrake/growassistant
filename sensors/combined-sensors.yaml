@@ -1,5 +1,4 @@
 # template:
-- platform: template
   sensors:
     combined_humidity:
       friendly_name: "Combined Humidity"
