@@ -115,9 +115,10 @@
 - name: "DLI"
   unit_of_measurement: "mol/m²/day"
   state: >
-    {% set ppfd = states('sensor.ppfd') | float %}
-    {% set day_length = states('sensor.day_length') | float %}
-    {{ ppfd * 0.0036 * day_length | round(2) }}
+    {% set ppfd = states('sensor.ppfd') | float(0) %}
+    {% set day_length = states('sensor.day_length') | float(0) %}
+    {{ (ppfd * 0.0036 * day_length) | round(2) }}
+
 
 
 
