@@ -1,9 +1,10 @@
 # template:
 # - platform: template
 # sensors:
-- name: "Combined Humidity"
+combined_humidity:
+  friendly_name: "Combined Humidity"
   unit_of_measurement: "%"
-  state: >
+  value_template: >
     {% if not is_state(states('input_text.canopy_humidity'), 'unavailable') and not is_state(states('input_text.canopy_humidity'), 'unknown') %}
       {{ states(states('input_text.canopy_humidity')) }}
     {% elif not is_state(states('input_text.intake_humidity'), 'unavailable') and not is_state(states('input_text.intake_humidity'), 'unknown') %}
@@ -12,9 +13,10 @@
       unavailable
     {% endif %}
 
-- name: "Combined Temperature"
+combined_temperature:
+  friendly_name: "Combined Temperature"
   unit_of_measurement: "°C"
-  state: >
+  value_template: >
     {% if not is_state(states('input_text.canopy_temperature'), 'unavailable') and not is_state(states('input_text.canopy_temperature'), 'unknown') %}
       {{ states(states('input_text.canopy_temperature')) }}
     {% elif not is_state(states('input_text.intake_temperature'), 'unavailable') and not is_state(states('input_text.intake_temperature'), 'unknown') %}
@@ -23,14 +25,16 @@
       unavailable
     {% endif %}
 
-- name: "Cultivar Height"
-  state: "{{ states('input_number.gantry_null_position') | float - states('input_text.gantry_height') | float }}"
+cultivar_height:
+  friendly_name: "Cultivar Height"
   unit_of_measurement: "m"
+  value_template: "{{ states('input_number.gantry_null_position') | float - states('input_text.gantry_height') | float }}"
   icon: mdi:flower
 
-- name: "VPD"
+vpd:
+  friendly_name: "VPD"
   unit_of_measurement: "kPa"
-  state: >
+  value_template: >
     {% set T = states('sensor.combined_temperature') | float %}
     {% set LT = T - 2 %}
     {% set RH = states('sensor.combined_humidity') | float %}
@@ -40,9 +44,10 @@
     {% set LVPD = (LSVP - (ASVP * RH / 100)) / 1000 %}
     {{ LVPD | round(2) }}
 
-- name: "VPD Intake"
+vpd_intake:
+  friendly_name: "VPD Intake"
   unit_of_measurement: "kPa"
-  state: >
+  value_template: >
     {% set T = states(states('input_text.intake_temperature')) | float %}
     {% set LT = T - 2 %}
     {% set RH = states(states('input_text.intake_humidity')) | float %}
@@ -54,15 +59,17 @@
 
 # to make a PPFD guestimate, an ppfd = lux * 0.051872 - 85.209312
 # based on https://thecavepearlproject.org/2024/08/10/using-a-bh1750-lux-sensor-to-measure-par/
-- name: "PPFD"
+ppfd:
+  friendly_name: "PPFD"
   unit_of_measurement: "µmol/m²/s"
-  state: >
+  value_template: >
     {% set lux = states('sensor.g1_canopy_g1_bh1750_illuminance') | float %}
     {{ lux * 0.051872 - 85.209312 | round(2) }}
     
 # Determine the current state of the growth cycle, vegetative, flipping, generative, drying, based on dates given in the input_datetime.yaml
-- name: "Growth Cycle"
-  state: >
+growth_cycle:
+  friendly_name: "Growth Cycle"
+  value_template: >
     {% set start_vegetative = as_timestamp(states('input_datetime.vegetative_start')) %}
     {% set start_flipping = as_timestamp(states('input_datetime.flip_date')) %}
     {% set start_generative = as_timestamp(states('input_datetime.generative_start')) %}
@@ -86,9 +93,10 @@
 # during flipping (now > flip_date), the day_length shall day_length_vegetative to day_length_generative linearly interpolated
 # during generative (now > generative_start), the day_length shall be day_length_generative
 # during drying, the day shall always be 0 hours
-- name: "Day Length"
+day_length:
+  friendly_name: "Day Length"
   unit_of_measurement: "hours"
-  state: >
+  value_template: >
     {% set start_vegetative = as_timestamp(states('input_datetime.vegetative_start')) %}
     {% set start_flipping = as_timestamp(states('input_datetime.flip_date')) %}
     {% set start_generative = as_timestamp(states('input_datetime.generative_start')) %}
@@ -112,9 +120,10 @@
 
 # DLI = PPFD * 0.0036 * 3600 * 24, where 0.0036 is the conversion factor from µmol/m²/s to µmol/m²/day
 # DLI shall be calculated as for the day_length of the current growth cycle found in Day Length
-- name: "DLI"
+dli:
+  friendly_name: "DLI"
   unit_of_measurement: "mol/m²/day"
-  state: >
+  value_template: >
     {% set ppfd = states('sensor.ppfd') | float(0) %}
     {% set day_length = states('sensor.day_length') | float(0) %}
     {{ (ppfd * 0.0036 * day_length) | round(2) }}

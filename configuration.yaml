@@ -46,9 +46,6 @@ influxdb:
   max_retries: 3
   default_measurement: state
 
-input_text:
-  g1_timestamp:
-    initial: "00:00:00"
 
 # sensor:
 
