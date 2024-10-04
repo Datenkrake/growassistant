@@ -58,13 +58,6 @@ drying_start:
   has_time: false
   initial: "1987-11-02"
 
-# Drying stage end date
-drying_end:
-  name: Drying stage end date
-  has_date: true
-  has_time: false
-  initial: "1987-11-02"
-
 last_timelapse:
   name: Last timelapse
   has_date: true
