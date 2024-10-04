@@ -1,123 +1,123 @@
-template:
-  - sensor:
-    - name: "Combined Humidity"
-      unit_of_measurement: "%"
-      state: >
-        {% if not is_state(states('input_text.canopy_humidity'), 'unavailable') and not is_state(states('input_text.canopy_humidity'), 'unknown') %}
-          {{ states(states('input_text.canopy_humidity')) }}
-        {% elif not is_state(states('input_text.intake_humidity'), 'unavailable') and not is_state(states('input_text.intake_humidity'), 'unknown') %}
-          {{ states(states('input_text.intake_humidity')) }}
-        {% else %}
-          unavailable
-        {% endif %}
+# template:
+- sensor:
+  - name: "Combined Humidity"
+    unit_of_measurement: "%"
+    state: >
+      {% if not is_state(states('input_text.canopy_humidity'), 'unavailable') and not is_state(states('input_text.canopy_humidity'), 'unknown') %}
+        {{ states(states('input_text.canopy_humidity')) }}
+      {% elif not is_state(states('input_text.intake_humidity'), 'unavailable') and not is_state(states('input_text.intake_humidity'), 'unknown') %}
+        {{ states(states('input_text.intake_humidity')) }}
+      {% else %}
+        unavailable
+      {% endif %}
 
-    - name: "Combined Temperature"
-      unit_of_measurement: "°C"
-      state: >
-        {% if not is_state(states('input_text.canopy_temperature'), 'unavailable') and not is_state(states('input_text.canopy_temperature'), 'unknown') %}
-          {{ states(states('input_text.canopy_temperature')) }}
-        {% elif not is_state(states('input_text.intake_temperature'), 'unavailable') and not is_state(states('input_text.intake_temperature'), 'unknown') %}
-          {{ states(states('input_text.intake_temperature')) }}
-        {% else %}
-          unavailable
-        {% endif %}
+  - name: "Combined Temperature"
+    unit_of_measurement: "°C"
+    state: >
+      {% if not is_state(states('input_text.canopy_temperature'), 'unavailable') and not is_state(states('input_text.canopy_temperature'), 'unknown') %}
+        {{ states(states('input_text.canopy_temperature')) }}
+      {% elif not is_state(states('input_text.intake_temperature'), 'unavailable') and not is_state(states('input_text.intake_temperature'), 'unknown') %}
+        {{ states(states('input_text.intake_temperature')) }}
+      {% else %}
+        unavailable
+      {% endif %}
 
-    - name: "Cultivar Height"
-      state: "{{ states('input_number.gantry_null_position') | float - states('input_text.gantry_height') | float }}"
-      unit_of_measurement: "m"
-      icon: mdi:flower
+  - name: "Cultivar Height"
+    state: "{{ states('input_number.gantry_null_position') | float - states('input_text.gantry_height') | float }}"
+    unit_of_measurement: "m"
+    icon: mdi:flower
 
-    - name: "VPD"
-      unit_of_measurement: "kPa"
-      state: >
-        {% set T = states('sensor.combined_temperature') | float %}
-        {% set LT = T - 2 %}
-        {% set RH = states('sensor.combined_humidity') | float %}
-        {% set ASVP = 610.78 * (2.71828 ** (T / (T + 237.3) * 17.2694)) %}
-        {% set LSVP = 610.78 * (2.71828 ** (LT / (LT + 237.3) * 17.2694)) %}
-        {% set VPD = (ASVP * (1 - RH / 100)) / 1000 %}
-        {% set LVPD = (LSVP - (ASVP * RH / 100)) / 1000 %}
-        {{ LVPD | round(2) }}
+  - name: "VPD"
+    unit_of_measurement: "kPa"
+    state: >
+      {% set T = states('sensor.combined_temperature') | float %}
+      {% set LT = T - 2 %}
+      {% set RH = states('sensor.combined_humidity') | float %}
+      {% set ASVP = 610.78 * (2.71828 ** (T / (T + 237.3) * 17.2694)) %}
+      {% set LSVP = 610.78 * (2.71828 ** (LT / (LT + 237.3) * 17.2694)) %}
+      {% set VPD = (ASVP * (1 - RH / 100)) / 1000 %}
+      {% set LVPD = (LSVP - (ASVP * RH / 100)) / 1000 %}
+      {{ LVPD | round(2) }}
 
-    - name: "VPD Intake"
-      unit_of_measurement: "kPa"
-      state: >
-        {% set T = states(states('input_text.intake_temperature')) | float %}
-        {% set LT = T - 2 %}
-        {% set RH = states(states('input_text.intake_humidity')) | float %}
-        {% set ASVP = 610.78 * (2.71828 ** (T / (T + 237.3) * 17.2694)) %}
-        {% set LSVP = 610.78 * (2.71828 ** (LT / (LT + 237.3) * 17.2694)) %}
-        {% set VPD = (ASVP * (1 - RH / 100)) / 1000 %}
-        {% set LVPD = (LSVP - (ASVP * RH / 100)) / 1000 %}
-        {{ LVPD | round(2) }}
+  - name: "VPD Intake"
+    unit_of_measurement: "kPa"
+    state: >
+      {% set T = states(states('input_text.intake_temperature')) | float %}
+      {% set LT = T - 2 %}
+      {% set RH = states(states('input_text.intake_humidity')) | float %}
+      {% set ASVP = 610.78 * (2.71828 ** (T / (T + 237.3) * 17.2694)) %}
+      {% set LSVP = 610.78 * (2.71828 ** (LT / (LT + 237.3) * 17.2694)) %}
+      {% set VPD = (ASVP * (1 - RH / 100)) / 1000 %}
+      {% set LVPD = (LSVP - (ASVP * RH / 100)) / 1000 %}
+      {{ LVPD | round(2) }}
 
-    # to make a PPFD guestimate, an ppfd = lux * 0.051872 - 85.209312
-    # based on https://thecavepearlproject.org/2024/08/10/using-a-bh1750-lux-sensor-to-measure-par/
-    - name: "PPFD"
-      unit_of_measurement: "µmol/m²/s"
-      state: >
-        {% set lux = states('sensor.g1_canopy_g1_bh1750_illuminance') | float %}
-        {{ lux * 0.051872 - 85.209312 | round(2) }}
-        
-    # Determine the current state of the growth cycle, vegetative, flipping, generative, drying, based on dates given in the input_datetime.yaml
-    - name: "Growth Cycle"
-      state: >
-        {% set start_vegetative = as_timestamp(states('input_datetime.vegetative_start')) %}
-        {% set start_flipping = as_timestamp(states('input_datetime.flip_date')) %}
-        {% set start_generative = as_timestamp(states('input_datetime.generative_start')) %}
-        {% set start_drying = as_timestamp(states('input_datetime.drying_start')) %}
-        {% set now = as_timestamp(now()) %}
-        {% if now < start_vegetative %}
-          "Pre-vegetative"
-        {% elif now < start_flipping %}
-          "Vegetative"
-        {% elif now < start_generative %}
-          "Flipping"
-        {% elif now < start_drying %}
-          "Generative"
-        {% else %}
-          "Drying"
-        {% endif %}
+  # to make a PPFD guestimate, an ppfd = lux * 0.051872 - 85.209312
+  # based on https://thecavepearlproject.org/2024/08/10/using-a-bh1750-lux-sensor-to-measure-par/
+  - name: "PPFD"
+    unit_of_measurement: "µmol/m²/s"
+    state: >
+      {% set lux = states('sensor.g1_canopy_g1_bh1750_illuminance') | float %}
+      {{ lux * 0.051872 - 85.209312 | round(2) }}
+      
+  # Determine the current state of the growth cycle, vegetative, flipping, generative, drying, based on dates given in the input_datetime.yaml
+  - name: "Growth Cycle"
+    state: >
+      {% set start_vegetative = as_timestamp(states('input_datetime.vegetative_start')) %}
+      {% set start_flipping = as_timestamp(states('input_datetime.flip_date')) %}
+      {% set start_generative = as_timestamp(states('input_datetime.generative_start')) %}
+      {% set start_drying = as_timestamp(states('input_datetime.drying_start')) %}
+      {% set now = as_timestamp(now()) %}
+      {% if now < start_vegetative %}
+        "Pre-vegetative"
+      {% elif now < start_flipping %}
+        "Vegetative"
+      {% elif now < start_generative %}
+        "Flipping"
+      {% elif now < start_drying %}
+        "Generative"
+      {% else %}
+        "Drying"
+      {% endif %}
 
 
-    # Determine the current day_length based on the current growth cycle
-    # during vegetative (now > vegetative_start), the day_length shall be day_length_vegetative
-    # during flipping (now > flip_date), the day_length shall day_length_vegetative to day_length_generative linearly interpolated
-    # during generative (now > generative_start), the day_length shall be day_length_generative
-    # during drying, the day shall always be 0 hours
-    - name: "Day Length"
-      ID: "day_length"
-      unit_of_measurement: "hours"
-      state: >
-        {% set start_vegetative = as_timestamp(states('input_datetime.vegetative_start')) %}
-        {% set start_flipping = as_timestamp(states('input_datetime.flip_date')) %}
-        {% set start_generative = as_timestamp(states('input_datetime.generative_start')) %}
-        {% set start_drying = as_timestamp(states('input_datetime.drying_start')) %}
-        {% set now = as_timestamp(now()) %}
-        {% if now > vegetative_start %}
-          {{ states('input_number.day_length_vegetative') }}
-        {% elif now > flip_date %}
-          # linear interpolation between vegetative_end and generative_start
-          {% set x = (now - flip_date) / (generative_start - flip_date) %}
-          {% set day_length = states('input_number.day_length_vegetative') + x * (states('input_number.day_length_generative') - states('input_number.day_length_vegetative')) %}
-          {{ day_length }}
-        {% elif now > generative_start %}
-          {{ states('input_number.day_length_generative') }}
-        {% elif now > start_drying %}
-          {{ 0 }}
-        {% else %}
-          {{ 0 }}
-        {% endif %} 
-                
+  # Determine the current day_length based on the current growth cycle
+  # during vegetative (now > vegetative_start), the day_length shall be day_length_vegetative
+  # during flipping (now > flip_date), the day_length shall day_length_vegetative to day_length_generative linearly interpolated
+  # during generative (now > generative_start), the day_length shall be day_length_generative
+  # during drying, the day shall always be 0 hours
+  - name: "Day Length"
+    ID: "day_length"
+    unit_of_measurement: "hours"
+    state: >
+      {% set start_vegetative = as_timestamp(states('input_datetime.vegetative_start')) %}
+      {% set start_flipping = as_timestamp(states('input_datetime.flip_date')) %}
+      {% set start_generative = as_timestamp(states('input_datetime.generative_start')) %}
+      {% set start_drying = as_timestamp(states('input_datetime.drying_start')) %}
+      {% set now = as_timestamp(now()) %}
+      {% if now > start_vegetative %}
+        {{ states('input_number.day_length_vegetative') }}
+      {% elif now > start_flipping %}
+        # linear interpolation between vegetative_end and generative_start
+        {% set x = (now - flip_date) / (generative_start - flip_date) %}
+        {% set day_length = states('input_number.day_length_vegetative') + x * (states('input_number.day_length_generative') - states('input_number.day_length_vegetative')) %}
+        {{ day_length }}
+      {% elif now > start_generative %}
+        {{ states('input_number.day_length_generative') }}
+      {% elif now > start_drying %}
+        {{ 0 }}
+      {% else %}
+        {{ 0 }}
+      {% endif %} 
+              
 
-    # DLI = PPFD * 0.0036 * 3600 * 24, where 0.0036 is the conversion factor from µmol/m²/s to µmol/m²/day
-    # DLI shall be calculated as for the day_length of the current growth cycle found in Day Length
-    - name: "DLI"
-      unit_of_measurement: "mol/m²/day"
-      state: >
-        {% set ppfd = states('sensor.ppfd') | float %}
-        {% set day_length = states('sensor.day_length') | float %}
-        {{ ppfd * 0.0036 * day_length | round(2) }}
+  # DLI = PPFD * 0.0036 * 3600 * 24, where 0.0036 is the conversion factor from µmol/m²/s to µmol/m²/day
+  # DLI shall be calculated as for the day_length of the current growth cycle found in Day Length
+  - name: "DLI"
+    unit_of_measurement: "mol/m²/day"
+    state: >
+      {% set ppfd = states('sensor.ppfd') | float %}
+      {% set day_length = states('sensor.day_length') | float %}
+      {{ ppfd * 0.0036 * day_length | round(2) }}
 
 
 
