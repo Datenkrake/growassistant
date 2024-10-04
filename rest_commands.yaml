@@ -1,9 +1,9 @@
 
 # Rest commands to move the light_gantry up and down by a specified distance in meters
-move_light_distance:
-  url: 'http://g1.local:7125/printer/gcode/script?script=move_light%20DISTANCE={{ DISTANCE }}'
-  method: GET
-
 # move_light_distance:
-#   url: 'http://g1.local:7125/printer/gcode/script?script=move_light%20DISTANCE=10'
+#   url: 'http://g1.local:7125/printer/gcode/script?script=move_light%20DISTANCE={{ DISTANCE }}'
 #   method: GET
+
+move_light_distance:
+  url: 'http://g1.local:7125/printer/gcode/script?script=move_light%20DISTANCE=10'
+  method: GET
