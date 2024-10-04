@@ -1,7 +1,6 @@
 
 # Include the sensors/combined-sensors.yaml file
-template: 
-  sensor: !include sensors/combined-sensors.yaml
+template: !include sensors/combined-sensors.yaml
 
 # template: !include_dir_merge_list templates/
 
