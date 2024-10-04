@@ -29,7 +29,6 @@
       friendly_name: "Cultivar Height"
       unit_of_measurement: "m"
       value_template: "{{ states('input_number.gantry_null_position') | float - states('input_text.gantry_height') | float }}"
-      icon: mdi:flower
 
     vpd:
       friendly_name: "VPD"
