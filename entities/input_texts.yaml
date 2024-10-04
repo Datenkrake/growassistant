@@ -1,0 +1,70 @@
+
+
+# text input homeassistant entities
+
+# Cultivar name
+cultivar_name:
+  name: Cultivar Name
+  initial: "Cultivar 1"
+  mode: box
+  icon: mdi:flower
+  unit_of_measurement: ""
+  min: 0
+  max: 0
+  step: 0
+
+# Cultivar Breeder
+cultivar_breeder:
+  name: Cultivar Breeder
+  initial: "Breeder Name"
+  mode: box
+  icon: mdi:flower
+  unit_of_measurement: ""
+  min: 0
+  max: 0
+  step: 0
+
+# Remarks
+remarks:
+  name: Remarks
+  initial: "Remarks"
+  mode: box
+  icon: mdi:flower
+  unit_of_measurement: ""
+  min: 0
+  max: 0
+  step: 0
+
+# Medium
+medium:
+  name: Medium
+  initial: "Medium"
+  mode: box
+  icon: mdi:flower
+  unit_of_measurement: ""
+  min: 0
+  max: 0
+  step: 0
+
+# Light
+light:
+  name: Light
+  initial: "Light"
+  mode: box
+  icon: mdi:flower
+  unit_of_measurement: ""
+  min: 0
+  max: 0
+  step: 0
+
+# Nutrients
+nutrients:
+  name: Nutrients
+  initial: "Nutrients"
+  mode: box
+  icon: mdi:flower
+  unit_of_measurement: ""
+  min: 0
+  max: 0
+  step: 0
+

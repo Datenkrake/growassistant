@@ -1,0 +1,72 @@
+
+
+# date inputs for homeassistant configuration files
+
+# begin of project date
+first_sun:
+  name: First day of growing season
+  has_date: true
+  has_time: false
+  initial: "1987-11-02"
+
+# sunrise time
+sunrise_time:
+  name: Sunrise time
+  has_date: false
+  has_time: true
+  initial: "06:00:00"
+
+# Vegetative stage start date
+vegetative_start:
+  name: Vegetative stage start date
+  has_date: true
+  has_time: false
+  initial: "1987-11-02"
+
+# Vegetative stage end date (Flip date)
+flip_date:
+  name: Flip date
+  has_date: true
+  has_time: false
+  initial: "1987-11-02"
+
+# Generative stage start date
+generative_start:
+  name: Generative stage start date
+  has_date: true
+  has_time: false
+  initial: "1987-11-02"
+
+# Generative stage peak date
+generative_peak:
+  name: Generative stage peak date
+  has_date: true
+  has_time: false
+  initial: "1987-11-02"
+
+# Generative stage end date
+generative_end:
+  name: Generative stage end date
+  has_date: true
+  has_time: false
+  initial: "1987-11-02"
+
+# Drying stage start date
+drying_start:
+  name: Drying stage start date
+  has_date: true
+  has_time: false
+  initial: "1987-11-02"
+
+# Drying stage end date
+drying_end:
+  name: Drying stage end date
+  has_date: true
+  has_time: false
+  initial: "1987-11-02"
+
+last_timelapse:
+  name: Last timelapse
+  has_date: true
+  has_time: true
+  initial: "1987-11-02 06:00:00"

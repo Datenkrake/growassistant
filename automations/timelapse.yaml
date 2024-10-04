@@ -1,0 +1,67 @@
+
+# This automation will take a snapshot of the camera every n minutes (n = timelapse_period) and store it in the influxdb database
+# The timelapse_period is a global variable that can be changed in the frontend
+# The timelapse_period is defined in the input_numbers.yaml file
+
+# The automation will only run if the global_enable input_boolean is on
+# The global_enable input_boolean is defined in the input_bools.yaml file
+
+# The automation will only run if the timelapse_enable input_boolean is on
+# The timelapse_enable input_boolean is defined in the input_bools.yaml file
+
+# The automation will only run if the timelapse_period is greater than 0
+# The timelapse_period is defined in the input_numbers.yaml file
+
+# The automation will confirm that the light is on before taking the snapshot
+# The automation will confirm that the light is in photolist_mode before taking the snapshot
+
+# The automation will take a snapshot of the camera
+# The camera entity is defined in the input_text_devices.yaml file as canopy_camera
+
+# The automation will store the snapshot in the influxdb database
+# The influxdb database is defined in the configuration.yaml file
+# The format is base64 encoded
+
+# The automation will set the last_timelapse timestamp to the current time
+# The last_timelapse timestamp is defined in the input_datetime.yaml file
+
+
+alias: Timelapse
+description: ''
+trigger:
+  - platform: time_pattern
+    minutes: /{{ states('input_number.timelapse_period') }}
+condition:
+  # Only run if global_enable is on
+  - condition: state
+    entity_id: input_boolean.global_enable
+    state: 'on'
+  # Only run if timelapse_enable is on
+  - condition: state
+    entity_id: input_boolean.timelapse_enable
+    state: 'on'
+  # Only run if timelapse_period is greater than 0
+  - condition: numeric_state
+    entity_id: input_number.timelapse_period
+    above: '0'
+  # Only run if the light is on, do not take a snapshot if the light is off. Light on means that the canopy_illumination is greater than 100 lux
+  # use the light entity_id from the input_text_devices.yaml file to get the entity_id of the light
+  - condition: numeric_state
+    entity_id: '{{ states(''input_text.canopy_illumination'') }}'
+    above: '100'
+action:
+  - service: camera.snapshot
+    data:
+      entity_id: '{{ states(''input_text.canopy_camera'') }}'
+      filename: '/config/www/timelapse/{{ now().strftime(''%Y%m%d_%H%M%S'') }}.jpg'
+  - service: influxdb.write
+    data:
+      database: growassistant
+      data:
+        image: '{{ states(''input_text.canopy_camera'') }}'
+  - service: input_datetime.set_datetime
+    data:
+      entity_id: input_datetime.last_timelapse
+      time: '{{ now().strftime(''%Y-%m-%d %H:%M:%S'') }}'
+
+

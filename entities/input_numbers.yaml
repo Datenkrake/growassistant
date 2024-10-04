@@ -10,3 +10,170 @@ cola_detection_distance_threshold:
   unit_of_measurement: "m"
   icon: mdi:ruler
 
+# day length in hours
+day_length_vegetative:
+  name: "Day Length Vegetative"
+  initial: 18
+  min: 0
+  max: 24
+  step: 1
+  mode: box
+  unit_of_measurement: "hours"
+  icon: mdi:weather-sunset-up
+
+day_length_generative:
+  name: "Day Length Generative"
+  initial: 12
+  min: 0
+  max: 24
+  step: 1
+  mode: box
+  unit_of_measurement: "hours"
+  icon: mdi:weather-sunset-up
+
+# DLI in mol/m2/day (Daily Light Integral) 
+dli_vegetative_start:
+  name: "DLI Vegetative"
+  initial: 15
+  min: 0
+  max: 100
+  step: 1
+  mode: box
+  unit_of_measurement: "mol/m2/day"
+  icon: mdi:weather-sunny
+
+dli_vegetative_end:
+  name: "DLI Vegetative End"
+  initial: 25
+  min: 0
+  max: 100
+  step: 1
+  mode: box
+  unit_of_measurement: "mol/m2/day"
+  icon: mdi:weather-sunny
+
+dli_generative_peak:
+  name: "DLI Generative Peak"
+  initial: 40
+  min: 0
+  max: 100
+  step: 1
+  mode: box
+  unit_of_measurement: "mol/m2/day"
+  icon: mdi:weather-sunny
+
+dli_generative_end:
+  name: "DLI Generative End"
+  initial: 35
+  min: 0
+  max: 100
+  step: 1
+  mode: box
+  unit_of_measurement: "mol/m2/day"
+  icon: mdi:weather-sunny
+
+# Fan Speed min and max 
+intake_fan_speed_min:
+  name: "Intake Fan Speed Min"
+  initial: 0
+  min: 0
+  max: 100
+  step: 1
+  mode: box
+  unit_of_measurement: "%"
+  icon: mdi:fan
+
+intake_fan_speed_max:
+  name: "Intake Fan Speed Max"
+  initial: 100
+  min: 0
+  max: 100
+  step: 1
+  mode: box
+  unit_of_measurement: "%"
+  icon: mdi:fan
+
+exhaust_fan_speed_min:
+  name: "Exhaust Fan Speed Min"
+  initial: 0
+  min: 0
+  max: 100
+  step: 1
+  mode: box
+  unit_of_measurement: "%"
+  icon: mdi:fan
+
+exhaust_fan_speed_max:
+  name: "Exhaust Fan Speed Max"
+  initial: 100
+  min: 0
+  max: 100
+  step: 1
+  mode: box
+  unit_of_measurement: "%"
+  icon: mdi:fan
+
+# Circulation Fan Speed min and max
+circulation_fan_speed_min:
+  name: "Circulation Fan Speed Min"
+  initial: 0
+  min: 0
+  max: 100
+  step: 1
+  mode: box
+  unit_of_measurement: "%"
+  icon: mdi:fan
+
+circulation_fan_speed_max:
+  name: "Circulation Fan Speed Max"
+  initial: 100
+  min: 0
+  max: 100
+  step: 1
+  mode: box
+  unit_of_measurement: "%"
+  icon: mdi:fan
+
+# Target temperature in degrees Celsius
+temperature_target:
+  name: "Temperature Target"
+  initial: 25
+  min: 0
+  max: 40
+  step: 1
+  mode: box
+  unit_of_measurement: "°C"
+  icon: mdi:thermometer
+
+# abs max temperature in degrees Celsius
+temperature_max:
+  name: "Temperature Max"
+  initial: 30
+  min: 0
+  max: 40
+  step: 1
+  mode: box
+  unit_of_measurement: "°C"
+  icon: mdi:thermometer
+
+# VPD target in kPa
+vpd_target:
+  name: "VPD Target"
+  initial: 1.0
+  min: 0.0
+  max: 2.0
+  step: 0.1
+  mode: box
+  unit_of_measurement: "kPa"
+  icon: mdi:water-percent
+
+# Timelapse period in minutes
+timelapse_period:
+  name: "Timelapse Period"
+  initial: 60
+  min: 30
+  max: 1440
+  step: 30
+  mode: box
+  unit_of_measurement: "minutes"
+  icon: mdi:camera-timer

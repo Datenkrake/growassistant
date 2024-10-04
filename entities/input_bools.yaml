@@ -1,0 +1,55 @@
+# Boolean input entities 
+
+global_enable:
+  name: Global Enable
+  initial: "off"
+  icon: mdi:flower
+  unit_of_measurement: ""
+  min: 0
+  max: 0
+  step: 0
+
+irrigation_enable:
+  name: Irrigation Enable
+  initial: "off"
+  icon: mdi:flower
+  unit_of_measurement: ""
+  min: 0
+  max: 0
+  step: 0
+
+service_mode:
+  name: Service Mode
+  initial: "off"
+  icon: mdi:flower
+  unit_of_measurement: ""
+  min: 0
+  max: 0
+  step: 0
+
+silent_mode:
+  name: Silent Mode
+  initial: "off"
+  icon: mdi:flower
+  unit_of_measurement: ""
+  min: 0
+  max: 0
+  step: 0
+
+photolight_mode:
+  name: Photolight Mode
+  initial: "off"
+  icon: mdi:flower
+  unit_of_measurement: ""
+  min: 0
+  max: 0
+  step: 0
+
+timelapse_enable:
+  name: Timelapse Enable
+  initial: "off"
+  icon: mdi:flower
+  unit_of_measurement: ""
+  min: 0
+  max: 0
+  step: 0
