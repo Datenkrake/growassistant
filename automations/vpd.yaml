@@ -20,10 +20,10 @@ condition:
     state: "off"
 action:
   # Log that automation is triggered
-  - service: logger.log
-    data:
-      message: "VPD Control Automation Triggered"
-      level: warning
+  # - service: logger.log
+  #   data:
+  #     message: "VPD Control Automation Triggered"
+  #     level: warning
 
   # Declare variables at the top of the action sequence
   - variables:
@@ -111,10 +111,10 @@ action:
                     value_template: "{{ rh_margin > 0 }}"
                 sequence:
                   # Log increasing humidifier duty cycle
-                  - service: logger.log
-                    data:
-                      message: "Increasing Humidifier Duty Cycle."
-                      level: warning
+                  # - service: logger.log
+                    # data:
+                      # message: "Increasing Humidifier Duty Cycle."
+                      # level: warning
                   - service: fan.set_percentage
                     target:
                       entity_id: fan.g1_humidifier_humidifier
@@ -125,10 +125,10 @@ action:
                     value_template: "{{ rh_margin <= 0 }}"
                 sequence:
                   # Log decreasing humidifier duty cycle
-                  - service: logger.log
-                    data:
-                      message: "Decreasing Humidifier Duty Cycle."
-                      level: warning
+                  # - service: logger.log
+                  #   data:
+                  #     message: "Decreasing Humidifier Duty Cycle."
+                  #     level: warning
                   - service: fan.set_percentage
                     target:
                       entity_id: fan.g1_humidifier_humidifier
@@ -140,10 +140,10 @@ action:
                     value_template: "{{ t_margin < 0 }}"
                 sequence:
                   # Log increasing intake and exhaust fan speed
-                  - service: logger.log
-                    data:
-                      message: "Increasing Intake and Exhaust Fan Speed."
-                      level: warning
+                  # - service: logger.log
+                  #   data:
+                  #     message: "Increasing Intake and Exhaust Fan Speed."
+                  #     level: warning
                   - service: fan.set_percentage
                     target:
                       entity_id: fan.g1_intake_intake_fan
@@ -159,10 +159,10 @@ action:
                     value_template: "{{ t_margin >= 0 and rh_margin > 0 }}"
                 sequence:
                   # Log decreasing intake and exhaust fan speed
-                  - service: logger.log
-                    data:
-                      message: "Decreasing Intake and Exhaust Fan Speed."
-                      level: warning
+                  # - service: logger.log
+                  #   data:
+                  #     message: "Decreasing Intake and Exhaust Fan Speed."
+                  #     level: warning
                   - service: fan.set_percentage
                     target:
                       entity_id: fan.g1_intake_intake_fan
@@ -183,10 +183,10 @@ action:
                     value_template: "{{ rh_margin < 0 }}"
                 sequence:
                   # Log decreasing humidifier duty cycle
-                  - service: logger.log
-                    data:
-                      message: "Decreasing Humidifier Duty Cycle."
-                      level: warning
+                  # - service: logger.log
+                  #   data:
+                  #     message: "Decreasing Humidifier Duty Cycle."
+                  #     level: warning
                   - service: fan.set_percentage
                     target:
                       entity_id: fan.g1_humidifier_humidifier
