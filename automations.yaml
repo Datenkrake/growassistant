@@ -9,4 +9,3 @@
 #         entity_id: input_text.g1_timestamp
 #         value: "{{ now().strftime('%H:%M:%S') }}"
 
-automation: !include_dir_merge_list automations/
