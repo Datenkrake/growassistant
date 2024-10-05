@@ -2593,3 +2593,385 @@ required key not provided @ data['trigger']. Got None
 2024-10-05 02:46:44.496 ERROR (MainThread) [homeassistant.components.automation] Automation with alias 'Water Autopot' failed to setup triggers and has been disabled: invalid time_pattern value for dictionary value @ data['minutes']. Got None
 2024-10-05 02:46:44.511 INFO (MainThread) [homeassistant.components.automation.vpd_control_automation] Initialized trigger VPD Control Automation
 2024-10-05 02:46:44.558 INFO (MainThread) [homeassistant.components.sensor] Setting up template.sensor
+2024-10-05 03:17:02.060 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 03:17:19.725 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 03:26:32.097 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 03:26:49.761 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 03:29:32.110 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 03:29:49.772 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 03:34:02.125 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 03:34:19.794 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 03:37:32.134 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 03:37:49.807 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 03:42:02.149 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 03:42:19.812 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 03:50:02.176 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 03:50:19.845 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 03:52:32.182 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 03:52:49.854 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 03:57:32.200 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 03:57:49.866 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 04:02:02.214 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 04:02:19.882 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 04:05:32.223 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 04:05:49.903 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 04:08:32.233 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 04:08:49.907 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 04:12:32.247 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 04:12:49.916 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 04:20:02.271 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 04:20:19.949 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 04:22:02.277 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 04:22:19.944 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 04:27:32.294 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 04:27:49.956 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 04:33:02.311 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 04:33:19.984 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 04:35:02.317 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 04:35:19.979 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 04:38:02.325 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 04:38:19.986 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 04:40:32.333 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 04:40:50.009 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 04:45:32.348 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 04:45:50.013 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 04:52:32.371 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 04:52:50.036 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 04:57:02.384 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 04:57:20.050 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 05:00:02.392 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 05:00:20.060 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 05:02:32.399 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 05:02:50.070 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 05:10:32.421 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 05:10:50.096 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 05:13:32.430 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 05:13:50.112 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 05:16:32.438 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 05:16:50.109 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 05:20:02.450 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 05:20:20.114 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 05:25:02.464 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 05:25:20.130 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 05:28:02.472 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 05:28:20.138 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 05:33:32.493 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 05:33:50.166 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 05:38:02.510 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 05:38:20.180 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 05:45:02.536 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 05:45:20.208 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 05:48:02.546 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 05:48:20.214 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 05:51:02.557 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 05:51:20.228 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 05:53:32.567 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 05:53:50.227 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 05:56:02.574 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 05:56:20.244 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 05:59:02.585 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 05:59:20.251 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 06:05:32.611 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 06:05:50.275 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 06:09:02.624 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 06:09:20.302 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 06:11:32.633 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 06:11:50.298 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 06:16:32.651 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 06:16:50.320 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 06:19:32.664 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 06:19:50.337 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 06:22:02.671 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 06:22:20.332 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 06:26:02.685 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 06:26:20.353 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 06:30:02.704 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 06:30:20.371 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 06:34:32.717 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 06:34:50.386 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 06:37:32.730 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 06:37:50.398 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 06:40:02.739 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 06:40:20.419 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 06:50:32.782 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 06:50:50.446 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 06:54:32.801 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 06:54:50.474 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 06:57:32.812 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 06:57:50.479 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 07:11:32.867 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 07:11:50.533 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 07:15:32.883 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 07:15:50.551 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 07:18:02.894 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 07:18:20.568 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 07:20:32.903 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 07:20:50.568 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 07:25:02.917 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 07:25:20.587 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 07:28:02.928 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 07:28:20.601 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 07:31:32.941 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 07:31:50.612 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 07:34:32.955 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 07:34:50.622 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 07:37:02.965 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 07:37:20.628 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 07:39:32.973 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 07:39:50.643 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 07:45:02.995 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 07:45:20.662 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 07:48:03.011 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 07:48:20.680 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 07:51:03.022 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 07:51:20.694 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 07:55:03.037 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 07:55:20.705 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 07:58:03.046 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 07:58:20.711 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 08:04:33.071 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 08:04:50.745 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 08:07:03.080 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 08:07:20.748 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 08:17:33.131 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 08:17:50.799 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 08:20:03.145 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 08:20:20.823 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 08:22:33.155 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 08:22:50.824 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 08:25:03.164 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 08:25:20.828 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 08:29:22.493 INFO (MainThread) [custom_components.hacs] Loading known repositories
+2024-10-05 08:34:33.195 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 08:34:50.866 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 08:37:33.203 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 08:37:50.870 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 08:47:03.235 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 08:47:20.910 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 08:49:33.242 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 08:49:50.911 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 08:52:03.247 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 08:52:20.912 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 08:57:03.259 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 08:57:20.917 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 08:59:33.265 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 08:59:50.927 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 09:02:03.272 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 09:02:20.937 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 09:06:33.286 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 09:06:50.953 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 09:12:33.301 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 09:12:50.970 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 09:17:33.317 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 09:17:50.981 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 09:22:33.333 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 09:22:51.009 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 09:26:33.345 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 09:26:51.010 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 09:29:33.353 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 09:29:51.021 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 09:32:33.361 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 09:32:51.034 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 09:37:03.373 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 09:37:21.039 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 09:39:03.378 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 09:39:21.051 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 09:41:33.383 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 09:41:51.046 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 09:52:29.640 ERROR (MainThread) [frontend.js.modern.202409091] Uncaught error from Mobile Safari 18.0 on iOS 18.0
+Error: Failed to execute 'define' on 'CustomElementRegistry': the name "flex-horseshoe-card" has already been used with this registry
+message (node_modules/core-js/modules/web.dom-exception.stack.js:25:24)
+src/scoped-custom-element-registry.js:45:10
+module code (/hacsfiles/flex-horseshoe-card/flex-horseshoe-card.js:1976:24)
+2024-10-05 09:55:33.431 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 09:55:51.110 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 09:58:03.438 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 09:58:21.106 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 10:13:33.484 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 10:13:51.151 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 10:36:03.554 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 10:36:21.251 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 11:03:33.641 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 11:03:51.303 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 11:06:03.649 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 11:06:21.313 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 11:30:03.718 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 11:30:21.404 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 11:36:03.732 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 11:36:21.397 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 11:55:31.617 ERROR (MainThread) [homeassistant.components.hassio.handler] Client error on /ingress/validate_session request 401, message='Attempt to decode JSON with unexpected mimetype: text/plain; charset=utf-8', url='http://172.30.32.2/ingress/validate_session'
+2024-10-05 11:55:31.617 ERROR (MainThread) [homeassistant.components.hassio] Failed to to call /ingress/validate_session - 
+2024-10-05 12:23:03.899 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 12:23:21.560 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 12:25:33.905 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 12:25:51.575 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 13:07:04.032 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 13:07:21.700 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 13:21:34.077 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 13:21:51.750 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 13:32:34.109 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 13:32:51.785 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 13:44:34.148 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 13:44:51.818 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 13:58:04.202 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 13:58:21.870 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 14:21:34.270 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 14:21:51.933 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 14:29:22.494 INFO (MainThread) [custom_components.hacs] Loading known repositories
+2024-10-05 14:35:34.312 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 14:35:51.983 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 14:38:04.318 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 14:38:21.991 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 14:43:04.335 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 14:43:22.001 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 14:47:04.345 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 14:47:22.016 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 14:53:04.374 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 14:53:22.041 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 15:42:34.544 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 15:42:52.208 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 15:57:04.590 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 15:57:22.264 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 16:39:04.724 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 16:39:22.394 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 17:39:34.898 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 17:39:52.567 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 17:42:04.903 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 17:42:22.570 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 17:43:56.720 ERROR (MainThread) [homeassistant.components.hassio.handler] Client error on /ingress/validate_session request 401, message='Attempt to decode JSON with unexpected mimetype: text/plain; charset=utf-8', url='http://172.30.32.2/ingress/validate_session'
+2024-10-05 17:43:56.721 ERROR (MainThread) [homeassistant.components.hassio] Failed to to call /ingress/validate_session - 
+2024-10-05 17:47:04.916 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 17:47:22.594 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 18:02:04.955 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 18:02:22.621 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 18:11:34.981 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 18:11:52.652 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 18:13:58.063 ERROR (MainThread) [homeassistant.components.hassio.handler] Client error on /ingress/validate_session request 401, message='Attempt to decode JSON with unexpected mimetype: text/plain; charset=utf-8', url='http://172.30.32.2/ingress/validate_session'
+2024-10-05 18:13:58.064 ERROR (MainThread) [homeassistant.components.hassio] Failed to to call /ingress/validate_session - 
+2024-10-05 18:14:04.987 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 18:14:22.658 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 18:54:05.122 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 18:54:22.788 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 19:09:35.173 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 19:09:52.839 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 20:29:22.495 INFO (MainThread) [custom_components.hacs] Loading known repositories
+2024-10-05 22:20:05.778 INFO (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Bluetooth scanner has gone quiet for 90s, restarting
+2024-10-05 22:20:23.448 WARNING (MainThread) [habluetooth.scanner] hci0 (D8:3A:DD:2B:61:05): Successful fall-back to passive scanning mode after active scanning failed (4/4)
+2024-10-05 22:44:51.719 ERROR (MainThread) [frontend.js.modern.202409091] Uncaught error from Edge 128.0.0.0 on Windows 10
+Error: Failed to execute 'define' on 'CustomElementRegistry': the name "flex-horseshoe-card" has already been used with this registry
+window.CustomElementRegistry.define (src/scoped-custom-element-registry.js:44:14)
+/hacsfiles/flex-horseshoe-card/flex-horseshoe-card.js:1976:18
+2024-10-05 22:49:02.610 ERROR (MainThread) [frontend.js.modern.202409091] Uncaught error from Edge 128.0.0.0 on Windows 10
+Error: Failed to execute 'define' on 'CustomElementRegistry': the name "flex-horseshoe-card" has already been used with this registry
+window.CustomElementRegistry.define (src/scoped-custom-element-registry.js:44:14)
+/hacsfiles/flex-horseshoe-card/flex-horseshoe-card.js:1976:18
+2024-10-05 22:49:05.988 INFO (MainThread) [aioesphomeapi.reconnect_logic] Processing expected disconnect from ESPHome API for g1-canopy @ 192.168.1.73
+2024-10-05 22:49:06.007 ERROR (MainThread) [homeassistant.helpers.event] Error while dispatching event for sensor.g1_canopy_canopy_humidity to <Job track state_changed event {'input_text.canopy_humidity', 'sensor.g1_canopy_canopy_humidity'} HassJobType.Callback <bound method TrackTemplateResultInfo._refresh of <TrackTemplateResultInfo {Template<template=({% if not is_state(states('input_text.canopy_humidity'), 'unavailable') and not is_state(states('input_text.canopy_humidity'), 'unknown') %}
+  {{ states(states('input_text.canopy_humidity')) }}
+{% elif not is_state(states('input_text.intake_humidity'), 'unavailable') and not is_state(states('input_text.intake_humidity'), 'unknown') %}
+  {{ states(states('input_text.intake_humidity')) }}
+{% else %}
+  unavailable
+{% endif %}) renders=1490>: <RenderInfo Template<template=({% if not is_state(states('input_text.canopy_humidity'), 'unavailable') and not is_state(states('input_text.canopy_humidity'), 'unknown') %}
+  {{ states(states('input_text.canopy_humidity')) }}
+{% elif not is_state(states('input_text.intake_humidity'), 'unavailable') and not is_state(states('input_text.intake_humidity'), 'unknown') %}
+  {{ states(states('input_text.intake_humidity')) }}
+{% else %}
+  unavailable
+{% endif %}) renders=1490> all_states=False all_states_lifecycle=False domains=frozenset() domains_lifecycle=frozenset() entities=frozenset({'input_text.canopy_humidity', 'sensor.g1_canopy_canopy_humidity', 'input_text.intake_humidity', 'sensor.esp1_g1_intake_humidity'}) rate_limit=None has_time=False exception=None is_static=False>}>>>
+Traceback (most recent call last):
+  File "/usr/src/homeassistant/homeassistant/components/sensor/__init__.py", line 657, in state
+    numerical_value = int(value)
+                      ^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: 'unknown'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/src/homeassistant/homeassistant/components/sensor/__init__.py", line 660, in state
+    numerical_value = float(value)
+                      ^^^^^^^^^^^^
+ValueError: could not convert string to float: 'unknown'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/usr/src/homeassistant/homeassistant/helpers/event.py", line 352, in _async_dispatch_entity_id_event
+    hass.async_run_hass_job(job, event)
+  File "/usr/src/homeassistant/homeassistant/core.py", line 937, in async_run_hass_job
+    hassjob.target(*args)
+  File "/usr/src/homeassistant/homeassistant/helpers/event.py", line 1308, in _refresh
+    self.hass.async_run_hass_job(self._job, event, updates)
+  File "/usr/src/homeassistant/homeassistant/core.py", line 937, in async_run_hass_job
+    hassjob.target(*args)
+  File "/usr/src/homeassistant/homeassistant/components/template/template_entity.py", line 436, in _handle_results
+    self.async_write_ha_state()
+  File "/usr/src/homeassistant/homeassistant/helpers/entity.py", line 1005, in async_write_ha_state
+    self._async_write_ha_state()
+  File "/usr/src/homeassistant/homeassistant/helpers/entity.py", line 1130, in _async_write_ha_state
+    self.__async_calculate_state()
+  File "/usr/src/homeassistant/homeassistant/helpers/entity.py", line 1067, in __async_calculate_state
+    state = self._stringify_state(available)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/src/homeassistant/homeassistant/helpers/entity.py", line 1011, in _stringify_state
+    if (state := self.state) is None:
+                 ^^^^^^^^^^
+  File "/usr/src/homeassistant/homeassistant/components/sensor/__init__.py", line 664, in state
+    raise ValueError(
+ValueError: Sensor sensor.combined_humidity has device class 'None', state class 'None' unit '%' and suggested precision 'None' thus indicating it has a numeric value; however, it has the non-numeric value: 'unknown' (<class 'str'>)
+2024-10-05 22:49:06.056 ERROR (MainThread) [homeassistant.components.template.template_entity] TemplateError('ValueError: Template error: float got invalid input 'unavailable' when rendering template '{% set lux = states('sensor.g1_canopy_g1_bh1750_illuminance') | float %} {{ lux * 0.051872 - 85.209312 | round(2) }}' but no default was specified') while processing template 'Template<template=({% set lux = states('sensor.g1_canopy_g1_bh1750_illuminance') | float %} {{ lux * 0.051872 - 85.209312 | round(2) }}) renders=2174>' for attribute '_attr_native_value' in entity 'sensor.ppfd'
+2024-10-05 22:49:06.058 ERROR (MainThread) [homeassistant.helpers.event] Error while dispatching event for sensor.g1_canopy_canopy_temperature to <Job track state_changed event {'input_text.canopy_temperature', 'sensor.g1_canopy_canopy_temperature'} HassJobType.Callback <bound method TrackTemplateResultInfo._refresh of <TrackTemplateResultInfo {Template<template=({% if not is_state(states('input_text.canopy_temperature'), 'unavailable') and not is_state(states('input_text.canopy_temperature'), 'unknown') %}
+  {{ states(states('input_text.canopy_temperature')) }}
+{% elif not is_state(states('input_text.intake_temperature'), 'unavailable') and not is_state(states('input_text.intake_temperature'), 'unknown') %}
+  {{ states(states('input_text.intake_temperature')) }}
+{% else %}
+  unavailable
+{% endif %}) renders=472>: <RenderInfo Template<template=({% if not is_state(states('input_text.canopy_temperature'), 'unavailable') and not is_state(states('input_text.canopy_temperature'), 'unknown') %}
+  {{ states(states('input_text.canopy_temperature')) }}
+{% elif not is_state(states('input_text.intake_temperature'), 'unavailable') and not is_state(states('input_text.intake_temperature'), 'unknown') %}
+  {{ states(states('input_text.intake_temperature')) }}
+{% else %}
+  unavailable
+{% endif %}) renders=472> all_states=False all_states_lifecycle=False domains=frozenset() domains_lifecycle=frozenset() entities=frozenset({'input_text.intake_temperature', 'input_text.canopy_temperature', 'sensor.g1_canopy_canopy_temperature', 'sensor.esp1_g1_intake_temperature'}) rate_limit=None has_time=False exception=None is_static=False>}>>>
+Traceback (most recent call last):
+  File "/usr/src/homeassistant/homeassistant/components/sensor/__init__.py", line 657, in state
+    numerical_value = int(value)
+                      ^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: 'unknown'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/src/homeassistant/homeassistant/components/sensor/__init__.py", line 660, in state
+    numerical_value = float(value)
+                      ^^^^^^^^^^^^
+ValueError: could not convert string to float: 'unknown'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/usr/src/homeassistant/homeassistant/helpers/event.py", line 352, in _async_dispatch_entity_id_event
+    hass.async_run_hass_job(job, event)
+  File "/usr/src/homeassistant/homeassistant/core.py", line 937, in async_run_hass_job
+    hassjob.target(*args)
+  File "/usr/src/homeassistant/homeassistant/helpers/event.py", line 1308, in _refresh
+    self.hass.async_run_hass_job(self._job, event, updates)
+  File "/usr/src/homeassistant/homeassistant/core.py", line 937, in async_run_hass_job
+    hassjob.target(*args)
+  File "/usr/src/homeassistant/homeassistant/components/template/template_entity.py", line 436, in _handle_results
+    self.async_write_ha_state()
+  File "/usr/src/homeassistant/homeassistant/helpers/entity.py", line 1005, in async_write_ha_state
+    self._async_write_ha_state()
+  File "/usr/src/homeassistant/homeassistant/helpers/entity.py", line 1130, in _async_write_ha_state
+    self.__async_calculate_state()
+  File "/usr/src/homeassistant/homeassistant/helpers/entity.py", line 1067, in __async_calculate_state
+    state = self._stringify_state(available)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/src/homeassistant/homeassistant/helpers/entity.py", line 1011, in _stringify_state
+    if (state := self.state) is None:
+                 ^^^^^^^^^^
+  File "/usr/src/homeassistant/homeassistant/components/sensor/__init__.py", line 664, in state
+    raise ValueError(
+ValueError: Sensor sensor.combined_temperature has device class 'None', state class 'None' unit '°C' and suggested precision 'None' thus indicating it has a numeric value; however, it has the non-numeric value: 'unknown' (<class 'str'>)
+2024-10-05 22:49:11.052 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successfully connected to g1-canopy @ 192.168.1.73 in 0.051s
+2024-10-05 22:49:11.355 INFO (MainThread) [aioesphomeapi.reconnect_logic] Successful handshake with g1-canopy @ 192.168.1.73 in 0.302s
