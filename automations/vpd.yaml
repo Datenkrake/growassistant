@@ -1,4 +1,5 @@
 alias: "VPD Control Automation"
+id: "automations_vpd"
 description: "Adjust VPD based on target VPD after a 1-minute delay."
 trigger:
   - platform: time_pattern

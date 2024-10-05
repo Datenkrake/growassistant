@@ -9,6 +9,7 @@
 
 
 alias: Light Height Automation
+id: 'automations_light_height'
 description: 'This automation reads sensor.esp1_g1_light_distance_sensor every minute'
 trigger:
   - platform: time_pattern

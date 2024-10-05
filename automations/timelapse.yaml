@@ -26,6 +26,7 @@
 # The last_timelapse timestamp is defined in the input_datetime.yaml file
 
 alias: Timelapse
+id: 'automations_timelapse'
 description: ''
 trigger:
   - platform: time_pattern
