@@ -19,16 +19,8 @@ condition:
     entity_id: binary_sensor.g1_water_door_switch
     state: "off"
 action:
-  # Log that automation is triggered
-  # - service: logger.log
-  #   data:
-  #     message: "VPD Control Automation Triggered"
-  #     level: warning
-
-  # Declare variables at the top of the action sequence
   - variables:
       target_vpd: "{{ states('input_number.target_vpd') | float }}"
-      # intake_vpd: "{{ states('sensor.vpd_intake') | float }}"
       canopy_vpd: "{{ states('sensor.vpd') | float }}"
       intake_temp: "{{ states('sensor.g1_intake_bme680_temperature') | float }}"
       intake_hum: "{{ states('sensor.g1_intake_bme680_humidity') | float }}"
@@ -36,47 +28,35 @@ action:
       canopy_hum: "{{ states('sensor.combined_humidity') | float }}"
       rh_target: "{{ states('sensor.rh_target') | float }}"
       dayphase: "{{ states('sensor.dayphase') | int }}"
-
-      # PID controller variables
       Kp: 1
       Ki: 0.1
       Kd: 0.01
       dt: 0.01
-
-      # VPD differences
       d_canopy_target: "{{ canopy_vpd - target_vpd }}"
-      # d_intake_target: "{{ intake_vpd - target_vpd }}"
-      # d_canopy_intake: "{{ canopy_vpd - intake_vpd }}"
-
-      # Retrieve previous error (stored in an input_number)
       previous_error: "{{ states('input_number.previous_d_canopy_target') | float(0) }}"
-
-      # Control logic calculations
       intake_fan_speed: "{{ (state_attr('fan.g1_intake_intake_fan', 'percentage') | float(0)) / 100 }}"
       exhaust_fan_1_speed: "{{ (state_attr('fan.g1_exhaust_exhaust_fan_1', 'percentage') | float(0)) / 100 }}"
       exhaust_fan_2_speed: "{{ (state_attr('fan.g1_exhaust_exhaust_fan_2', 'percentage') | float(0)) / 100 }}"
       humidifier_dutycycle: "{{ (state_attr('fan.g1_humidifier_humidifier', 'percentage') | float(0)) }}"
 
-      # Calculate the proportional term
+      # Fan speed limits from input_numbers
+      intake_fan_min: "{{ states('input_number.intake_fan_speed_min') | float }}"
+      intake_fan_max: "{{ states('input_number.intake_fan_speed_max') | float }}"
+      exhaust_fan_min: "{{ states('input_number.exhaust_fan_speed_min') | float }}"
+      exhaust_fan_max: "{{ states('input_number.exhaust_fan_speed_max') | float }}"
+
+      # Control logic calculations
       P_intake: "{{ Kp * d_canopy_target }}"
       P_exhaust: "{{ Kp * d_canopy_target }}"
-
-      # Integral terms (ensure you have input_numbers to store these)
       integral_intake: "{{ states('input_number.integral_intake') | float(0) + (d_canopy_target * dt) }}"
       integral_exhaust: "{{ states('input_number.integral_exhaust') | float(0) + (d_canopy_target * dt) }}"
       integral_limit: 0.05
       integral_intake_clamped: "{{ [integral_limit, integral_intake] | min }}"
       integral_exhaust_clamped: "{{ [integral_limit, integral_exhaust] | min }}"
-
-      # Derivative terms
       D_intake: "{{ Kd * (d_canopy_target - previous_error) / dt }}"
       D_exhaust: "{{ Kd * (d_canopy_target - previous_error) / dt }}"
-
-      # Fan speed adjustments based on control terms
       control_intake: "{{ P_intake + Ki * integral_intake_clamped + D_intake }}"
       control_exhaust: "{{ P_exhaust + Ki * integral_exhaust_clamped + D_exhaust }}"
-
-      # Temperature and humidity margins
       min_temp: 15
       max_temp: "{{ intake_temp + (1 if dayphase == 0 else 5) }}"
       t_margin: "{{ max_temp - canopy_temp }}"
@@ -84,7 +64,7 @@ action:
       rh_margin: "{{ rh_target - canopy_hum }}"
       rh_potential: "{{ canopy_hum - intake_hum }}"
 
-  # Update the previous error value for next cycle
+  # Update previous error value for next cycle
   - service: input_number.set_value
     data:
       entity_id: input_number.previous_d_canopy_target
@@ -111,11 +91,6 @@ action:
                   - condition: template
                     value_template: "{{ rh_margin > 0 }}"
                 sequence:
-                  # Log increasing humidifier duty cycle
-                  # - service: logger.log
-                    # data:
-                      # message: "Increasing Humidifier Duty Cycle."
-                      # level: warning
                   - service: fan.set_percentage
                     target:
                       entity_id: fan.g1_humidifier_humidifier
@@ -125,11 +100,6 @@ action:
                   - condition: template
                     value_template: "{{ rh_margin <= 0 }}"
                 sequence:
-                  # Log decreasing humidifier duty cycle
-                  # - service: logger.log
-                  #   data:
-                  #     message: "Decreasing Humidifier Duty Cycle."
-                  #     level: warning
                   - service: fan.set_percentage
                     target:
                       entity_id: fan.g1_humidifier_humidifier
@@ -140,50 +110,40 @@ action:
                   - condition: template
                     value_template: "{{ t_margin < 0 }}"
                 sequence:
-                  # Log increasing intake and exhaust fan speed
-                  # - service: logger.log
-                  #   data:
-                  #     message: "Increasing Intake and Exhaust Fan Speed."
-                  #     level: warning
                   - service: fan.set_percentage
                     target:
                       entity_id: fan.g1_intake_intake_fan
                     data:
-                      percentage: "{{ [ (intake_fan_speed + control_intake) * 100, 100 ] | min }}"
+                      percentage: "{{ [ (intake_fan_speed + control_intake) * 100, intake_fan_max ] | min | max(intake_fan_min) }}"
                   - service: fan.set_percentage
                     target:
                       entity_id: fan.g1_exhaust_exhaust_fan_1
                     data:
-                      percentage: "{{ [ (exhaust_fan_1_speed + control_exhaust) * 100, 100 ] | min }}"
+                      percentage: "{{ [ (exhaust_fan_1_speed + control_exhaust) * 100, exhaust_fan_max ] | min | max(exhaust_fan_min) }}"
                   - service: fan.set_percentage
                     target:
                       entity_id: fan.g1_exhaust_exhaust_fan_2
                     data:
-                      percentage: "{{ [ (exhaust_fan_2_speed + control_exhaust) * 100, 100 ] | min }}"
+                      percentage: "{{ [ (exhaust_fan_2_speed + control_exhaust) * 100, exhaust_fan_max ] | min | max(exhaust_fan_min) }}"
               - conditions:
                   - condition: template
                     value_template: "{{ t_margin >= 0 and rh_margin > 0 }}"
                 sequence:
-                  # Log decreasing intake and exhaust fan speed
-                  # - service: logger.log
-                  #   data:
-                  #     message: "Decreasing Intake and Exhaust Fan Speed."
-                  #     level: warning
                   - service: fan.set_percentage
                     target:
                       entity_id: fan.g1_intake_intake_fan
                     data:
-                      percentage: "{{ [ (intake_fan_speed - control_intake) * 100, 0 ] | max }}"
+                      percentage: "{{ [ (intake_fan_speed - control_intake) * 100, intake_fan_max ] | min | max(intake_fan_min) }}"
                   - service: fan.set_percentage
                     target:
                       entity_id: fan.g1_exhaust_exhaust_fan_1
                     data:
-                      percentage: "{{ [ (exhaust_fan_1_speed - control_exhaust) * 100, 0 ] | max }}"
+                      percentage: "{{ [ (exhaust_fan_1_speed - control_exhaust) * 100, exhaust_fan_max ] | min | max(exhaust_fan_min) }}"
                   - service: fan.set_percentage
                     target:
                       entity_id: fan.g1_exhaust_exhaust_fan_2
                     data:
-                      percentage: "{{ [ (exhaust_fan_2_speed - control_exhaust) * 100, 0 ] | max }}"
+                      percentage: "{{ [ (exhaust_fan_2_speed - control_exhaust) * 100, exhaust_fan_max ] | min | max(exhaust_fan_min) }}"
       - conditions:
           - condition: template
             value_template: "{{ d_canopy_target <= 0 }}"
@@ -193,11 +153,6 @@ action:
                   - condition: template
                     value_template: "{{ rh_margin < 0 }}"
                 sequence:
-                  # Log decreasing humidifier duty cycle
-                  # - service: logger.log
-                  #   data:
-                  #     message: "Decreasing Humidifier Duty Cycle."
-                  #     level: warning
                   - service: fan.set_percentage
                     target:
                       entity_id: fan.g1_humidifier_humidifier
@@ -207,14 +162,14 @@ action:
                     target:
                       entity_id: fan.g1_intake_intake_fan
                     data:
-                      percentage: "{{ [ (intake_fan_speed + control_intake) * 100, 100 ] | min }}"
+                      percentage: "{{ [ (intake_fan_speed + control_intake) * 100, intake_fan_max ] | min | max(intake_fan_min) }}"
                   - service: fan.set_percentage
                     target:
                       entity_id: fan.g1_exhaust_exhaust_fan_1
                     data:
-                      percentage: "{{ [ (exhaust_fan_1_speed + control_exhaust) * 100, 100 ] | min }}"
+                      percentage: "{{ [ (exhaust_fan_1_speed + control_exhaust) * 100, exhaust_fan_max ] | min | max(exhaust_fan_min) }}"
                   - service: fan.set_percentage
                     target:
                       entity_id: fan.g1_exhaust_exhaust_fan_2
                     data:
-                      percentage: "{{ [ (exhaust_fan_2_speed + control_exhaust) * 100, 100 ] | min }}"
+                      percentage: "{{ [ (exhaust_fan_2_speed + control_exhaust) * 100, exhaust_fan_max ] | min | max(exhaust_fan_min) }}"
