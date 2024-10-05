@@ -20,6 +20,7 @@
 
 
 alias: Water Autopot
+id: 'automations_water_autopot'
 description: ''
 trigger:
   - platform: time_pattern
