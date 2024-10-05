@@ -151,6 +151,15 @@
         {% set dew_point = (b * alpha) / (a - alpha) %}
         {{ dew_point | round(1) }}
 
-
+    # dayphase is 0 for night and 1 for day, decide based on lux sensor
+    dayphase:
+      friendly_name: "Day Phase"
+      value_template: >
+        {% set lux = states('sensor.g1_canopy_g1_bh1750_illuminance') | float %}
+        {% if lux < 100 %}
+          0
+        {% else %}
+          1
+        {% endif %}
 
 

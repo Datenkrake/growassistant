@@ -28,13 +28,13 @@ action:
   # Declare variables at the top of the action sequence
   - variables:
       target_vpd: "{{ states('input_number.target_vpd') | float }}"
-      intake_vpd: "{{ states('sensor.g1_vpd_intake') | float }}"
-      canopy_vpd: "{{ states('sensor.g1_vpd_canopy') | float }}"
+      # intake_vpd: "{{ states('sensor.vpd_intake') | float }}"
+      canopy_vpd: "{{ states('sensor.vpd') | float }}"
       intake_temp: "{{ states('sensor.g1_intake_bme680_temperature') | float }}"
       intake_hum: "{{ states('sensor.g1_intake_bme680_humidity') | float }}"
       canopy_temp: "{{ states('sensor.combined_temperature') | float }}"
       canopy_hum: "{{ states('sensor.combined_humidity') | float }}"
-      rh_target: "{{ states('sensor.g1_rh_target') | float }}"
+      rh_target: "{{ states('sensor.rh_target') | float }}"
       dayphase: "{{ states('sensor.dayphase') | int }}"
 
       # PID controller variables
@@ -45,8 +45,8 @@ action:
 
       # VPD differences
       d_canopy_target: "{{ canopy_vpd - target_vpd }}"
-      d_intake_target: "{{ intake_vpd - target_vpd }}"
-      d_canopy_intake: "{{ canopy_vpd - intake_vpd }}"
+      # d_intake_target: "{{ intake_vpd - target_vpd }}"
+      # d_canopy_intake: "{{ canopy_vpd - intake_vpd }}"
 
       # Retrieve previous error (stored in an input_number)
       previous_error: "{{ states('input_number.previous_d_canopy_target') | float(0) }}"
