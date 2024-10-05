@@ -17,7 +17,7 @@ condition:
     state: "off"
   - condition: state
     entity_id: input_text.door_switch
-    state: "Closed"
+    state: "off"
 action:
   # Log that automation is triggered
   - service: logger.log
