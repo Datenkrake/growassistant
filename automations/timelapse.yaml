@@ -25,7 +25,6 @@
 # The automation will set the last_timelapse timestamp to the current time
 # The last_timelapse timestamp is defined in the input_datetime.yaml file
 
-
 alias: Timelapse
 description: ''
 trigger:
@@ -47,29 +46,27 @@ condition:
   - condition: numeric_state
     entity_id: input_number.timelapse_period
     above: '0'
-  # Only run if the light is on, do not take a snapshot if the light is off. Light on means that the canopy_illumination is greater than 100 lux
-  # use the light entity_id from the input_text_devices.yaml file to get the entity_id of the light
+  # Only run if the light is on (i.e., canopy_illumination > 100 lux)
   - condition: numeric_state
-    entity_id: '{{ states(''input_text.canopy_illumination'') }}'
-    above: '100'
-  # Only run if the door is closed. Do not take a snapshot if the door is open. Door closed means that the door_switch is "Closed"
-  # use the door entity_id from the input_text_devices.yaml file to get the entity_id of the door_switch
+    entity_id: "{{ states('input_text.canopy_illumination') }}"
+    above: 100
+  # Only run if the door is closed
   - condition: state
-    entity_id: '{{ states(''input_text.door_switch'') }}'
+    entity_id: "{{ states('input_text.door_switch') }}"
     state: 'closed'
 action:
   - service: camera.snapshot
     data:
-      entity_id: '{{ states(''input_text.canopy_camera'') }}'
-      filename: '/config/www/timelapse/{{ now().strftime(''%Y%m%d_%H%M%S'') }}.jpg'
+      entity_id: "{{ states('input_text.canopy_camera') }}"
+      filename: "/config/www/timelapse/{{ now().strftime('%Y%m%d_%H%M%S') }}.jpg"
   - service: influxdb.write
     data:
       database: growassistant
       data:
-        image: '{{ states(''input_text.canopy_camera'') }}'
+        image: "{{ states('input_text.canopy_camera') }}"
   - service: input_datetime.set_datetime
     data:
       entity_id: input_datetime.last_timelapse
-      time: '{{ now().strftime(''%Y-%m-%d %H:%M:%S'') }}'
+      time: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
 
 
