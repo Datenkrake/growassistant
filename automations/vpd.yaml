@@ -16,8 +16,8 @@ condition:
     entity_id: input_boolean.service_mode
     state: "off"
   - condition: state
-    entity_id: "{{ states('input_text.door_switch') }}" 
-    state: "off"
+    entity_id: binary_sensor.g1_water_door_switch
+    state: "closed"
 action:
   # Log that automation is triggered
   # - service: logger.log
