@@ -51,6 +51,10 @@ sensor:
     address: 0x23
     update_interval: 60s
     i2c_id: bus_a
+    filters:
+      - sliding_window_moving_average:
+          window_size: 15
+          send_every: 5
 
   - platform: ultrasonic
     trigger_pin: 1
