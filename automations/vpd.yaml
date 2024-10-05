@@ -17,7 +17,7 @@ condition:
     state: "off"
   - condition: state
     entity_id: binary_sensor.g1_water_door_switch
-    state: "closed"
+    state: "off"
 action:
   # Log that automation is triggered
   # - service: logger.log
