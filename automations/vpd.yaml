@@ -16,7 +16,7 @@ condition:
     entity_id: input_boolean.service_mode
     state: "off"
   - condition: state
-    entity_id: input_text.door_switch
+    entity_id: "{{ states('input_text.door_switch') }}" 
     state: "off"
 action:
   # Log that automation is triggered
