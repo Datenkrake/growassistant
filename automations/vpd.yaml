@@ -20,7 +20,7 @@ condition:
     state: "off"
 action:
   - variables:
-      target_vpd: "{{ states('input_number.target_vpd') | float }}"
+      vpd_target: "{{ states('input_number.vpd_target') | float }}"
       canopy_vpd: "{{ states('sensor.vpd') | float }}"
       intake_temp: "{{ states('sensor.g1_intake_bme680_temperature') | float }}"
       intake_hum: "{{ states('sensor.g1_intake_bme680_humidity') | float }}"
@@ -32,7 +32,7 @@ action:
       Ki: 0.1
       Kd: 0.01
       dt: 0.01
-      d_canopy_target: "{{ canopy_vpd - target_vpd }}"
+      d_canopy_target: "{{ canopy_vpd - vpd_target }}"
       previous_error: "{{ states('input_number.previous_d_canopy_target') | float(0) }}"
       intake_fan_speed: "{{ (state_attr('fan.g1_intake_intake_fan', 'percentage') | float(0)) / 100 }}"
       exhaust_fan_1_speed: "{{ (state_attr('fan.g1_exhaust_exhaust_fan_1', 'percentage') | float(0)) / 100 }}"
