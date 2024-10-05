@@ -1,48 +1,35 @@
-# This automation control the light gantry height based on the cola_detection_distance value
-# If the cola_detection_distance is less than the cola_detection_distance_threshold, the gantry will be raised
-# If the cola_detection_distance is greater than the cola_detection_distance_threshold, the gantry will remain at the current height
-# The cola_detection_distance_threshold is a global variable that can be changed in the frontend
-# The cola_detection_distance_threshold is defined in the input_numbers.yaml file
-
-# The automation will only run if the global_enable input_boolean is on
-# The global_enable input_boolean is defined in the input_bools.yaml file
-
-# The automation will only run if the door is closed. Do not raise the gantry if the door is open. Door closed means that the door_switch is "Closed"
-# The door_switch entity is defined in the input_text_devices.yaml file as door_switch
-
-# The automation will only run if the service_mode input_boolean is off
-# The service_mode input_boolean is defined in the input_bools.yaml file
-
-# The automation will only run if the light_height_control_enable input_boolean is on
-# The light_height_control_enable input_boolean is defined in the input_bools.yaml file
-
-# The automation will only run if the cola_detection_distance is less than the cola_detection_distance_threshold
-# The cola_detection_distance is defined in the input_text_devices.yaml file as cola_detection_distance
-# The cola_detection_distance_threshold is defined in the input_numbers.yaml file
-
-# The automation will change the light_height input_number by the light_raise_distance value
-# The light_raise_distance is a global variable that can be changed in the frontend
-# The light_raise_distance is defined in the input_numbers.yaml file
-
 # The entity that controls the light gantry height is defined in the input_text_devices.yaml file as light_gantry
 # The light_gantry can be moved by rest command move_light_distance with input parameter distance in mm in the file _rest_commands.yaml
 
-# This automation reads sensor.esp1_g1_light_distance_sensor every minute
+# 
+# The automation shall run every minute
+# The automation will not move the gantry if the gantry is already at the top position
+
+# the rest command moves the light 10mm up. The rest command is defined in the rest_commands.yaml file as move_light_up_10mm
 
 
-# - alias: "Light Height Automation"
-#   description: "Adjust light height based on distance sensor after a 10-minute delay."
-#   trigger:
-#     - platform: state
-#       entity_id: input_boolean.light_height_trigger
-#       to: "on"
-#   action:
-#     - delay: "00:10:00"
-#     - condition: numeric_state
-#       entity_id: sensor.esp1_g1_light_distance_sensor
-#       below: 0.30
-#     - service: rest_command.move_light_distance
-#     - service: system_log.write
-#       data:
-#         message: "Light height adjusted. Distance was {{ states('sensor.esp1_g1_light_distance_sensor') }}."
-#         level: warning
+alias: Light Height Automation
+description: 'This automation reads sensor.esp1_g1_light_distance_sensor every minute'
+trigger:
+  - platform: time_pattern
+    minutes: /1
+condition:
+  - condition: state
+    entity_id: input_boolean.global_enable
+    state: 'on'
+  - condition: state
+    entity_id: input_boolean.light_height_control_enable
+    state: 'on'
+  - condition: state
+    entity_id: input_boolean.service_mode
+    state: 'off'
+  - condition: state
+    entity_id: input_text.door_switch
+    state: 'Closed'
+  - condition: numeric_state
+    entity_id: input_text.cola_detection_distance
+    below: '{{ states(''input_number.cola_detection_distance_threshold'') }}'
+  - condition: template
+    value_template: '{{ states(''input_number.light_height'') | int > 15 }}'
+action:
+  - service: rest_command.move_light_up_10mm
