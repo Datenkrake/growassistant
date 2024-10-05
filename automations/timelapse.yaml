@@ -30,8 +30,11 @@ alias: Timelapse
 description: ''
 trigger:
   - platform: time_pattern
-    minutes: /{{ states('input_number.timelapse_period') }}
+    minutes: "/1"  # Run every minute
 condition:
+  - condition: template
+    value_template: >
+      {{ (now().timestamp() / 60) % states('input_number.timelapse_period') | int == 0 }}
   # Only run if global_enable is on
   - condition: state
     entity_id: input_boolean.global_enable
