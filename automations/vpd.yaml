@@ -53,7 +53,8 @@ action:
 
       # Control logic calculations
       intake_fan_speed: "{{ (state_attr('fan.g1_intake_intake_fan', 'percentage') | float(0)) / 100 }}"
-      exhaust_fan_speed: "{{ (state_attr('fan.g1_exhaust_exhaust_fan', 'percentage') | float(0)) / 100 }}"
+      exhaust_fan_1_speed: "{{ (state_attr('fan.g1_exhaust_exhaust_fan_1', 'percentage') | float(0)) / 100 }}"
+      exhaust_fan_2_speed: "{{ (state_attr('fan.g1_exhaust_exhaust_fan_2', 'percentage') | float(0)) / 100 }}"
       humidifier_dutycycle: "{{ (state_attr('fan.g1_humidifier_humidifier', 'percentage') | float(0)) }}"
 
       # Calculate the proportional term
@@ -151,9 +152,14 @@ action:
                       percentage: "{{ [ (intake_fan_speed + control_intake) * 100, 100 ] | min }}"
                   - service: fan.set_percentage
                     target:
-                      entity_id: fan.g1_exhaust_exhaust_fan
+                      entity_id: fan.g1_exhaust_exhaust_fan_1
                     data:
-                      percentage: "{{ [ (exhaust_fan_speed + control_exhaust) * 100, 100 ] | min }}"
+                      percentage: "{{ [ (exhaust_fan_1_speed + control_exhaust) * 100, 100 ] | min }}"
+                  - service: fan.set_percentage
+                    target:
+                      entity_id: fan.g1_exhaust_exhaust_fan_2
+                    data:
+                      percentage: "{{ [ (exhaust_fan_2_speed + control_exhaust) * 100, 100 ] | min }}"
               - conditions:
                   - condition: template
                     value_template: "{{ t_margin >= 0 and rh_margin > 0 }}"
@@ -170,9 +176,14 @@ action:
                       percentage: "{{ [ (intake_fan_speed - control_intake) * 100, 0 ] | max }}"
                   - service: fan.set_percentage
                     target:
-                      entity_id: fan.g1_exhaust_exhaust_fan
+                      entity_id: fan.g1_exhaust_exhaust_fan_1
                     data:
-                      percentage: "{{ [ (exhaust_fan_speed - control_exhaust) * 100, 0 ] | max }}"
+                      percentage: "{{ [ (exhaust_fan_1_speed - control_exhaust) * 100, 0 ] | max }}"
+                  - service: fan.set_percentage
+                    target:
+                      entity_id: fan.g1_exhaust_exhaust_fan_2
+                    data:
+                      percentage: "{{ [ (exhaust_fan_2_speed - control_exhaust) * 100, 0 ] | max }}"
       - conditions:
           - condition: template
             value_template: "{{ d_canopy_target <= 0 }}"
@@ -199,6 +210,11 @@ action:
                       percentage: "{{ [ (intake_fan_speed + control_intake) * 100, 100 ] | min }}"
                   - service: fan.set_percentage
                     target:
-                      entity_id: fan.g1_exhaust_exhaust_fan
+                      entity_id: fan.g1_exhaust_exhaust_fan_1
                     data:
-                      percentage: "{{ [ (exhaust_fan_speed + control_exhaust) * 100, 100 ] | min }}"
+                      percentage: "{{ [ (exhaust_fan_1_speed + control_exhaust) * 100, 100 ] | min }}"
+                  - service: fan.set_percentage
+                    target:
+                      entity_id: fan.g1_exhaust_exhaust_fan_2
+                    data:
+                      percentage: "{{ [ (exhaust_fan_2_speed + control_exhaust) * 100, 100 ] | min }}"
