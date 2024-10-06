@@ -28,7 +28,7 @@ trigger:
 condition:
   - condition: template
     value_template: >
-      {{ (now().timestamp() / 60) % (states('input_number.irrigation_period') | int) == 0 }}
+      {{ (now().timestamp() // 60) % (states('input_number.irrigation_period') | int) == 0 }}
 
   # Only run if global_enable is on
   - condition: state
