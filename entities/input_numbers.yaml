@@ -182,11 +182,22 @@ timelapse_period:
 irrigation_period:
   name: "Irrigation Period"
   initial: 60
-  min: 30
+  min: 1
   max: 1440
-  step: 30
+  step: 1
   mode: box
   unit_of_measurement: "minutes"
+  icon: mdi:water-pump
+
+# Irrigation duration in seconds
+irrigation_duration:
+  name: "Irrigation Duration"
+  initial: 10
+  min: 1
+  max: 60
+  step: 1
+  mode: box
+  unit_of_measurement: "seconds"
   icon: mdi:water-pump
 
 # Gantry Null position in meters

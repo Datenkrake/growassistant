@@ -46,7 +46,7 @@ action:
   - service: switch.turn_on
     target:
       entity_id: "{{ states('input_text.irrigation_pump') }}"
-  - delay: "{{ states('input_number.irrigation_period') }}"
+  - delay: "{{ states('input_number.irrigation_duration') }}"
   - service: switch.turn_off
     target:
       entity_id: "{{ states('input_text.irrigation_pump') }}"
