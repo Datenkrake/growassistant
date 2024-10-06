@@ -27,9 +27,8 @@ condition:
   - condition: state
     entity_id: input_text.door_switch
     state: 'Closed'
-  - condition: numeric_state
-    entity_id: input_text.cola_detection_distance
-    below: "{{ states('input_number.cola_detection_distance_threshold') }}"
+  - condition: template
+    value_template: "{{ states('input_text.cola_detection_distance') | float < states('input_number.cola_detection_distance_threshold') | float }}"
   - condition: template
     value_template: "{{ states('input_number.light_height') | int > 15 }}"
 action:
