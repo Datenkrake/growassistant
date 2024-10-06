@@ -29,9 +29,9 @@ action:
       rh_target: "{{ states('sensor.rh_target') | float }}"
       dayphase: "{{ states('sensor.dayphase') | int }}"
       Kp: 1
-      Ki: 0.1
-      Kd: 0.01
-      dt: 0.01
+      Ki: 1
+      Kd: 1
+      dt: 1
       d_canopy_target: "{{ canopy_vpd - vpd_target }}"
       previous_error: "{{ states('input_number.previous_d_canopy_target') | float(0) }}"
       intake_fan_speed: "{{ (state_attr('fan.g1_intake_intake_fan', 'percentage') | float(0)) / 100 }}"
