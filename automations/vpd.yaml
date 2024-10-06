@@ -46,21 +46,17 @@ action:
       exhaust_fan_max: "{{ states('input_number.exhaust_fan_speed_max') | float }}"
 
       # Control logic calculations
-      P_intake: "{{ Kp * d_canopy_target }}"
-      P_exhaust: "{{ Kp * d_canopy_target }}"
-      integral_intake: "{{ states('input_number.integral_intake') | float(0) + (d_canopy_target * dt) }}"
-      integral_exhaust: "{{ states('input_number.integral_exhaust') | float(0) + (d_canopy_target * dt) }}"
+      P_intake: "{{ Kp * d_canopy_target | abs }}"
+      P_exhaust: "{{ Kp * d_canopy_target | abs }}"
+      integral_intake: "{{ states('input_number.integral_intake') | float(0) + (d_canopy_target * dt) | abs }}"
+      integral_exhaust: "{{ states('input_number.integral_exhaust') | float(0) + (d_canopy_target * dt) | abs }}"
       integral_limit: 0.05
       integral_intake_clamped: "{{ [integral_limit, integral_intake] | min }}"
       integral_exhaust_clamped: "{{ [integral_limit, integral_exhaust] | min }}"
-      D_intake: "{{ Kd * (d_canopy_target - previous_error) / dt }}"
-      D_exhaust: "{{ Kd * (d_canopy_target - previous_error) / dt }}"
+      D_intake: "{{ Kd * (d_canopy_target - previous_error) / dt | abs }}"
+      D_exhaust: "{{ Kd * (d_canopy_target - previous_error) / dt | abs }}"
       control_intake: "{{ P_intake + Ki * integral_intake_clamped + D_intake | abs }}"
       control_exhaust: "{{ P_exhaust + Ki * integral_exhaust_clamped + D_exhaust | abs }}"
-      
-      # write control intake and exhaust to input_numbers for debugging
-      control_intake_debug: "{{ control_intake }}"
-      control_exhaust_debug: "{{ control_exhaust }}"
 
       min_temp: 15
       max_temp: "{{ intake_temp + (1 if dayphase == 0 else 5) }}"
@@ -72,12 +68,12 @@ action:
   - service: input_number.set_value
     data:
       entity_id: input_number.control_intake
-      value: "{{ control_intake_debug }}"
+      value: "{{ control_intake }}"
   - service: input_number.set_value
 
     data:
       entity_id: input_number.control_exhaust
-      value: "{{ control_exhaust_debug }}"
+      value: "{{ control_exhaust }}"
 
   # Update previous error value for next cycle
   - service: input_number.set_value
