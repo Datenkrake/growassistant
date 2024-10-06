@@ -232,3 +232,24 @@ light_to_canopy_distance:
   mode: box
   unit_of_measurement: "m"
   icon: mdi:lightbulb
+
+# control intake and exhaust for VPD debuggin
+control_intake:
+  name: "Control Intake"
+  initial: 0.1
+  min: -100
+  max: 100
+  step: 0.01
+  mode: box
+  unit_of_measurement: "m/s"
+  icon: mdi:fan
+
+control_exhaust:
+  name: "Control Exhaust"
+  initial: 0.1
+  min: -100
+  max: 100
+  step: 0.01
+  mode: box
+  unit_of_measurement: "m/s"
+  icon: mdi:fan

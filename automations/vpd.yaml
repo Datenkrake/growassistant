@@ -57,6 +57,10 @@ action:
       D_exhaust: "{{ Kd * (d_canopy_target - previous_error) / dt }}"
       control_intake: "{{ P_intake + Ki * integral_intake_clamped + D_intake }}"
       control_exhaust: "{{ P_exhaust + Ki * integral_exhaust_clamped + D_exhaust }}"
+      # write control intake and exhaust to input_numbers for debugging
+      control_intake_debug: "{{ control_intake }}"
+      control_exhaust_debug: "{{ control_exhaust }}"
+
       min_temp: 15
       max_temp: "{{ intake_temp + (1 if dayphase == 0 else 5) }}"
       t_margin: "{{ max_temp - canopy_temp }}"
@@ -64,6 +68,16 @@ action:
       rh_margin: "{{ rh_target - canopy_hum }}"
       rh_potential: "{{ canopy_hum - intake_hum }}"
 
+  - service: input_number.set_value
+    data:
+      entity_id: input_number.control_intake
+      value: "{{ control_intake_debug }}"
+  - service: input_number.set_value
+
+    data:
+      entity_id: input_number.control_exhaust
+      value: "{{ control_exhaust_debug }}"
+      
   # Update previous error value for next cycle
   - service: input_number.set_value
     data:
