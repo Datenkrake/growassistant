@@ -114,17 +114,17 @@ action:
                     target:
                       entity_id: fan.g1_intake_intake_fan
                     data:
-                      percentage: "{{ [ (intake_fan_speed + control_intake) * 100, intake_fan_max ] | min }}"
+                      percentage: "{{ [ [(intake_fan_speed + control_intake) * 100, intake_fan_max ] | min, intake_fan_min] | max }}"
                   - service: fan.set_percentage
                     target:
                       entity_id: fan.g1_exhaust_exhaust_fan_1
                     data:
-                      percentage: "{{ [ (exhaust_fan_1_speed + control_exhaust) * 100, exhaust_fan_max ] | min }}"
+                      percentage: "{{ [ [(exhaust_fan_1_speed + control_exhaust) * 100, exhaust_fan_max ] | min, exhaust_fan_min] | max }}"
                   - service: fan.set_percentage
                     target:
                       entity_id: fan.g1_exhaust_exhaust_fan_2
                     data:
-                      percentage: "{{ [ (exhaust_fan_2_speed + control_exhaust) * 100, exhaust_fan_max ] | min }}"
+                      percentage: "{{ [ [(exhaust_fan_2_speed + control_exhaust) * 100, exhaust_fan_max ] | min, exhaust_fan_min] | max }}"
               - conditions:
                   - condition: template
                     value_template: "{{ t_margin >= 0 and rh_margin > 0 }}"
@@ -133,17 +133,17 @@ action:
                     target:
                       entity_id: fan.g1_intake_intake_fan
                     data:
-                      percentage: "{{ [ (intake_fan_speed - control_intake) * 100, intake_fan_min ] | max }}"
+                      percentage: "{{ [ [(intake_fan_speed - control_intake) * 100, intake_fan_min ] | max, intake_fan_max] | min }}"
                   - service: fan.set_percentage
                     target:
                       entity_id: fan.g1_exhaust_exhaust_fan_1
                     data:
-                      percentage: "{{ [ (exhaust_fan_1_speed - control_exhaust) * 100, exhaust_fan_min ] | max }}"
+                      percentage: "{{ [ [(exhaust_fan_1_speed - control_exhaust) * 100, exhaust_fan_min ] | max, exhaust_fan_max] | min }}"
                   - service: fan.set_percentage
                     target:
                       entity_id: fan.g1_exhaust_exhaust_fan_2
                     data:
-                      percentage: "{{ [ (exhaust_fan_2_speed - control_exhaust) * 100, exhaust_fan_min ] | max }}"
+                      percentage: "{{ [ [(exhaust_fan_2_speed - control_exhaust) * 100, exhaust_fan_min ] | max, exhaust_fan_max] | min }}"
       - conditions:
           - condition: template
             value_template: "{{ d_canopy_target <= 0 }}"
@@ -162,14 +162,14 @@ action:
                     target:
                       entity_id: fan.g1_intake_intake_fan
                     data:
-                      percentage: "{{ [ (intake_fan_speed + control_intake) * 100, intake_fan_max ] | min }}"
+                      percentage: "{{ [ [(intake_fan_speed + control_intake) * 100, intake_fan_max ] | min, intake_fan_min] | max }}"
                   - service: fan.set_percentage
                     target:
                       entity_id: fan.g1_exhaust_exhaust_fan_1
                     data:
-                      percentage: "{{ [ (exhaust_fan_1_speed + control_exhaust) * 100, exhaust_fan_max ] | min }}"
+                      percentage: "{{ [[ (exhaust_fan_1_speed + control_exhaust) * 100, exhaust_fan_max ] | min, exhaust_fan_min] | max }}"
                   - service: fan.set_percentage
                     target:
                       entity_id: fan.g1_exhaust_exhaust_fan_2
                     data:
-                      percentage: "{{ [ (exhaust_fan_2_speed + control_exhaust) * 100, exhaust_fan_max ] | min }}"
+                      percentage: "{{ [ [(exhaust_fan_2_speed + control_exhaust) * 100, exhaust_fan_max ] | min, exhaust_fan_min] | max }}"
