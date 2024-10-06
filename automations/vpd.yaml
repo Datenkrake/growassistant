@@ -55,8 +55,9 @@ action:
       integral_exhaust_clamped: "{{ [integral_limit, integral_exhaust] | min }}"
       D_intake: "{{ Kd * (d_canopy_target - previous_error) / dt }}"
       D_exhaust: "{{ Kd * (d_canopy_target - previous_error) / dt }}"
-      control_intake: "{{ P_intake + Ki * integral_intake_clamped + D_intake }}"
-      control_exhaust: "{{ P_exhaust + Ki * integral_exhaust_clamped + D_exhaust }}"
+      control_intake: "{{ P_intake + Ki * integral_intake_clamped + D_intake | abs }}"
+      control_exhaust: "{{ P_exhaust + Ki * integral_exhaust_clamped + D_exhaust | abs }}"
+      
       # write control intake and exhaust to input_numbers for debugging
       control_intake_debug: "{{ control_intake }}"
       control_exhaust_debug: "{{ control_exhaust }}"
@@ -77,7 +78,7 @@ action:
     data:
       entity_id: input_number.control_exhaust
       value: "{{ control_exhaust_debug }}"
-      
+
   # Update previous error value for next cycle
   - service: input_number.set_value
     data:
