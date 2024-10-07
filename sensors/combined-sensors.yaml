@@ -34,7 +34,8 @@
       unit_of_measurement: "kPa"
       value_template: >
         {% set T = states('sensor.combined_temperature') | float(0) %}
-        {% set LT = T - 2 %}
+        {% set LTO = states('vpd_leaf_offset') | float(0) %}
+        {% set LT = T + LTO %}
         {% set RH = states('sensor.combined_humidity') | float(0) %}
         {% set ASVP = 610.78 * (2.71828 ** (T / (T + 237.3) * 17.2694)) %}
         {% set LSVP = 610.78 * (2.71828 ** (LT / (LT + 237.3) * 17.2694)) %}
