@@ -8,7 +8,7 @@ id: 'automations_light_intensity'
 description: 'This automation adjusts the light intensity based on the DLI setpoint'
 trigger:
   - platform: time_pattern
-    minutes: "/1"
+    minutes: "/2"
 condition:
   - condition: state
     entity_id: input_boolean.global_enable
