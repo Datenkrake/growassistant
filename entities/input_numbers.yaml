@@ -288,3 +288,96 @@ light_intensity_door_open:
   mode: box
   unit_of_measurement: "%"
   icon: mdi:lightbulb
+
+# light intensity 
+previous_dli_error:
+  name: "Previous DLI Error"
+  min: -100
+  max: 100
+  step: 0.01
+  mode: box
+  unit_of_measurement: "mol/m2/day"
+  icon: mdi:lightbulb
+
+integral_dli:
+  name: "Integral DLI"
+  min: 0
+  max: 100
+  step: 0.01
+  mode: box
+  unit_of_measurement: "mol/m2/day"
+  icon: mdi:lightbulb
+
+# p i d gains for light intensity control
+kp_dli:
+  name: "Kp DLI"
+  min: 0
+  max: 1
+  step: 0.01
+  mode: box
+  unit_of_measurement: "mol/m2/day"
+  icon: mdi:lightbulb
+
+ki_dli: 
+  name: "Ki DLI"
+  min: 0
+  max: 1
+  step: 0.01
+  mode: box
+  unit_of_measurement: "mol/m2/day"
+  icon: mdi:lightbulb
+
+kd_dli:
+  name: "Kd DLI"
+  min: 0
+  max: 1
+  step: 0.01
+  mode: box
+  unit_of_measurement: "mol/m2/day"
+  icon: mdi:lightbulb
+
+dt_dli:
+  name: "dt DLI"
+  min: 0
+  max: 1
+  step: 0.01
+  mode: box
+  unit_of_measurement: "mol/m2/day"
+  icon: mdi:lightbulb
+
+# vpd controller gains
+kp_vpd:
+  name: "Kp VPD"
+  min: 0
+  max: 1
+  step: 0.01
+  mode: box
+  unit_of_measurement: "kPa"
+  icon: mdi:water-percent
+
+ki_vpd:
+  name: "Ki VPD"
+  min: 0
+  max: 1
+  step: 0.01
+  mode: box
+  unit_of_measurement: "kPa"
+  icon: mdi:water-percent
+
+kd_vpd:
+  name: "Kd VPD"
+  min: 0
+  max: 1
+  step: 0.01
+  mode: box
+  unit_of_measurement: "kPa"
+  icon: mdi:water-percent
+
+dt_vpd:
+  name: "dt VPD"
+  min: 0
+  max: 1
+  step: 0.01
+  mode: box
+  unit_of_measurement: "kPa"
+  icon: mdi:water-percent
