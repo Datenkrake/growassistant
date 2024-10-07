@@ -22,8 +22,8 @@ condition:
 
 action:
   - variables:
-      dli_target: "{{ states('sensor.dli_target') | float }}"
-      dli_current: "{{ states('sensor.dli') | float }}"
+      dli_target: "{{ states('sensor.dli_target') | float(0) }}"
+      dli_current: "{{ states('sensor.dli') | float(0) }}"
       previous_error: "{{ states('input_number.previous_dli_error') | float(0) }}"
       Kp: 1
       Ki: 1
@@ -36,18 +36,21 @@ action:
       derivative: "{{ Kd * (d_dli_target - previous_error) / dt | abs }}"
       control: "{{ Kp * d_dli_target | abs + Ki * integral_clamped + derivative | abs }}"
       light_intensity: "{{ (state_attr('light.g1_canopy_light', 'brightness') | float(0)) / 255 }}"
-      light_intensity_new: "{{ [0, [1, light_intensity + control] | min] | max * 255 | int }}"
+      light_intensity_new: >
+        {% set new_intensity = light_intensity + control %}
+        {% set clamped_intensity = [1, [0, new_intensity] | min] | max %}
+        {{ (clamped_intensity * 255) | int }}
       door_state: "{{ states('binary_sensor.g1_water_door_switch') }}"
       light_intensity_door_open: "{{ states('input_number.light_intensity_door_open') | int }}"
-      # if the door is open, set the light intensity to light_intensity_door_open
-      light_intensity_new: "{{ light_intensity_door_open if door_state == 'on' else light_intensity_new }}"
+      # If the door is open, set the light intensity to light_intensity_door_open
+      final_light_intensity: "{{ light_intensity_door_open if door_state == 'on' else light_intensity_new }}"
   - service: light.turn_on
     target:
       entity_id: light.g1_qbar1_pwm_qbar1
     data:
-      brightness: "{{ light_intensity_new }}"
+      brightness: "{{ final_light_intensity }}"
   - service: light.turn_on
     target:
       entity_id: light.g1_qbar2_pwm_qbar2
     data:
-      brightness: "{{ light_intensity_new }}"
+      brightness: "{{ final_light_intensity }}"
