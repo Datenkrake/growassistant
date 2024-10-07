@@ -30,6 +30,6 @@ condition:
   - condition: template
     value_template: "{{ states('sensor.esp1_g1_light_distance_sensor') | float < states('input_number.cola_detection_distance_threshold') | float }}"
   - condition: template
-    value_template: "{{ states('sensor.g1_qbar1_ultrasonic_sensor') | int > 15 }}"
+    value_template: "{{ states('sensor.g1_qbar1_ultrasonic_sensor') | int > 0.15 }}"
 action:
   - service: rest_command.move_light_up_10mm
