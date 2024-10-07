@@ -1,0 +1,31 @@
+alias: Water Circulation
+id: 'automations_water_circulation'
+description: ''
+trigger:
+  - platform: time_pattern
+    minutes: "/1"  # Run every minute
+condition:
+  - condition: template
+    value_template: >
+      {{ (now().timestamp() // 60) % (states('input_number.water_circulation_period') | int) == 0 }}
+
+  # Only run if global_enable is on
+  - condition: state
+    entity_id: input_boolean.global_enable
+    state: 'on'
+  # Only run if irrigation_enable is on
+  - condition: state
+    entity_id: input_boolean.irrigation_enable
+    state: 'on'
+  # Only run if service_mode is off
+  - condition: state
+    entity_id: input_boolean.service_mode
+    state: 'off'
+action:
+  - service: switch.turn_on
+    target:
+      entity_id: "{{ states('input_text.circulation_pump') }}"
+  - delay: "{{ states('input_number.water_circulation_duration') }}"
+  - service: switch.turn_off
+    target:
+      entity_id: "{{ states('input_text.circulation_pump') }}"
