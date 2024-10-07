@@ -49,12 +49,12 @@ sensor:
   - platform: bh1750
     name: "G1 BH1750 Illuminance"
     address: 0x23
-    update_interval: 60s
+    update_interval: 1s
     i2c_id: bus_a
     filters:
       - sliding_window_moving_average:
-          window_size: 15
-          send_every: 5
+          window_size: 60
+          send_every: 60
 
   - platform: ultrasonic
     trigger_pin: 1

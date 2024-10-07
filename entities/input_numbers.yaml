@@ -313,7 +313,7 @@ kp_dli:
   name: "Kp DLI"
   min: 0
   max: 1
-  step: 0.01
+  step: 0.001
   mode: box
   unit_of_measurement: "mol/m2/day"
   icon: mdi:lightbulb
@@ -322,7 +322,7 @@ ki_dli:
   name: "Ki DLI"
   min: 0
   max: 1
-  step: 0.01
+  step: 0.001
   mode: box
   unit_of_measurement: "mol/m2/day"
   icon: mdi:lightbulb
@@ -331,7 +331,7 @@ kd_dli:
   name: "Kd DLI"
   min: 0
   max: 1
-  step: 0.01
+  step: 0.001
   mode: box
   unit_of_measurement: "mol/m2/day"
   icon: mdi:lightbulb
@@ -350,7 +350,7 @@ kp_vpd:
   name: "Kp VPD"
   min: 0
   max: 1
-  step: 0.01
+  step: 0.001
   mode: box
   unit_of_measurement: "kPa"
   icon: mdi:water-percent
@@ -359,7 +359,7 @@ ki_vpd:
   name: "Ki VPD"
   min: 0
   max: 1
-  step: 0.01
+  step: 0.001
   mode: box
   unit_of_measurement: "kPa"
   icon: mdi:water-percent
@@ -368,7 +368,7 @@ kd_vpd:
   name: "Kd VPD"
   min: 0
   max: 1
-  step: 0.01
+  step: 0.001
   mode: box
   unit_of_measurement: "kPa"
   icon: mdi:water-percent
@@ -381,3 +381,13 @@ dt_vpd:
   mode: box
   unit_of_measurement: "kPa"
   icon: mdi:water-percent
+
+# max light intensity in percentage
+light_intensity_max:
+  name: "Light Intensity Max"
+  min: 0
+  max: 100
+  step: 1
+  mode: box
+  unit_of_measurement: "%"
+  icon: mdi:lightbulb
