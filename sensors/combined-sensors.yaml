@@ -188,7 +188,7 @@
           {% set dli_target = states('input_number.dli_vegetative_start') + x * (states('input_number.dli_vegetative_end') - states('input_number.dli_vegetative_start')) %}
           {{ dli_target }}
         {% elif now > start_flipping %}
-          {% set x = (now - start_flipping) / (start_generative - flip_date) %}
+          {% set x = (now - start_flipping) / (start_generative - start_flipping) %}
           {% set dli_target = states('input_number.dli_vegetative_end') + x * (states('input_number.dli_generative_start') - states('input_number.dli_vegetative_end')) %}
           {{ dli_target }}
         {% elif now > start_generative %}
