@@ -176,28 +176,27 @@
       unit_of_measurement: "mol/m²/day"
       value_template: >
         {% set start_vegetative = as_timestamp(states('input_datetime.vegetative_start')) %}
+        {% set end_vegetative = as_timstamp(states('input_datetime.vegetative_end')) %}
         {% set start_flipping = as_timestamp(states('input_datetime.flip_date')) %}
         {% set start_generative = as_timestamp(states('input_datetime.generative_start')) %}
+        {% set generative_peak = as_timestamp(states('input_datetime.generative_peak')) %}
+        {% set end_generative = as_timestamp(states('input_datetime.generative_end')) %}
         {% set start_drying = as_timestamp(states('input_datetime.drying_start')) %}
         {% set now = as_timestamp(now()) %}
         {% if now > start_vegetative %}
-          # linear interpolation between vegetative_start and vegetative_end
-          {% set x = (now - vegetative_start) / (vegetative_end - vegetative_start) %}
+          {% set x = (now - start_vegetative) / (end_vegetative - start_vegetative) %}
           {% set dli_target = states('input_number.dli_vegetative_start') + x * (states('input_number.dli_vegetative_end') - states('input_number.dli_vegetative_start')) %}
           {{ dli_target }}
         {% elif now > start_flipping %}
-          # linear interpolation between vegetative_end and generative_start
-          {% set x = (now - flip_date) / (generative_start - flip_date) %}
+          {% set x = (now - start_flipping) / (start_generative - flip_date) %}
           {% set dli_target = states('input_number.dli_vegetative_end') + x * (states('input_number.dli_generative_start') - states('input_number.dli_vegetative_end')) %}
           {{ dli_target }}
         {% elif now > start_generative %}
-          # linear interpolation between generative_start and generative_peak
-          {% set x = (now - generative_start) / (generative_peak - generative_start) %}
+          {% set x = (now - start_generative) / (generative_peak - start_generative) %}
           {% set dli_target = states('input_number.dli_generative_start') + x * (states('input_number.dli_generative_peak') - states('input_number.dli_generative_start')) %}
           {{ dli_target }}
         {% elif now > start_drying %}
-          # linear interpolation between generative_peak and drying_end
-          {% set x = (now - generative_peak) / (drying_end - generative_peak) %}
+          {% set x = (now - generative_peak) / (start_drying - generative_peak) %}
           {% set dli_target = states('input_number.dli_generative_peak') + x * (states('input_number.dli_drying_end') - states('input_number.dli_generative_peak')) %}
           {{ dli_target }}
         {% else %}
