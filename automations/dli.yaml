@@ -26,19 +26,27 @@ action:
       dli_target: "{{ states('sensor.dli_target') | float(0) }}"
       dli_current: "{{ states('sensor.dli') | float(0) }}"
       previous_error: "{{ states('input_number.previous_dli_error') | float(0) }}"
-      # Kp: 0.01
-      # Ki: 0.01
-      # Kd: 0.01
-      # dt: 0.01
       Kp: "{{ states('input_number.Kp_dli') | float(0) }}"
       Ki: "{{ states('input_number.Ki_dli') | float(0) }}"
       Kd: "{{ states('input_number.Kd_dli') | float(0) }}"
       dt: "{{ states('input_number.dt_dli') | float(0) }}"
+      
+      # Calculate the difference between current and target DLI
       d_dli_target: "{{ dli_current - dli_target }}"
-      integral: "{{ states('input_number.integral_dli') | float(0) + (d_dli_target * dt) | abs }}"
-      derivative: "{{ Kd * (d_dli_target - previous_error) / dt | abs }}"
-      control: "{{ Kp * d_dli_target | abs + Ki * integral + derivative | abs }}"
+
+      # Integral term (accumulating error over time)
+      integral: "{{ states('input_number.integral_dli') | float(0) + (d_dli_target * dt) }}"
+
+      # Derivative term (rate of change of error)
+      derivative: "{{ Kd * (d_dli_target - previous_error) / dt }}"
+
+      # The overall control calculation, without abs to allow for both increases and decreases
+      control: "{{ Kp * d_dli_target + Ki * integral + derivative }}"
+
+      # Current light intensity as a float between 0 and 1
       light_intensity: "{{ (state_attr('light.g1_canopy_light', 'brightness') | float(0)) / 255 }}"
+
+      # Calculate the new light intensity, ensuring it remains within bounds
       light_intensity_new: >
         {% set new_intensity = light_intensity + control %}
         {% if new_intensity > light_intensity_max %}
@@ -49,14 +57,16 @@ action:
           {{ (new_intensity * 255) | int }}
         {% endif %}
 
+      # State of the door and handling when it's open
       door_state: "{{ states('binary_sensor.g1_water_door_switch') }}"
       light_intensity_door_open: "{{ states('input_number.light_intensity_door_open') | int }}"
-      # If the door is open, set the light intensity to light_intensity_door_open
+
+      # Final light intensity, accounting for the door state
       final_light_intensity: >
         {% if door_state == 'on' %}
-          {{ (light_intensity_door_open) | int }}
+          {{ light_intensity_door_open }}
         {% else %}
-          {{ (light_intensity_new) | int }}
+          {{ light_intensity_new }}
         {% endif %}
   - service: light.turn_on
     target:
@@ -77,5 +87,6 @@ action:
     data:
       entity_id: input_number.integral_dli
       value: "{{ integral }}"
+
 
 
