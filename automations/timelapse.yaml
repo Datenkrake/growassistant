@@ -60,11 +60,6 @@ action:
     data:
       entity_id: camera.g1_cam_my_camera
       filename: "/config/www/timelapse/{{ now().strftime('%Y%m%d_%H%M%S') }}.jpg"
-  - service: influxdb.write
-    data:
-      database: growassistant
-      data:
-        image: camera.g1_cam_my_camera
   - service: input_datetime.set_datetime
     data:
       entity_id: input_datetime.last_timelapse
