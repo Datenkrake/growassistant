@@ -49,7 +49,7 @@ condition:
     above: '0'
   # Only run if the light is on (i.e., canopy_illumination > 100 lux)
   - condition: numeric_state
-    entity_id: "{{ states('input_text.canopy_illumination') }}"
+    entity_id: sensor.g1_canopy_g1_bh1750_illuminance
     above: 100
   # Only run if the door is closed
   - condition: state
@@ -58,13 +58,13 @@ condition:
 action:
   - service: camera.snapshot
     data:
-      entity_id: "{{ states('input_text.canopy_camera') }}"
+      entity_id: camera.g1_cam_my_camera
       filename: "/config/www/timelapse/{{ now().strftime('%Y%m%d_%H%M%S') }}.jpg"
   - service: influxdb.write
     data:
       database: growassistant
       data:
-        image: "{{ states('input_text.canopy_camera') }}"
+        image: camera.g1_cam_my_camera
   - service: input_datetime.set_datetime
     data:
       entity_id: input_datetime.last_timelapse
