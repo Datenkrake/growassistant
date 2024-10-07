@@ -42,11 +42,11 @@ action:
       light_intensity_new: >
         {% set new_intensity = light_intensity + control %}
         {% if new_intensity > light_intensity_max %}
-          light_intensity_max * 255
+          {{ (light_intensity_max * 255) | int }}
         {% elif new_intensity < 0 %}
-          0
+          {{ 0 }}
         {% else %}
-          new_intensity * 255
+          {{ (new_intensity * 255) | int }}
         {% endif %}
 
       door_state: "{{ states('binary_sensor.g1_water_door_switch') }}"
