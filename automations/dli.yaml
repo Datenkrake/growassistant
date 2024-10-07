@@ -48,7 +48,7 @@ action:
 
       # Calculate the new light intensity, ensuring it remains within bounds
       light_intensity_new: >
-        {% set new_intensity = light_intensity + control %}
+        {% set new_intensity = light_intensity - control %}
         {% if new_intensity > light_intensity_max %}
           {{ (light_intensity_max * 255) | int }}
         {% elif new_intensity < 0 %}
