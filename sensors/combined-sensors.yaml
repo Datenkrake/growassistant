@@ -195,9 +195,7 @@
           {% set dli_target = states('input_number.dli_generative_start') + x * (states('input_number.dli_generative_peak') - states('input_number.dli_generative_start')) %}
           {{ dli_target }}
         {% elif now > start_drying %}
-          {% set x = (now - generative_peak) / (start_drying - generative_peak) %}
-          {% set dli_target = states('input_number.dli_generative_peak') + x * (states('input_number.dli_drying_end') - states('input_number.dli_generative_peak')) %}
-          {{ dli_target }}
+          {{ 0 }}
         {% else %}
           {{ 0 }}
         {% endif %}
