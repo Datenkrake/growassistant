@@ -52,7 +52,12 @@ action:
       door_state: "{{ states('binary_sensor.g1_water_door_switch') }}"
       light_intensity_door_open: "{{ states('input_number.light_intensity_door_open') | int }}"
       # If the door is open, set the light intensity to light_intensity_door_open
-      final_light_intensity: "{{ light_intensity_door_open if door_state == 'on' else light_intensity_new }}"
+      final_light_intensity: >
+        {% if door_state == 'on' %}
+          {{ light_intensity_door_open }}
+        {% else %}
+          {{ (light_intensity_new * 255) | int }}
+        {% endif %}
   - service: light.turn_on
     target:
       entity_id: light.g1_qbar1_pwm_qbar1
