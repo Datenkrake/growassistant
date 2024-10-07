@@ -49,9 +49,9 @@ sensor:
     trigger_pin: GPIO9
     echo_pin: GPIO10
     name: "Ultrasonic Sensor"
-    update_interval: 10s
+    update_interval: 1s
     timeout: 2m
     filters:
       - sliding_window_moving_average:
-          window_size: 6   # Number of readings to average
-          send_every: 6    # How often to send the averaged result
+          window_size: 60   # Number of readings to average
+          send_every: 60    # How often to send the averaged result

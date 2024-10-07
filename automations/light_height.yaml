@@ -13,7 +13,7 @@ id: 'automations_light_height'
 description: 'This automation reads sensor.esp1_g1_light_distance_sensor every minute'
 trigger:
   - platform: time_pattern
-    minutes: /1
+    minutes: /15
 condition:
   - condition: state
     entity_id: input_boolean.global_enable
