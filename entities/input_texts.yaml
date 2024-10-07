@@ -5,42 +5,36 @@
 # Cultivar name
 cultivar_name:
   name: Cultivar Name
-  initial: "Cultivar 1"
   mode: text
   icon: mdi:flower
 
 # Cultivar Breeder
 cultivar_breeder:
   name: Cultivar Breeder
-  initial: "Breeder Name"
   mode: text
   icon: mdi:flower
 
 # Remarks
 remarks:
   name: Remarks
-  initial: "Remarks"
   mode: text
   icon: mdi:flower
 
 # Medium
 medium:
   name: Medium
-  initial: "Medium"
   mode: text
   icon: mdi:flower
 
 # Light
 light:
   name: Light
-  initial: "Light"
   mode: text
   icon: mdi:flower
 
 # Nutrients
 nutrients:
   name: Nutrients
-  initial: "Nutrients"
   mode: text
   icon: mdi:flower
 

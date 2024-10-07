@@ -2,46 +2,38 @@
 
 global_enable:
   name: Global Enable
-  initial: "off"
   icon: mdi:flower
   
 
 irrigation_enable:
   name: Irrigation Enable
-  initial: "off"
   icon: mdi:flower
   
 
 service_mode:
   name: Service Mode
-  initial: "off"
   icon: mdi:flower
   
 
 silent_mode:
   name: Silent Mode
-  initial: "off"
   icon: mdi:flower
   
 
 photolight_mode:
   name: Photolight Mode
-  initial: "off"
   icon: mdi:flower
   
 
 timelapse_enable:
   name: Timelapse Enable
-  initial: "off"
   icon: mdi:flower
   
 
 light_height_control_enable:
   name: Light Height Control Enable
-  initial: "off"
   icon: mdi:flower
   
 vpd_control_enable:
   name: VPD Control Enable
-  initial: "off"
   icon: mdi:flower

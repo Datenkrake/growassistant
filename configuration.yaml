@@ -54,3 +54,14 @@ influxdb:
   password: growassistant
   max_retries: 3
   default_measurement: state
+
+recorder:
+  include:
+    domains:
+      - input_number
+      - input_text
+      - input_datetime
+      - input_boolean
+  # exclude:
+  #   entities:
+  #     - input_number.some_excluded_entity
