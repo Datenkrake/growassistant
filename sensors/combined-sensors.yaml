@@ -127,15 +127,17 @@
       value_template: >
         {% set sunrise_time = states('input_datetime.sunrise_time') %}
         {% set today = now().strftime('%Y-%m-%d') %}
+        {% set yesterday = (as_timestamp(today) - 86400) | timestamp_custom('%Y-%m-%d', true) %}
         {% set sunrise_time_today = as_timestamp(today + ' ' + sunrise_time) %}
+        {% set sunrise_time_yesterday = as_timestamp(yesterday + ' ' + sunrise_time) %}
         {% set day_length = states('sensor.day_length') | float %}
         {% set now_time = as_timestamp(now()) %}
         
         {% if sunrise_time_today is none or day_length == 0 %}
           0
-        {% elif now_time < sunrise_time_today %}
-          0
-        {% elif now_time < sunrise_time_today + day_length * 3600 %}
+        {% elif now_time < sunrise_time_yesterday + day_length * 3600 %}
+          1
+        {% elif now_time > sunrise_time_today and now_time < sunrise_time_today + day_length * 3600 %}
           1
         {% else %}
           0
