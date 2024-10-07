@@ -176,7 +176,7 @@
       unit_of_measurement: "mol/m²/day"
       value_template: >
         {% set start_vegetative = as_timestamp(states('input_datetime.vegetative_start')) %}
-        {% set end_vegetative = as_timstamp(states('input_datetime.vegetative_end')) %}
+        {% set end_vegetative = as_timestamp(states('input_datetime.vegetative_end')) %}
         {% set start_flipping = as_timestamp(states('input_datetime.flip_date')) %}
         {% set start_generative = as_timestamp(states('input_datetime.generative_start')) %}
         {% set generative_peak = as_timestamp(states('input_datetime.generative_peak')) %}
