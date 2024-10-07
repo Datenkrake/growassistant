@@ -47,6 +47,15 @@ dli_vegetative_end:
   unit_of_measurement: "mol/m2/day"
   icon: mdi:weather-sunny
 
+dli_generative_start:
+  name: "DLI Generative Start"
+  min: 0
+  max: 100
+  step: 1
+  mode: box
+  unit_of_measurement: "mol/m2/day"
+  icon: mdi:weather-sunny
+
 dli_generative_peak:
   name: "DLI Generative Peak"
   min: 0
