@@ -34,6 +34,7 @@ automation:
   - !include automations/timelapse.yaml
   - !include automations/vpd.yaml
   - !include automations/water_autopot.yaml
+  - !include automations/dli.yaml
 
 rest_command: !include rest_commands.yaml
 script: !include scripts.yaml
