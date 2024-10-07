@@ -53,8 +53,8 @@ condition:
     above: 100
   # Only run if the door is closed
   - condition: state
-    entity_id: "{{ states('input_text.door_switch') }}"
-    state: 'closed'
+    entity_id: binary_sensor.g1_water_door_switch
+    state: 'off'
 action:
   - service: camera.snapshot
     data:
