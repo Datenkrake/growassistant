@@ -28,14 +28,14 @@ action:
       canopy_hum: "{{ states('sensor.combined_humidity') | float }}"
       rh_target: "{{ states('sensor.rh_target') | float }}"
       dayphase: "{{ states('sensor.dayphase') | int }}"
-      # Kp: 1
-      Kp: "{{ states('input_number.kp_vpd') | float(0) }}"
-      Ki: "{{ states('input_number.ki_vpd') | float(0) }}"
-      Kd: "{{ states('input_number.kd_vpd') | float(0) }}"
-      dt: "{{ states('input_number.dt_vpd') | float(0) }}"
-      # Ki: 1
-      # Kd: 1
-      # dt: 1
+      # Kp: "{{ states('input_number.kp_vpd') | float(0) }}"
+      # Ki: "{{ states('input_number.ki_vpd') | float(0) }}"
+      # Kd: "{{ states('input_number.kd_vpd') | float(0) }}"
+      # dt: "{{ states('input_number.dt_vpd') | float(0) }}"
+      Kp: 1
+      Ki: 1
+      Kd: 1
+      dt: 1
       d_canopy_target: "{{ canopy_vpd - vpd_target }}"
       previous_error: "{{ states('input_number.previous_d_canopy_target') | float(0) }}"
       intake_fan_speed: "{{ (state_attr('fan.g1_intake_intake_fan', 'percentage') | float(0)) / 100 }}"
