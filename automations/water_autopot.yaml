@@ -61,7 +61,7 @@ trigger:
 condition:
   - condition: template
     value_template: >
-      {{ (now().timestamp() // 60) % (states('input_number.circulation_period') | int) == 0 }}
+      {{ (now().timestamp() // 60) % (states('input_number.water_circulation_period') | int) == 0 }}
 
   # Only run if global_enable is on
   - condition: state
@@ -79,7 +79,7 @@ action:
   - service: switch.turn_on
     target:
       entity_id: "{{ states('input_text.circulation_pump') }}"
-  - delay: "{{ states('input_number.circulation_duration') }}"
+  - delay: "{{ states('input_number.water_circulation_duration') }}"
   - service: switch.turn_off
     target:
       entity_id: "{{ states('input_text.circulation_pump') }}"
