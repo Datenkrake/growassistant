@@ -86,7 +86,7 @@ action:
   - service: input_number.set_value
     data:
       entity_id: input_number.integral_dli
-      value: "{{ integral }}"
+      value: "{{ [100, [-100, integral] | max] | min }}"
 
 
 
