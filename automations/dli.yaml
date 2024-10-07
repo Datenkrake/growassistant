@@ -37,7 +37,7 @@ action:
       d_dli_target: "{{ dli_current - dli_target }}"
       integral: "{{ states('input_number.integral_dli') | float(0) + (d_dli_target * dt) | abs }}"
       derivative: "{{ Kd * (d_dli_target - previous_error) / dt | abs }}"
-      control: "{{ Kp * d_dli_target | abs + Ki * integral_clamped + derivative | abs }}"
+      control: "{{ Kp * d_dli_target | abs + Ki * integral + derivative | abs }}"
       light_intensity: "{{ (state_attr('light.g1_canopy_light', 'brightness') | float(0)) / 255 }}"
       light_intensity_new: >
         {% set new_intensity = light_intensity + control %}
