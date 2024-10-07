@@ -61,24 +61,47 @@ action:
       door_state: "{{ states('binary_sensor.g1_water_door_switch') }}"
       light_intensity_door_open: "{{ states('input_number.light_intensity_door_open') | int }}"
 
+      dayphase_target: "{{ states('sensor.dayphase_target') | int }}"
+
       # Final light intensity, accounting for the door state
       final_light_intensity: >
-        {% if door_state == 'on' %}
-          {{ light_intensity_door_open }}
+        {% if dayphase_target == 1 %}
+          {% if door_state == 'on' %}
+            {{ light_intensity_door_open }}
+          {% else %}
+            {{ light_intensity_new }}
+          {% endif %}
         {% else %}
-          {{ light_intensity_new }}
+          {{ 0 }}
         {% endif %}
-  - service: light.turn_on
-    target:
-      entity_id: light.g1_qbar1_pwm_qbar1
-    data:
-      brightness: "{{ final_light_intensity }}"
-  - service: light.turn_on
-    target:
-      entity_id: light.g1_qbar2_pwm_qbar2
-    data:
-      brightness: "{{ final_light_intensity }}"
-  
+      
+      # if light intensity is 0, call light.turn_off
+      # if light intensity is not 0, call light.turn_on
+  - choose:
+    - conditions:
+        condition: template
+        value_template: "{{ final_light_intensity == 0 }}"
+      sequence:
+        - service: light.turn_off
+          target:
+            entity_id: light.g1_qbar1_pwm_qbar1
+        - service: light.turn_off
+          target:
+            entity_id: light.g1_qbar2_pwm_qbar2
+    - conditions:
+        condition: template
+        value_template: "{{ final_light_intensity != 0 }}"
+      sequence:
+        - service: light.turn_on
+          target:
+            entity_id: light.g1_qbar1_pwm_qbar1
+          data:
+            brightness: "{{ final_light_intensity }}"
+        - service: light.turn_on
+          target:
+            entity_id: light.g1_qbar2_pwm_qbar2
+          data:
+            brightness: "{{ final_light_intensity }}"
   - service: input_number.set_value
     data:
       entity_id: input_number.previous_dli_error
