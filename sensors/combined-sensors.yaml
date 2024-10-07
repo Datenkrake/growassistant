@@ -75,15 +75,15 @@
         {% set start_drying = as_timestamp(states('input_datetime.drying_start')) %}
         {% set now = as_timestamp(now()) %}
         {% if now < start_vegetative %}
-          "Pre-vegetative"
+          Pre-vegetative
         {% elif now < start_flipping %}
-          "Vegetative"
+          Vegetative
         {% elif now < start_generative %}
-          "Flipping"
+          Flipping
         {% elif now < start_drying %}
-          "Generative"
+          Generative
         {% else %}
-          "Drying"
+          Drying
         {% endif %}
 
 
