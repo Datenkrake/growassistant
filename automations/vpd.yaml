@@ -29,9 +29,9 @@ action:
       rh_target: "{{ states('sensor.rh_target') | float }}"
       dayphase: "{{ states('sensor.dayphase') | int }}"
       # Kp: 1
-      Kp: "{{ states('input_number.Kp_vpd') | float(0) }}"
-      Ki: "{{ states('input_number.Ki_vpd') | float(0) }}"
-      Kd: "{{ states('input_number.Kd_vpd') | float(0) }}"
+      Kp: "{{ states('input_number.kp_vpd') | float(0) }}"
+      Ki: "{{ states('input_number.ki_vpd') | float(0) }}"
+      Kd: "{{ states('input_number.kd_vpd') | float(0) }}"
       dt: "{{ states('input_number.dt_vpd') | float(0) }}"
       # Ki: 1
       # Kd: 1
