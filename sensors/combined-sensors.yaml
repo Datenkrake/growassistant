@@ -119,21 +119,28 @@
                 
     # dayphase_target is 0 for night and 1 for day, decide based on day_length and sunrise_time
     # sunrise_time is the time of sunrise, as defined in input_datetime.yaml, the dayphase_target shall be 0 before sunrise_time and 1 after sunrise_time for the duration of the day_length
+    # the sunrise_time does not contain a date, so todays date shall be added to the sunrise_time
     # all times are calculated in timestamp, so sunrise_time is the time of sunrise in seconds since epoch, this avoid issues with rolling over midnight
     # day_length is in hours, so the day_length shall be converted to seconds
     dayphase_target:
       friendly_name: "Day Phase Target"
       value_template: >
-        {% set sunrise_time = as_timestamp(states('input_datetime.sunrise_time')) %}
+        {% set sunrise_time = states('input_datetime.sunrise_time') %}
+        {% set today = now().strftime('%Y-%m-%d') %}
+        {% set sunrise_time_today = as_timestamp(today + ' ' + sunrise_time) %}
         {% set day_length = states('sensor.day_length') | float %}
-        {% set now = as_timestamp(now()) %}
-        {% if now < sunrise_time %}
-          {{ 0 }}
-        {% elif now < sunrise_time + day_length * 3600 %}
-          {{ 1 }}
+        {% set now_time = as_timestamp(now()) %}
+        
+        {% if sunrise_time_today is none or day_length == 0 %}
+          0
+        {% elif now_time < sunrise_time_today %}
+          0
+        {% elif now_time < sunrise_time_today + day_length * 3600 %}
+          1
         {% else %}
-          {{ 0 }}
-        {% endif %}   
+          0
+        {% endif %}
+
 
 
     # DLI = PPFD * 0.0036 * 3600 * 24, where 0.0036 is the conversion factor from µmol/m²/s to µmol/m²/day
