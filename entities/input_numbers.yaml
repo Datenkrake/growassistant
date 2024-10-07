@@ -269,3 +269,13 @@ control_exhaust:
   mode: box
   unit_of_measurement: "m/s"
   icon: mdi:fan
+
+# light intensity in % when door is open
+light_intensity_door_open:
+  name: "Light Intensity Door Open"
+  min: 0
+  max: 100
+  step: 1
+  mode: box
+  unit_of_measurement: "%"
+  icon: mdi:lightbulb
