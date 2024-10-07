@@ -176,7 +176,6 @@
       unit_of_measurement: "mol/m²/day"
       value_template: >
         {% set start_vegetative = as_timestamp(states('input_datetime.vegetative_start')) %}
-        {% set end_vegetative = as_timestamp(states('input_datetime.vegetative_end')) %}
         {% set start_flipping = as_timestamp(states('input_datetime.flip_date')) %}
         {% set start_generative = as_timestamp(states('input_datetime.generative_start')) %}
         {% set generative_peak = as_timestamp(states('input_datetime.generative_peak')) %}
@@ -184,7 +183,7 @@
         {% set start_drying = as_timestamp(states('input_datetime.drying_start')) %}
         {% set now = as_timestamp(now()) %}
         {% if now > start_vegetative %}
-          {% set x = (now - start_vegetative) / (end_vegetative - start_vegetative) %}
+          {% set x = (now - start_vegetative) / (start_flipping - start_vegetative) %}
           {% set dli_target = states('input_number.dli_vegetative_start') + x * (states('input_number.dli_vegetative_end') - states('input_number.dli_vegetative_start')) %}
           {{ dli_target }}
         {% elif now > start_flipping %}
