@@ -182,18 +182,7 @@
         {% set end_generative = as_timestamp(states('input_datetime.generative_end')) %}
         {% set start_drying = as_timestamp(states('input_datetime.drying_start')) %}
         {% set now = as_timestamp(now()) %}
-        {{ 1}}
-        {% if now > start_vegetative %}
-        {{ 2}}
-        {% elif now > start_flipping %}
-        {{ 3}}
-        {% elif now > start_generative %}
-        {{ 4}}
-        {% elif now > start_drying %}
-        {{ 5}}
-        {% else %}
-        {{ 6}}
-        {% endif %}
+        {{ now }}
     #   {% set x = (now - start_vegetative) / (start_flipping - start_vegetative) %}
     #   {% set dli_target = states('input_number.dli_vegetative_start') + x * (states('input_number.dli_vegetative_end') - states('input_number.dli_vegetative_start')) %}
     #   {{ dli_target }}
