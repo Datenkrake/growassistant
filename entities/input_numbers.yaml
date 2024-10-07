@@ -301,7 +301,7 @@ previous_dli_error:
 
 integral_dli:
   name: "Integral DLI"
-  min: 0
+  min: -100
   max: 100
   step: 0.01
   mode: box
