@@ -128,11 +128,11 @@
         {% set day_length = states('sensor.day_length') | float %}
         {% set now = as_timestamp(now()) %}
         {% if now < sunrise_time %}
-          0
+          {{ 0 }}
         {% elif now < sunrise_time + day_length * 3600 %}
-          1
+          {{ 1 }}
         {% else %}
-          0
+          {{ 0 }}
         {% endif %}   
 
 
