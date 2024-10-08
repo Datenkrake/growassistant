@@ -1,0 +1,307 @@
+template:
+  - sensor:
+      - name: "Combined Humidity"
+        unique_id: "combined_humidity_sensor"
+        unit_of_measurement: "%"
+        state: >
+          {% if not is_state('sensor.g1_canopy_canopy_humidity', 'unavailable') and not is_state('sensor.g1_canopy_canopy_humidity', 'unknown') %}
+            {{ states('sensor.g1_canopy_canopy_humidity') }}
+          {% elif not is_state('sensor.esp1_g1_intake_humidity', 'unavailable') and not is_state('sensor.esp1_g1_intake_humidity', 'unknown') %}
+            {{ states('sensor.esp1_g1_intake_humidity') }}
+          {% else %}
+            unavailable
+          {% endif %}
+        availability: >
+          {{ not (is_state('sensor.g1_canopy_canopy_humidity', 'unavailable') and is_state('sensor.esp1_g1_intake_humidity', 'unavailable')) }}
+        trigger:
+          - platform: state
+            entity_id:
+              - sensor.g1_canopy_canopy_humidity
+              - sensor.esp1_g1_intake_humidity
+
+      - name: "Combined Temperature"
+        unique_id: "combined_temperature_sensor"
+        unit_of_measurement: "°C"
+        state: >
+          {% if not is_state('sensor.g1_canopy_canopy_temperature', 'unavailable') and not is_state('sensor.g1_canopy_canopy_temperature', 'unknown') %}
+            {{ states('sensor.g1_canopy_canopy_temperature') }}
+          {% elif not is_state('sensor.esp1_g1_intake_temperature', 'unavailable') and not is_state('sensor.esp1_g1_intake_temperature', 'unknown') %}
+            {{ states('sensor.esp1_g1_intake_temperature') }}
+          {% else %}
+            unavailable
+          {% endif %}
+        availability: >
+          {{ not (is_state('sensor.g1_canopy_canopy_temperature', 'unavailable') and is_state('sensor.esp1_g1_intake_temperature', 'unavailable')) }}
+        trigger:
+          - platform: state
+            entity_id:
+              - sensor.g1_canopy_canopy_temperature
+              - sensor.esp1_g1_intake_temperature
+
+      - name: "Cultivar Height"
+        unique_id: "cultivar_height_sensor"
+        unit_of_measurement: "m"
+        state: >
+          {{ (states('input_number.gantry_null_position') | float(0)) - (states('sensor.g1_qbar1_ultrasonic_sensor') | float(0)) }}
+        trigger:
+          - platform: state
+            entity_id:
+              - input_number.gantry_null_position
+              - sensor.g1_qbar1_ultrasonic_sensor
+
+      - name: "VPD"
+        unique_id: "vpd_sensor"
+        unit_of_measurement: "kPa"
+        state: >
+          {% set T = states('sensor.combined_temperature') | float(0) %}
+          {% set LTO = states('input_number.vpd_leaf_offset') | float(0) %}
+          {% set LT = T + LTO %}
+          {% set RH = states('sensor.combined_humidity') | float(0) %}
+          {% set ASVP = 610.78 * (2.71828 ** ((T * 17.2694) / (T + 237.3))) %}
+          {% set LSVP = 610.78 * (2.71828 ** ((LT * 17.2694) / (LT + 237.3))) %}
+          {% set LVPD = (LSVP - (ASVP * RH / 100)) / 1000 %}
+          {{ LVPD | round(2) }}
+        availability: >
+          {{ not (is_state('sensor.combined_temperature', 'unavailable') or is_state('sensor.combined_humidity', 'unavailable')) }}
+        trigger:
+          - platform: state
+            entity_id:
+              - sensor.combined_temperature
+              - sensor.combined_humidity
+              - input_number.vpd_leaf_offset
+
+      - name: "VPD Intake"
+        unique_id: "vpd_intake_sensor"
+        unit_of_measurement: "kPa"
+        state: >
+          {% set T = states('sensor.esp1_g1_intake_temperature') | float(0) %}
+          {% set LT = T - 2 %}
+          {% set RH = states('sensor.esp1_g1_intake_humidity') | float(0) %}
+          {% set ASVP = 610.78 * (2.71828 ** ((T * 17.2694) / (T + 237.3))) %}
+          {% set LSVP = 610.78 * (2.71828 ** ((LT * 17.2694) / (LT + 237.3))) %}
+          {% set LVPD = (LSVP - (ASVP * RH / 100)) / 1000 %}
+          {{ LVPD | round(2) }}
+        availability: >
+          {{ not (is_state('sensor.esp1_g1_intake_temperature', 'unavailable') or is_state('sensor.esp1_g1_intake_humidity', 'unavailable')) }}
+        trigger:
+          - platform: state
+            entity_id:
+              - sensor.esp1_g1_intake_temperature
+              - sensor.esp1_g1_intake_humidity
+
+      - name: "PPFD"
+        unique_id: "ppfd_sensor"
+        unit_of_measurement: "µmol/m²/s"
+        state: >
+          {% set lux = states('sensor.g1_canopy_g1_bh1750_illuminance') | float(0) %}
+          {{ (lux * 0.051872 - 85.209312) | round(2) }}
+        trigger:
+          - platform: state
+            entity_id:
+              - sensor.g1_canopy_g1_bh1750_illuminance
+
+      - name: "Growth Cycle"
+        unique_id: "growth_cycle_sensor"
+        state: >
+          {% set start_vegetative = as_timestamp(states('input_datetime.vegetative_start')) %}
+          {% set start_flipping = as_timestamp(states('input_datetime.flip_date')) %}
+          {% set start_generative = as_timestamp(states('input_datetime.generative_start')) %}
+          {% set start_drying = as_timestamp(states('input_datetime.drying_start')) %}
+          {% set now = as_timestamp(now()) %}
+          {% if now < start_vegetative %}
+            Pre-vegetative
+          {% elif now < start_flipping %}
+            Vegetative
+          {% elif now < start_generative %}
+            Flipping
+          {% elif now < start_drying %}
+            Generative
+          {% else %}
+            Drying
+          {% endif %}
+        trigger:
+          - platform: time_pattern
+            minutes: "/1"
+          - platform: state
+            entity_id:
+              - input_datetime.vegetative_start
+              - input_datetime.flip_date
+              - input_datetime.generative_start
+              - input_datetime.drying_start
+
+      - name: "Day Length"
+        unique_id: "day_length_sensor"
+        unit_of_measurement: "hours"
+        state: >
+          {% set start_vegetative = as_timestamp(states('input_datetime.vegetative_start')) %}
+          {% set start_flipping = as_timestamp(states('input_datetime.flip_date')) %}
+          {% set start_generative = as_timestamp(states('input_datetime.generative_start')) %}
+          {% set start_drying = as_timestamp(states('input_datetime.drying_start')) %}
+          {% set now = as_timestamp(now()) %}
+          {% if now < start_vegetative %}
+            0
+          {% elif now < start_flipping %}
+            {{ states('input_number.day_length_vegetative') }}
+          {% elif now < start_generative %}
+            {% set x = (now - start_flipping) / (start_generative - start_flipping) %}
+            {% set day_length_vegetative = states('input_number.day_length_vegetative') | float(0) %}
+            {% set day_length_generative = states('input_number.day_length_generative') | float(0) %}
+            {% set day_length = day_length_vegetative + x * (day_length_generative - day_length_vegetative) %}
+            {{ day_length | round(2) }}
+          {% elif now < start_drying %}
+            {{ states('input_number.day_length_generative') }}
+          {% else %}
+            0
+          {% endif %}
+        trigger:
+          - platform: time_pattern
+            minutes: "/1"
+          - platform: state
+            entity_id:
+              - input_datetime.vegetative_start
+              - input_datetime.flip_date
+              - input_datetime.generative_start
+              - input_datetime.drying_start
+              - input_number.day_length_vegetative
+              - input_number.day_length_generative
+
+      - name: "Day Phase Target"
+        unique_id: "dayphase_target_sensor"
+        state: >
+          {% set sunrise_time = states('input_datetime.sunrise_time') %}
+          {% set today = now().strftime('%Y-%m-%d') %}
+          {% set yesterday = (now() - timedelta(days=1)).strftime('%Y-%m-%d') %}
+          {% set sunrise_time_today = as_timestamp(today + ' ' + sunrise_time) %}
+          {% set sunrise_time_yesterday = as_timestamp(yesterday + ' ' + sunrise_time) %}
+          {% set day_length = states('sensor.day_length') | float(0) %}
+          {% set now_time = as_timestamp(now()) %}
+          {% if day_length == 0 %}
+            0
+          {% elif now_time >= sunrise_time_today and now_time < sunrise_time_today + day_length * 3600 %}
+            1
+          {% elif now_time >= sunrise_time_yesterday and now_time < sunrise_time_yesterday + day_length * 3600 %}
+            1
+          {% else %}
+            0
+          {% endif %}
+        trigger:
+          - platform: time_pattern
+            minutes: "/1"
+          - platform: state
+            entity_id:
+              - input_datetime.sunrise_time
+              - sensor.day_length
+
+      - name: "DLI"
+        unique_id: "dli_sensor"
+        unit_of_measurement: "mol/m²/day"
+        state: >
+          {% set ppfd = states('sensor.ppfd') | float(0) %}
+          {% set day_length = states('sensor.day_length') | float(0) %}
+          {{ (ppfd * 0.0036 * day_length) | round(2) }}
+        trigger:
+          - platform: state
+            entity_id:
+              - sensor.ppfd
+              - sensor.day_length
+
+      - name: "RH Target"
+        unique_id: "rh_target_sensor"
+        unit_of_measurement: "%"
+        state: >
+          {% set T = states('sensor.combined_temperature') | float(0) %}
+          {% set LT = T - 2 %}
+          {% set ASVP = 610.78 * (2.71828 ** ((T * 17.2694) / (T + 237.3))) %}
+          {% set LSVP = 610.78 * (2.71828 ** ((LT * 17.2694) / (LT + 237.3))) %}
+          {% set LVPD_TARGET = states('input_number.vpd_target') | float(0) %}
+          {% set RH_TARGET = (LSVP - LVPD_TARGET * 1000) / ASVP * 100 %}
+          {{ RH_TARGET | round(2) }}
+        trigger:
+          - platform: state
+            entity_id:
+              - sensor.combined_temperature
+              - input_number.vpd_target
+
+      - name: "Dew Point"
+        unique_id: "dew_point_sensor"
+        unit_of_measurement: "°C"
+        state: >
+          {% set T = states('sensor.combined_temperature') | float(0) %}
+          {% set RH = states('sensor.combined_humidity') | float(0) %}
+          {% set a = 17.27 %}
+          {% set b = 237.7 %}
+          {% set alpha = ((a * T) / (b + T)) + (RH / 100) | ln %}
+          {% set dew_point = (b * alpha) / (a - alpha) %}
+          {{ dew_point | round(1) }}
+        trigger:
+          - platform: state
+            entity_id:
+              - sensor.combined_temperature
+              - sensor.combined_humidity
+
+      - name: "Day Phase"
+        unique_id: "dayphase_sensor"
+        state: >
+          {% set lux = states('sensor.g1_canopy_g1_bh1750_illuminance') | float(0) %}
+          {% if lux < 100 %}
+            0
+          {% else %}
+            1
+          {% endif %}
+        trigger:
+          - platform: state
+            entity_id:
+              - sensor.g1_canopy_g1_bh1750_illuminance
+
+      - name: "DLI Target"
+        unique_id: "dli_target_sensor"
+        unit_of_measurement: "mol/m²/day"
+        state: >
+          {% set start_vegetative = as_timestamp(states('input_datetime.vegetative_start')) %}
+          {% set start_flipping = as_timestamp(states('input_datetime.flip_date')) %}
+          {% set start_generative = as_timestamp(states('input_datetime.generative_start')) %}
+          {% set generative_peak = as_timestamp(states('input_datetime.generative_peak')) %}
+          {% set start_drying = as_timestamp(states('input_datetime.drying_start')) %}
+          {% set now = as_timestamp(now()) %}
+          {% if now >= start_vegetative and now < start_flipping %}
+            {% set x = (now - start_vegetative) / (start_flipping - start_vegetative) %}
+            {% set dli_start = states('input_number.dli_vegetative_start') | float(0) %}
+            {% set dli_end = states('input_number.dli_vegetative_end') | float(0) %}
+            {% set dli_target = dli_start + x * (dli_end - dli_start) %}
+            {{ dli_target | round(2) }}
+          {% elif now >= start_flipping and now < start_generative %}
+            {% set x = (now - start_flipping) / (start_generative - start_flipping) %}
+            {% set dli_start = states('input_number.dli_vegetative_end') | float(0) %}
+            {% set dli_end = states('input_number.dli_generative_start') | float(0) %}
+            {% set dli_target = dli_start + x * (dli_end - dli_start) %}
+            {{ dli_target | round(2) }}
+          {% elif now >= start_generative and now < generative_peak %}
+            {% set x = (now - start_generative) / (generative_peak - start_generative) %}
+            {% set dli_start = states('input_number.dli_generative_start') | float(0) %}
+            {% set dli_end = states('input_number.dli_generative_peak') | float(0) %}
+            {% set dli_target = dli_start + x * (dli_end - dli_start) %}
+            {{ dli_target | round(2) }}
+          {% elif now >= generative_peak and now < start_drying %}
+            {% set x = (now - generative_peak) / (start_drying - generative_peak) %}
+            {% set dli_start = states('input_number.dli_generative_peak') | float(0) %}
+            {% set dli_end = states('input_number.dli_drying_end') | float(0) %}
+            {% set dli_target = dli_start + x * (dli_end - dli_start) %}
+            {{ dli_target | round(2) }}
+          {% else %}
+            0
+          {% endif %}
+        trigger:
+          - platform: time_pattern
+            minutes: "/1"
+          - platform: state
+            entity_id:
+              - input_datetime.vegetative_start
+              - input_datetime.flip_date
+              - input_datetime.generative_start
+              - input_datetime.generative_peak
+              - input_datetime.drying_start
+              - input_number.dli_vegetative_start
+              - input_number.dli_vegetative_end
+              - input_number.dli_generative_start
+              - input_number.dli_generative_peak
+              - input_number.dli_drying_end
