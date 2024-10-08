@@ -1,7 +1,7 @@
 template:
   - sensor:
       - name: "Combined Humidity"
-        unique_id: "combined_humidity_sensor"
+        unique_id: "combined_humidity"
         unit_of_measurement: "%"
         state: >
           {% if not is_state('sensor.g1_canopy_canopy_humidity', 'unavailable') and not is_state('sensor.g1_canopy_canopy_humidity', 'unknown') %}
@@ -20,7 +20,7 @@ template:
               - sensor.esp1_g1_intake_humidity
 
       - name: "Combined Temperature"
-        unique_id: "combined_temperature_sensor"
+        unique_id: "combined_temperature"
         unit_of_measurement: "°C"
         state: >
           {% if not is_state('sensor.g1_canopy_canopy_temperature', 'unavailable') and not is_state('sensor.g1_canopy_canopy_temperature', 'unknown') %}
@@ -39,7 +39,7 @@ template:
               - sensor.esp1_g1_intake_temperature
 
       - name: "Cultivar Height"
-        unique_id: "cultivar_height_sensor"
+        unique_id: "cultivar_height"
         unit_of_measurement: "m"
         state: >
           {{ (states('input_number.gantry_null_position') | float(0)) - (states('sensor.g1_qbar1_ultrasonic_sensor') | float(0)) }}
@@ -50,7 +50,7 @@ template:
               - sensor.g1_qbar1_ultrasonic_sensor
 
       - name: "VPD"
-        unique_id: "vpd_sensor"
+        unique_id: "vpd"
         unit_of_measurement: "kPa"
         state: >
           {% set T = states('sensor.combined_temperature') | float(0) %}
@@ -71,7 +71,7 @@ template:
               - input_number.vpd_leaf_offset
 
       - name: "VPD Intake"
-        unique_id: "vpd_intake_sensor"
+        unique_id: "vpd_intake"
         unit_of_measurement: "kPa"
         state: >
           {% set T = states('sensor.esp1_g1_intake_temperature') | float(0) %}
@@ -90,7 +90,7 @@ template:
               - sensor.esp1_g1_intake_humidity
 
       - name: "PPFD"
-        unique_id: "ppfd_sensor"
+        unique_id: "ppfd"
         unit_of_measurement: "µmol/m²/s"
         state: >
           {% set lux = states('sensor.g1_canopy_g1_bh1750_illuminance') | float(0) %}
@@ -101,7 +101,7 @@ template:
               - sensor.g1_canopy_g1_bh1750_illuminance
 
       - name: "Growth Cycle"
-        unique_id: "growth_cycle_sensor"
+        unique_id: "growth_cycle"
         state: >
           {% set start_vegetative = as_timestamp(states('input_datetime.vegetative_start')) %}
           {% set start_flipping = as_timestamp(states('input_datetime.flip_date')) %}
@@ -130,7 +130,7 @@ template:
               - input_datetime.drying_start
 
       - name: "Day Length"
-        unique_id: "day_length_sensor"
+        unique_id: "day_length"
         unit_of_measurement: "hours"
         state: >
           {% set start_vegetative = as_timestamp(states('input_datetime.vegetative_start')) %}
@@ -166,7 +166,7 @@ template:
               - input_number.day_length_generative
 
       - name: "Day Phase Target"
-        unique_id: "dayphase_target_sensor"
+        unique_id: "dayphase_target"
         state: >
           {% set sunrise_time = states('input_datetime.sunrise_time') %}
           {% set today = now().strftime('%Y-%m-%d') %}
@@ -193,7 +193,7 @@ template:
               - sensor.day_length
 
       - name: "DLI"
-        unique_id: "dli_sensor"
+        unique_id: "dli"
         unit_of_measurement: "mol/m²/day"
         state: >
           {% set ppfd = states('sensor.ppfd') | float(0) %}
@@ -206,7 +206,7 @@ template:
               - sensor.day_length
 
       - name: "RH Target"
-        unique_id: "rh_target_sensor"
+        unique_id: "rh_target"
         unit_of_measurement: "%"
         state: >
           {% set T = states('sensor.combined_temperature') | float(0) %}
@@ -223,7 +223,7 @@ template:
               - input_number.vpd_target
 
       - name: "Dew Point"
-        unique_id: "dew_point_sensor"
+        unique_id: "dew_point"
         unit_of_measurement: "°C"
         state: >
           {% set T = states('sensor.combined_temperature') | float(0) %}
@@ -240,7 +240,7 @@ template:
               - sensor.combined_humidity
 
       - name: "Day Phase"
-        unique_id: "dayphase_sensor"
+        unique_id: "dayphase"
         state: >
           {% set lux = states('sensor.g1_canopy_g1_bh1750_illuminance') | float(0) %}
           {% if lux < 100 %}
@@ -254,7 +254,7 @@ template:
               - sensor.g1_canopy_g1_bh1750_illuminance
 
       - name: "DLI Target"
-        unique_id: "dli_target_sensor"
+        unique_id: "dli_target"
         unit_of_measurement: "mol/m²/day"
         state: >
           {% set start_vegetative = as_timestamp(states('input_datetime.vegetative_start')) %}
