@@ -4,10 +4,10 @@
       friendly_name: "Combined Humidity"
       unit_of_measurement: "%"
       value_template: >
-        {% if not is_state(states('input_text.canopy_humidity'), 'unavailable') and not is_state(states('input_text.canopy_humidity'), 'unknown') %}
-          {{ states(states('input_text.canopy_humidity')) }}
-        {% elif not is_state(states('input_text.intake_humidity'), 'unavailable') and not is_state(states('input_text.intake_humidity'), 'unknown') %}
-          {{ states(states('input_text.intake_humidity')) }}
+        {% if not is_state(states('sensor.g1_canopy_canopy_humidityy'), 'unavailable') and not is_state(states('sensor.g1_canopy_canopy_humidityy'), 'unknown') %}
+          {{ states(states('sensor.g1_canopy_canopy_humidityy')) }}
+        {% elif not is_state(states('sensor.esp1_g1_intake_humidity'), 'unavailable') and not is_state(states('sensor.esp1_g1_intake_humidity'), 'unknown') %}
+          {{ states(states('sensor.esp1_g1_intake_humidity')) }}
         {% else %}
           unavailable
         {% endif %}
@@ -16,10 +16,10 @@
       friendly_name: "Combined Temperature"
       unit_of_measurement: "°C"
       value_template: >
-        {% if not is_state(states('input_text.canopy_temperature'), 'unavailable') and not is_state(states('input_text.canopy_temperature'), 'unknown') %}
-          {{ states(states('input_text.canopy_temperature')) }}
-        {% elif not is_state(states('input_text.intake_temperature'), 'unavailable') and not is_state(states('input_text.intake_temperature'), 'unknown') %}
-          {{ states(states('input_text.intake_temperature')) }}
+        {% if not is_state(states('sensor.g1_canopy_canopy_temperature'), 'unavailable') and not is_state(states('sensor.g1_canopy_canopy_temperature'), 'unknown') %}
+          {{ states(states('sensor.g1_canopy_canopy_temperature')) }}
+        {% elif not is_state(states('sensor.esp1_g1_intake_temperature'), 'unavailable') and not is_state(states('sensor.esp1_g1_intake_temperature'), 'unknown') %}
+          {{ states(states('sensor.esp1_g1_intake_temperature')) }}
         {% else %}
           unavailable
         {% endif %}
@@ -27,7 +27,7 @@
     cultivar_height:
       friendly_name: "Cultivar Height"
       unit_of_measurement: "m"
-      value_template: "{{ states('input_number.gantry_null_position') | float(0) - states('input_text.gantry_height') | float(0) }}"
+      value_template: "{{ states('input_number.gantry_null_position') | float(0) - states('sensor.g1_qbar1_ultrasonic_sensor') | float(0) }}"
 
     vpd:
       friendly_name: "VPD"
@@ -47,9 +47,9 @@
       friendly_name: "VPD Intake"
       unit_of_measurement: "kPa"
       value_template: >
-        {% set T = states('input_text.intake_temperature') | float(0) %}
+        {% set T = states('sensor.esp1_g1_intake_temperature') | float(0) %}
         {% set LT = T - 2 %}
-        {% set RH = states('input_text.intake_humidity') | float(0) %}
+        {% set RH = states('sensor.esp1_g1_intake_humidity') | float(0) %}
         {% set ASVP = 610.78 * (2.71828 ** (T / (T + 237.3) * 17.2694)) %}
         {% set LSVP = 610.78 * (2.71828 ** (LT / (LT + 237.3) * 17.2694)) %}
         {% set VPD = (ASVP * (1 - RH / 100)) / 1000 %}
