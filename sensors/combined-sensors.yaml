@@ -134,13 +134,13 @@
         {% set now_time = as_timestamp(now()) %}
         
         {% if sunrise_time_today is none or day_length == 0 %}
-          0
+          {{ 0 }}
         {% elif now_time < sunrise_time_yesterday + day_length * 3600 %}
-          1
+          {{ 1 }}
         {% elif now_time > sunrise_time_today and now_time < sunrise_time_today + day_length * 3600 %}
-          1
+          {{ 1 }}
         {% else %}
-          0
+          {{ 0 }}
         {% endif %}
 
 
@@ -185,9 +185,9 @@
       value_template: >
         {% set lux = states('sensor.g1_canopy_g1_bh1750_illuminance') | float %}
         {% if lux < 100 %}
-          0
+          {{ 0 }}
         {% else %}
-          1
+          {{ 1 }}
         {% endif %}
 
     # dli_target is the target DLI for the current growth cycle and dayphase
