@@ -53,8 +53,8 @@ sensor:
     i2c_id: bus_a
     filters:
       - sliding_window_moving_average:
-          window_size: 60
-          send_every: 60
+          window_size: 30
+          send_every: 10
 
   - platform: ultrasonic
     trigger_pin: 1

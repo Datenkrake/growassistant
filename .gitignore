@@ -5,5 +5,4 @@
 /custom_components/*
 /www/*
 secrets.yaml
-*.log
-home-assistant.log
+*.log*

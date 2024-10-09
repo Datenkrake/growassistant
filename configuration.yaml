@@ -1,4 +1,3 @@
-
 # Include the sensors/combined-sensors.yaml file
 template: !include sensors/combined-sensors.yaml
 
@@ -29,7 +28,7 @@ input_text: !include entities/input_texts.yaml
 # input_select: !include entities/input_selects.yaml
 
 # automation: !include automations.yaml
-automation: 
+automation:
   - !include automations/light_height.yaml
   - !include automations/timelapse.yaml
   - !include automations/vpd.yaml
@@ -47,7 +46,6 @@ logger:
   logs:
     homeassistant.components.automation: debug
 
-
 influxdb:
   host: localhost
   port: 8086
@@ -56,10 +54,21 @@ influxdb:
   password: growassistant
   max_retries: 3
   default_measurement: state
+  include:
+    domains:
+      - sensor
+      - switch
+      - input_number
+      - input_text
+      - input_datetime
+      - input_boolean
+      # Add other domains as needed
 
 recorder:
   include:
     domains:
+      - sensor
+      - switch
       - input_number
       - input_text
       - input_datetime
