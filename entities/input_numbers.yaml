@@ -130,6 +130,16 @@ circulation_fan_speed_max:
   unit_of_measurement: "%"
   icon: mdi:fan
 
+# Wind Fan Speed set point
+wind_fan_speed:
+  name: "Wind Fan Speed"
+  min: 0
+  max: 100
+  step: 1
+  mode: box
+  unit_of_measurement: "%"
+  icon: mdi:fan
+
 # Target temperature in degrees Celsius
 temperature_target:
   name: "Temperature Target"
