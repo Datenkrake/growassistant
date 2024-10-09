@@ -35,3 +35,7 @@ vpd_control_enable:
 light_intensity_control_enable:
   name: Light Intensity Control Enable
   icon: mdi:flower
+
+wind_enable:
+  name: Wind Enable
+  icon: mdi:flower
