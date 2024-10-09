@@ -149,7 +149,7 @@ sensors:
     value_template: >
       {% set ppfd = states('sensor.ppfd') | float(0) %}
       {% set day_length = states('sensor.day_length') | float(0) %}
-      {{ (ppfd * 0.0036 * day_length) | round(2) }}
+      {{ (ppfd * 0.0036 * day_length) | round(0) }}
 
   rh_target:
     friendly_name: "RH Target"
@@ -161,7 +161,7 @@ sensors:
       {% set LSVP = 610.78 * (2.71828 ** (LT / (LT + 237.3) * 17.2694)) %}
       {% set LVPD_TARGET = states('input_number.vpd_target') | float %}
       {% set RH_TARGET = (LSVP - LVPD_TARGET * 1000) / ASVP * 100 %}
-      {{ RH_TARGET | round(2)}}
+      {{ RH_TARGET | round(1)}}
 
   dew_point:
     friendly_name: "Dew Point"
@@ -211,19 +211,19 @@ sensors:
       {% elif now > start_vegetative and now < start_flipping %}
         {% set x = (now - start_vegetative) / (start_flipping - start_vegetative) %}
         {% set dli_target = (states('input_number.dli_vegetative_start') | float(0)) + x * ((states('input_number.dli_vegetative_end') | float(0)) - (states('input_number.dli_vegetative_start') | float(0))) %}
-        {{ dli_target }}
+        {{ dli_target | round(0) }}
       {% elif now > start_flipping and now < start_generative %}
         {% set x = (now - start_flipping) / (start_generative - start_flipping) %}
         {% set dli_target = (states('input_number.dli_vegetative_end') | float(0)) + x * ((states('input_number.dli_generative_start') | float(0)) - (states('input_number.dli_vegetative_end') | float(0))) %}
-        {{ dli_target }}
+        {{ dli_target | round(0) }}
       {% elif now > start_generative and now < generative_peak %}
         {% set x = (now - start_generative) / (generative_peak - start_generative) %}
         {% set dli_target = (states('input_number.dli_generative_start') | float(0)) + x * ((states('input_number.dli_generative_peak') | float(0)) - (states('input_number.dli_generative_start') | float(0))) %}
-        {{ dli_target }}
+        {{ dli_target | round(0) }}
       {% elif now > generative_peak and now < start_drying %}
         {% set x = (now - generative_peak) / (start_drying - generative_peak) %}
         {% set dli_target = (states('input_number.dli_generative_peak') | float(0)) + x * ((states('input_number.dli_drying_end') | float(0)) - (states('input_number.dli_generative_peak') | float(0))) %}
-        {{ dli_target }}
+        {{ dli_target | round(0) }}
       {% else %}
         {{ 0 }}
       {% endif %}
@@ -268,9 +268,9 @@ sensors:
   g1_qbar1_percentage:
     friendly_name: "QBar1 Percentage"
     unit_of_measurement: "%"
-    value_template: "{{ state_attr('light.g1_qbar1_pwm_qbar1', 'brightness') / 255 * 100 }}"
+    value_template: "{{ state_attr('light.g1_qbar1_pwm_qbar1', 'brightness') / 255 * 100 | round(0) }}"
 
   g1_qbar2_percentage:
     friendly_name: "QBar2 Percentage"
     unit_of_measurement: "%"
-    value_template: "{{ state_attr('light.g1_qbar2_pwm_qbar2', 'brightness') / 255 * 100 }}"
+    value_template: "{{ state_attr('light.g1_qbar2_pwm_qbar2', 'brightness') / 255 * 100 | round(0) }}"
