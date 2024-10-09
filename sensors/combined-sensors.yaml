@@ -274,3 +274,54 @@ sensors:
     friendly_name: "QBar2 Percentage"
     unit_of_measurement: "%"
     value_template: "{{ state_attr('light.g1_qbar2_pwm_qbar2', 'brightness') / 255 * 100 | round(0) }}"
+
+  cultivar_age:
+    friendly_name: "Cultivar Age"
+    unit_of_measurement: "days"
+    value_template: >
+      {% set start_vegetative = as_timestamp(states('input_datetime.vegetative_start')) %}
+      {% set now = as_timestamp(now()) %}
+      {{ ((now - start_vegetative) / 86400) | round(0) }}
+    
+  cultivar_vegetative_age:
+    friendly_name: "Cultivar Vegetative Age"
+    unit_of_measurement: "days"
+    value_template: >
+      {% set start_vegetative = as_timestamp(states('input_datetime.vegetative_start')) %}
+      {% set start_flipping = as_timestamp(states('input_datetime.flip_date')) %}
+      {% set start_generative = as_timestamp(states('input_datetime.generative_start')) %}
+      {% set generative_end = as_timestamp(states('input_datetime.generative_end')) %}
+      {% set now = as_timestamp(now()) %}
+      {% if now < start_flipping %}
+        {{ ((now - start_vegetative) / 86400) | round(0) }}
+      {% else %}
+        {{ ((start_generative - start_vegetative) / 86400) | round(0) }}
+      {% endif %}
+    
+  cultivar_generative_age:
+    friendly_name: "Cultivar Generative Age"
+    unit_of_measurement: "days"
+    value_template: >
+      {% set start_flipping = as_timestamp(states('input_datetime.flip_date')) %}
+      {% set start_generative = as_timestamp(states('input_datetime.generative_start')) %}
+      {% set generative_end = as_timestamp(states('input_datetime.generative_end')) %}
+      {% set now = as_timestamp(now()) %}
+      {% if now < start_generative %}
+        {{ 0 }}
+      {% elif now < generative_end %}
+        {{ ((now - start_generative) / 86400) | round(0) }}
+      {% else %}
+        {{ ((generative_end - start_generative) / 86400) | round(0) }}
+      {% endif %}
+
+  cultivar_drying_age:
+    friendly_name: "Cultivar Drying Age"
+    unit_of_measurement: "days"
+    value_template: >
+      {% set start_drying = as_timestamp(states('input_datetime.drying_start')) %}
+      {% set now = as_timestamp(now()) %}
+      {% if now < start_drying %}
+        {{ 0 }}
+      {% else %}
+        {{ ((now - start_drying) / 86400) | round(0) }}
+      {% endif %}
