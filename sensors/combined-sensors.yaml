@@ -244,3 +244,23 @@ sensors:
   # {% else %}
   #   {{ 0 }}
   # {% endif %}
+
+  g1_exhaust_exhaust_fan_1_percentage:
+    friendly_name: "Exhaust Fan 1 Percentage"
+    unit_of_measurement: "%"
+    value_template: "{{ state_attr('fan.g1_exhaust_exhaust_fan_1', 'percentage') }}"
+  
+  g1_exhaust_exhaust_fan_2_percentage:
+    friendly_name: "Exhaust Fan 2 Percentage"
+    unit_of_measurement: "%"
+    value_template: "{{ state_attr('fan.g1_exhaust_exhaust_fan_2', 'percentage') }}"
+  
+  g1_intake_intake_fan_percentage:
+    friendly_name: "Intake Fan Percentage"
+    unit_of_measurement: "%"
+    value_template: "{{ state_attr('fan.g1_intake_intake_fan', 'percentage') }}"
+  
+  g1_humidifier_humidifier_percentage:
+    friendly_name: "Humidifier Percentage"
+    unit_of_measurement: "%"
+    value_template: "{{ state_attr('fan.g1_humidifier_humidifier', 'percentage') }}"
