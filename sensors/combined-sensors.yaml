@@ -265,12 +265,12 @@ sensors:
     unit_of_measurement: "%"
     value_template: "{{ state_attr('fan.g1_humidifier_humidifier', 'percentage') }}"
 
-  g1_qbar1_brightness:
+  g1_qbar1_percentage:
     friendly_name: "QBar1 Percentage"
     unit_of_measurement: "%"
     value_template: "{{ state_attr('light.g1_qbar1_pwm_qbar1', 'brightness') / 255 * 100 }}"
 
-  g1_qbar2_brightness:
+  g1_qbar2_percentage:
     friendly_name: "QBar2 Percentage"
     unit_of_measurement: "%"
     value_template: "{{ state_attr('light.g1_qbar2_pwm_qbar2', 'brightness') / 255 * 100 }}"
