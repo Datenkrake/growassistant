@@ -67,6 +67,8 @@ influxdb:
 recorder:
   include:
     domains:
+      - sensor
+      - switch
       - input_number
       - input_text
       - input_datetime
