@@ -63,7 +63,7 @@ sensors:
     unit_of_measurement: "µmol/m²/s"
     value_template: >
       {% set lux = states('sensor.g1_canopy_g1_bh1750_illuminance') | float %}
-      {{ lux * 0.051872 - 85.209312 | round(2) }}
+      {{ lux * 0.051872 - 85.209312 | round(0) }}
 
   # Determine the current state of the growth cycle, vegetative, flipping, generative, drying, based on dates given in the input_datetime.yaml
   growth_cycle:
@@ -149,7 +149,7 @@ sensors:
     value_template: >
       {% set ppfd = states('sensor.ppfd') | float(0) %}
       {% set day_length = states('sensor.day_length') | float(0) %}
-      {{ (ppfd * 0.0036 * day_length) | round(0) }}
+      {{ (ppfd * 0.0036 * day_length) | round(2) }}
 
   rh_target:
     friendly_name: "RH Target"
@@ -249,17 +249,17 @@ sensors:
     friendly_name: "Exhaust Fan 1 Percentage"
     unit_of_measurement: "%"
     value_template: "{{ state_attr('fan.g1_exhaust_exhaust_fan_1', 'percentage') }}"
-  
+
   g1_exhaust_exhaust_fan_2_percentage:
     friendly_name: "Exhaust Fan 2 Percentage"
     unit_of_measurement: "%"
     value_template: "{{ state_attr('fan.g1_exhaust_exhaust_fan_2', 'percentage') }}"
-  
+
   g1_intake_intake_fan_percentage:
     friendly_name: "Intake Fan Percentage"
     unit_of_measurement: "%"
     value_template: "{{ state_attr('fan.g1_intake_intake_fan', 'percentage') }}"
-  
+
   g1_humidifier_humidifier_percentage:
     friendly_name: "Humidifier Percentage"
     unit_of_measurement: "%"

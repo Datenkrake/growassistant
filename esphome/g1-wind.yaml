@@ -51,3 +51,35 @@ fan:
   - platform: speed
     output: fan2_pwm
     name: "Wind Fan 2"
+
+  # Example configuration entry for ESP32
+i2c:
+  sda: 21
+  scl: 20
+  scan: true
+  id: bus_a
+
+# Example configuration entry
+sensor:
+  - platform: sgp4x
+    voc:
+      name: "VOC Index"
+    nox:
+      name: "NOx Index"
+    compensation:
+      humidity_source: htu21d_humidity
+      temperature_source: htu21d_temperature
+    address: 0x59
+    update_interval: 60s
+    i2c_id: bus_a
+
+  - platform: htu21d
+    model: htu21d
+    temperature:
+      name: "Canopy Temperature"
+      id: htu21d_temperature
+    humidity:
+      name: "Canopy Humidity"
+      id: htu21d_humidity  
+    heater:
+      name: "Heater"
