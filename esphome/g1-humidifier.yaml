@@ -34,7 +34,7 @@ output:
   - platform: slow_pwm
     pin: GPIO21
     id: humidifier_pwm_output
-    period: 60s
+    period: 10s
 
 fan:
   - platform: speed

@@ -25,7 +25,7 @@ action:
   - service: switch.turn_on
     target:
       entity_id: "{{ states('input_text.circulation_pump') }}"
-  - delay: "{{ states('input_number.water_circulation_duration') }}"
+  - delay: "{{ states('input_number.water_circulation_duration') | int * 60 }}"
   - service: switch.turn_off
     target:
       entity_id: "{{ states('input_text.circulation_pump') }}"

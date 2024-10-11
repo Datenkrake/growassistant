@@ -6,8 +6,8 @@ sensors:
     value_template: >
       {% if not is_state('sensor.g1_canopy_bme680_humidity', 'unavailable') and not is_state('sensor.g1_canopy_bme680_humidity', 'unknown') %}
         {{ states('sensor.g1_canopy_bme680_humidity') }}
-      {% elif not is_state('sensor.esp1_g1_intake_humidity', 'unavailable') and not is_state('sensor.esp1_g1_intake_humidity', 'unknown') %}
-        {{ states('sensor.esp1_g1_intake_humidity') }}
+      {% elif not is_state('sensor.g1_intake_bme680_humidity', 'unavailable') and not is_state('sensor.g1_intake_bme680_humidity', 'unknown') %}
+        {{ states('sensor.g1_intake_bme680_humidity') }}
       {% else %}
         {{ 0 }}
       {% endif %}
@@ -18,8 +18,8 @@ sensors:
     value_template: >
       {% if not is_state('sensor.g1_canopy_bme680_temperature', 'unavailable') and not is_state('sensor.g1_canopy_bme680_temperature', 'unknown') %}
         {{ states('sensor.g1_canopy_bme680_temperature') }}
-      {% elif not is_state('sensor.esp1_g1_intake_temperature', 'unavailable') and not is_state('sensor.esp1_g1_intake_temperature', 'unknown') %}
-        {{ states('sensor.esp1_g1_intake_temperature') }}
+      {% elif not is_state('sensor.g1_intake_bme680_temperature', 'unavailable') and not is_state('sensor.g1_intake_bme680_temperature', 'unknown') %}
+        {{ states('sensor.g1_intake_bme680_temperature') }}
       {% else %}
         {{ 0 }}
       {% endif %}
@@ -47,9 +47,9 @@ sensors:
     friendly_name: "VPD Intake"
     unit_of_measurement: "kPa"
     value_template: >
-      {% set T = states('sensor.esp1_g1_intake_temperature') | float(0) %}
+      {% set T = states('sensor.g1_intake_bme680_temperature') | float(0) %}
       {% set LT = T - 2 %}
-      {% set RH = states('sensor.esp1_g1_intake_humidity') | float(0) %}
+      {% set RH = states('sensor.g1_intake_bme680_humidity') | float(0) %}
       {% set ASVP = 610.78 * (2.71828 ** (T / (T + 237.3) * 17.2694)) %}
       {% set LSVP = 610.78 * (2.71828 ** (LT / (LT + 237.3) * 17.2694)) %}
       {% set VPD = (ASVP * (1 - RH / 100)) / 1000 %}
