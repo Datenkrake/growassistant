@@ -59,6 +59,7 @@ influxdb:
     domains:
       - sensor
       - switch
+      - binary_sensor
       - input_number
       - input_text
       - input_datetime
@@ -70,6 +71,7 @@ recorder:
     domains:
       - sensor
       - switch
+      - binary_sensor
       - input_number
       - input_text
       - input_datetime
