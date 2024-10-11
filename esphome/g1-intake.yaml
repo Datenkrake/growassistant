@@ -48,16 +48,39 @@ i2c:
   scl: GPIO21
   timeout: 1ms
 
+bme68x_bsec2_i2c:
+  address: 0x77
+  model: bme680
+  operating_age: 28d
+  sample_rate: LP
+  supply_voltage: 3.3V
+  temperature_offset: 1
+  
 sensor:
-  - platform: bme680
+  - platform: bme68x_bsec2
     temperature:
       name: "BME680 Temperature"
-      oversampling: 16x
     pressure:
       name: "BME680 Pressure"
     humidity:
       name: "BME680 Humidity"
-    gas_resistance:
-      name: "BME680 Gas Resistance"
-    address: 0x77
-    update_interval: 60s
+    iaq:
+      name: "BME680 IAQ"
+      id: iaq
+    co2_equivalent:
+      name: "BME680 CO2 Equivalent"
+    breath_voc_equivalent:
+      name: "BME680 Breath VOC Equivalent"
+
+  # - platform: bme680
+  #   temperature:
+  #     name: "BME680 Temperature"
+  #     oversampling: 16x
+  #   pressure:
+  #     name: "BME680 Pressure"
+  #   humidity:
+  #     name: "BME680 Humidity"
+  #   gas_resistance:
+  #     name: "BME680 Gas Resistance"
+  #   address: 0x77
+  #   update_interval: 60s

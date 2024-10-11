@@ -4,8 +4,8 @@ sensors:
     friendly_name: "Combined Humidity"
     unit_of_measurement: "%"
     value_template: >
-      {% if not is_state('sensor.g1_canopy_canopy_humidity', 'unavailable') and not is_state('sensor.g1_canopy_canopy_humidity', 'unknown') %}
-        {{ states('sensor.g1_canopy_canopy_humidity') }}
+      {% if not is_state('sensor.g1_canopy_bme680_humidity', 'unavailable') and not is_state('sensor.g1_canopy_bme680_humidity', 'unknown') %}
+        {{ states('sensor.g1_canopy_bme680_humidity') }}
       {% elif not is_state('sensor.esp1_g1_intake_humidity', 'unavailable') and not is_state('sensor.esp1_g1_intake_humidity', 'unknown') %}
         {{ states('sensor.esp1_g1_intake_humidity') }}
       {% else %}
@@ -16,8 +16,8 @@ sensors:
     friendly_name: "Combined Temperature"
     unit_of_measurement: "°C"
     value_template: >
-      {% if not is_state('sensor.g1_canopy_canopy_temperature', 'unavailable') and not is_state('sensor.g1_canopy_canopy_temperature', 'unknown') %}
-        {{ states('sensor.g1_canopy_canopy_temperature') }}
+      {% if not is_state('sensor.g1_canopy_bme680_temperature', 'unavailable') and not is_state('sensor.g1_canopy_bme680_temperature', 'unknown') %}
+        {{ states('sensor.g1_canopy_bme680_temperature') }}
       {% elif not is_state('sensor.esp1_g1_intake_temperature', 'unavailable') and not is_state('sensor.esp1_g1_intake_temperature', 'unknown') %}
         {{ states('sensor.esp1_g1_intake_temperature') }}
       {% else %}

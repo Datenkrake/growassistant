@@ -37,12 +37,14 @@ i2c:
   scan: true
   id: bus_a
 
-# bme68x_bsec2_i2c:
-#   address: 0x77
-#   model: bme680
-#   operating_age: 28d
-#   sample_rate: LP
-#   supply_voltage: 3.3V
+bme68x_bsec2_i2c:
+  address: 0x77
+  model: bme680
+  operating_age: 28d
+  sample_rate: LP
+  supply_voltage: 3.3V
+  temperature_offset: 2.5
+
 
 # Example configuration entry
 sensor:
@@ -52,9 +54,9 @@ sensor:
     update_interval: 1s
     i2c_id: bus_a
     filters:
-      - sliding_window_moving_average:
-          window_size: 5
-          send_every: 1
+      - exponential_moving_average:
+          alpha: 0.1  # Adjust this value for stronger or weaker , 0 to 1
+          send_every: 5
 
   - platform: ultrasonic
     trigger_pin: 1
@@ -67,28 +69,30 @@ sensor:
         window_size: 60
         send_every: 60
 
-  - platform: sgp4x
-    voc:
-      name: "VOC Index"
-    nox:
-      name: "NOx Index"
-    compensation:
-      humidity_source: htu21d_humidity
-      temperature_source: htu21d_temperature
-    address: 0x59
-    update_interval: 60s
-    i2c_id: bus_a
+  # - platform: sgp4x
+  #   voc:
+  #     name: "VOC Index"
+  #   nox:
+  #     name: "NOx Index"
+  #   compensation:
+  #     humidity_source: htu21d_humidity
+  #     temperature_source: htu21d_temperature
+  #   address: 0x59
+  #   update_interval: 60s
+  #   i2c_id: bus_a
 
-  - platform: htu21d
-    model: htu21d
-    temperature:
-      name: "Canopy Temperature"
-      id: htu21d_temperature
-    humidity:
-      name: "Canopy Humidity"
-      id: htu21d_humidity  
-    heater:
-      name: "Heater"
+  # - platform: htu21d
+  #   model: htu21d
+  #   temperature:
+  #     name: "Canopy Temperature"
+  #     id: htu21d_temperature
+  #   humidity:
+  #     name: "Canopy Humidity"
+  #     id: htu21d_humidity  
+  #   heater:
+  #     name: "Heater"
+
+  
 
   # - platform: bme680
   #   temperature:
@@ -107,20 +111,20 @@ sensor:
   #   address: 0x76
   #   update_interval: 60s
 
-  # - platform: bme68x_bsec2
-  #   temperature:
-  #     name: "BME68x Temperature"
-  #   pressure:
-  #     name: "BME68x Pressure"
-  #   humidity:
-  #     name: "BME68x Humidity"
-  #   iaq:
-  #     name: "BME68x IAQ"
-  #     id: iaq
-  #   co2_equivalent:
-  #     name: "BME68x CO2 Equivalent"
-  #   breath_voc_equivalent:
-  #     name: "BME68x Breath VOC Equivalent"
+  - platform: bme68x_bsec2
+    temperature:
+      name: "BME680 Temperature"
+    pressure:
+      name: "BME680 Pressure"
+    humidity:
+      name: "BME680 Humidity"
+    iaq:
+      name: "BME680 IAQ"
+      id: iaq
+    co2_equivalent:
+      name: "BME680 CO2 Equivalent"
+    breath_voc_equivalent:
+      name: "BME680 Breath VOC Equivalent"
 
   # - platform: bme68x_bsec2
   #   temperature:
