@@ -118,11 +118,8 @@ sensors:
       {% for sensor in sensors %}
         {% set state = states(sensor) %}
         {% if state not in ['unavailable', 'unknown', 'none'] %}
-          {% set last_updated = as_timestamp(states[sensor].last_updated) %}
-          {% if (as_timestamp(now()) - last_updated) < 300 %}
-            {% set value = state %}
-            {% break %}
-          {% endif %}
+          {% set value = state %}
+          {% break %}
         {% endif %}
       {% endfor %}
       {{ value }}
@@ -154,12 +151,8 @@ sensors:
       {% for sensor in sensors %}
         {% set state = states(sensor) %}
         {% if state not in ['unavailable', 'unknown', 'none'] %}
-          {# Check if sensor was updated within the last 300 seconds #}
-          {% set last_updated = as_timestamp(states[sensor].last_updated) %}
-          {% if (as_timestamp(now()) - last_updated) < 300 %}
-            {% set value = state %}
-            {% break %}
-          {% endif %}
+          {% set value = state %}
+          {% break %}
         {% endif %}
       {% endfor %}
       {{ value }}
