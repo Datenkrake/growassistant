@@ -95,10 +95,6 @@ sensors:
   #   value_template: "{{ state_attr('fan.g1_humidifier_humidifier', 'percentage') }}"
   #   icon: mdi:fan
 
-
-
-
-
   combined_humidity:
     friendly_name: "Combined Humidity"
     unit_of_measurement: "%"
@@ -164,7 +160,8 @@ sensors:
       {% set lux = states('sensor.g1_canopy_g1_bh1750_illuminance') | float %}
       {% set bh1750_cal = states('input_number.bh1750_calibration_factor') | float %}
       {% set calibrated_lux = lux * bh1750_cal %}
-      {{ (calibrated_lux * 0.017) | round(0) }}
+      {% set ppfd = calibrated_lux * 0.017 %}
+      {{ ppfd | round(0) }}
 
 
   # Determine the current state of the growth cycle, vegetative, flipping, generative, drying, based on dates given in the input_datetime.yaml
