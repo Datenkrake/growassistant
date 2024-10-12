@@ -84,7 +84,6 @@ recorder:
 light:
   - platform: group
     name: Full Spectrum Light
-    id: full_spectrum_light
     entities:
       - light.g1_qbar1_pwm_qbar1
       - light.g1_qbar2_pwm_qbar2
