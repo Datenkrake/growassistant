@@ -7,93 +7,93 @@ sensors:
   ##########################################################################
 
   # Canopy sensors
-  g1_canopy_temperature:
-    friendly_name: "Canopy Temperature"
-    unit_of_measurement: "°C"
-    value_template: "{{ states('sensor.g1_canopy_bme680_temperature') }}"
-    icon: mdi:thermometer
+  # g1_canopy_temperature:
+  #   friendly_name: "Canopy Temperature"
+  #   unit_of_measurement: "°C"
+  #   value_template: "{{ states('sensor.g1_canopy_bme680_temperature') }}"
+  #   icon: mdi:thermometer
 
-  g1_canopy_humidity:
-    friendly_name: "Canopy Humidity"
-    unit_of_measurement: "%"
-    value_template: "{{ states('sensor.g1_canopy_bme680_humidity') }}"
-    icon: mdi:water-percent
+  # g1_canopy_humidity:
+  #   friendly_name: "Canopy Humidity"
+  #   unit_of_measurement: "%"
+  #   value_template: "{{ states('sensor.g1_canopy_bme680_humidity') }}"
+  #   icon: mdi:water-percent
 
-  g1_canopy_illuminance:
-    friendly_name: "Canopy Illuminance"
-    unit_of_measurement: "lux"
-    value_template: "{{ states('sensor.g1_canopy_g1_bh1750_illuminance') }}"
-    icon: mdi:weather-sunny
+  # g1_canopy_illuminance:
+  #   friendly_name: "Canopy Illuminance"
+  #   unit_of_measurement: "lux"
+  #   value_template: "{{ states('sensor.g1_canopy_g1_bh1750_illuminance') }}"
+  #   icon: mdi:weather-sunny
 
-  g1_canopy_ultrasonic_sensor:
-    friendly_name: "Canopy Ultrasonic Sensor"
-    unit_of_measurement: "m"
-    value_template: "{{ states('sensor.esp1_g1_light_distance_sensor') }}"
-    icon: mdi:ruler
+  # g1_canopy_ultrasonic_sensor:
+  #   friendly_name: "Canopy Ultrasonic Sensor"
+  #   unit_of_measurement: "m"
+  #   value_template: "{{ states('sensor.esp1_g1_light_distance_sensor') }}"
+  #   icon: mdi:ruler
 
-  # Intake sensors
-  g1_intake_temperature:
-    friendly_name: "Intake Temperature"
-    unit_of_measurement: "°C"
-    value_template: "{{ states('sensor.g1_intake_bme680_temperature') }}"
-    icon: mdi:thermometer
+  # # Intake sensors
+  # g1_intake_temperature:
+  #   friendly_name: "Intake Temperature"
+  #   unit_of_measurement: "°C"
+  #   value_template: "{{ states('sensor.g1_intake_bme680_temperature') }}"
+  #   icon: mdi:thermometer
 
-  g1_intake_humidity:
-    friendly_name: "Intake Humidity"
-    unit_of_measurement: "%"
-    value_template: "{{ states('sensor.g1_intake_bme680_humidity') }}"
-    icon: mdi:water-percent
+  # g1_intake_humidity:
+  #   friendly_name: "Intake Humidity"
+  #   unit_of_measurement: "%"
+  #   value_template: "{{ states('sensor.g1_intake_bme680_humidity') }}"
+  #   icon: mdi:water-percent
 
-  g1_intake_fan_speed:
-    friendly_name: "Intake Fan Speed"
-    unit_of_measurement: "%"
-    value_template: "{{ state_attr('fan.g1_intake_intake_fan', 'percentage') }}"
-    icon: mdi:fan
+  # g1_intake_fan_speed:
+  #   friendly_name: "Intake Fan Speed"
+  #   unit_of_measurement: "%"
+  #   value_template: "{{ state_attr('fan.g1_intake_intake_fan', 'percentage') }}"
+  #   icon: mdi:fan
 
-  # Exhaust sensors
-  g1_exhaust_fan_1_speed:
-    friendly_name: "Exhaust Fan 1 Speed"
-    unit_of_measurement: "%"
-    value_template: "{{ state_attr('fan.g1_exhaust_exhaust_fan_1', 'percentage') }}"
-    icon: mdi:fan
+  # # Exhaust sensors
+  # g1_exhaust_fan_1_speed:
+  #   friendly_name: "Exhaust Fan 1 Speed"
+  #   unit_of_measurement: "%"
+  #   value_template: "{{ state_attr('fan.g1_exhaust_exhaust_fan_1', 'percentage') }}"
+  #   icon: mdi:fan
 
-  g1_exhaust_fan_2_speed:
-    friendly_name: "Exhaust Fan 2 Speed"
-    unit_of_measurement: "%"
-    value_template: "{{ state_attr('fan.g1_exhaust_exhaust_fan_2', 'percentage') }}"
-    icon: mdi:fan
+  # g1_exhaust_fan_2_speed:
+  #   friendly_name: "Exhaust Fan 2 Speed"
+  #   unit_of_measurement: "%"
+  #   value_template: "{{ state_attr('fan.g1_exhaust_exhaust_fan_2', 'percentage') }}"
+  #   icon: mdi:fan
 
-  # Wind sensors
-  g1_wind_fan_1_speed:
-    friendly_name: "Wind Fan 1 Speed"
-    unit_of_measurement: "%"
-    value_template: "{{ state_attr('fan.g1_wind_wind_fan_1', 'percentage') }}"
-    icon: mdi:fan
+  # # Wind sensors
+  # g1_wind_fan_1_speed:
+  #   friendly_name: "Wind Fan 1 Speed"
+  #   unit_of_measurement: "%"
+  #   value_template: "{{ state_attr('fan.g1_wind_wind_fan_1', 'percentage') }}"
+  #   icon: mdi:fan
 
-  g1_wind_fan_2_speed:
-    friendly_name: "Wind Fan 2 Speed"
-    unit_of_measurement: "%"
-    value_template: "{{ state_attr('fan.g1_wind_wind_fan_2', 'percentage') }}"
-    icon: mdi:fan
+  # g1_wind_fan_2_speed:
+  #   friendly_name: "Wind Fan 2 Speed"
+  #   unit_of_measurement: "%"
+  #   value_template: "{{ state_attr('fan.g1_wind_wind_fan_2', 'percentage') }}"
+  #   icon: mdi:fan
 
-  g1_gantry_humidity:
-    friendly_name: "Gantry Humidity"
-    unit_of_measurement: "%"
-    value_template: "{{ states('sensor.g1_wind_canopy_humidity') }}"
-    icon: mdi:water-percent
+  # g1_gantry_humidity:
+  #   friendly_name: "Gantry Humidity"
+  #   unit_of_measurement: "%"
+  #   value_template: "{{ states('sensor.g1_wind_canopy_humidity') }}"
+  #   icon: mdi:water-percent
 
-  g1_gantry_temperature:
-    friendly_name: "Gantry Temperature"
-    unit_of_measurement: "°C"
-    value_template: "{{ states('sensor.g1_wind_canopy_temperature') }}"
-    icon: mdi:thermometer
+  # g1_gantry_temperature:
+  #   friendly_name: "Gantry Temperature"
+  #   unit_of_measurement: "°C"
+  #   value_template: "{{ states('sensor.g1_wind_canopy_temperature') }}"
+  #   icon: mdi:thermometer
 
-  # Humidifier sensors
-  g1_humidifier_speed:
-    friendly_name: "Humidifier Speed"
-    unit_of_measurement: "%"
-    value_template: "{{ state_attr('fan.g1_humidifier_humidifier', 'percentage') }}"
-    icon: mdi:fan
+  # # Humidifier sensors
+  # g1_humidifier_speed:
+  #   friendly_name: "Humidifier Speed"
+  #   unit_of_measurement: "%"
+  #   value_template: "{{ state_attr('fan.g1_humidifier_humidifier', 'percentage') }}"
+  #   icon: mdi:fan
 
 
 
