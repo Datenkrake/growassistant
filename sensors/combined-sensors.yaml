@@ -111,18 +111,21 @@ sensors:
     friendly_name: "Combined Humidity"
     unit_of_measurement: "%"
     value_template: >
-      {# List of sensors in order of preference #}
-      {% set sensors = ['sensor.g1_canopy_bme680_humidity', 'sensor.g1_wind_canopy_humidity', 'sensor.g1_intake_bme680_humidity'] %}
-      {% set value = 0 %}
-      {# Loop through sensors to find a valid one #}
+      {% set sensors = [
+        'sensor.g1_canopy_bme680_humidity',
+        'sensor.g1_wind_canopy_humidity',
+        'sensor.g1_intake_bme680_humidity'
+      ] %}
+      {% set ns = namespace(value=None) %}
       {% for sensor in sensors %}
-        {% set state = states(sensor) %}
-        {% if state not in ['unavailable', 'unknown', 'none'] %}
-          {% set value = state %}
+        {% set sensor_state = states(sensor) %}
+        {% set sensor_value = sensor_state | float(default=None) %}
+        {% if sensor_value is not none %}
+          {% set ns.value = sensor_state %}
           {% break %}
         {% endif %}
       {% endfor %}
-      {{ value }}
+      {{ ns.value | default(0) }}
 
   # combined_temperature:
   #   friendly_name: "Combined Temperature"
@@ -140,22 +143,22 @@ sensors:
     friendly_name: "Combined Temperature"
     unit_of_measurement: "°C"
     value_template: >
-      {# List of temperature sensors in order of preference #}
       {% set sensors = [
         'sensor.g1_canopy_bme680_temperature',
         'sensor.g1_wind_canopy_temperature',
         'sensor.g1_intake_bme680_temperature'
       ] %}
-      {% set value = 0 %}
-      {# Loop through sensors to find a valid one #}
+      {% set ns = namespace(value=None) %}
       {% for sensor in sensors %}
-        {% set state = states(sensor) %}
-        {% if state not in ['unavailable', 'unknown', 'none'] %}
-          {% set value = state %}
+        {% set sensor_state = states(sensor) %}
+        {% set sensor_value = sensor_state | float(default=None) %}
+        {% if sensor_value is not none %}
+          {% set ns.value = sensor_state %}
           {% break %}
         {% endif %}
       {% endfor %}
-      {{ value }}
+      {{ ns.value | default(0) }}
+
     
   cultivar_height:
     friendly_name: "Cultivar Height"
