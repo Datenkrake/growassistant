@@ -162,8 +162,8 @@ sensors:
     unit_of_measurement: "µmol/m²/s"
     value_template: >
       {% set lux = states('sensor.g1_canopy_g1_bh1750_illuminance') | float %}
-      {% set bh1750_cal = input_number.bh1750_calibration_factor | float %}
-      {{ set lux = lux * bh1750_cal }}
+      {% set bh1750_cal = states('input_number.bh1750_calibration_factor') | float %}
+      {% set lux = lux * bh1750_cal %}
       {{ lux * 0.017 | round(0) }}
 
   # Determine the current state of the growth cycle, vegetative, flipping, generative, drying, based on dates given in the input_datetime.yaml
