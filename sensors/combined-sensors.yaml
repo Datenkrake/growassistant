@@ -95,30 +95,75 @@ sensors:
   #   value_template: "{{ state_attr('fan.g1_humidifier_humidifier', 'percentage') }}"
   #   icon: mdi:fan
 
+  # combined_humidity:
+  #   friendly_name: "Combined Humidity"
+  #   unit_of_measurement: "%"
+  #   value_template: >
+  #     {% if not is_state('sensor.g1_canopy_bme680_humidity', 'unavailable') and not is_state('sensor.g1_canopy_bme680_humidity', 'unknown') %}
+  #       {{ states('sensor.g1_canopy_bme680_humidity') }}
+  #     {% elif not is_state('sensor.g1_intake_bme680_humidity', 'unavailable') and not is_state('sensor.g1_intake_bme680_humidity', 'unknown') %}
+  #       {{ states('sensor.g1_intake_bme680_humidity') }}
+  #     {% else %}
+  #       {{ 0 }}
+  #     {% endif %}
+
   combined_humidity:
     friendly_name: "Combined Humidity"
     unit_of_measurement: "%"
     value_template: >
-      {% if not is_state('sensor.g1_canopy_bme680_humidity', 'unavailable') and not is_state('sensor.g1_canopy_bme680_humidity', 'unknown') %}
-        {{ states('sensor.g1_canopy_bme680_humidity') }}
-      {% elif not is_state('sensor.g1_intake_bme680_humidity', 'unavailable') and not is_state('sensor.g1_intake_bme680_humidity', 'unknown') %}
-        {{ states('sensor.g1_intake_bme680_humidity') }}
-      {% else %}
-        {{ 0 }}
-      {% endif %}
+      {# List of sensors in order of preference #}
+      {% set sensors = ['sensor.g1_canopy_bme680_humidity', 'sensor.g1_wind_canopy_humidity', 'sensor.g1_intake_bme680_humidity'] %}
+      {% set value = 0 %}
+      {# Loop through sensors to find a valid one #}
+      {% for sensor in sensors %}
+        {% set state = states(sensor) %}
+        {% if state not in ['unavailable', 'unknown', 'none'] %}
+          {% set last_updated = as_timestamp(states[sensor].last_updated) %}
+          {% if (as_timestamp(now()) - last_updated) < 300 %}
+            {% set value = state %}
+            {% break %}
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+      {{ value }}
+
+  # combined_temperature:
+  #   friendly_name: "Combined Temperature"
+  #   unit_of_measurement: "°C"
+  #   value_template: >
+  #     {% if not is_state('sensor.g1_canopy_bme680_temperature', 'unavailable') and not is_state('sensor.g1_canopy_bme680_temperature', 'unknown') %}
+  #       {{ states('sensor.g1_canopy_bme680_temperature') }}
+  #     {% elif not is_state('sensor.g1_intake_bme680_temperature', 'unavailable') and not is_state('sensor.g1_intake_bme680_temperature', 'unknown') %}
+  #       {{ states('sensor.g1_intake_bme680_temperature') }}
+  #     {% else %}
+  #       {{ 0 }}
+  #     {% endif %}
 
   combined_temperature:
     friendly_name: "Combined Temperature"
     unit_of_measurement: "°C"
     value_template: >
-      {% if not is_state('sensor.g1_canopy_bme680_temperature', 'unavailable') and not is_state('sensor.g1_canopy_bme680_temperature', 'unknown') %}
-        {{ states('sensor.g1_canopy_bme680_temperature') }}
-      {% elif not is_state('sensor.g1_intake_bme680_temperature', 'unavailable') and not is_state('sensor.g1_intake_bme680_temperature', 'unknown') %}
-        {{ states('sensor.g1_intake_bme680_temperature') }}
-      {% else %}
-        {{ 0 }}
-      {% endif %}
-
+      {# List of temperature sensors in order of preference #}
+      {% set sensors = [
+        'sensor.g1_canopy_bme680_temperature',
+        'sensor.g1_wind_canopy_temperature',
+        'sensor.g1_intake_bme680_temperature'
+      ] %}
+      {% set value = 0 %}
+      {# Loop through sensors to find a valid one #}
+      {% for sensor in sensors %}
+        {% set state = states(sensor) %}
+        {% if state not in ['unavailable', 'unknown', 'none'] %}
+          {# Check if sensor was updated within the last 300 seconds #}
+          {% set last_updated = as_timestamp(states[sensor].last_updated) %}
+          {% if (as_timestamp(now()) - last_updated) < 300 %}
+            {% set value = state %}
+            {% break %}
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+      {{ value }}
+    
   cultivar_height:
     friendly_name: "Cultivar Height"
     unit_of_measurement: "m"
