@@ -28,6 +28,8 @@ action:
       canopy_hum: "{{ states('sensor.combined_humidity') | float }}"
       rh_target: "{{ states('sensor.rh_target') | float }}"
       dayphase: "{{ states('sensor.dayphase') | int }}"
+      temperature_offset_max_day: "{{ states('input_number.temperature_offset_max_day') | float }}"
+      temperature_offset_max_night: "{{ states('input_number.temperature_offset_max_night') | float }}"
       Kp: "{{ states('input_number.kp_vpd') | float(0) }}"
       Ki: "{{ states('input_number.ki_vpd') | float(0) }}"
       Kd: "{{ states('input_number.kd_vpd') | float(0) }}"
@@ -63,7 +65,7 @@ action:
       control_exhaust: "{{ P_exhaust + Ki * integral_exhaust_clamped + D_exhaust | abs }}"
 
       min_temp: 15
-      max_temp: "{{ intake_temp + (1 if dayphase == 0 else 5) }}"
+      max_temp: "{{ intake_temp + (temperature_offset_max_night if dayphase == 0 else temperature_offset_max_day) }}"
       t_margin: "{{ max_temp - canopy_temp }}"
       t_potential: "{{ canopy_temp - intake_temp }}"
       rh_margin: "{{ rh_target - canopy_hum }}"

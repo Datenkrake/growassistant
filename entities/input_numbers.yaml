@@ -411,3 +411,21 @@ bh1750_calibration_factor:
   mode: box
   icon: mdi:lightbulb
 
+# Max allowed temperature above intake temperature for day and night
+temperature_offset_max_day:
+  name: "Temperature Offset Max Day (Canopy to Intake)"
+  min: 0
+  max: 10
+  step: 0.1
+  mode: box
+  unit_of_measurement: "°C"
+  icon: mdi:thermometer
+
+temperature_offset_max_night:
+  name: "Temperature Offset Max Night (Canopy to Intake)"
+  min: 0
+  max: 10
+  step: 0.1
+  mode: box
+  unit_of_measurement: "°C"
+  icon: mdi:thermometer
