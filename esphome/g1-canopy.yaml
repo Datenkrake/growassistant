@@ -29,7 +29,13 @@ wifi:
     password: "zyRlPuMkWQ2v"
 
 captive_portal:
-    
+
+globals:
+  - id: last_bme680_update
+    type: unsigned long
+    restore_value: no
+    initial_value: '0'
+
   # Example configuration entry for ESP32
 i2c:
   sda: 7
@@ -69,51 +75,13 @@ sensor:
         window_size: 60
         send_every: 60
 
-  # - platform: sgp4x
-  #   voc:
-  #     name: "VOC Index"
-  #   nox:
-  #     name: "NOx Index"
-  #   compensation:
-  #     humidity_source: htu21d_humidity
-  #     temperature_source: htu21d_temperature
-  #   address: 0x59
-  #   update_interval: 60s
-  #   i2c_id: bus_a
-
-  # - platform: htu21d
-  #   model: htu21d
-  #   temperature:
-  #     name: "Canopy Temperature"
-  #     id: htu21d_temperature
-  #   humidity:
-  #     name: "Canopy Humidity"
-  #     id: htu21d_humidity  
-  #   heater:
-  #     name: "Heater"
-
-  
-
-  # - platform: bme680
-  #   temperature:
-  #     name: "BME680 Temperature"
-  #     id: bme680_temperature
-  #     oversampling: 16x
-  #   pressure:
-  #     name: "BME680 Pressure"
-  #     id: bme680_pressure
-  #   humidity:
-  #     name: "BME680 Humidity"
-  #     id: bme680_humidity
-  #   gas_resistance:
-  #     name: "BME680 Gas Resistance"
-  #     id: bme680_gas
-  #   address: 0x76
-  #   update_interval: 60s
-
   - platform: bme68x_bsec2
     temperature:
       name: "BME680 Temperature"
+      on_value:
+        then:
+          - lambda: |-
+              id(last_bme680_update) = millis();
     pressure:
       name: "BME680 Pressure"
     humidity:
@@ -126,37 +94,22 @@ sensor:
     breath_voc_equivalent:
       name: "BME680 Breath VOC Equivalent"
 
-  # - platform: bme68x_bsec2
-  #   temperature:
-  #     name: "BME688 Temperature"
-  #     filters:
-  #       - median
-  #   pressure:
-  #     name: "BME688 Pressure"
-  #     filters:
-  #       - median
-  #   humidity:
-  #     name: "BME688 Humidity"
-  #     filters:
-  #       - median
-  #   iaq:
-  #     name: "BME688 IAQ"
-  #     filters:
-  #       - median
-  #   iaq_static:
-  #     name: "BME688 Static IAQ"
-  #     filters:
-  #       - median
-  #   co2_equivalent:
-  #     name: "BME688 CO2 Equivalent"
-  #     filters:
-  #       - median
-  #   breath_voc_equivalent:
-  #     name: "BME688 Breath VOC Equivalent"
-  #     filters:
-  #       - median
-  #   gas_resistance:
-  #     # Gas resistance in Ω
-  #     name: "BME688 Gas Resistance"
-  #     filters:
-  #       - median
+# BME680 value stuck / no update sent detection and reset
+interval:
+  - interval: 60s
+    then:
+      - if:
+          condition:
+            lambda: |-
+              if (id(last_bme680_update) == 0) {
+                // Sensor hasn't updated yet
+                return false;
+              }
+              return (millis() - id(last_bme680_update) > (5 * 60 * 1000));
+          then:
+            - logger.log:
+                level: WARN
+                format: "BME680 sensor hasn't updated in over 5 minutes, restarting MCU."
+            - lambda: |-
+                ESP.restart();  // This will reset the MCU
+

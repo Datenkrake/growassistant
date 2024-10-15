@@ -1,0 +1,74 @@
+esphome:
+  name: g2-intake
+  friendly_name: G2_INTAKE
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "+j+okthzC9Bih061sZ0fVzfc7J79eZZv1yO7bZFmzE8="
+
+ota:
+  - platform: esphome
+    password: "f2f855f8e0b8d178f386c3f8773972f7"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  domain: .local
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "G2-Intake Fallback Hotspot"
+    password: "Na1KtN4vGGSR"
+
+captive_portal:
+
+
+output:
+  - platform: ledc
+    pin: GPIO3
+    id: fan_pwm
+    frequency: 15000 Hz
+    inverted: True
+
+fan:
+  - platform: speed
+    output: fan_pwm
+    name: "Intake Fan"
+
+# Example configuration entry
+i2c:
+  sda: GPIO2
+  scl: GPIO1
+  timeout: 1ms
+
+bme68x_bsec2_i2c:
+  address: 0x77
+  model: bme680
+  operating_age: 28d
+  sample_rate: LP
+  supply_voltage: 3.3V
+  temperature_offset: 1
+  
+sensor:
+  - platform: bme68x_bsec2
+    temperature:
+      name: "BME680 Temperature"
+    pressure:
+      name: "BME680 Pressure"
+    humidity:
+      name: "BME680 Humidity"
+    iaq:
+      name: "BME680 IAQ"
+      id: iaq
+    co2_equivalent:
+      name: "BME680 CO2 Equivalent"
+    breath_voc_equivalent:
+      name: "BME680 Breath VOC Equivalent"

@@ -107,6 +107,46 @@ sensors:
   #       {{ 0 }}
   #     {% endif %}
 
+  # combined_humidity:
+  #   friendly_name: "Combined Humidity"
+  #   unit_of_measurement: "%"
+  #   value_template: >
+  #     {% set sensors = [
+  #       'sensor.g1_canopy_bme680_humidity',
+  #       'sensor.g1_wind_canopy_humidity',
+  #       'sensor.g1_intake_bme680_humidity'
+  #     ] %}
+  #     {% set ns = namespace(value=None) %}
+  #     {% for sensor in sensors %}
+  #       {% set sensor_state = states(sensor) %}
+  #       {% set sensor_value = sensor_state | float(default=None) %}
+  #       {% if sensor_value is not none %}
+  #         {% set ns.value = sensor_state %}
+  #         {% break %}
+  #       {% endif %}
+  #     {% endfor %}
+  #     {{ ns.value | default(0) }}
+
+  # combined_temperature:
+  #   friendly_name: "Combined Temperature"
+  #   unit_of_measurement: "°C"
+  #   value_template: >
+  #     {% set sensors = [
+  #       'sensor.g1_canopy_bme680_temperature',
+  #       'sensor.g1_wind_canopy_temperature',
+  #       'sensor.g1_intake_bme680_temperature'
+  #     ] %}
+  #     {% set ns = namespace(value=None) %}
+  #     {% for sensor in sensors %}
+  #       {% set sensor_state = states(sensor) %}
+  #       {% set sensor_value = sensor_state | float(default=None) %}
+  #       {% if sensor_value is not none %}
+  #         {% set ns.value = sensor_state %}
+  #         {% break %}
+  #       {% endif %}
+  #     {% endfor %}
+  #     {{ ns.value | default(0) }}
+  
   combined_humidity:
     friendly_name: "Combined Humidity"
     unit_of_measurement: "%"
@@ -117,27 +157,35 @@ sensors:
         'sensor.g1_intake_bme680_humidity'
       ] %}
       {% set ns = namespace(value=None) %}
+      {% set last_updated = 0 %}
+      
       {% for sensor in sensors %}
         {% set sensor_state = states(sensor) %}
-        {% set sensor_value = sensor_state | float(default=None) %}
-        {% if sensor_value is not none %}
-          {% set ns.value = sensor_state %}
-          {% break %}
+        {% if sensor_state is not none %}
+          {% set sensor_value = sensor_state | float(default=None) %}
+          {% set sensor_last_updated = states[sensor].last_updated %}
+          
+          {% if sensor_value is not none and sensor_last_updated is not none %}
+            {% if (now() - sensor_last_updated).total_seconds() < 300 %}
+              {% set ns.value = sensor_value %}
+              {% break %}
+            {% else %}
+              {% set last_updated = max(last_updated, sensor_last_updated.timestamp()) %}
+            {% endif %}
+          {% endif %}
         {% endif %}
       {% endfor %}
-      {{ ns.value | default(0) }}
-
-  # combined_temperature:
-  #   friendly_name: "Combined Temperature"
-  #   unit_of_measurement: "°C"
-  #   value_template: >
-  #     {% if not is_state('sensor.g1_canopy_bme680_temperature', 'unavailable') and not is_state('sensor.g1_canopy_bme680_temperature', 'unknown') %}
-  #       {{ states('sensor.g1_canopy_bme680_temperature') }}
-  #     {% elif not is_state('sensor.g1_intake_bme680_temperature', 'unavailable') and not is_state('sensor.g1_intake_bme680_temperature', 'unknown') %}
-  #       {{ states('sensor.g1_intake_bme680_temperature') }}
-  #     {% else %}
-  #       {{ 0 }}
-  #     {% endif %}
+      
+      {% if ns.value is none and last_updated > 0 %}
+        {% set fallback_sensor = sensors | selectattr('last_updated', '>', (now() - timedelta(minutes=5))) | list | first %}
+        {% if fallback_sensor %}
+          {{ states(fallback_sensor) | float(0) }}
+        {% else %}
+          {{ 0 }}  # Default value if no sensors are available
+        {% endif %}
+      {% else %}
+        {{ ns.value | default(0) }}
+      {% endif %}
 
   combined_temperature:
     friendly_name: "Combined Temperature"
@@ -149,17 +197,38 @@ sensors:
         'sensor.g1_intake_bme680_temperature'
       ] %}
       {% set ns = namespace(value=None) %}
+      {% set last_updated = 0 %}
+      
       {% for sensor in sensors %}
         {% set sensor_state = states(sensor) %}
-        {% set sensor_value = sensor_state | float(default=None) %}
-        {% if sensor_value is not none %}
-          {% set ns.value = sensor_state %}
-          {% break %}
+        {% if sensor_state is not none %}
+          {% set sensor_value = sensor_state | float(default=None) %}
+          {% set sensor_last_updated = states[sensor].last_updated %}
+          
+          {% if sensor_value is not none and sensor_last_updated is not none %}
+            {% if (now() - sensor_last_updated).total_seconds() < 300 %}
+              {% set ns.value = sensor_value %}
+              {% break %}
+            {% else %}
+              {% set last_updated = max(last_updated, sensor_last_updated.timestamp()) %}
+            {% endif %}
+          {% endif %}
         {% endif %}
       {% endfor %}
-      {{ ns.value | default(0) }}
+      
+      {% if ns.value is none and last_updated > 0 %}
+        {% set fallback_sensor = sensors | selectattr('last_updated', '>', (now() - timedelta(minutes=5))) | list | first %}
+        {% if fallback_sensor %}
+          {{ states(fallback_sensor) | float(0) }}
+        {% else %}
+          {{ 0 }}  # Default value if no sensors are available
+        {% endif %}
+      {% else %}
+        {{ ns.value | default(0) }}
+      {% endif %}
 
-    
+
+
   cultivar_height:
     friendly_name: "Cultivar Height"
     unit_of_measurement: "m"

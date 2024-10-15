@@ -1,5 +1,6 @@
 # Automation to set restart flag if any sensor fails
 alias: 'Set Restart Flag on Sensor Failure'
+id: "automations_sensor_validation"
 trigger:
   - platform: time_pattern
     minutes: '/1'  # Check every minute
