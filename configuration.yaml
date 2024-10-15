@@ -38,7 +38,7 @@ automation:
   - !include automations/dli.yaml
   - !include automations/wind.yaml
   - !include automations/sensor_validation.yaml
-  # - !include automations/reset.yaml
+  - !include automations/reset.yaml
 
 rest_command: !include rest_commands.yaml
 script: !include scripts.yaml
