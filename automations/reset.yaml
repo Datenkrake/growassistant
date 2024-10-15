@@ -11,13 +11,10 @@ alias: "System Reset Automation"
 id: "automations_reset"
 description: "Reset the system if a sensor fails."
 trigger:
-  - platform: time_pattern
-    minutes: "/60"
-    seconds: 00
+  - platform: state
+    entity_id: input_boolean.restart_flag
+    to: 'on'
 condition:
-  - condition: state
-    entity_id: input_boolean.vpd_control_enable
-    state: "on"
   - condition: state
     entity_id: input_boolean.global_enable
     state: "on"
@@ -29,16 +26,11 @@ condition:
     state: "off"
 
 action:
-  - variables:
-      restart_flag: "{{ states('input_boolean.restart_flag') }}"
-  - choose:
-      - conditions: "{{ restart_flag == 'on' }}"
-        sequence:
-          - service: switch.turn_off
-            entity_id: switch.shelly_mains_switch_0
-          - delay: "00:00:10"
-          - service: switch.turn_on
-            entity_id: switch.shelly_mains_switch_0
-      - conditions: "{{ restart_flag == 'off' }}"
-        sequence:
+  - service: switch.turn_off
+    entity_id: switch.shelly_mains_switch_0
+  - delay: "00:00:10"
+  - service: input_boolean.turn_off
+    entity_id: input_boolean.restart_flag
+  - service: switch.turn_on
+    entity_id: switch.shelly_mains_switch_0
 
