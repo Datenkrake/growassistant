@@ -1,0 +1,55 @@
+esphome:
+  name: gx-sht21
+  friendly_name: GX_SHT21
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "tTsVnmfwRjAJVXiTaDmPlbupV93rhvXhWV2fzj3TVeI="
+
+ota:
+  - platform: esphome
+    password: "76ea25f7bae7cb81d7e0bdf9f26644b7"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Gx-Sht21 Fallback Hotspot"
+    password: "uWezis5Q2NxQ"
+
+captive_portal:
+
+i2c:
+  sda: 2
+  scl: 3
+  scan: true
+  id: bus_a
+  frequency: 50kHz
+
+switch:
+  - platform: gpio
+    pin: GPIO4
+    id: door_switch_enable
+    restore_mode: ALWAYS_OFF  # GPIO4 is always on, it is GND for SHT21
+
+sensor:
+  - platform: htu21d
+    model: SHT21
+    temperature:
+      name: "Temperature"
+    humidity:
+      name: "Humidity"
+    heater:
+      name: "Heater"
+    update_interval: 30s

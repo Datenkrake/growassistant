@@ -1,0 +1,63 @@
+esphome:
+  name: g2-humidifier
+  friendly_name: G2_HUMIDIFIER
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "HhOA1PlgbsEhARTfOVv2uCTzB9MqmctIsjiBJH6rE1k="
+
+ota:
+  - platform: esphome
+    password: "8f69bc69bd62f07446b1e6c58f7b8814"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "G2-Humidifier Fallback Hotspot"
+    password: "hUyWt72oSiTm"
+
+captive_portal:
+
+output:
+  - platform: slow_pwm
+    pin: GPIO10
+    id: humidifier_pwm_output
+    period: 10s
+
+fan:
+  - platform: speed
+    output: humidifier_pwm_output
+    name: "Humidifier"
+    id: humidifier_fan
+    speed_count: 100  # Set the speed steps (0-100%)
+
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO20
+      mode: INPUT_PULLDOWN  # Enable internal pull-down resistor
+    name: "Door Switch"
+    id: door_switch
+    device_class: door  # Classify the sensor as a door sensor
+    filters:
+      - invert:  # Inverts the logic of the binary sensor
+
+switch:
+  - platform: gpio
+    pin: GPIO21
+    id: door_switch_enable
+    restore_mode: ALWAYS_ON  # GPIO21 is always on
+

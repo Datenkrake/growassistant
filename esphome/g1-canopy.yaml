@@ -30,18 +30,13 @@ wifi:
 
 captive_portal:
 
-globals:
-  - id: last_bme680_update
-    type: unsigned long
-    restore_value: no
-    initial_value: '0'
-
   # Example configuration entry for ESP32
 i2c:
   sda: 7
   scl: 6
   scan: true
   id: bus_a
+  frequency: 50kHz
 
 bme68x_bsec2_i2c:
   address: 0x77
@@ -78,10 +73,6 @@ sensor:
   - platform: bme68x_bsec2
     temperature:
       name: "BME680 Temperature"
-      on_value:
-        then:
-          - lambda: |-
-              id(last_bme680_update) = millis();
     pressure:
       name: "BME680 Pressure"
     humidity:
@@ -94,22 +85,4 @@ sensor:
     breath_voc_equivalent:
       name: "BME680 Breath VOC Equivalent"
 
-# BME680 value stuck / no update sent detection and reset
-interval:
-  - interval: 60s
-    then:
-      - if:
-          condition:
-            lambda: |-
-              if (id(last_bme680_update) == 0) {
-                // Sensor hasn't updated yet
-                return false;
-              }
-              return (millis() - id(last_bme680_update) > (5 * 60 * 1000));
-          then:
-            - logger.log:
-                level: WARN
-                format: "BME680 sensor hasn't updated in over 5 minutes, restarting MCU."
-            - lambda: |-
-                ESP.restart();  // This will reset the MCU
 

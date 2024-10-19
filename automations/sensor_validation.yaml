@@ -1,4 +1,3 @@
-# Automation to set restart flag if any sensor fails
 alias: 'Set Restart Flag on Sensor Failure'
 id: "automations_sensor_validation"
 trigger:
@@ -6,27 +5,30 @@ trigger:
     minutes: '/1'  # Check every minute
 action:
   - variables:
+      # sensors: [
+      #   'sensor.g1_canopy_bme680_humidity',
+      #   'sensor.g1_wind_canopy_humidity',
+      #   'sensor.g1_intake_bme680_humidity',
+      #   'sensor.g1_canopy_bme680_temperature',
+      #   'sensor.g1_wind_canopy_temperature',
+      #   'sensor.g1_intake_bme680_temperature'
+      # ]
       sensors: [
-        'sensor.g1_canopy_bme680_humidity',
-        'sensor.g1_wind_canopy_humidity',
-        'sensor.g1_intake_bme680_humidity',
         'sensor.g1_canopy_bme680_temperature',
-        'sensor.g1_wind_canopy_temperature',
-        'sensor.g1_intake_bme680_temperature'
       ]
       failed: >
-        {# Initialize failed flag #}
-        {% set failed = false %}
+        {# Use a namespace to allow 'failed' to persist outside the loop #}
+        {% set ns = namespace(failed=false) %}
         {# Loop through all sensors to check their state #}
         {% for sensor in sensors %}
           {% set state = states(sensor) %}
           {# Check if sensor is unavailable, unknown, none, or not updated in 300s #}
           {% if state in ['unavailable', 'unknown', 'none'] or
                 (as_timestamp(now()) - as_timestamp(states[sensor].last_updated)) >= 300 %}
-            {% set failed = true %}
+            {% set ns.failed = true %}
           {% endif %}
         {% endfor %}
-        {{ failed }}
+        {{ ns.failed }}
   - choose:
       - conditions: "{{ failed }}"
         sequence:
