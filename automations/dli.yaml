@@ -35,7 +35,9 @@ action:
       d_dli_target: "{{ dli_current - dli_target }}"
 
       # Integral term (accumulating error over time)
-      integral: "{{ states('input_number.g1_integral_dli') | float(0) + (d_dli_target * dt) }}"
+      integral: >
+        {{ (states('input_number.g1_integral_dli') | float(0)) + ((d_dli_target | float(0)) * (dt | float(0))) }}
+
 
       # Derivative term (rate of change of error)
       derivative: "{{ Kd * (d_dli_target - previous_error) / dt }}"
