@@ -8,7 +8,7 @@ id: 'automations_light_intensity'
 description: 'This automation adjusts the light intensity based on the DLI setpoint'
 trigger:
   - platform: time_pattern
-    seconds: "/30"
+    seconds: 30
 condition:
   - condition: state
     entity_id: input_boolean.g1_global_enable
@@ -26,8 +26,8 @@ action:
       dli_target: "{{ states('sensor.g1_dli_target') | float(0) }}"
       dli_current: "{{ states('sensor.g1_dli') | float(0) }}"
       previous_error: "{{ states('input_number.g1_previous_dli_error') | float(0) }}"
-      Kp: "{{ states('input_number.g1_p_dli') | float(0) }}"
-      Ki: "{{ states('input_number.g1_i_dli') | float(0) }}"
+      Kp: "{{ states('input_number.g1_kp_dli') | float(0) }}"
+      Ki: "{{ states('input_number.g1_ki_dli') | float(0) }}"
       Kd: "{{ states('input_number.g1_Kd_dli') | float(0) }}"
       dt: "{{ states('input_number.g1_dt_dli') | float(0) }}"
       
