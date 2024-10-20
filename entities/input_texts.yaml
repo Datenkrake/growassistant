@@ -1,71 +1,71 @@
-# Cultivar name
-cultivar_name:
-  cultivar_name_base: &cultivar_name_base
-    mode: text
-    icon: mdi:flower
-  g1_cultivar_name:
-    <<: *cultivar_name_base
-    name: "G1 Cultivar Name"
-  g2_cultivar_name:
-    <<: *cultivar_name_base
-    name: "G2 Cultivar Name"
+# Cultivar Name
+g1_cultivar_name:
+  mode: text
+  icon: mdi:flower
+  name: "G1 Cultivar Name"
 
 # Cultivar Breeder
-cultivar_breeder:
-  cultivar_breeder_base: &cultivar_breeder_base
-    mode: text
-    icon: mdi:flower
-  g1_cultivar_breeder:
-    <<: *cultivar_breeder_base
-    name: "G1 Cultivar Breeder"
-  g2_cultivar_breeder:
-    <<: *cultivar_breeder_base
-    name: "G2 Cultivar Breeder"
+g1_cultivar_breeder:
+  mode: text
+  icon: mdi:flower
+  name: "G1 Cultivar Breeder"
 
 # Remarks
-remarks:
-  remarks_base: &remarks_base
-    mode: text
-    icon: mdi:flower
-  g1_remarks:
-    <<: *remarks_base
-    name: "G1 Remarks"
-  g2_remarks:
-    <<: *remarks_base
-    name: "G2 Remarks"
+g1_remarks:
+  mode: text
+  icon: mdi:flower
+  name: "G1 Remarks"
 
 # Medium
-medium:
-  medium_base: &medium_base
-    mode: text
-    icon: mdi:flower
-  g1_medium:
-    <<: *medium_base
-    name: "G1 Medium"
-  g2_medium:
-    <<: *medium_base
-    name: "G2 Medium"
+g1_medium:
+  mode: text
+  icon: mdi:flower
+  name: "G1 Medium"
 
 # Light
-light:
-  light_base: &light_base
-    mode: text
-    icon: mdi:flower
-  g1_light:
-    <<: *light_base
-    name: "G1 Light"
-  g2_light:
-    <<: *light_base
-    name: "G2 Light"
+g1_light:
+  mode: text
+  icon: mdi:flower
+  name: "G1 Light"
 
 # Nutrients
-nutrients:
-  nutrients_base: &nutrients_base
-    mode: text
-    icon: mdi:flower
-  g1_nutrients:
-    <<: *nutrients_base
-    name: "G1 Nutrients"
-  g2_nutrients:
-    <<: *nutrients_base
-    name: "G2 Nutrients"
+g1_nutrients:
+  mode: text
+  icon: mdi:flower
+  name: "G1 Nutrients"
+
+# Cultivar Name
+g2_cultivar_name:
+  mode: text
+  icon: mdi:flower
+  name: "G2 Cultivar Name"
+
+# Cultivar Breeder
+g2_cultivar_breeder:
+  mode: text
+  icon: mdi:flower
+  name: "G2 Cultivar Breeder"
+
+# Remarks
+g2_remarks:
+  mode: text
+  icon: mdi:flower
+  name: "G2 Remarks"
+
+# Medium
+g2_medium:
+  mode: text
+  icon: mdi:flower
+  name: "G2 Medium"
+
+# Light
+g2_light:
+  mode: text
+  icon: mdi:flower
+  name: "G2 Light"
+
+# Nutrients
+g2_nutrients:
+  mode: text
+  icon: mdi:flower
+  name: "G2 Nutrients"

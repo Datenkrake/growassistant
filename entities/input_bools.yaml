@@ -1,111 +1,113 @@
-# Boolean input entities 
+# Global Enable
+g1_global_enable:
+  name: "G1 Global Enable"
+  icon: mdi:flower
 
-global_enable:
-  global_enable_base: &global_enable_base
-    icon: mdi:flower
-  g1_global_enable:
-    <<: *global_enable_base
-    name: G1 Global Enable
-  g2_global_enable:
-    <<: *global_enable_base
-    name: G2 Global Enable
+# Irrigation Enable
+g1_irrigation_enable:
+  name: "G1 Irrigation Enable"
+  icon: mdi:flower
 
-irrigation_enable:
-  irrigation_enable_base: &irrigation_enable_base
-    icon: mdi:flower
-  g1_irrigation_enable:
-    <<: *irrigation_enable_base
-    name: G1 Irrigation Enable  
-  g2_irrigation_enable:
-    <<: *irrigation_enable_base
-    name: G2 Irrigation Enable
+# Service Mode
+g1_service_mode:
+  name: "G1 Service Mode"
+  icon: mdi:flower
 
-service_mode:
-  service_mode_base: &service_mode_base
-    icon: mdi:flower
-  g1_service_mode:
-    <<: *service_mode_base
-    name: G1 Service Mode
-  g2_service_mode:
-    <<: *service_mode_base
-    name: G2 Service Mode
-  
-silent_mode:
-  silent_mode_base: &silent_mode_base
-    icon: mdi:flower
-  g1_silent_mode:
-    <<: *silent_mode_base
-    name: G1 Silent Mode
-  g2_silent_mode:
-    <<: *silent_mode_base
-    name: G2 Silent Mode
+# Silent Mode
+g1_silent_mode:
+  name: "G1 Silent Mode"
+  icon: mdi:flower
 
-photolight_mode:
-  photolight_mode_base: &photolight_mode_base
-    icon: mdi:flower
-  g1_photolight_mode:
-    <<: *photolight_mode_base
-    name: G1 Photolight Mode
-  g2_photolight_mode:
-    <<: *photolight_mode_base
-    name: G2 Photolight Mode
+# Photolight Mode
+g1_photolight_mode:
+  name: "G1 Photolight Mode"
+  icon: mdi:flower
 
-timelapse_enable:
-  timelapse_enable_base: &timelapse_enable_base
-    icon: mdi:flower
-  g1_timelapse_enable:
-    <<: *timelapse_enable_base
-    name: G1 Timelapse Enable
-  g2_timelapse_enable:
-    <<: *timelapse_enable_base
-    name: G2 Timelapse Enable
+# Timelapse Enable
+g1_timelapse_enable:
+  name: "G1 Timelapse Enable"
+  icon: mdi:flower
 
-light_height_control_enable:
-  light_height_control_enable_base: &light_height_control_enable_base
-    icon: mdi:flower
-  g1_light_height_control_enable:
-    <<: *light_height_control_enable_base
-    name: G1 Light Height Control Enable
-  g2_light_height_control_enable:
-    <<: *light_height_control_enable_base
-    name: G2 Light Height Control Enable
+# Light Height Control Enable
+g1_light_height_control_enable:
+  name: "G1 Light Height Control Enable"
+  icon: mdi:flower
 
-vpd_control_enable:
-  vpd_control_enable_base: &vpd_control_enable_base
-    icon: mdi:flower
-  g1_vpd_control_enable:
-    <<: *vpd_control_enable_base
-    name: G1 VPD Control Enable
-  g2_vpd_control_enable:
-    <<: *vpd_control_enable_base
-    name: G2 VPD Control Enable
+# VPD Control Enable
+g1_vpd_control_enable:
+  name: "G1 VPD Control Enable"
+  icon: mdi:flower
 
-light_intensity_control_enable:
-  light_intensity_control_enable_base: &light_intensity_control_enable_base
-    icon: mdi:flower
-  g1_light_intensity_control_enable:
-    <<: *light_intensity_control_enable_base
-    name: G1 Light Intensity Control Enable
-  g2_light_intensity_control_enable:
-    <<: *light_intensity_control_enable_base
-    name: G2 Light Intensity Control Enable
+# Light Intensity Control Enable
+g1_light_intensity_control_enable:
+  name: "G1 Light Intensity Control Enable"
+  icon: mdi:flower
 
-wind_enable:
-  wind_enable_base: &wind_enable_base
-    icon: mdi:flower
-  g1_wind_enable:
-    <<: *wind_enable_base
-    name: G1 Wind Enable
-  g2_wind_enable:
-    <<: *wind_enable_base
-    name: G2 Wind Enable
+# Wind Enable
+g1_wind_enable:
+  name: "G1 Wind Enable"
+  icon: mdi:flower
 
-restart_flag:
-  restart_flag_base: &restart_flag_base
-    icon: mdi:flower
-  g1_restart_flag:
-    <<: *restart_flag_base
-    name: G1 Restart Flag
-  g2_restart_flag:
-    <<: *restart_flag_base
-    name: G2 Restart Flag
+# Restart Flag
+g1_restart_flag:
+  name: "G1 Restart Flag"
+  icon: mdi:flower
+
+
+
+
+
+# Global Enable
+g2_global_enable:
+  name: "G2 Global Enable"
+  icon: mdi:flower
+
+# Irrigation Enable
+g2_irrigation_enable:
+  name: "G2 Irrigation Enable"
+  icon: mdi:flower
+
+# Service Mode
+g2_service_mode:
+  name: "G2 Service Mode"
+  icon: mdi:flower
+
+# Silent Mode
+g2_silent_mode:
+  name: "G2 Silent Mode"
+  icon: mdi:flower
+
+# Photolight Mode
+g2_photolight_mode:
+  name: "G2 Photolight Mode"
+  icon: mdi:flower
+
+# Timelapse Enable
+g2_timelapse_enable:
+  name: "G2 Timelapse Enable"
+  icon: mdi:flower
+
+# Light Height Control Enable
+g2_light_height_control_enable:
+  name: "G2 Light Height Control Enable"
+  icon: mdi:flower
+
+# VPD Control Enable
+g2_vpd_control_enable:
+  name: "G2 VPD Control Enable"
+  icon: mdi:flower
+
+# Light Intensity Control Enable
+g2_light_intensity_control_enable:
+  name: "G2 Light Intensity Control Enable"
+  icon: mdi:flower
+
+# Wind Enable
+g2_wind_enable:
+  name: "G2 Wind Enable"
+  icon: mdi:flower
+
+# Restart Flag
+g2_restart_flag:
+  name: "G2 Restart Flag"
+  icon: mdi:flower
