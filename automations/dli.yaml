@@ -1,8 +1,3 @@
-# This automation control the light intensity of the grow light (DLI) based on the DLI setpoint
-# All light intensity values are in percentage and changed equally
-# The light intensity is adjusted every minute based on the DLI setpoint and the current DLI
-# The new setpoint is calculated using a PID controller
-
 alias: Light Intensity Control
 id: 'automations_light_intensity'
 description: 'This automation adjusts the light intensity based on the DLI setpoint'
@@ -22,36 +17,58 @@ condition:
 
 action:
   - variables:
-      light_intensity_max: "{{ states('input_number.g1_light_intensity_max') | float(0) }}"
-      dli_target: "{{ states('sensor.g1_dli_target') | float(0) }}"
-      dli_current: "{{ states('sensor.g1_dli') | float(0) }}"
-      previous_error: "{{ states('input_number.g1_previous_dli_error') | float(0) }}"
-      Kp: "{{ states('input_number.g1_kp_dli') | float(0) }}"
-      Ki: "{{ states('input_number.g1_ki_dli') | float(0) }}"
-      Kd: "{{ states('input_number.g1_Kd_dli') | float(0) }}"
-      dt: "{{ states('input_number.g1_dt_dli') | float(0) }}"
-      
+      light_intensity_max: >
+        {% set value = states('input_number.g1_light_intensity_max') %}
+        {{ value if value != 'unknown' and value != 'unavailable' else 0 | float }}
+
+      dli_target: >
+        {% set value = states('sensor.g1_dli_target') %}
+        {{ value if value != 'unknown' and value != 'unavailable' else 0 | float }}
+
+      dli_current: >
+        {% set value = states('sensor.g1_dli') %}
+        {{ value if value != 'unknown' and value != 'unavailable' else 0 | float }}
+
+      previous_error: >
+        {% set value = states('input_number.g1_previous_dli_error') %}
+        {{ value if value != 'unknown' and value != 'unavailable' else 0 | float }}
+
+      Kp: >
+        {% set value = states('input_number.g1_kp_dli') %}
+        {{ value if value != 'unknown' and value != 'unavailable' else 0 | float }}
+
+      Ki: >
+        {% set value = states('input_number.g1_ki_dli') %}
+        {{ value if value != 'unknown' and value != 'unavailable' else 0 | float }}
+
+      Kd: >
+        {% set value = states('input_number.g1_Kd_dli') %}
+        {{ value if value != 'unknown' and value != 'unavailable' else 0 | float }}
+
+      dt: >
+        {% set value = states('input_number.g1_dt_dli') %}
+        {{ value if value != 'unknown' and value != 'unavailable' else 0 | float }}
+
       # Calculate the difference between current and target DLI
-      d_dli_target: "{{ dli_current - dli_target }}"
+      d_dli_target: "{{ (dli_current | float(0)) - (dli_target | float(0)) }}"
 
       # Integral term (accumulating error over time)
       integral: >
         {{ (states('input_number.g1_integral_dli') | float(0)) + ((d_dli_target | float(0)) * (dt | float(0))) }}
 
-
       # Derivative term (rate of change of error)
-      derivative: "{{ Kd * (d_dli_target - previous_error) / dt }}"
+      derivative: "{{ (Kd | float(0)) * ((d_dli_target | float(0)) - (previous_error | float(0))) / (dt | float(0)) }}"
 
       # The overall control calculation, without abs to allow for both increases and decreases
-      control: "{{ Kp * d_dli_target + Ki * integral + derivative }}"
+      control: "{{ (Kp | float(0)) * (d_dli_target | float(0)) + (Ki | float(0)) * (integral | float(0)) + (derivative | float(0)) }}"
 
       # Current light intensity as a float between 0 and 1
       light_intensity: "{{ (state_attr('light.g1_canopy_light', 'brightness') | float(0)) / 255 }}"
 
       # Calculate the new light intensity, ensuring it remains within bounds
       light_intensity_new: >
-        {% set new_intensity = light_intensity - control %}
-        {% if new_intensity > light_intensity_max %}
+        {% set new_intensity = (light_intensity | float(0)) - (control | float(0)) %}
+        {% if new_intensity > (light_intensity_max | float(0)) %}
           {{ (light_intensity_max * 255) | int }}
         {% elif new_intensity < 0 %}
           {{ 0 }}
@@ -61,9 +78,14 @@ action:
 
       # State of the door and handling when it's open
       door_state: "{{ states('binary_sensor.g1_water_door_switch') }}"
-      light_intensity_door_open: "{{ states('input_number.g1_light_intensity_door_open') | int }}"
 
-      dayphase_target: "{{ states('sensor.g1_dayphase_target') | int }}"
+      light_intensity_door_open: >
+        {% set value = states('input_number.g1_light_intensity_door_open') %}
+        {{ value if value != 'unknown' and value != 'unavailable' else 0 | int }}
+
+      dayphase_target: >
+        {% set value = states('sensor.g1_dayphase_target') %}
+        {{ value if value != 'unknown' and value != 'unavailable' else 0 | int }}
 
       # Final light intensity, accounting for the door state
       final_light_intensity: >
@@ -76,42 +98,39 @@ action:
         {% else %}
           {{ 0 }}
         {% endif %}
-      
-      # if light intensity is 0, call light.turn_off
-      # if light intensity is not 0, call light.turn_on
+
   - choose:
-    - conditions:
-        condition: template
-        value_template: "{{ final_light_intensity == 0 }}"
-      sequence:
-        - service: light.turn_off
-          target:
-            entity_id: light.g1_qbar1_pwm_qbar1
-        - service: light.turn_off
-          target:
-            entity_id: light.g1_qbar2_pwm_qbar2
-    - conditions:
-        condition: template
-        value_template: "{{ final_light_intensity != 0 }}"
-      sequence:
-        - service: light.turn_on
-          target:
-            entity_id: light.g1_qbar1_pwm_qbar1
-          data:
-            brightness: "{{ final_light_intensity }}"
-        - service: light.turn_on
-          target:
-            entity_id: light.g1_qbar2_pwm_qbar2
-          data:
-            brightness: "{{ final_light_intensity }}"
+      - conditions:
+          condition: template
+          value_template: "{{ final_light_intensity == 0 }}"
+        sequence:
+          - service: light.turn_off
+            target:
+              entity_id: light.g1_qbar1_pwm_qbar1
+          - service: light.turn_off
+            target:
+              entity_id: light.g1_qbar2_pwm_qbar2
+      - conditions:
+          condition: template
+          value_template: "{{ final_light_intensity != 0 }}"
+        sequence:
+          - service: light.turn_on
+            target:
+              entity_id: light.g1_qbar1_pwm_qbar1
+            data:
+              brightness: "{{ final_light_intensity }}"
+          - service: light.turn_on
+            target:
+              entity_id: light.g1_qbar2_pwm_qbar2
+            data:
+              brightness: "{{ final_light_intensity }}"
+
   - service: input_number.set_value
     data:
       entity_id: input_number.g1_previous_dli_error
       value: "{{ d_dli_target }}"
+
   - service: input_number.set_value
     data:
       entity_id: input_number.g1_integral_dli
       value: "{{ [100, [-100, integral] | max] | min }}"
-
-
-
