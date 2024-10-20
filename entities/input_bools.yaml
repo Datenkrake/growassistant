@@ -9,12 +9,12 @@ g1_irrigation_enable:
   icon: mdi:flower
 
 # Service Mode
-g1_service_mode:
+g1_service_mode_enable:
   name: "G1 Service Mode"
   icon: mdi:flower
 
 # Silent Mode
-g1_silent_mode:
+g1_silent_mode_enable:
   name: "G1 Silent Mode"
   icon: mdi:flower
 
@@ -68,12 +68,12 @@ g2_irrigation_enable:
   icon: mdi:flower
 
 # Service Mode
-g2_service_mode:
+g2_service_mode_enable:
   name: "G2 Service Mode"
   icon: mdi:flower
 
 # Silent Mode
-g2_silent_mode:
+g2_silent_mode_enable:
   name: "G2 Silent Mode"
   icon: mdi:flower
 
