@@ -32,24 +32,24 @@ condition:
 
   # Only run if global_enable is on
   - condition: state
-    entity_id: input_boolean.global_enable
+    entity_id: input_boolean.g1_global_enable
     state: 'on'
   # Only run if irrigation_enable is on
   - condition: state
-    entity_id: input_boolean.irrigation_enable
+    entity_id: input_boolean.g1_irrigation_enable
     state: 'on'
   # Only run if service_mode is off
   - condition: state
-    entity_id: input_boolean.service_mode
+    entity_id: input_boolean.g1_service_mode_enable
     state: 'off'
 action:
   - service: switch.turn_on
     target:
-      entity_id: "{{ states('input_text.irrigation_pump') }}"
+      entity_id: switch.g1_water_irrigation_pump_1
   - delay: "{{ states('input_number.irrigation_duration') }}"
   - service: switch.turn_off
     target:
-      entity_id: "{{ states('input_text.irrigation_pump') }}"
+      entity_id: switch.g1_water_irrigation_pump_1
 
 
 

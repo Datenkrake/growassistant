@@ -34,18 +34,18 @@ trigger:
 condition:
   - condition: template
     value_template: >
-      {{ (now().timestamp() // 60) % states('input_number.timelapse_period') | int == 0 }}
+      {{ (now().timestamp() // 60) % states('input_number.g1_timelapse_period') | int == 0 }}
   # Only run if global_enable is on
   - condition: state
-    entity_id: input_boolean.global_enable
+    entity_id: input_boolean.g1_global_enable
     state: 'on'
   # Only run if timelapse_enable is on
   - condition: state
-    entity_id: input_boolean.timelapse_enable
+    entity_id: input_boolean.g1_timelapse_enable
     state: 'on'
   # Only run if timelapse_period is greater than 0
   - condition: numeric_state
-    entity_id: input_number.timelapse_period
+    entity_id: input_number.g1_timelapse_period
     above: '0'
   # Only run if the light is on (i.e., canopy_illumination > 100 lux)
   - condition: numeric_state
@@ -62,7 +62,7 @@ action:
       filename: "/config/www/timelapse/{{ now().strftime('%Y%m%d_%H%M%S') }}.jpg"
   - service: input_datetime.set_datetime
     data:
-      entity_id: input_datetime.last_timelapse
+      entity_id: input_datetime.g1_last_timelapse
       time: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
 
 

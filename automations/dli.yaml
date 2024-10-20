@@ -11,31 +11,31 @@ trigger:
     seconds: "/30"
 condition:
   - condition: state
-    entity_id: input_boolean.global_enable
+    entity_id: input_boolean.g1_global_enable
     state: 'on'
   - condition: state
-    entity_id: input_boolean.light_intensity_control_enable
+    entity_id: input_boolean.g1_light_intensity_control_enable
     state: 'on'
   - condition: state
-    entity_id: input_boolean.service_mode
+    entity_id: input_boolean.g1_service_mode_enable
     state: 'off'
 
 action:
   - variables:
-      light_intensity_max: "{{ states('input_number.light_intensity_max') | float(0) }}"
-      dli_target: "{{ states('sensor.dli_target') | float(0) }}"
-      dli_current: "{{ states('sensor.dli') | float(0) }}"
-      previous_error: "{{ states('input_number.previous_dli_error') | float(0) }}"
-      Kp: "{{ states('input_number.Kp_dli') | float(0) }}"
-      Ki: "{{ states('input_number.Ki_dli') | float(0) }}"
-      Kd: "{{ states('input_number.Kd_dli') | float(0) }}"
-      dt: "{{ states('input_number.dt_dli') | float(0) }}"
+      light_intensity_max: "{{ states('input_number.g1_light_intensity_max') | float(0) }}"
+      dli_target: "{{ states('sensor.g1_dli_target') | float(0) }}"
+      dli_current: "{{ states('sensor.g1_dli') | float(0) }}"
+      previous_error: "{{ states('input_number.g1_previous_dli_error') | float(0) }}"
+      Kp: "{{ states('input_number.g1_p_dli') | float(0) }}"
+      Ki: "{{ states('input_number.g1_i_dli') | float(0) }}"
+      Kd: "{{ states('input_number.g1_Kd_dli') | float(0) }}"
+      dt: "{{ states('input_number.g1_dt_dli') | float(0) }}"
       
       # Calculate the difference between current and target DLI
       d_dli_target: "{{ dli_current - dli_target }}"
 
       # Integral term (accumulating error over time)
-      integral: "{{ states('input_number.integral_dli') | float(0) + (d_dli_target * dt) }}"
+      integral: "{{ states('input_number.g1_integral_dli') | float(0) + (d_dli_target * dt) }}"
 
       # Derivative term (rate of change of error)
       derivative: "{{ Kd * (d_dli_target - previous_error) / dt }}"
@@ -59,9 +59,9 @@ action:
 
       # State of the door and handling when it's open
       door_state: "{{ states('binary_sensor.g1_water_door_switch') }}"
-      light_intensity_door_open: "{{ states('input_number.light_intensity_door_open') | int }}"
+      light_intensity_door_open: "{{ states('input_number.g1_light_intensity_door_open') | int }}"
 
-      dayphase_target: "{{ states('sensor.dayphase_target') | int }}"
+      dayphase_target: "{{ states('sensor.g1_dayphase_target') | int }}"
 
       # Final light intensity, accounting for the door state
       final_light_intensity: >
@@ -104,11 +104,11 @@ action:
             brightness: "{{ final_light_intensity }}"
   - service: input_number.set_value
     data:
-      entity_id: input_number.previous_dli_error
+      entity_id: input_number.g1_previous_dli_error
       value: "{{ d_dli_target }}"
   - service: input_number.set_value
     data:
-      entity_id: input_number.integral_dli
+      entity_id: input_number.g1_integral_dli
       value: "{{ [100, [-100, integral] | max] | min }}"
 
 

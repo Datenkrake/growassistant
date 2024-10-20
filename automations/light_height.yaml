@@ -16,19 +16,19 @@ trigger:
     minutes: /15
 condition:
   - condition: state
-    entity_id: input_boolean.global_enable
+    entity_id: input_boolean.g1_global_enable
     state: 'on'
   - condition: state
-    entity_id: input_boolean.light_height_control_enable
+    entity_id: input_boolean.g1_light_height_control_enable
     state: 'on'
   - condition: state
-    entity_id: input_boolean.service_mode
+    entity_id: input_boolean.g1_service_mode_enable
     state: 'off'
   - condition: state
     entity_id: binary_sensor.g1_water_door_switch
     state: "off"
   - condition: template
-    value_template: "{{ states('sensor.esp1_g1_light_distance_sensor') | float < states('input_number.cola_detection_distance_threshold') | float }}"
+    value_template: "{{ states('sensor.esp1_g1_light_distance_sensor') | float < states('input_number.g1_cola_detection_distance_threshold') | float }}"
   - condition: template
     value_template: "{{ states('sensor.g1_qbar1_ultrasonic_sensor') | int > 0.15 }}"
 action:

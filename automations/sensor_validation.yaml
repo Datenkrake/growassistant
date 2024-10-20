@@ -33,8 +33,8 @@ action:
       - conditions: "{{ failed }}"
         sequence:
           - service: input_boolean.turn_on
-            entity_id: input_boolean.restart_flag
+            entity_id: input_boolean.g1_restart_flag
       - conditions: "{{ not failed }}"
         sequence:
           - service: input_boolean.turn_off
-            entity_id: input_boolean.restart_flag
+            entity_id: input_boolean.g1_restart_flag

@@ -8,13 +8,13 @@ trigger:
     entity_id: binary_sensor.g1_water_door_switch
 condition:
   - condition: state
-    entity_id: input_boolean.global_enable
+    entity_id: input_boolean.g1_global_enable
     state: 'on'
   - condition: state
-    entity_id: input_boolean.wind_enable
+    entity_id: input_boolean.g1_wind_enable
     state: 'on'
   - condition: state
-    entity_id: input_boolean.service_mode
+    entity_id: input_boolean.g1_service_mode_enable
     state: 'off'
 
 action:
