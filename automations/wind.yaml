@@ -42,8 +42,7 @@ action:
         sequence:
           - variables:
               # Default to input_number.wind_fan_speed
-              new_wind_fan_speed: "{{ states('input_number.wind_fan_speed') | int }}"
-
+              new_wind_fan_speed: "{{ states('input_number.g1_wind_fan_speed') | int }}"
           # Set the wind fan speed based on the calculated value
           - service: fan.set_percentage
             target:
