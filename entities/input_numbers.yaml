@@ -430,6 +430,33 @@ g2_cola_detection_distance_threshold:
   icon: mdi:ruler
   name: "G2 Cola Detection Distance Sensor Threshold"
 
+g1_previous_d_canopy_target:
+  min: -100
+  max: 100
+  step: 0.01
+  mode: box
+  unit_of_measurement: "kPa"
+  icon: mdi:water-percent
+  name: "G1 Previous D Canopy Target"
+
+g1_integral_intake:
+  min: -100
+  max: 100
+  step: 0.0001
+  mode: box
+  unit_of_measurement: "kPa"
+  icon: mdi:water-percent
+  name: "G1 Integral Intake"
+
+g1_integral_exhaust:
+  min: -100
+  max: 100
+  step: 0.0001
+  mode: box
+  unit_of_measurement: "kPa"
+  icon: mdi:water-percent
+  name: "G1 Integral Exhaust"
+  
 # Day Length Vegetative
 g2_day_length_vegetative:
   min: 0
