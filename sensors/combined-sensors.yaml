@@ -2,153 +2,8 @@
 
 
 sensors:
-  ##########################################################################
-  # Physical sensors
-  ##########################################################################
-
-  # Canopy sensors
-  # g1_canopy_temperature:
-  #   friendly_name: "Canopy Temperature"
-  #   unit_of_measurement: "°C"
-  #   value_template: "{{ states('sensor.g1_canopy_bme680_temperature') }}"
-  #   icon: mdi:thermometer
-
-  # g1_canopy_humidity:
-  #   friendly_name: "Canopy Humidity"
-  #   unit_of_measurement: "%"
-  #   value_template: "{{ states('sensor.g1_canopy_bme680_humidity') }}"
-  #   icon: mdi:water-percent
-
-  # g1_canopy_illuminance:
-  #   friendly_name: "Canopy Illuminance"
-  #   unit_of_measurement: "lux"
-  #   value_template: "{{ states('sensor.g1_canopy_g1_bh1750_illuminance') }}"
-  #   icon: mdi:weather-sunny
-
-  # g1_canopy_ultrasonic_sensor:
-  #   friendly_name: "Canopy Ultrasonic Sensor"
-  #   unit_of_measurement: "m"
-  #   value_template: "{{ states('sensor.esp1_g1_light_distance_sensor') }}"
-  #   icon: mdi:ruler
-
-  # # Intake sensors
-  # g1_intake_temperature:
-  #   friendly_name: "Intake Temperature"
-  #   unit_of_measurement: "°C"
-  #   value_template: "{{ states('sensor.g1_intake_bme680_temperature') }}"
-  #   icon: mdi:thermometer
-
-  # g1_intake_humidity:
-  #   friendly_name: "Intake Humidity"
-  #   unit_of_measurement: "%"
-  #   value_template: "{{ states('sensor.g1_intake_bme680_humidity') }}"
-  #   icon: mdi:water-percent
-
-  # g1_intake_fan_speed:
-  #   friendly_name: "Intake Fan Speed"
-  #   unit_of_measurement: "%"
-  #   value_template: "{{ state_attr('fan.g1_intake_intake_fan', 'percentage') }}"
-  #   icon: mdi:fan
-
-  # # Exhaust sensors
-  # g1_exhaust_fan_1_speed:
-  #   friendly_name: "Exhaust Fan 1 Speed"
-  #   unit_of_measurement: "%"
-  #   value_template: "{{ state_attr('fan.g1_exhaust_exhaust_fan_1', 'percentage') }}"
-  #   icon: mdi:fan
-
-  # g1_exhaust_fan_2_speed:
-  #   friendly_name: "Exhaust Fan 2 Speed"
-  #   unit_of_measurement: "%"
-  #   value_template: "{{ state_attr('fan.g1_exhaust_exhaust_fan_2', 'percentage') }}"
-  #   icon: mdi:fan
-
-  # # Wind sensors
-  # g1_wind_fan_1_speed:
-  #   friendly_name: "Wind Fan 1 Speed"
-  #   unit_of_measurement: "%"
-  #   value_template: "{{ state_attr('fan.g1_wind_wind_fan_1', 'percentage') }}"
-  #   icon: mdi:fan
-
-  # g1_wind_fan_2_speed:
-  #   friendly_name: "Wind Fan 2 Speed"
-  #   unit_of_measurement: "%"
-  #   value_template: "{{ state_attr('fan.g1_wind_wind_fan_2', 'percentage') }}"
-  #   icon: mdi:fan
-
-  # g1_gantry_humidity:
-  #   friendly_name: "Gantry Humidity"
-  #   unit_of_measurement: "%"
-  #   value_template: "{{ states('sensor.g1_wind_canopy_humidity') }}"
-  #   icon: mdi:water-percent
-
-  # g1_gantry_temperature:
-  #   friendly_name: "Gantry Temperature"
-  #   unit_of_measurement: "°C"
-  #   value_template: "{{ states('sensor.g1_wind_canopy_temperature') }}"
-  #   icon: mdi:thermometer
-
-  # # Humidifier sensors
-  # g1_humidifier_speed:
-  #   friendly_name: "Humidifier Speed"
-  #   unit_of_measurement: "%"
-  #   value_template: "{{ state_attr('fan.g1_humidifier_humidifier', 'percentage') }}"
-  #   icon: mdi:fan
-
-  # combined_humidity:
-  #   friendly_name: "Combined Humidity"
-  #   unit_of_measurement: "%"
-  #   value_template: >
-  #     {% if not is_state('sensor.g1_canopy_bme680_humidity', 'unavailable') and not is_state('sensor.g1_canopy_bme680_humidity', 'unknown') %}
-  #       {{ states('sensor.g1_canopy_bme680_humidity') }}
-  #     {% elif not is_state('sensor.g1_intake_bme680_humidity', 'unavailable') and not is_state('sensor.g1_intake_bme680_humidity', 'unknown') %}
-  #       {{ states('sensor.g1_intake_bme680_humidity') }}
-  #     {% else %}
-  #       {{ 0 }}
-  #     {% endif %}
-
-  # combined_humidity:
-  #   friendly_name: "Combined Humidity"
-  #   unit_of_measurement: "%"
-  #   value_template: >
-  #     {% set sensors = [
-  #       'sensor.g1_canopy_bme680_humidity',
-  #       'sensor.g1_wind_canopy_humidity',
-  #       'sensor.g1_intake_bme680_humidity'
-  #     ] %}
-  #     {% set ns = namespace(value=None) %}
-  #     {% for sensor in sensors %}
-  #       {% set sensor_state = states(sensor) %}
-  #       {% set sensor_value = sensor_state | float(default=None) %}
-  #       {% if sensor_value is not none %}
-  #         {% set ns.value = sensor_state %}
-  #         {% break %}
-  #       {% endif %}
-  #     {% endfor %}
-  #     {{ ns.value | default(0) }}
-
-  # combined_temperature:
-  #   friendly_name: "Combined Temperature"
-  #   unit_of_measurement: "°C"
-  #   value_template: >
-  #     {% set sensors = [
-  #       'sensor.g1_canopy_bme680_temperature',
-  #       'sensor.g1_wind_canopy_temperature',
-  #       'sensor.g1_intake_bme680_temperature'
-  #     ] %}
-  #     {% set ns = namespace(value=None) %}
-  #     {% for sensor in sensors %}
-  #       {% set sensor_state = states(sensor) %}
-  #       {% set sensor_value = sensor_state | float(default=None) %}
-  #       {% if sensor_value is not none %}
-  #         {% set ns.value = sensor_state %}
-  #         {% break %}
-  #       {% endif %}
-  #     {% endfor %}
-  #     {{ ns.value | default(0) }}
-  
-  combined_humidity:
-    friendly_name: "Combined Humidity"
+  g1_combined_humidity:
+    friendly_name: "G1 Combined Humidity"
     unit_of_measurement: "%"
     value_template: >
       {% set sensors = [
@@ -187,8 +42,8 @@ sensors:
         {{ ns.value | default(0) }}
       {% endif %}
 
-  combined_temperature:
-    friendly_name: "Combined Temperature"
+  g1_combined_temperature:
+    friendly_name: "G1 Combined Temperature"
     unit_of_measurement: "°C"
     value_template: >
       {% set sensors = [
@@ -229,27 +84,27 @@ sensors:
 
 
 
-  cultivar_height:
-    friendly_name: "Cultivar Height"
+  g1_cultivar_height:
+    friendly_name: "G1 Cultivar Height"
     unit_of_measurement: "m"
-    value_template: "{{ states('input_number.gantry_null_position') | float(0) - states('sensor.g1_qbar1_ultrasonic_sensor') | float(0) }}"
+    value_template: "{{ states('input_number.g1_gantry_null_position') | float(0) - states('sensor.g1_qbar1_ultrasonic_sensor') | float(0) }}"
 
-  vpd:
-    friendly_name: "VPD"
+  g1_vpd:
+    friendly_name: "G1 VPD"
     unit_of_measurement: "kPa"
     value_template: >
-      {% set T = states('sensor.combined_temperature') | float(0) %}
-      {% set LTO = states('input_number.vpd_leaf_offset') | float(0) %}
+      {% set T = states('sensor.g1_combined_temperature') | float(0) %}
+      {% set LTO = states('input_number.g1_vpd_leaf_offset') | float(0) %}
       {% set LT = T + LTO %}
-      {% set RH = states('sensor.combined_humidity') | float(0) %}
+      {% set RH = states('sensor.g1_combined_humidity') | float(0) %}
       {% set ASVP = 610.78 * (2.71828 ** (T / (T + 237.3) * 17.2694)) %}
       {% set LSVP = 610.78 * (2.71828 ** (LT / (LT + 237.3) * 17.2694)) %}
       {% set VPD = (ASVP * (1 - RH / 100)) / 1000 %}
       {% set LVPD = (LSVP - (ASVP * RH / 100)) / 1000 %}
       {{ LVPD | round(2) }}
 
-  vpd_intake:
-    friendly_name: "VPD Intake"
+  g1_vpd_intake:
+    friendly_name: G1 VPD Intake"
     unit_of_measurement: "kPa"
     value_template: >
       {% set T = states('sensor.g1_intake_bme680_temperature') | float(0) %}
@@ -263,25 +118,25 @@ sensors:
 
   # based on uni-t ref measurement to get cal factor and factor 0.017 based on migro testing
   # https://migrolight.de/en/blogs/grow-light-news/cheap-par-meter-hack-use-a-lux-meter-to-measure-par-accurately
-  ppfd:
-    friendly_name: "PPFD"
+  g1_ppfd:
+    friendly_name: "G1 PPFD"
     unit_of_measurement: "µmol/m²/s"
     value_template: >
       {% set lux = states('sensor.g1_canopy_g1_bh1750_illuminance') | float %}
-      {% set bh1750_cal = states('input_number.bh1750_calibration_factor') | float %}
+      {% set bh1750_cal = states('input_number.g1_bh1750_calibration_factor') | float %}
       {% set calibrated_lux = lux * bh1750_cal %}
       {% set ppfd = calibrated_lux * 0.017 %}
       {{ ppfd | round(0) }}
 
 
   # Determine the current state of the growth cycle, vegetative, flipping, generative, drying, based on dates given in the input_datetime.yaml
-  growth_cycle:
-    friendly_name: "Growth Cycle"
+  g1_growth_cycle:
+    friendly_name: "G1 Growth Cycle"
     value_template: >
-      {% set start_vegetative = as_timestamp(states('input_datetime.vegetative_start')) %}
-      {% set start_flipping = as_timestamp(states('input_datetime.flip_date')) %}
-      {% set start_generative = as_timestamp(states('input_datetime.generative_start')) %}
-      {% set start_drying = as_timestamp(states('input_datetime.drying_start')) %}
+      {% set start_vegetative = as_timestamp(states('input_datetime.g1_vegetative_start')) %}
+      {% set start_flipping = as_timestamp(states('input_datetime.g1_flip_date')) %}
+      {% set start_generative = as_timestamp(states('input_datetime.g1_generative_start')) %}
+      {% set start_drying = as_timestamp(states('input_datetime.g1_drying_start')) %}
       {% set now = as_timestamp(now()) %}
       {% if now < start_vegetative %}
         Pre-vegetative
@@ -300,24 +155,24 @@ sensors:
   # during flipping (now > flip_date), the day_length shall day_length_vegetative to day_length_generative linearly interpolated
   # during generative (now > generative_start), the day_length shall be day_length_generative
   # during drying, the day shall always be 0 hours
-  day_length:
-    friendly_name: "Day Length"
+  g1_day_length:
+    friendly_name: "G1 Day Length"
     unit_of_measurement: "hours"
     value_template: >
-      {% set start_vegetative = as_timestamp(states('input_datetime.vegetative_start')) %}
-      {% set start_flipping = as_timestamp(states('input_datetime.flip_date')) %}
-      {% set start_generative = as_timestamp(states('input_datetime.generative_start')) %}
-      {% set start_drying = as_timestamp(states('input_datetime.drying_start')) %}
+      {% set start_vegetative = as_timestamp(states('input_datetime.g1_vegetative_start')) %}
+      {% set start_flipping = as_timestamp(states('input_datetime.g1_flip_date')) %}
+      {% set start_generative = as_timestamp(states('input_datetime.g1_generative_start')) %}
+      {% set start_drying = as_timestamp(states('input_datetime.g1_drying_start')) %}
       {% set now = as_timestamp(now()) %}
       {% if now > start_vegetative %}
-        {{ states('input_number.day_length_vegetative') }}
+        {{ states('input_number.g1_day_length_vegetative') }}
       {% elif now > start_flipping %}
         # linear interpolation between vegetative_end and generative_start
         {% set x = (now - flip_date) / (generative_start - flip_date) %}
-        {% set day_length = states('input_number.day_length_vegetative') + x * (states('input_number.day_length_generative') - states('input_number.day_length_vegetative')) %}
+        {% set day_length = states('input_number.g1_day_length_vegetative') + x * (states('input_number.g1_day_length_generative') - states('input_number.g1_day_length_vegetative')) %}
         {{ day_length }}
       {% elif now > start_generative %}
-        {{ states('input_number.day_length_generative') }}
+        {{ states('input_number.g1_day_length_generative') }}
       {% elif now > start_drying %}
         {{ 0 }}
       {% else %}
@@ -329,15 +184,15 @@ sensors:
   # the sunrise_time does not contain a date, so todays date shall be added to the sunrise_time
   # all times are calculated in timestamp, so sunrise_time is the time of sunrise in seconds since epoch, this avoid issues with rolling over midnight
   # day_length is in hours, so the day_length shall be converted to seconds
-  dayphase_target:
-    friendly_name: "Day Phase Target"
+  g1_dayphase_target:
+    friendly_name: "G1 Day Phase Target"
     value_template: >
-      {% set sunrise_time = states('input_datetime.sunrise_time') %}
+      {% set sunrise_time = states('input_datetime.g1_sunrise_time') %}
       {% set today = now().strftime('%Y-%m-%d') %}
       {% set yesterday = (as_timestamp(today) - 86400) | timestamp_custom('%Y-%m-%d', true) %}
       {% set sunrise_time_today = as_timestamp(today + ' ' + sunrise_time) %}
       {% set sunrise_time_yesterday = as_timestamp(yesterday + ' ' + sunrise_time) %}
-      {% set day_length = states('sensor.day_length') | float %}
+      {% set day_length = states('sensor.g1_day_length') | float %}
       {% set now_time = as_timestamp(now()) %}
 
       {% if sunrise_time_today is none or day_length == 0 %}
@@ -352,32 +207,32 @@ sensors:
 
   # DLI = PPFD * 0.0036 * 3600 * 24, where 0.0036 is the conversion factor from µmol/m²/s to µmol/m²/day
   # DLI shall be calculated as for the day_length of the current growth cycle found in Day Length
-  dli:
+  g1_dli:
     friendly_name: "DLI"
     unit_of_measurement: "mol/m²/day"
     value_template: >
-      {% set ppfd = states('sensor.ppfd') | float(0) %}
-      {% set day_length = states('sensor.day_length') | float(0) %}
+      {% set ppfd = states('sensor.g1_ppfd') | float(0) %}
+      {% set day_length = states('sensor.g1_day_length') | float(0) %}
       {{ (ppfd * 0.0036 * day_length) | round(2) }}
 
-  rh_target:
-    friendly_name: "RH Target"
+  g1_rh_target:
+    friendly_name: "G1 RH Target"
     unit_of_measurement: "%"
     value_template: >
-      {% set T = states('sensor.combined_temperature') | float %}
-      {% set LT = states('sensor.combined_temperature') | float - 2 %}
+      {% set T = states('sensor.g1_combined_temperature') | float %}
+      {% set LT = states('sensor.g1_combined_temperature') | float - 2 %}
       {% set ASVP = 610.78 * (2.71828 ** (T / (T + 237.3) * 17.2694)) %}
       {% set LSVP = 610.78 * (2.71828 ** (LT / (LT + 237.3) * 17.2694)) %}
-      {% set LVPD_TARGET = states('input_number.vpd_target') | float %}
+      {% set LVPD_TARGET = states('input_number.g1_vpd_target') | float %}
       {% set RH_TARGET = (LSVP - LVPD_TARGET * 1000) / ASVP * 100 %}
       {{ RH_TARGET | round(1)}}
 
-  dew_point:
-    friendly_name: "Dew Point"
+  g1_dew_point:
+    friendly_name: "G1 Dew Point"
     unit_of_measurement: "°C"
     value_template: >
-      {% set T = states('sensor.combined_temperature') | float %}
-      {% set RH = states('sensor.combined_humidity') | float %}
+      {% set T = states('sensor.g1_combined_temperature') | float %}
+      {% set RH = states('sensor.g1_combined_humidity') | float %}
       {% set a = 17.27 %}
       {% set b = 237.7 %}
       {% set alpha = ((a * T) / (b + T)) + (RH / 100) | log %}
@@ -385,7 +240,7 @@ sensors:
       {{ dew_point | round(1) }}
 
   # dayphase is 0 for night and 1 for day, decide based on lux sensor
-  dayphase:
+  g1_dayphase:
     friendly_name: "Day Phase"
     value_template: >
       {% set lux = states('sensor.g1_canopy_g1_bh1750_illuminance') | float %}
@@ -403,56 +258,39 @@ sensors:
   # during drying, the dli_target shall always be 0
   # during night, dayphase = 0, the dli_target shall always be 0
 
-  dli_target:
+  g1_dli_target:
     friendly_name: "DLI Target"
     unit_of_measurement: "mol/m²/day"
     value_template: >
-      {% set start_vegetative = as_timestamp(states('input_datetime.vegetative_start')) %}
-      {% set start_flipping = as_timestamp(states('input_datetime.flip_date')) %}
-      {% set start_generative = as_timestamp(states('input_datetime.generative_start')) %}
-      {% set generative_peak = as_timestamp(states('input_datetime.generative_peak')) %}
-      {% set end_generative = as_timestamp(states('input_datetime.generative_end')) %}
-      {% set start_drying = as_timestamp(states('input_datetime.drying_start')) %}
+      {% set start_vegetative = as_timestamp(states('input_datetime.g1_vegetative_start')) %}
+      {% set start_flipping = as_timestamp(states('input_datetime.g1_flip_date')) %}
+      {% set start_generative = as_timestamp(states('input_datetime.g1_generative_start')) %}
+      {% set generative_peak = as_timestamp(states('input_datetime.g1_generative_peak')) %}
+      {% set end_generative = as_timestamp(states('input_datetime.g1_generative_end')) %}
+      {% set start_drying = as_timestamp(states('input_datetime.g1_drying_start')) %}
       {% set now = as_timestamp(now()) %}
 
       {% if start_vegetative is none or start_flipping is none or start_generative is none or generative_peak is none or start_drying is none %}
         {{ 0 }}
       {% elif now > start_vegetative and now < start_flipping %}
         {% set x = (now - start_vegetative) / (start_flipping - start_vegetative) %}
-        {% set dli_target = (states('input_number.dli_vegetative_start') | float(0)) + x * ((states('input_number.dli_vegetative_end') | float(0)) - (states('input_number.dli_vegetative_start') | float(0))) %}
+        {% set dli_target = (states('input_number.g1_dli_vegetative_start') | float(0)) + x * ((states('input_number.g1_dli_vegetative_end') | float(0)) - (states('input_number.dli_vegetative_start') | float(0))) %}
         {{ dli_target | round(0) }}
       {% elif now > start_flipping and now < start_generative %}
         {% set x = (now - start_flipping) / (start_generative - start_flipping) %}
-        {% set dli_target = (states('input_number.dli_vegetative_end') | float(0)) + x * ((states('input_number.dli_generative_start') | float(0)) - (states('input_number.dli_vegetative_end') | float(0))) %}
+        {% set dli_target = (states('input_number.g1_dli_vegetative_end') | float(0)) + x * ((states('input_number.g1_dli_generative_start') | float(0)) - (states('input_number.dli_vegetative_end') | float(0))) %}
         {{ dli_target | round(0) }}
       {% elif now > start_generative and now < generative_peak %}
         {% set x = (now - start_generative) / (generative_peak - start_generative) %}
-        {% set dli_target = (states('input_number.dli_generative_start') | float(0)) + x * ((states('input_number.dli_generative_peak') | float(0)) - (states('input_number.dli_generative_start') | float(0))) %}
+        {% set dli_target = (states('input_number.g1_dli_generative_start') | float(0)) + x * ((states('input_number.g1_dli_generative_peak') | float(0)) - (states('input_number.dli_generative_start') | float(0))) %}
         {{ dli_target | round(0) }}
       {% elif now > generative_peak and now < start_drying %}
         {% set x = (now - generative_peak) / (start_drying - generative_peak) %}
-        {% set dli_target = (states('input_number.dli_generative_peak') | float(0)) + x * ((states('input_number.dli_drying_end') | float(0)) - (states('input_number.dli_generative_peak') | float(0))) %}
+        {% set dli_target = (states('input_number.g1_dli_generative_peak') | float(0)) + x * ((states('input_number.g1_dli_drying_end') | float(0)) - (states('input_number.dli_generative_peak') | float(0))) %}
         {{ dli_target | round(0) }}
       {% else %}
         {{ 0 }}
       {% endif %}
-
-    # {% set x = (now - start_vegetative) / (start_flipping - start_vegetative) %}
-  #   {% set dli_target = states('input_number.dli_vegetative_start') + x * (states('input_number.dli_vegetative_end') - states('input_number.dli_vegetative_start')) %}
-  #   {{ dli_target }}
-  # {% elif now > start_flipping %}
-  #   {% set x = (now - start_flipping) / (start_generative - start_flipping) %}
-  #   {% set dli_target = states('input_number.dli_vegetative_end') + x * (states('input_number.dli_generative_start') - states('input_number.dli_vegetative_end')) %}
-  #   {{ dli_target }}
-  # {% elif now > start_generative %}
-  #   {% set x = (now - start_generative) / (generative_peak - start_generative) %}
-  #   {% set dli_target = states('input_number.dli_generative_start') + x * (states('input_number.dli_generative_peak') - states('input_number.dli_generative_start')) %}
-  #   {{ dli_target }}
-  # {% elif now > start_drying %}
-  #   {{ 0 }}
-  # {% else %}
-  #   {{ 0 }}
-  # {% endif %}
 
   g1_exhaust_exhaust_fan_1_percentage:
     friendly_name: "Exhaust Fan 1 Percentage"
@@ -484,22 +322,22 @@ sensors:
     unit_of_measurement: "%"
     value_template: "{{ state_attr('light.g1_qbar2_pwm_qbar2', 'brightness') / 255 * 100 | round(0) }}"
 
-  cultivar_age:
+  g1_cultivar_age:
     friendly_name: "Cultivar Age"
     unit_of_measurement: "days"
     value_template: >
-      {% set start_vegetative = as_timestamp(states('input_datetime.vegetative_start')) %}
+      {% set start_vegetative = as_timestamp(states('input_datetime.g1_vegetative_start')) %}
       {% set now = as_timestamp(now()) %}
       {{ ((now - start_vegetative) / 86400) | round(0) }}
     
-  cultivar_vegetative_age:
+  g1_cultivar_vegetative_age:
     friendly_name: "Cultivar Vegetative Age"
     unit_of_measurement: "days"
     value_template: >
-      {% set start_vegetative = as_timestamp(states('input_datetime.vegetative_start')) %}
-      {% set start_flipping = as_timestamp(states('input_datetime.flip_date')) %}
-      {% set start_generative = as_timestamp(states('input_datetime.generative_start')) %}
-      {% set generative_end = as_timestamp(states('input_datetime.generative_end')) %}
+      {% set start_vegetative = as_timestamp(states('input_datetime.g1_vegetative_start')) %}
+      {% set start_flipping = as_timestamp(states('input_datetime.g1_flip_date')) %}
+      {% set start_generative = as_timestamp(states('input_datetime.g1_generative_start')) %}
+      {% set generative_end = as_timestamp(states('input_datetime.g1_generative_end')) %}
       {% set now = as_timestamp(now()) %}
       {% if now < start_flipping %}
         {{ ((now - start_vegetative) / 86400) | round(0) }}
@@ -507,13 +345,13 @@ sensors:
         {{ ((start_generative - start_vegetative) / 86400) | round(0) }}
       {% endif %}
     
-  cultivar_generative_age:
+  g1_cultivar_generative_age:
     friendly_name: "Cultivar Generative Age"
     unit_of_measurement: "days"
     value_template: >
-      {% set start_flipping = as_timestamp(states('input_datetime.flip_date')) %}
-      {% set start_generative = as_timestamp(states('input_datetime.generative_start')) %}
-      {% set generative_end = as_timestamp(states('input_datetime.generative_end')) %}
+      {% set start_flipping = as_timestamp(states('input_datetime.g1_flip_date')) %}
+      {% set start_generative = as_timestamp(states('input_datetime.g1_generative_start')) %}
+      {% set generative_end = as_timestamp(states('input_datetime.g1_generative_end')) %}
       {% set now = as_timestamp(now()) %}
       {% if now < start_generative %}
         {{ 0 }}
@@ -523,11 +361,11 @@ sensors:
         {{ ((generative_end - start_generative) / 86400) | round(0) }}
       {% endif %}
 
-  cultivar_drying_age:
+  g1_cultivar_drying_age:
     friendly_name: "Cultivar Drying Age"
     unit_of_measurement: "days"
     value_template: >
-      {% set start_drying = as_timestamp(states('input_datetime.drying_start')) %}
+      {% set start_drying = as_timestamp(states('input_datetime.g1_drying_start')) %}
       {% set now = as_timestamp(now()) %}
       {% if now < start_drying %}
         {{ 0 }}
