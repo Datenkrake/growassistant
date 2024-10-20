@@ -1,0 +1,98 @@
+blueprint:
+  name: Wind Fan Control Blueprint
+  description: Adjusts the wind fan speed based on temperature, humidity, and the door state.
+  domain: automation
+  input:
+    global_enable:
+      name: Global Enable
+      selector:
+        entity:
+          domain: input_boolean
+
+    wind_enable:
+      name: Wind Enable
+      selector:
+        entity:
+          domain: input_boolean
+
+    service_mode:
+      name: Service Mode
+      selector:
+        entity:
+          domain: input_boolean
+
+    water_door_switch:
+      name: Water Door Switch
+      selector:
+        entity:
+          domain: binary_sensor
+
+    wind_fan_1:
+      name: Wind Fan 1
+      selector:
+        entity:
+          domain: fan
+
+    wind_fan_2:
+      name: Wind Fan 2
+      selector:
+        entity:
+          domain: fan
+
+    wind_fan_speed:
+      name: Wind Fan Speed
+      selector:
+        entity:
+          domain: input_number
+
+trigger:
+  - platform: time_pattern
+    minutes: "/1"
+  - platform: state
+    entity_id: !input water_door_switch
+
+condition:
+  - condition: state
+    entity_id: !input global_enable
+    state: 'on'
+  - condition: state
+    entity_id: !input wind_enable
+    state: 'on'
+  - condition: state
+    entity_id: !input service_mode
+    state: 'off'
+
+action:
+  - variables:
+      door_state: "{{ states('!input water_door_switch') }}"
+
+  - choose:
+      - conditions:
+          - condition: template
+            value_template: "{{ door_state == 'on' }}"
+        sequence:
+          - service: fan.turn_off
+            target:
+              entity_id: !input wind_fan_1
+          - service: fan.turn_off
+            target:
+              entity_id: !input wind_fan_2
+
+      - conditions:
+          - condition: template
+            value_template: "{{ door_state == 'off' }}"
+        sequence:
+          - variables:
+              new_wind_fan_speed: "{{ states('!input wind_fan_speed') | int }}"
+
+          - service: fan.set_percentage
+            target:
+              entity_id: !input wind_fan_1
+            data:
+              percentage: "{{ new_wind_fan_speed }}"
+
+          - service: fan.set_percentage
+            target:
+              entity_id: !input wind_fan_2
+            data:
+              percentage: "{{ new_wind_fan_speed }}"

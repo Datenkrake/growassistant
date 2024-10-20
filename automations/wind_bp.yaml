@@ -1,0 +1,27 @@
+# - id: 'wind_fan_control_g1'
+#   alias: 'Wind Fan Control - G1'
+#   description: 'Controls the wind fan speed for G1 based on the door state and other conditions.'
+#   use_blueprint:
+#     path: /blueprints/automation/homeassistant/wind_fan_control_blueprint.yaml
+#     input:
+#       global_enable: input_boolean.g1_global_enable
+#       wind_enable: input_boolean.g1_wind_enable
+#       service_mode: input_boolean.g1_service_mode
+#       water_door_switch: binary_sensor.g1_water_door_switch
+#       wind_fan_1: fan.g1_wind_wind_fan_1
+#       wind_fan_2: fan.g1_wind_wind_fan_2
+#       wind_fan_speed: input_number.g1_wind_fan_speed
+
+# - id: 'wind_fan_control_g2'
+#   alias: 'Wind Fan Control - G2'
+#   description: 'Controls the wind fan speed for G2 based on the door state and other conditions.'
+#   use_blueprint:
+#     path: /blueprints/automation/homeassistant/wind_fan_control_blueprint.yaml
+#     input:
+#       global_enable: input_boolean.g2_global_enable
+#       wind_enable: input_boolean.g2_wind_enable
+#       service_mode: input_boolean.g2_service_mode
+#       water_door_switch: binary_sensor.g2_water_door_switch
+#       wind_fan_1: fan.g2_wind_wind_fan_1
+#       wind_fan_2: fan.g2_wind_wind_fan_2
+#       wind_fan_speed: input_number.g2_wind_fan_speed

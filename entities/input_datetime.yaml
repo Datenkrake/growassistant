@@ -4,53 +4,109 @@
 
 # begin of project date
 first_sun:
-  name: First day of growing season
-  has_date: true
-  has_time: false
+  first_sun_base: &first_sun_base
+    has_date: true
+    has_time: false
+  g1_first_sun:
+    <<: *first_sun_base
+    name: G1 First day of growing season
+  g2_first_sun:
+    <<: *first_sun_base
+    name: G2 First day of growing season
+
 
 # sunrise time
 sunrise_time:
-  name: Sunrise time
-  has_date: false
-  has_time: true
+  sunrise_time_base: &sunrise_time_base
+    has_date: false
+    has_time: true
+  g1_sunrise_time:
+    <<: *sunrise_time_base
+    name: G1 Sunrise time
+  g2_sunrise_time:
+    <<: *sunrise_time_base
+    name: G2 Sunrise time
 
 # Vegetative stage start date
 vegetative_start:
-  name: Vegetative stage start date
-  has_date: true
-  has_time: false
+  vegetative_start_base: &vegetative_start_base
+    has_date: true
+    has_time: false
+  g1_vegetative_start:
+    <<: *vegetative_start_base
+    name: G1 Vegetative stage start date
+  g2_vegetative_start:
+    <<: *vegetative_start_base
+    name: G2 Vegetative stage start date
+
 
 # Vegetative stage end date (Flip date)
 flip_date:
-  name: Flip date
-  has_date: true
-  has_time: false
+  flip_date_base: &flip_date_base
+    has_date: true
+    has_time: false
+  g1_flip_date:
+    <<: *flip_date_base
+    name: G1 Flip date
+  g2_flip_date:
+    <<: *flip_date_base
+    name: G2 Flip date
 
 # Generative stage start date
 generative_start:
-  name: Generative stage start date
-  has_date: true
-  has_time: false
+  generative_start_base: &generative_start_base
+    has_date: true
+    has_time: false
+  g1_generative_start:
+    <<: *generative_start_base
+    name: G1 Generative stage start date
+  g2_generative_start:
+    <<: *generative_start_base
+    name: G2 Generative stage start date
 
 # Generative stage peak date
 generative_peak:
-  name: Generative stage peak date
-  has_date: true
-  has_time: false
+  generative_peak_base: &generative_peak_base
+    has_date: true
+    has_time: false
+  g1_generative_peak:
+    <<: *generative_peak_base
+    name: G1 Generative stage peak date
+  g2_generative_peak:
+    <<: *generative_peak_base
+    name: G2 Generative stage peak date
 
 # Generative stage end date
 generative_end:
-  name: Generative stage end date
-  has_date: true
-  has_time: false
+  generative_end_base: &generative_end_base
+    has_date: true
+    has_time: false
+  g1_generative_end:
+    <<: *generative_end_base
+    name: G1 Generative stage end date
+  g2_generative_end:
+    <<: *generative_end_base
+    name: G2 Generative stage end date
 
 # Drying stage start date
 drying_start:
-  name: Drying stage start date
-  has_date: true
-  has_time: false
+  drying_start_base: &drying_start_base
+    has_date: true
+    has_time: false
+  g1_drying_start:
+    <<: *drying_start_base
+    name: G1 Drying stage start date
+  g2_drying_start:
+    <<: *drying_start_base
+    name: G2 Drying stage start date
 
 last_timelapse:
-  name: Last timelapse
-  has_date: true
-  has_time: true
+  last_timelapse_base: &last_timelapse_base
+    has_date: true
+    has_time: true
+  g1_last_timelapse:
+    <<: *last_timelapse_base
+    name: G1 Last timelapse
+  g2_last_timelapse:
+    <<: *last_timelapse_base
+    name: G2 Last timelapse

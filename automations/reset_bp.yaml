@@ -1,0 +1,23 @@
+# - id: 'system_reset_g1'
+#   alias: 'System Reset Automation - G1'
+#   description: 'Resets the system for G1 when the restart flag is set to on'
+#   use_blueprint:
+#     path: /blueprints/automation/homeassistant/system_reset_automation_blueprint.yaml
+#     input:
+#       restart_flag: input_boolean.g1_restart_flag
+#       global_enable: input_boolean.g1_global_enable
+#       service_mode: input_boolean.g1_service_mode
+#       water_door_switch: binary_sensor.g1_water_door_switch
+#       mains_switch: switch.shelly_g1_mains_switch_0
+
+# - id: 'system_reset_g2'
+#   alias: 'System Reset Automation - G2'
+#   description: 'Resets the system for G2 when the restart flag is set to on'
+#   use_blueprint:
+#     path: /blueprints/automation/homeassistant/system_reset_automation_blueprint.yaml
+#     input:
+#       restart_flag: input_boolean.g2_restart_flag
+#       global_enable: input_boolean.g2_global_enable
+#       service_mode: input_boolean.g2_service_mode
+#       water_door_switch: binary_sensor.g2_water_door_switch
+#       mains_switch: switch.shelly_g2_mains_switch_0

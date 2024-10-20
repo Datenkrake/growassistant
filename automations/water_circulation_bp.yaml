@@ -1,0 +1,25 @@
+# - id: 'water_circulation_g1'
+#   alias: 'Water Circulation Control - G1'
+#   description: 'Controls the water circulation pump for G1 based on the specified period and duration.'
+#   use_blueprint:
+#     path: /blueprints/automation/homeassistant/water_circulation_control_blueprint.yaml
+#     input:
+#       global_enable: input_boolean.g1_global_enable
+#       irrigation_enable: input_boolean.g1_irrigation_enable
+#       service_mode: input_boolean.g1_service_mode
+#       water_circulation_period: input_number.g1_water_circulation_period
+#       water_circulation_duration: input_number.g1_water_circulation_duration
+#       circulation_pump: switch.g1_circulation_pump
+
+# - id: 'water_circulation_g2'
+#   alias: 'Water Circulation Control - G2'
+#   description: 'Controls the water circulation pump for G2 based on the specified period and duration.'
+#   use_blueprint:
+#     path: /blueprints/automation/homeassistant/water_circulation_control_blueprint.yaml
+#     input:
+#       global_enable: input_boolean.g2_global_enable
+#       irrigation_enable: input_boolean.g2_irrigation_enable
+#       service_mode: input_boolean.g2_service_mode
+#       water_circulation_period: input_number.g2_water_circulation_period
+#       water_circulation_duration: input_number.g2_water_circulation_duration
+#       circulation_pump: switch.g2_circulation_pump

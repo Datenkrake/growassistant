@@ -1,0 +1,62 @@
+blueprint:
+  name: System Reset Automation Blueprint
+  description: Resets the system by toggling the mains switch when the restart flag is set to 'on'.
+  domain: automation
+  input:
+    restart_flag:
+      name: Restart Flag
+      selector:
+        entity:
+          domain: input_boolean
+
+    global_enable:
+      name: Global Enable
+      selector:
+        entity:
+          domain: input_boolean
+
+    service_mode:
+      name: Service Mode
+      selector:
+        entity:
+          domain: input_boolean
+
+    water_door_switch:
+      name: Water Door Switch
+      selector:
+        entity:
+          domain: binary_sensor
+
+    mains_switch:
+      name: Mains Switch (Shelly)
+      selector:
+        entity:
+          domain: switch
+
+trigger:
+  - platform: state
+    entity_id: !input restart_flag
+    to: 'on'
+
+condition:
+  - condition: state
+    entity_id: !input global_enable
+    state: 'on'
+  - condition: state
+    entity_id: !input service_mode
+    state: 'off'
+  - condition: state
+    entity_id: !input water_door_switch
+    state: 'off'
+
+action:
+  - service: switch.turn_off
+    target:
+      entity_id: !input mains_switch
+  - delay: "00:00:10"
+  - service: input_boolean.turn_off
+    target:
+      entity_id: !input restart_flag
+  - service: switch.turn_on
+    target:
+      entity_id: !input mains_switch

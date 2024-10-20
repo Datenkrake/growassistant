@@ -1,431 +1,555 @@
-
+# Boolean input entities 
 
 cola_detection_distance_threshold:
-  name: "Cola Detection Distance Sensor Threshold"
-  min: 0.0
-  max: 1.0
-  step: 0.05
-  mode: box
-  unit_of_measurement: "m"
-  icon: mdi:ruler
+  cola_detection_distance_threshold_base: &cola_detection_distance_threshold_base
+    min: 0.0
+    max: 1.0
+    step: 0.05
+    mode: box
+    unit_of_measurement: "m"
+    icon: mdi:ruler
+  g1_cola_detection_distance_threshold:
+    <<: *cola_detection_distance_threshold_base
+    name: "G1 Cola Detection Distance Sensor Threshold"
+  g2_cola_detection_distance_threshold:
+    <<: *cola_detection_distance_threshold_base
+    name: "G2 Cola Detection Distance Sensor Threshold"
 
-# day length in hours
+# Day length in hours
 day_length_vegetative:
-  name: "Day Length Vegetative"
-  min: 0
-  max: 24
-  step: 1
-  mode: box
-  unit_of_measurement: "hours"
-  icon: mdi:weather-sunset-up
-
+  day_length_base: &day_length_base
+    min: 0
+    max: 24
+    step: 1
+    mode: box
+    unit_of_measurement: "hours"
+    icon: mdi:weather-sunset-up
+  g1_day_length_vegetative:
+    <<: *day_length_base
+    name: "G1 Day Length Vegetative"
+  g2_day_length_vegetative:
+    <<: *day_length_base
+    name: "G2 Day Length Vegetative"
+  
 day_length_generative:
-  name: "Day Length Generative"
-  min: 0
-  max: 24
-  step: 1
-  mode: box
-  unit_of_measurement: "hours"
-  icon: mdi:weather-sunset-up
+  g1_day_length_generative:
+    <<: *day_length_base
+    name: "G1 Day Length Generative"
+  g2_day_length_generative:
+    <<: *day_length_base
+    name: "G2 Day Length Generative"
 
-# DLI in mol/m2/day (Daily Light Integral) 
+# DLI in mol/m2/day (Daily Light Integral)
 dli_vegetative_start:
-  name: "DLI Vegetative"
-  min: 0
-  max: 100
-  step: 1
-  mode: box
-  unit_of_measurement: "mol/m2/day"
-  icon: mdi:weather-sunny
+  dli_base: &dli_base
+    min: 0
+    max: 100
+    step: 1
+    mode: box
+    unit_of_measurement: "mol/m2/day"
+    icon: mdi:weather-sunny
+  g1_dli_vegetative_start:
+    <<: *dli_base
+    name: "G1 DLI Vegetative Start"
+  g2_dli_vegetative_start:
+    <<: *dli_base
+    name: "G2 DLI Vegetative Start"
 
 dli_vegetative_end:
-  name: "DLI Vegetative End"
-  min: 0
-  max: 100
-  step: 1
-  mode: box
-  unit_of_measurement: "mol/m2/day"
-  icon: mdi:weather-sunny
+  g1_dli_vegetative_end:
+    <<: *dli_base
+    name: "G1 DLI Vegetative End"
+  g2_dli_vegetative_end:
+    <<: *dli_base
+    name: "G2 DLI Vegetative End"
 
 dli_generative_start:
-  name: "DLI Generative Start"
-  min: 0
-  max: 100
-  step: 1
-  mode: box
-  unit_of_measurement: "mol/m2/day"
-  icon: mdi:weather-sunny
+  g1_dli_generative_start:
+    <<: *dli_base
+    name: "G1 DLI Generative Start"
+  g2_dli_generative_start:
+    <<: *dli_base
+    name: "G2 DLI Generative Start"
 
 dli_generative_peak:
-  name: "DLI Generative Peak"
-  min: 0
-  max: 100
-  step: 1
-  mode: box
-  unit_of_measurement: "mol/m2/day"
-  icon: mdi:weather-sunny
+  g1_dli_generative_peak:
+    <<: *dli_base
+    name: "G1 DLI Generative Peak"
+  g2_dli_generative_peak:
+    <<: *dli_base
+    name: "G2 DLI Generative Peak"
 
 dli_generative_end:
-  name: "DLI Generative End"
-  min: 0
-  max: 100
-  step: 1
-  mode: box
-  unit_of_measurement: "mol/m2/day"
-  icon: mdi:weather-sunny
+  g1_dli_generative_end:
+    <<: *dli_base
+    name: "G1 DLI Generative End"
+  g2_dli_generative_end:
+    <<: *dli_base
+    name: "G2 DLI Generative End"
 
-# Fan Speed min and max 
+# Fan Speed min and max
 intake_fan_speed_min:
-  name: "Intake Fan Speed Min"
-  min: 0
-  max: 100
-  step: 1
-  mode: box
-  unit_of_measurement: "%"
-  icon: mdi:fan
+  fan_speed_base: &fan_speed_base
+    min: 0
+    max: 100
+    step: 1
+    mode: box
+    unit_of_measurement: "%"
+    icon: mdi:fan
+  g1_intake_fan_speed_min:
+    <<: *fan_speed_base
+    name: "G1 Intake Fan Speed Min"
+  g2_intake_fan_speed_min:
+    <<: *fan_speed_base
+    name: "G2 Intake Fan Speed Min"
 
 intake_fan_speed_max:
-  name: "Intake Fan Speed Max"
-  min: 0
-  max: 100
-  step: 1
-  mode: box
-  unit_of_measurement: "%"
-  icon: mdi:fan
+  g1_intake_fan_speed_max:
+    <<: *fan_speed_base
+    name: "G1 Intake Fan Speed Max"
+  g2_intake_fan_speed_max:
+    <<: *fan_speed_base
+    name: "G2 Intake Fan Speed Max"
 
 exhaust_fan_speed_min:
-  name: "Exhaust Fan Speed Min"
-  min: 0
-  max: 100
-  step: 1
-  mode: box
-  unit_of_measurement: "%"
-  icon: mdi:fan
+  g1_exhaust_fan_speed_min:
+    <<: *fan_speed_base
+    name: "G1 Exhaust Fan Speed Min"
+  g2_exhaust_fan_speed_min:
+    <<: *fan_speed_base
+    name: "G2 Exhaust Fan Speed Min"
 
 exhaust_fan_speed_max:
-  name: "Exhaust Fan Speed Max"
-  min: 0
-  max: 100
-  step: 1
-  mode: box
-  unit_of_measurement: "%"
-  icon: mdi:fan
+  g1_exhaust_fan_speed_max:
+    <<: *fan_speed_base
+    name: "G1 Exhaust Fan Speed Max"
+  g2_exhaust_fan_speed_max:
+    <<: *fan_speed_base
+    name: "G2 Exhaust Fan Speed Max"
 
-# Circulation Fan Speed min and max
 circulation_fan_speed_min:
-  name: "Circulation Fan Speed Min"
-  min: 0
-  max: 100
-  step: 1
-  mode: box
-  unit_of_measurement: "%"
-  icon: mdi:fan
+  g1_circulation_fan_speed_min:
+    <<: *fan_speed_base
+    name: "G1 Circulation Fan Speed Min"
+  g2_circulation_fan_speed_min:
+    <<: *fan_speed_base
+    name: "G2 Circulation Fan Speed Min"
 
 circulation_fan_speed_max:
-  name: "Circulation Fan Speed Max"
-  min: 0
-  max: 100
-  step: 1
-  mode: box
-  unit_of_measurement: "%"
-  icon: mdi:fan
+  g1_circulation_fan_speed_max:
+    <<: *fan_speed_base
+    name: "G1 Circulation Fan Speed Max"
+  g2_circulation_fan_speed_max:
+    <<: *fan_speed_base
+    name: "G2 Circulation Fan Speed Max"
 
-# Wind Fan Speed set point
+# Wind Fan Speed
 wind_fan_speed:
-  name: "Wind Fan Speed"
-  min: 0
-  max: 100
-  step: 1
-  mode: box
-  unit_of_measurement: "%"
-  icon: mdi:fan
+  g1_wind_fan_speed:
+    <<: *fan_speed_base
+    name: "G1 Wind Fan Speed"
+  g2_wind_fan_speed:
+    <<: *fan_speed_base
+    name: "G2 Wind Fan Speed"
 
-# Target temperature in degrees Celsius
+# Temperature settings
 temperature_target:
-  name: "Temperature Target"
-  min: 0
-  max: 40
-  step: 1
-  mode: box
-  unit_of_measurement: "°C"
-  icon: mdi:thermometer
+  temperature_base: &temperature_base
+    min: 0
+    max: 40
+    step: 1
+    mode: box
+    unit_of_measurement: "°C"
+    icon: mdi:thermometer
+  g1_temperature_target:
+    <<: *temperature_base
+    name: "G1 Temperature Target"
+  g2_temperature_target:
+    <<: *temperature_base
+    name: "G2 Temperature Target"
 
-# abs max temperature in degrees Celsius
 temperature_max:
-  name: "Temperature Max"
-  min: 0
-  max: 40
-  step: 1
-  mode: box
-  unit_of_measurement: "°C"
-  icon: mdi:thermometer
+  g1_temperature_max:
+    <<: *temperature_base
+    name: "G1 Temperature Max"
+  g2_temperature_max:
+    <<: *temperature_base
+    name: "G2 Temperature Max"
 
-# VPD target in kPa
+# VPD settings
 vpd_target:
-  name: "VPD Target"
-  min: 0.0
-  max: 2.0
-  step: 0.1
-  mode: box
-  unit_of_measurement: "kPa"
-  icon: mdi:water-percent
+  vpd_base: &vpd_base
+    min: 0.0
+    max: 2.0
+    step: 0.1
+    mode: box
+    unit_of_measurement: "kPa"
+    icon: mdi:water-percent
+  g1_vpd_target:
+    <<: *vpd_base
+    name: "G1 VPD Target"
+  g2_vpd_target:
+    <<: *vpd_base
+    name: "G2 VPD Target"
 
-# VPD leaf temperature offset
 vpd_leaf_offset:
-  name: "VPD Leaf Offset"
-  min: -2.0
-  max: 2.0
-  step: 0.1
-  mode: box
-  unit_of_measurement: "K"
-  icon: mdi:water-percent
+  vpd_leaf_offset_base: &vpd_leaf_offset_base
+    min: -2.0
+    max: 2.0
+    step: 0.1
+    mode: box
+    unit_of_measurement: "K"
+    icon: mdi:water-percent
+  g1_vpd_leaf_offset:
+    <<: *vpd_leaf_offset_base
+    name: "G1 VPD Leaf Offset"
+  g2_vpd_leaf_offset:
+    <<: *vpd_leaf_offset_base
+    name: "G2 VPD Leaf Offset"
 
 # Timelapse period in minutes
 timelapse_period:
-  name: "Timelapse Period"
-  min: 1
-  max: 1440
-  step: 1
-  mode: box
-  unit_of_measurement: "minutes"
-  icon: mdi:camera-timer
+  timelapse_base: &timelapse_base
+    min: 1
+    max: 1440
+    step: 1
+    mode: box
+    unit_of_measurement: "minutes"
+    icon: mdi:camera-timer
+  g1_timelapse_period:
+    <<: *timelapse_base
+    name: "G1 Timelapse Period"
+  g2_timelapse_period:
+    <<: *timelapse_base
+    name: "G2 Timelapse Period"
 
-# Irrigation period in minutes
+# Irrigation period and duration
 irrigation_period:
-  name: "Irrigation Period"
-  min: 1
-  max: 1440
-  step: 1
-  mode: box
-  unit_of_measurement: "minutes"
-  icon: mdi:water-pump
+  irrigation_base: &irrigation_base
+    min: 1
+    max: 1440
+    step: 1
+    mode: box
+    unit_of_measurement: "minutes"
+    icon: mdi:water-pump
+  g1_irrigation_period:
+    <<: *irrigation_base
+    name: "G1 Irrigation Period"
+  g2_irrigation_period:
+    <<: *irrigation_base
+    name: "G2 Irrigation Period"
 
-# Irrigation duration in seconds
 irrigation_duration:
-  name: "Irrigation Duration"
-  min: 1
-  max: 60
-  step: 1
-  mode: box
-  unit_of_measurement: "seconds"
-  icon: mdi:water-pump
+  irrigation_duration_base: &irrigation_duration_base
+    min: 1
+    max: 60
+    step: 1
+    mode: box
+    unit_of_measurement: "seconds"
+    icon: mdi:water-pump
+  g1_irrigation_duration:
+    <<: *irrigation_duration_base
+    name: "G1 Irrigation Duration"
+  g2_irrigation_duration:
+    <<: *irrigation_duration_base
+    name: "G2 Irrigation Duration"
 
-# Water Circulation period in minutes
+# Water circulation period and duration
 water_circulation_period:
-  name: "Water Circulation Period"
-  min: 1
-  max: 1440
-  step: 1
-  mode: box
-  unit_of_measurement: "minutes"
-  icon: mdi:water-pump
+  water_circulation_base: &water_circulation_base
+    min: 1
+    max: 1440
+    step: 1
+    mode: box
+    unit_of_measurement: "minutes"
+    icon: mdi:water-pump
+  g1_water_circulation_period:
+    <<: *water_circulation_base
+    name: "G1 Water Circulation Period"
+  g2_water_circulation_period:
+    <<: *water_circulation_base
+    name: "G2 Water Circulation Period"
 
-# Water Circulation duration in minutes
 water_circulation_duration:
-  name: "Water Circulation Duration"
-  min: 1
-  max: 60
-  step: 1
-  mode: box
-  unit_of_measurement: "minutes"
-  icon: mdi:water-pump
+  water_circulation_duration_base: &water_circulation_duration_base
+    min: 1
+    max: 60
+    step: 1
+    mode: box
+    unit_of_measurement: "minutes"
+    icon: mdi:water-pump
+  g1_water_circulation_duration:
+    <<: *water_circulation_duration_base
+    name: "G1 Water Circulation Duration"
+  g2_water_circulation_duration:
+    <<: *water_circulation_duration_base
+    name: "G2 Water Circulation Duration"
 
 # Gantry Null position in meters
 gantry_null_position:
-  name: "Gantry Null Position"
-  min: 0.1
-  max: 1.5
-  step: 0.01
-  mode: box
-  unit_of_measurement: "m"
-  icon: mdi:arrow-expand-all
+  gantry_base: &gantry_base
+    min: 0.1
+    max: 1.5
+    step: 0.01
+    mode: box
+    unit_of_measurement: "m"
+    icon: mdi:arrow-expand-all
+  g1_gantry_null_position:
+    <<: *gantry_base
+    name: "G1 Gantry Null Position"
+  g2_gantry_null_position:
+    <<: *gantry_base
+    name: "G2 Gantry Null Position"
 
 # Light Height in meters
 light_height:
-  name: "Light Height"
-  min: 0.1
-  max: 1.5
-  step: 0.01
-  mode: box
-  unit_of_measurement: "m"
-  icon: mdi:lightbulb
+  g1_light_height:
+    <<: *gantry_base
+    name: "G1 Light Height"
+  g2_light_height:
+    <<: *gantry_base
+    name: "G2 Light Height"
 
-# light height rise steps
 light_raise_distance:
-  name: "Light Height Raise Distance"
-  min: 0.001
-  max: 0.1
-  step: 0.01
-  mode: box
-  unit_of_measurement: "m"
-  icon: mdi:lightbulb
-
-# light to canopy distance
+  light_raise_distance_base: &light_raise_distance_base
+    min: 0.001
+    max: 0.1
+    step: 0.01
+    mode: box
+    unit_of_measurement: "m"
+    icon: mdi:lightbulb
+  g1_light_raise_distance:
+    <<: *light_raise_distance_base
+    name: "G1 Light Raise Distance"
+  g2_light_raise_distance:
+    <<: *light_raise_distance_base
+    name: "G2 Light Raise Distance"
+  
 light_to_canopy_distance:
-  name: "Light to Canopy Distance"
-  min: 0.1
-  max: 1.0
-  step: 0.01
-  mode: box
-  unit_of_measurement: "m"
-  icon: mdi:lightbulb
+  g1_light_to_canopy_distance:
+    <<: *gantry_base
+    name: "G1 Light to Canopy Distance"
+  g2_light_to_canopy_distance:
+    <<: *gantry_base
+    name: "G2 Light to Canopy Distance"
 
-# control intake and exhaust for VPD debuggin
+# Control intake and exhaust for VPD debugging
 control_intake:
-  name: "Control Intake"
-  min: -100
-  max: 100
-  step: 0.01
-  mode: box
-  unit_of_measurement: "m/s"
-  icon: mdi:fan
+  control_fan_base: &control_fan_base
+    min: -100
+    max: 100
+    step: 0.01
+    mode: box
+    unit_of_measurement: "m/s"
+    icon: mdi:fan
+  g1_control_intake:
+    <<: *control_fan_base
+    name: "G1 Control Intake"
+  g2_control_intake:
+    <<: *control_fan_base
+    name: "G2 Control Intake"
 
 control_exhaust:
-  name: "Control Exhaust"
-  min: -100
-  max: 100
-  step: 0.01
-  mode: box
-  unit_of_measurement: "m/s"
-  icon: mdi:fan
+  g1_control_exhaust:
+    <<: *control_fan_base
+    name: "G1 Control Exhaust"
+  g2_control_exhaust:
+    <<: *control_fan_base
+    name: "G2 Control Exhaust"
 
-# light intensity in % when door is open
+# Light intensity in % when door is open
 light_intensity_door_open:
-  name: "Light Intensity Door Open"
-  min: 0
-  max: 100
-  step: 1
-  mode: box
-  unit_of_measurement: "%"
-  icon: mdi:lightbulb
+  light_intensity_base: &light_intensity_base
+    min: 0
+    max: 100
+    step: 1
+    mode: box
+    unit_of_measurement: "%"
+    icon: mdi:lightbulb
+  g1_light_intensity_door_open:
+    <<: *light_intensity_base
+    name: "G1 Light Intensity Door Open"
+  g2_light_intensity_door_open:
+    <<: *light_intensity_base
+    name: "G2 Light Intensity Door Open"
 
-# light intensity 
+# Previous DLI error
 previous_dli_error:
-  name: "Previous DLI Error"
-  min: -100
-  max: 100
-  step: 0.01
-  mode: box
-  unit_of_measurement: "mol/m2/day"
-  icon: mdi:lightbulb
+  previous_dli_error_base: &previous_dli_error_base
+    min: -100
+    max: 100
+    step: 0.01
+    mode: box
+    unit_of_measurement: "mol/m2/day"
+    icon: mdi:lightbulb
+  g1_previous_dli_error:
+    <<: *previous_dli_error_base
+    name: "G1 Previous DLI Error"
+  g2_previous_dli_error:
+    <<: *previous_dli_error_base
+    name: "G2 Previous DLI Error"
 
+# Integral DLI
 integral_dli:
-  name: "Integral DLI"
-  min: -100
-  max: 100
-  step: 0.0001
-  mode: box
-  unit_of_measurement: "mol/m2/day"
-  icon: mdi:lightbulb
+  integral_dli_base: &integral_dli_base
+    min: -100
+    max: 100
+    step: 0.0001
+    mode: box
+    unit_of_measurement: "mol/m2/day"
+    icon: mdi:lightbulb
+  g1_integral_dli:
+    <<: *integral_dli_base
+    name: "G1 Integral DLI"
+  g2_integral_dli:
+    <<: *integral_dli_base
+    name: "G2 Integral DLI"
 
-# p i d gains for light intensity control
+# PID gains for light intensity control
 kp_dli:
-  name: "Kp DLI"
-  min: -1
-  max: 1
-  step: 0.0001
-  mode: box
-  unit_of_measurement: "mol/m2/day"
-  icon: mdi:lightbulb
+  pid_dli_base: &pid_dli_base
+    min: -1
+    max: 1
+    step: 0.0001
+    mode: box
+    unit_of_measurement: "mol/m2/day"
+    icon: mdi:lightbulb
+  g1_kp_dli:
+    <<: *pid_dli_base
+    name: "G1 Kp DLI"
+  g2_kp_dli:
+    <<: *pid_dli_base
+    name: "G2 Kp DLI"
 
 ki_dli: 
-  name: "Ki DLI"
-  min: -1
-  max: 1
-  step: 0.0001
-  mode: box
-  unit_of_measurement: "mol/m2/day"
-  icon: mdi:lightbulb
+  g1_ki_dli:
+    <<: *pid_dli_base
+    name: "G1 Ki DLI"
+  g2_ki_dli:
+    <<: *pid_dli_base
+    name: "G2 Ki DLI"
 
 kd_dli:
-  name: "Kd DLI"
-  min: -1
-  max: 1
-  step: 0.0001
-  mode: box
-  unit_of_measurement: "mol/m2/day"
-  icon: mdi:lightbulb
+  g1_kd_dli:
+    <<: *pid_dli_base
+    name: "G1 Kd DLI"
+  g2_kd_dli:
+    <<: *pid_dli_base
+    name: "G2 Kd DLI"
 
 dt_dli:
-  name: "dt DLI"
-  min: 0.01
-  max: 1
-  step: 0.001
-  mode: box
-  unit_of_measurement: "mol/m2/day"
-  icon: mdi:lightbulb
+  dt_dli_base: &dt_dli_base
+    min: 0.01
+    max: 1
+    step: 0.001
+    mode: box
+    unit_of_measurement: "mol/m2/day"
+    icon: mdi:lightbulb
+  g1_dt_dli:
+    <<: *dt_dli_base
+    name: "G1 dt DLI"
+  g2_dt_dli:
+    <<: *dt_dli_base
+    name: "G2 dt DLI"
 
-# vpd controller gains
+# VPD controller gains
 kp_vpd:
-  name: "Kp VPD"
-  min: 0
-  max: 1
-  step: 0.0001
-  mode: box
-  unit_of_measurement: "kPa"
-  icon: mdi:water-percent
+  pid_vpd_base: &pid_vpd_base
+    min: 0
+    max: 1
+    step: 0.0001
+    mode: box
+    unit_of_measurement: "kPa"
+    icon: mdi:water-percent
+  g1_kp_vpd:
+    <<: *pid_vpd_base
+    name: "G1 Kp VPD"
+  g2_kp_vpd:
+    <<: *pid_vpd_base
+    name: "G2 Kp VPD"
 
 ki_vpd:
-  name: "Ki VPD"
-  min: 0
-  max: 1
-  step: 0.0001
-  mode: box
-  unit_of_measurement: "kPa"
-  icon: mdi:water-percent
+  g1_ki_vpd:
+    <<: *pid_vpd_base
+    name: "G1 Ki VPD"
+  g2_ki_vpd:
+    <<: *pid_vpd_base
+    name: "G2 Ki VPD"
 
 kd_vpd:
-  name: "Kd VPD"
-  min: 0
-  max: 1
-  step: 0.0001
-  mode: box
-  unit_of_measurement: "kPa"
-  icon: mdi:water-percent
+  g1_kd_vpd:
+    <<: *pid_vpd_base
+    name: "G1 Kd VPD"
+  g2_kd_vpd:
+    <<: *pid_vpd_base
+    name: "G2 Kd VPD"
 
 dt_vpd:
-  name: "dt VPD"
-  min: 0.01
-  max: 1
-  step: 0.0001
-  mode: box
-  unit_of_measurement: "kPa"
-  icon: mdi:water-percent
+  dt_vpd_base: &dt_vpd_base
+    min: 0.01
+    max: 1
+    step: 0.0001
+    mode: box
+    unit_of_measurement: "kPa"
+    icon: mdi:water-percent
+  g1_dt_vpd:
+    <<: *dt_vpd_base
+    name: "G1 dt VPD"
+  g2_dt_vpd:
+    <<: *dt_vpd_base
+    name: "G2 dt VPD"
 
-# max light intensity in percentage
+# Max light intensity
 light_intensity_max:
-  name: "Light Intensity Max"
-  min: 0
-  max: 1
-  step: 0.001
-  mode: box
-  unit_of_measurement: "%"
-  icon: mdi:lightbulb
+  light_intensity_max_base: &light_intensity_max_base
+    min: 0
+    max: 1
+    step: 0.001
+    mode: box
+    unit_of_measurement: "%"
+    icon: mdi:lightbulb
+  g1_light_intensity_max:
+    <<: *light_intensity_max_base
+    name: "G1 Light Intensity Max"
+  g2_light_intensity_max:
+    <<: *light_intensity_max_base
+    name: "G2 Light Intensity Max"
 
 # BH1750 calibration factor
 bh1750_calibration_factor:
-  name: "BH1750 Calibration"
-  min: 0
-  max: 100
-  step: 0.1
-  mode: box
-  icon: mdi:lightbulb
+  bh1750_calibration_base: &bh1750_calibration_base
+    min: 0
+    max: 100
+    step: 0.1
+    mode: box
+    icon: mdi:lightbulb
+  g1_bh1750_calibration_factor:
+    <<: *bh1750_calibration_base
+    name: "G1 BH1750 Calibration"
+  g2_bh1750_calibration_factor:
+    <<: *bh1750_calibration_base
+    name: "G2 BH1750 Calibration"
 
 # Max allowed temperature above intake temperature for day and night
 temperature_offset_max_day:
-  name: "Temperature Offset Max Day (Canopy to Intake)"
-  min: 0
-  max: 10
-  step: 0.1
-  mode: box
-  unit_of_measurement: "°C"
-  icon: mdi:thermometer
+  temperature_offset_max_base: &temperature_offset_max_base
+    min: 0
+    max: 10
+    step: 0.1
+    mode: box
+    unit_of_measurement: "°C"
+    icon: mdi:thermometer
+  g1_temperature_offset_max_day:
+    <<: *temperature_offset_max_base
+    name: "G1 Temperature Offset Max Day (Canopy to Intake)"
+  g2_temperature_offset_max_day:
+    <<: *temperature_offset_max_base
+    name: "G2 Temperature Offset Max Day (Canopy to Intake)"
 
 temperature_offset_max_night:
-  name: "Temperature Offset Max Night (Canopy to Intake)"
-  min: 0
-  max: 10
-  step: 0.1
-  mode: box
-  unit_of_measurement: "°C"
-  icon: mdi:thermometer
+  g1_temperature_offset_max_night:
+    <<: *temperature_offset_max_base
+    name: "G1 Temperature Offset Max Night (Canopy to Intake)"
+  g2_temperature_offset_max_night:
+    <<: *temperature_offset_max_base
+    name: "G2 Temperature Offset Max Night (Canopy to Intake)"
