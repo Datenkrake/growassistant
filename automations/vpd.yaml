@@ -1,192 +1,192 @@
-# alias: "VPD Control Automation"
-# id: "automations_vpd"
-# description: "Adjust VPD based on target VPD after a 1-minute delay."
-# trigger:
-#   - platform: time_pattern
-#     minutes: "/1"
-#     seconds: 00
-# condition:
-#   - condition: state
-#     entity_id: input_boolean.g1_vpd_control_enable
-#     state: "on"
-#   - condition: state
-#     entity_id: input_boolean.g1_global_enable
-#     state: "on"
-#   - condition: state
-#     entity_id: input_boolean.g1_service_mode_enable
-#     state: "off"
-#   - condition: state
-#     entity_id: binary_sensor.g1_water_door_switch
-#     state: "off"
-# action:
-#   - variables:
-#       vpd_target: "{{ states('input_number.g1_vpd_target') | float }}"
-#       canopy_vpd: "{{ states('sensor.g1_vpd') | float }}"
-#       intake_temp: "{{ states('sensor.g1_intake_bme680_temperature') | float }}"
-#       intake_hum: "{{ states('sensor.g1_intake_bme680_humidity') | float }}"
-#       canopy_temp: "{{ states('sensor.g1_combined_temperature') | float }}"
-#       canopy_hum: "{{ states('sensor.g1_combined_humidity') | float }}"
-#       rh_target: "{{ states('sensor.g1_rh_target') | float }}"
-#       dayphase: "{{ states('sensor.g1_dayphase') | int }}"
-#       temperature_offset_max_day: "{{ states('input_number.g1_temperature_offset_max_day') | float }}"
-#       temperature_offset_max_night: "{{ states('input_number.g1_temperature_offset_max_night') | float }}"
-#       Kp: "{{ states('input_number.g1_kp_vpd') | float(0) }}"
-#       Ki: "{{ states('input_number.g1_ki_vpd') | float(0) }}"
-#       Kd: "{{ states('input_number.g1_kd_vpd') | float(0) }}"
-#       dt: "{{ states('input_number.g1_dt_vpd') | float(0) }}"
-#       # Kp: 1
-#       # Ki: 1
-#       # Kd: 1
-#       # dt: 1
-#       d_canopy_target: "{{ canopy_vpd - vpd_target }}"
-#       previous_error: "{{ states('input_number.g1_previous_d_canopy_target') | float(0) }}"
-#       intake_fan_speed: "{{ (state_attr('fan.g1_intake_intake_fan', 'percentage') | float(0)) / 100 }}"
-#       exhaust_fan_1_speed: "{{ (state_attr('fan.g1_exhaust_exhaust_fan_1', 'percentage') | float(0)) / 100 }}"
-#       exhaust_fan_2_speed: "{{ (state_attr('fan.g1_exhaust_exhaust_fan_2', 'percentage') | float(0)) / 100 }}"
-#       humidifier_dutycycle: "{{ (state_attr('fan.g1_humidifier_humidifier', 'percentage') | float(0)) }}"
+alias: "VPD Control Automation"
+id: "automations_vpd"
+description: "Adjust VPD based on target VPD after a 1-minute delay."
+trigger:
+  - platform: time_pattern
+    minutes: "/1"
+    seconds: 00
+condition:
+  - condition: state
+    entity_id: input_boolean.g1_vpd_control_enable
+    state: "on"
+  - condition: state
+    entity_id: input_boolean.g1_global_enable
+    state: "on"
+  - condition: state
+    entity_id: input_boolean.g1_service_mode_enable
+    state: "off"
+  - condition: state
+    entity_id: binary_sensor.g1_water_door_switch
+    state: "off"
+action:
+  - variables:
+      vpd_target: "{{ states('input_number.g1_vpd_target') | float(0) }}"
+      canopy_vpd: "{{ states('sensor.g1_vpd') | float(0) }}"
+      intake_temp: "{{ states('sensor.g1_intake_bme680_temperature') | float(0) }}"
+      intake_hum: "{{ states('sensor.g1_intake_bme680_humidity') | float(0) }}"
+      canopy_temp: "{{ states('sensor.g1_combined_temperature') | float(0) }}"
+      canopy_hum: "{{ states('sensor.g1_combined_humidity') | float(0) }}"
+      rh_target: "{{ states('sensor.g1_rh_target') | float(0) }}"
+      dayphase: "{{ states('sensor.g1_dayphase') | int(0) }}"
+      temperature_offset_max_day: "{{ states('input_number.g1_temperature_offset_max_day') | float(0) }}"
+      temperature_offset_max_night: "{{ states('input_number.g1_temperature_offset_max_night') | float(0) }}"
+      Kp: "{{ states('input_number.g1_kp_vpd') | float(0) }}"
+      Ki: "{{ states('input_number.g1_ki_vpd') | float(0) }}"
+      Kd: "{{ states('input_number.g1_kd_vpd') | float(0) }}"
+      dt: "{{ states('input_number.g1_dt_vpd') | float(0) }}"
+      
+      # Calculate the difference between current and target VPD
+      d_canopy_target: "{{ canopy_vpd - vpd_target }}"
+      previous_error: "{{ states('input_number.g1_previous_d_canopy_target') | float(0) }}"
+      
+      # Current fan speeds as floats
+      intake_fan_speed: "{{ (state_attr('fan.g1_intake_intake_fan', 'percentage') | float(0)) / 100 }}"
+      exhaust_fan_1_speed: "{{ (state_attr('fan.g1_exhaust_exhaust_fan_1', 'percentage') | float(0)) / 100 }}"
+      exhaust_fan_2_speed: "{{ (state_attr('fan.g1_exhaust_exhaust_fan_2', 'percentage') | float(0)) / 100 }}"
+      humidifier_dutycycle: "{{ (state_attr('fan.g1_humidifier_humidifier', 'percentage') | float(0)) }}"
+      
+      # Fan speed limits from input_numbers
+      intake_fan_min: "{{ states('input_number.g1_intake_fan_speed_min') | float(0) }}"
+      intake_fan_max: "{{ states('input_number.g1_intake_fan_speed_max') | float(0) }}"
+      exhaust_fan_min: "{{ states('input_number.g1_exhaust_fan_speed_min') | float(0) }}"
+      exhaust_fan_max: "{{ states('input_number.g1_exhaust_fan_speed_max') | float(0) }}"
+      
+      # Control logic calculations
+      P_intake: "{{ Kp * d_canopy_target | float(0) | abs }}"
+      P_exhaust: "{{ Kp * d_canopy_target | float(0) | abs }}"
+      integral_intake: "{{ states('input_number.g1_integral_intake') | float(0) + (d_canopy_target * dt) | float(0) | abs }}"
+      integral_exhaust: "{{ states('input_number.g1_integral_exhaust') | float(0) + (d_canopy_target * dt) | float(0) | abs }}"
+      integral_limit: 0.05
+      integral_intake_clamped: "{{ [integral_limit, integral_intake] | min }}"
+      integral_exhaust_clamped: "{{ [integral_limit, integral_exhaust] | min }}"
+      D_intake: "{{ Kd * (d_canopy_target - previous_error) / dt | float(0) | abs }}"
+      D_exhaust: "{{ Kd * (d_canopy_target - previous_error) / dt | float(0) | abs }}"
+      control_intake: "{{ P_intake + Ki * integral_intake_clamped + D_intake | abs }}"
+      control_exhaust: "{{ P_exhaust + Ki * integral_exhaust_clamped + D_exhaust | abs }}"
 
-#       # Fan speed limits from input_numbers
-#       intake_fan_min: "{{ states('input_number.g1_intake_fan_speed_min') | float }}"
-#       intake_fan_max: "{{ states('input_number.g1_intake_fan_speed_max') | float }}"
-#       exhaust_fan_min: "{{ states('input_number.g1_exhaust_fan_speed_min') | float }}"
-#       exhaust_fan_max: "{{ states('input_number.g1_exhaust_fan_speed_max') | float }}"
+      # Other logic for temperature and RH margins
+      min_temp: 15
+      max_temp: "{{ intake_temp + (temperature_offset_max_night if dayphase == 0 else temperature_offset_max_day) }}"
+      t_margin: "{{ max_temp - canopy_temp }}"
+      t_potential: "{{ canopy_temp - intake_temp }}"
+      rh_margin: "{{ rh_target - canopy_hum }}"
+      rh_potential: "{{ canopy_hum - intake_hum }}"
 
-#       # Control logic calculations
-#       P_intake: "{{ Kp * d_canopy_target | abs }}"
-#       P_exhaust: "{{ Kp * d_canopy_target | abs }}"
-#       integral_intake: "{{ states('input_number.g1_integral_intake') | float(0) + (d_canopy_target * dt) | abs }}"
-#       integral_exhaust: "{{ states('input_number.g1_integral_exhaust') | float(0) + (d_canopy_target * dt) | abs }}"
-#       integral_limit: 0.05
-#       integral_intake_clamped: "{{ [integral_limit, integral_intake] | min }}"
-#       integral_exhaust_clamped: "{{ [integral_limit, integral_exhaust] | min }}"
-#       D_intake: "{{ Kd * (d_canopy_target - previous_error) / dt | abs }}"
-#       D_exhaust: "{{ Kd * (d_canopy_target - previous_error) / dt | abs }}"
-#       control_intake: "{{ P_intake + Ki * integral_intake_clamped + D_intake | abs }}"
-#       control_exhaust: "{{ P_exhaust + Ki * integral_exhaust_clamped + D_exhaust | abs }}"
+  - service: input_number.set_value
+    data:
+      entity_id: input_number.g1_control_intake
+      value: "{{ control_intake }}"
+  - service: input_number.set_value
+    data:
+      entity_id: input_number.g1_control_exhaust
+      value: "{{ control_exhaust }}"
 
-#       min_temp: 15
-#       max_temp: "{{ intake_temp + (temperature_offset_max_night if dayphase == 0 else temperature_offset_max_day) }}"
-#       t_margin: "{{ max_temp - canopy_temp }}"
-#       t_potential: "{{ canopy_temp - intake_temp }}"
-#       rh_margin: "{{ rh_target - canopy_hum }}"
-#       rh_potential: "{{ canopy_hum - intake_hum }}"
+  # Update previous error value for next cycle
+  - service: input_number.set_value
+    data:
+      entity_id: input_number.g1_previous_d_canopy_target
+      value: "{{ d_canopy_target }}"
 
-#   - service: input_number.set_value
-#     data:
-#       entity_id: input_number.g1_control_intake
-#       value: "{{ control_intake }}"
-#   - service: input_number.set_value
+  # Update integral terms
+  - service: input_number.set_value
+    data:
+      entity_id: input_number.g1_integral_intake
+      value: "{{ integral_intake_clamped }}"
+  - service: input_number.set_value
+    data:
+      entity_id: input_number.g1_integral_exhaust
+      value: "{{ integral_exhaust_clamped }}"
 
-#     data:
-#       entity_id: input_number.g1_control_exhaust
-#       value: "{{ control_exhaust }}"
-
-#   # Update previous error value for next cycle
-#   - service: input_number.set_value
-#     data:
-#       entity_id: input_number.g1_previous_d_canopy_target
-#       value: "{{ d_canopy_target }}"
-
-#   # Update integral terms
-#   - service: input_number.set_value
-#     data:
-#       entity_id: input_number.g1_integral_intake
-#       value: "{{ integral_intake_clamped }}"
-#   - service: input_number.set_value
-#     data:
-#       entity_id: input_number.g1_integral_exhaust
-#       value: "{{ integral_exhaust_clamped }}"
-
-#   # Control logic
-#   - choose:
-#       - conditions:
-#           - condition: template
-#             value_template: "{{ d_canopy_target > 0 }}"
-#         sequence:
-#           - choose:
-#               - conditions:
-#                   - condition: template
-#                     value_template: "{{ rh_margin > 0 }}"
-#                 sequence:
-#                   - service: fan.set_percentage
-#                     target:
-#                       entity_id: fan.g1_humidifier_humidifier
-#                     data:
-#                       percentage: "{{ [humidifier_dutycycle + 1, 100] | min }}"
-#               - conditions:
-#                   - condition: template
-#                     value_template: "{{ rh_margin <= 0 }}"
-#                 sequence:
-#                   - service: fan.set_percentage
-#                     target:
-#                       entity_id: fan.g1_humidifier_humidifier
-#                     data:
-#                       percentage: "{{ [humidifier_dutycycle - 2, 0] | max }}"
-#           - choose:
-#               - conditions:
-#                   - condition: template
-#                     value_template: "{{ t_margin < 0 }}"
-#                 sequence:
-#                   - service: fan.set_percentage
-#                     target:
-#                       entity_id: fan.g1_intake_intake_fan
-#                     data:
-#                       percentage: "{{ [ [(intake_fan_speed + control_intake) * 100, intake_fan_max ] | min, intake_fan_min] | max }}"
-#                   - service: fan.set_percentage
-#                     target:
-#                       entity_id: fan.g1_exhaust_exhaust_fan_1
-#                     data:
-#                       percentage: "{{ [ [(exhaust_fan_1_speed + control_exhaust) * 100, exhaust_fan_max ] | min, exhaust_fan_min] | max }}"
-#                   - service: fan.set_percentage
-#                     target:
-#                       entity_id: fan.g1_exhaust_exhaust_fan_2
-#                     data:
-#                       percentage: "{{ [ [(exhaust_fan_2_speed + control_exhaust) * 100, exhaust_fan_max ] | min, exhaust_fan_min] | max }}"
-#               - conditions:
-#                   - condition: template
-#                     value_template: "{{ t_margin >= 0 and rh_margin > 0 }}"
-#                 sequence:
-#                   - service: fan.set_percentage
-#                     target:
-#                       entity_id: fan.g1_intake_intake_fan
-#                     data:
-#                       percentage: "{{ [ [(intake_fan_speed - control_intake) * 100, intake_fan_min ] | max, intake_fan_max] | min }}"
-#                   - service: fan.set_percentage
-#                     target:
-#                       entity_id: fan.g1_exhaust_exhaust_fan_1
-#                     data:
-#                       percentage: "{{ [ [(exhaust_fan_1_speed - control_exhaust) * 100, exhaust_fan_min ] | max, exhaust_fan_max] | min }}"
-#                   - service: fan.set_percentage
-#                     target:
-#                       entity_id: fan.g1_exhaust_exhaust_fan_2
-#                     data:
-#                       percentage: "{{ [ [(exhaust_fan_2_speed - control_exhaust) * 100, exhaust_fan_min ] | max, exhaust_fan_max] | min }}"
-#       - conditions:
-#           - condition: template
-#             value_template: "{{ d_canopy_target <= 0 }}"
-#         sequence:
-#           - choose:
-#               - conditions:
-#                   - condition: template
-#                     value_template: "{{ rh_margin < 0 }}"
-#                 sequence:
-#                   - service: fan.set_percentage
-#                     target:
-#                       entity_id: fan.g1_humidifier_humidifier
-#                     data:
-#                       percentage: "{{ [humidifier_dutycycle - 2, 0] | max }}"
-#                   - service: fan.set_percentage
-#                     target:
-#                       entity_id: fan.g1_intake_intake_fan
-#                     data:
-#                       percentage: "{{ [ [(intake_fan_speed + control_intake) * 100, intake_fan_max ] | min, intake_fan_min] | max }}"
-#                   - service: fan.set_percentage
-#                     target:
-#                       entity_id: fan.g1_exhaust_exhaust_fan_1
-#                     data:
-#                       percentage: "{{ [[ (exhaust_fan_1_speed + control_exhaust) * 100, exhaust_fan_max ] | min, exhaust_fan_min] | max }}"
-#                   - service: fan.set_percentage
-#                     target:
-#                       entity_id: fan.g1_exhaust_exhaust_fan_2
-#                     data:
-#                       percentage: "{{ [ [(exhaust_fan_2_speed + control_exhaust) * 100, exhaust_fan_max ] | min, exhaust_fan_min] | max }}"
+  # Control logic
+  - choose:
+      - conditions:
+          - condition: template
+            value_template: "{{ d_canopy_target > 0 }}"
+        sequence:
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ rh_margin > 0 }}"
+                sequence:
+                  - service: fan.set_percentage
+                    target:
+                      entity_id: fan.g1_humidifier_humidifier
+                    data:
+                      percentage: "{{ [humidifier_dutycycle + 1, 100] | min }}"
+              - conditions:
+                  - condition: template
+                    value_template: "{{ rh_margin <= 0 }}"
+                sequence:
+                  - service: fan.set_percentage
+                    target:
+                      entity_id: fan.g1_humidifier_humidifier
+                    data:
+                      percentage: "{{ [humidifier_dutycycle - 2, 0] | max }}"
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ t_margin < 0 }}"
+                sequence:
+                  - service: fan.set_percentage
+                    target:
+                      entity_id: fan.g1_intake_intake_fan
+                    data:
+                      percentage: "{{ [ [(intake_fan_speed + control_intake) * 100, intake_fan_max ] | min, intake_fan_min] | max }}"
+                  - service: fan.set_percentage
+                    target:
+                      entity_id: fan.g1_exhaust_exhaust_fan_1
+                    data:
+                      percentage: "{{ [ [(exhaust_fan_1_speed + control_exhaust) * 100, exhaust_fan_max ] | min, exhaust_fan_min] | max }}"
+                  - service: fan.set_percentage
+                    target:
+                      entity_id: fan.g1_exhaust_exhaust_fan_2
+                    data:
+                      percentage: "{{ [ [(exhaust_fan_2_speed + control_exhaust) * 100, exhaust_fan_max ] | min, exhaust_fan_min] | max }}"
+              - conditions:
+                  - condition: template
+                    value_template: "{{ t_margin >= 0 and rh_margin > 0 }}"
+                sequence:
+                  - service: fan.set_percentage
+                    target:
+                      entity_id: fan.g1_intake_intake_fan
+                    data:
+                      percentage: "{{ [ [(intake_fan_speed - control_intake) * 100, intake_fan_min ] | max, intake_fan_max] | min }}"
+                  - service: fan.set_percentage
+                    target:
+                      entity_id: fan.g1_exhaust_exhaust_fan_1
+                    data:
+                      percentage: "{{ [ [(exhaust_fan_1_speed - control_exhaust) * 100, exhaust_fan_min ] | max, exhaust_fan_max] | min }}"
+                  - service: fan.set_percentage
+                    target:
+                      entity_id: fan.g1_exhaust_exhaust_fan_2
+                    data:
+                      percentage: "{{ [ [(exhaust_fan_2_speed - control_exhaust) * 100, exhaust_fan_min ] | max, exhaust_fan_max] | min }}"
+      - conditions:
+          - condition: template
+            value_template: "{{ d_canopy_target <= 0 }}"
+        sequence:
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ rh_margin < 0 }}"
+                sequence:
+                  - service: fan.set_percentage
+                    target:
+                      entity_id: fan.g1_humidifier_humidifier
+                    data:
+                      percentage: "{{ [humidifier_dutycycle - 2, 0] | max }}"
+                  - service: fan.set_percentage
+                    target:
+                      entity_id: fan.g1_intake_intake_fan
+                    data:
+                      percentage: "{{ [ [(intake_fan_speed + control_intake) * 100, intake_fan_max ] | min, intake_fan_min] | max }}"
+                  - service: fan.set_percentage
+                    target:
+                      entity_id: fan.g1_exhaust_exhaust_fan_1
+                    data:
+                      percentage: "{{ [[ (exhaust_fan_1_speed + control_exhaust) * 100, exhaust_fan_max ] | min, exhaust_fan_min] | max }}"
+                  - service: fan.set_percentage
+                    target:
+                      entity_id: fan.g1_exhaust_exhaust_fan_2
+                    data:
+                      percentage: "{{ [ [(exhaust_fan_2_speed + control_exhaust) * 100, exhaust_fan_max ] | min, exhaust_fan_min] | max }}"
