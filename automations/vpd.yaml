@@ -57,8 +57,8 @@ action:
       integral_intake: "{{ states('input_number.g1_integral_intake') | float(0) + (d_canopy_target * dt) | float(0) | abs }}"
       integral_exhaust: "{{ states('input_number.g1_integral_exhaust') | float(0) + (d_canopy_target * dt) | float(0) | abs }}"
       integral_limit: 0.05
-      integral_intake_clamped: "{{ [integral_limit, integral_intake] | min }}"
-      integral_exhaust_clamped: "{{ [integral_limit, integral_exhaust] | min }}"
+      integral_intake_clamped: "{{ [integral_limit, [-integral_limit, integral_intake] | max] | min }}"
+      integral_exhaust_clamped: "{{ [integral_limit, [-integral_limit, integral_exhaust] | max] | min }}"
       D_intake: "{{ Kd * (d_canopy_target - previous_error) / dt | float(0) | abs }}"
       D_exhaust: "{{ Kd * (d_canopy_target - previous_error) / dt | float(0) | abs }}"
       control_intake: "{{ P_intake + Ki * integral_intake_clamped + D_intake | abs }}"
