@@ -2,7 +2,7 @@
 #   alias: 'Timelapse Automation - G1'
 #   description: 'Takes a timelapse snapshot every specified interval for G1.'
 #   use_blueprint:
-#     path: /blueprints/automation/homeassistant/timelapse_automation_blueprint.yaml
+#     path: /blueprints/automation/growassistant/timelapse_automation_blueprint.yaml
 #     input:
 #       global_enable: input_boolean.g1_global_enable
 #       timelapse_enable: input_boolean.g1_timelapse_enable
@@ -16,7 +16,7 @@
 #   alias: 'Timelapse Automation - G2'
 #   description: 'Takes a timelapse snapshot every specified interval for G2.'
 #   use_blueprint:
-#     path: /blueprints/automation/homeassistant/timelapse_automation_blueprint.yaml
+#     path: /blueprints/automation/growassistant/timelapse_automation_blueprint.yaml
 #     input:
 #       global_enable: input_boolean.g2_global_enable
 #       timelapse_enable: input_boolean.g2_timelapse_enable

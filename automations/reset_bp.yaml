@@ -2,7 +2,7 @@
 #   alias: 'System Reset Automation - G1'
 #   description: 'Resets the system for G1 when the restart flag is set to on'
 #   use_blueprint:
-#     path: /blueprints/automation/homeassistant/system_reset_automation_blueprint.yaml
+#     path: /blueprints/automation/growassistant/system_reset_automation_blueprint.yaml
 #     input:
 #       restart_flag: input_boolean.g1_restart_flag
 #       global_enable: input_boolean.g1_global_enable
@@ -14,7 +14,7 @@
 #   alias: 'System Reset Automation - G2'
 #   description: 'Resets the system for G2 when the restart flag is set to on'
 #   use_blueprint:
-#     path: /blueprints/automation/homeassistant/system_reset_automation_blueprint.yaml
+#     path: /blueprints/automation/growassistant/system_reset_automation_blueprint.yaml
 #     input:
 #       restart_flag: input_boolean.g2_restart_flag
 #       global_enable: input_boolean.g2_global_enable

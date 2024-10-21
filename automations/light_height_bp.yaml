@@ -2,7 +2,7 @@
 #   alias: 'Light Height Control - G1'
 #   description: 'This automation adjusts the light gantry height for G1 based on sensor readings every 15 minutes'
 #   use_blueprint:
-#     path: /blueprints/automation/homeassistant/light_height_blueprint.yaml
+#     path: /blueprints/automation/growassistant/light_height_blueprint.yaml
 #     input:
 #       global_enable: input_boolean.g1_global_enable
 #       light_height_control_enable: input_boolean.g1_light_height_control_enable
@@ -16,7 +16,7 @@
 #   alias: 'Light Height Control - G2'
 #   description: 'This automation adjusts the light gantry height for G2 based on sensor readings every 15 minutes'
 #   use_blueprint:
-#     path: /blueprints/automation/homeassistant/light_height_blueprint.yaml
+#     path: /blueprints/automation/growassistant/light_height_blueprint.yaml
 #     input:
 #       global_enable: input_boolean.g2_global_enable
 #       light_height_control_enable: input_boolean.g2_light_height_control_enable

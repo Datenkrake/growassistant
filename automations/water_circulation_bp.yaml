@@ -2,7 +2,7 @@
 #   alias: 'Water Circulation Control - G1'
 #   description: 'Controls the water circulation pump for G1 based on the specified period and duration.'
 #   use_blueprint:
-#     path: /blueprints/automation/homeassistant/water_circulation_control_blueprint.yaml
+#     path: /blueprints/automation/growassistant/water_circulation_control_blueprint.yaml
 #     input:
 #       global_enable: input_boolean.g1_global_enable
 #       irrigation_enable: input_boolean.g1_irrigation_enable
@@ -15,7 +15,7 @@
 #   alias: 'Water Circulation Control - G2'
 #   description: 'Controls the water circulation pump for G2 based on the specified period and duration.'
 #   use_blueprint:
-#     path: /blueprints/automation/homeassistant/water_circulation_control_blueprint.yaml
+#     path: /blueprints/automation/growassistant/water_circulation_control_blueprint.yaml
 #     input:
 #       global_enable: input_boolean.g2_global_enable
 #       irrigation_enable: input_boolean.g2_irrigation_enable

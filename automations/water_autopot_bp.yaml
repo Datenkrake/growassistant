@@ -2,7 +2,7 @@
 #   alias: 'Water Autopot Control - G1'
 #   description: 'Controls the irrigation pump for G1 autopot system.'
 #   use_blueprint:
-#     path: /blueprints/automation/homeassistant/water_autopot_control_blueprint.yaml
+#     path: /blueprints/automation/growassistant/water_autopot_control_blueprint.yaml
 #     input:
 #       global_enable: input_boolean.g1_global_enable
 #       irrigation_enable: input_boolean.g1_irrigation_enable
@@ -15,7 +15,7 @@
 #   alias: 'Water Autopot Control - G2'
 #   description: 'Controls the irrigation pump for G2 autopot system.'
 #   use_blueprint:
-#     path: /blueprints/automation/homeassistant/water_autopot_control_blueprint.yaml
+#     path: /blueprints/automation/growassistant/water_autopot_control_blueprint.yaml
 #     input:
 #       global_enable: input_boolean.g2_global_enable
 #       irrigation_enable: input_boolean.g2_irrigation_enable
