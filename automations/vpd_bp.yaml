@@ -2,7 +2,7 @@
   alias: 'VPD Control Automation - G1'
   description: 'Adjust VPD for Cabinet 1 based on target VPD after a 1-minute delay.'
   use_blueprint:
-    path: /blueprints/automation/growassistant/vpd_blueprint.yaml
+    path: growassistant/vpd_blueprint.yaml
     input:
       vpd_control_enable: input_boolean.g1_vpd_control_enable
       water_door_switch: binary_sensor.g1_water_door_switch
