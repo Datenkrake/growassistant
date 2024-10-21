@@ -1,0 +1,38 @@
+id: 'vpd_control_g2'
+alias: G2 VPD Control Blueprint
+description: 'Adjust VPD for Cabinet 2 based on target VPD after a 1-minute delay.'
+use_blueprint:
+  path: growassistant/vpd_blueprint.yaml
+  input:
+    # Cabinet-Specific Entities
+    vpd_control_enable: input_boolean.g2_global_enable
+    water_door_switch: binary_sensor.g2_water_door_switch
+    vpd_target: input_number.g2_vpd_target
+    vpd_sensor: sensor.g2_vpd
+    intake_temperature_sensor: sensor.g2_intake_bme680_temperature
+    intake_humidity_sensor: sensor.g2_intake_bme680_humidity
+    canopy_temperature_sensor: sensor.g2_canopy_bme680_temperature
+    canopy_humidity_sensor: sensor.g2_canopy_bme680_humidity
+    rh_target_sensor: sensor.g2_rh_target
+    dayphase_sensor: sensor.g2_dayphase
+    temperature_offset_max_day: input_number.g2_temperature_offset_max_day
+    temperature_offset_max_night: input_number.g2_temperature_offset_max_night
+    previous_d_canopy_target: input_number.g2_previous_d_canopy_target
+    intake_fan: fan.g2_intake_intake_fan
+    exhaust_fan_1: fan.g2_exhaust_exhaust_fan_1
+    exhaust_fan_2: fan.g2_exhaust_exhaust_fan_2
+    humidifier_fan: fan.g2_humidifier_humidifier
+    intake_fan_speed_min: input_number.g2_intake_fan_speed_min
+    intake_fan_speed_max: input_number.g2_intake_fan_speed_max
+    exhaust_fan_speed_min: input_number.g2_exhaust_fan_speed_min
+    exhaust_fan_speed_max: input_number.g2_exhaust_fan_speed_max
+    integral_intake: input_number.g2_integral_intake
+    integral_exhaust: input_number.g2_integral_exhaust
+    control_intake: input_number.g2_control_intake
+    control_exhaust: input_number.g2_control_exhaust
+    global_enable: input_boolean.g2_global_enable
+    service_mode_enable: input_boolean.g2_service_mode_enable
+    kp_vpd: input_number.g2_kp_vpd
+    ki_vpd: input_number.g2_ki_vpd
+    kd_vpd: input_number.g2_kd_vpd
+    dt_vpd: input_number.g2_dt_vpd

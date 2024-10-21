@@ -32,7 +32,8 @@ input_text: !include entities/input_texts.yaml
 automation:
   - !include automations/light_height.yaml
   - !include automations/timelapse.yaml
-  - !include automations/vpd_bp.yaml
+  - !include automations/vpd_bp_g1.yaml
+  - !include automations/vpd_bp_g2.yaml
   - !include automations/water_autopot.yaml
   - !include automations/water_circulation.yaml
   - !include automations/dli.yaml
