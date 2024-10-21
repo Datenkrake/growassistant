@@ -30,7 +30,7 @@
       control_intake: input_number.g1_control_intake
       control_exhaust: input_number.g1_control_exhaust
       global_enable: input_boolean.g1_global_enable
-      service_mode: input_boolean.g1_service_mode
+      service_mode: input_boolean.g1_service_mode_enable
       kp_vpd: input_number.g1_kp_vpd
       ki_vpd: input_number.g1_ki_vpd
       kd_vpd: input_number.g1_kd_vpd
