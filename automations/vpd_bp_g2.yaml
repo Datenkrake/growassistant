@@ -6,21 +6,21 @@ use_blueprint:
   input:
     # Cabinet-Specific Entities
     vpd_control_enable: input_boolean.g2_global_enable
-    water_door_switch: binary_sensor.g2_water_door_switch
+    water_door_switch: binary_sensor.g2_humidifier_door_switch
     vpd_target: input_number.g2_vpd_target
     vpd_sensor: sensor.g2_vpd
     intake_temperature_sensor: sensor.g2_intake_bme680_temperature
     intake_humidity_sensor: sensor.g2_intake_bme680_humidity
-    canopy_temperature_sensor: sensor.g2_canopy_bme680_temperature
-    canopy_humidity_sensor: sensor.g2_canopy_bme680_humidity
+    canopy_temperature_sensor: sensor.gx_sht21_temperature
+    canopy_humidity_sensor: sensor.gx_sht21_humidity
     rh_target_sensor: sensor.g2_rh_target
     dayphase_sensor: sensor.g2_dayphase
     temperature_offset_max_day: input_number.g2_temperature_offset_max_day
     temperature_offset_max_night: input_number.g2_temperature_offset_max_night
     previous_d_canopy_target: input_number.g2_previous_d_canopy_target
     intake_fan: fan.g2_intake_intake_fan
-    exhaust_fan_1: fan.g2_exhaust_exhaust_fan_1
-    exhaust_fan_2: fan.g2_exhaust_exhaust_fan_2
+    exhaust_fan_1: fan.g2_exhaust1_exhaust_fan_1
+    exhaust_fan_2: fan.g2_exhaust2_exhaust_fan_1
     humidifier_fan: fan.g2_humidifier_humidifier
     intake_fan_speed_min: input_number.g2_intake_fan_speed_min
     intake_fan_speed_max: input_number.g2_intake_fan_speed_max
