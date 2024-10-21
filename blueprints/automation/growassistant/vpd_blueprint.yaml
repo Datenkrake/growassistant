@@ -157,42 +157,36 @@ blueprint:
     # Global Entities (Default Values Provided)
     global_enable:
       name: Global Enable
-      default: input_boolean.global_enable
       selector:
         entity:
           domain: input_boolean
 
-    service_mode:
+    service_mode_enable:
       name: Service Mode
-      default: input_boolean.service_mode
       selector:
         entity:
           domain: input_boolean
 
     kp_vpd:
       name: Kp VPD
-      default: input_number.kp_vpd
       selector:
         entity:
           domain: input_number
 
     ki_vpd:
       name: Ki VPD
-      default: input_number.ki_vpd
       selector:
         entity:
           domain: input_number
 
     kd_vpd:
       name: Kd VPD
-      default: input_number.kd_vpd
       selector:
         entity:
           domain: input_number
 
     dt_vpd:
       name: dt VPD
-      default: input_number.dt_vpd
       selector:
         entity:
           domain: input_number
@@ -210,7 +204,7 @@ condition:
     entity_id: !input global_enable
     state: 'on'
   - condition: state
-    entity_id: !input service_mode
+    entity_id: !input service_mode_enable
     state: 'off'
   - condition: state
     entity_id: !input water_door_switch
