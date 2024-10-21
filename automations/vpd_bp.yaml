@@ -28,13 +28,13 @@
       kd_vpd: input_number.g1_kd_vpd
       dt_vpd: input_number.g1_dt_vpd
       # physical devices
-      intake_temperature_sensor: sensor.g1_intake_bme680_temperature
       humidifier_fan: fan.g1_humidifier_humidifier
       intake_fan: fan.g1_intake_intake_fan
       exhaust_fan_1: fan.g1_exhaust_exhaust_fan_1
       exhaust_fan_2: fan.g1_exhaust_exhaust_fan_2
+      intake_temperature_sensor: sensor.g1_intake_bme680_temperature
+      intake_humidity_sensor: sensor.g1_intake_bme680_humidity
       canopy_temperature_sensor: sensor.combined_temperature
-      intake_humidity_sensor: sensor.g1_intake_humidity
       canopy_humidity_sensor: sensor.combined_humidity
 
 # - id: 'vpd_control_g2'
