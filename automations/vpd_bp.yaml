@@ -8,19 +8,11 @@
       water_door_switch: binary_sensor.g1_water_door_switch
       vpd_target: input_number.g1_vpd_target
       vpd_sensor: sensor.g1_vpd
-      intake_temperature_sensor: sensor.g1_intake_temperature
-      intake_humidity_sensor: sensor.g1_intake_humidity
-      canopy_temperature_sensor: sensor.g1_canopy_temperature
-      canopy_humidity_sensor: sensor.g1_canopy_humidity
       rh_target_sensor: sensor.g1_rh_target
       dayphase_sensor: sensor.g1_dayphase
       temperature_offset_max_day: input_number.g1_temperature_offset_max_day
       temperature_offset_max_night: input_number.g1_temperature_offset_max_night
       previous_d_canopy_target: input_number.g1_previous_d_canopy_target
-      humidifier_fan: fan.g1_humidifier
-      intake_fan: fan.g1_intake_fan
-      exhaust_fan_1: fan.g1_exhaust_fan_1
-      exhaust_fan_2: fan.g1_exhaust_fan_2
       intake_fan_speed_min: input_number.g1_intake_fan_speed_min
       intake_fan_speed_max: input_number.g1_intake_fan_speed_max
       exhaust_fan_speed_min: input_number.g1_exhaust_fan_speed_min
@@ -35,7 +27,15 @@
       ki_vpd: input_number.g1_ki_vpd
       kd_vpd: input_number.g1_kd_vpd
       dt_vpd: input_number.g1_dt_vpd
-
+      # physical devices
+      intake_temperature_sensor: sensor.g1_intake_bme680_temperature
+      humidifier_fan: fan.g1_humidifier_humidifier
+      intake_fan: fan.g1_intake_intake_fan
+      exhaust_fan_1: fan.g1_exhaust_exhaust_fan_1
+      exhaust_fan_2: fan.g1_exhaust_exhaust_fan_2
+      canopy_temperature_sensor: sensor.combined_temperature
+      intake_humidity_sensor: sensor.g1_intake_humidity
+      canopy_humidity_sensor: sensor.combined_humidity
 
 # - id: 'vpd_control_g2'
 #   alias: 'VPD Control Automation - G2'
