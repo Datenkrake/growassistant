@@ -39,7 +39,7 @@ i2c:
   frequency: 50kHz
 
 bme68x_bsec2_i2c:
-  address: 0x77
+  address: 0x76
   model: bme680
   operating_age: 28d
   sample_rate: LP
