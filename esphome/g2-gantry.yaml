@@ -64,14 +64,14 @@ output:
     frequency: 25000 Hz  # 25 kHz is a common frequency for fans
     channel: 0
     # Optional: Set initial duty cycle to 0%
-    inverted: false
+    inverted: true
 
   - platform: ledc
     pin: 4  # GPIO4
     id: fan_pwm_2
     frequency: 25000 Hz
     channel: 1
-    inverted: false
+    inverted: true
 
 # Fan Controls
 fan:
