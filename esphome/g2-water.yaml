@@ -1,0 +1,42 @@
+esphome:
+  name: g2-water
+  friendly_name: G2_WATER
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "afF+LRRn2xJxO47lHzfxHAOmZksYw4lmOAZt1J83fxs="
+
+ota:
+  - platform: esphome
+    password: "dc90a879c18e4b2a08e6faaa40a22be4"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "G2-Water Fallback Hotspot"
+    password: "hscwfhyDtBvQ"
+
+captive_portal:
+    
+switch:
+  - platform: gpio
+    pin: GPIO16
+    name: "Relay 1"
+    id: relay_1
+
+  - platform: gpio
+    pin: GPIO17
+    name: "Relay 2"
+    id: relay_2

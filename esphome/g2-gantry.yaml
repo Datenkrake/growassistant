@@ -1,0 +1,84 @@
+esphome:
+  name: g2-gantry
+  friendly_name: G2_GANTRY
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "fUzPI9NZK1iPOvmrcCaSW53rNJgqktJFNpqJEftoQQY="
+
+ota:
+  - platform: esphome
+    password: "f494367364d46032c189203283b27107"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "G2-Gantry Fallback Hotspot"
+    password: "sdeWIJobDX5x"
+
+captive_portal:
+    
+# I2C Bus Configuration
+i2c:
+  sda: 0  # GPIO0
+  scl: 1  # GPIO1
+  scan: true  # Optional: enables scanning for I2C devices at startup
+
+# Sensors
+sensor:
+  - platform: sht3xd
+    temperature:
+      name: "Temperature"
+    humidity:
+      name: "Humidity"
+    address: 0x44
+    update_interval: 30s
+
+  - platform: ultrasonic
+    trigger_pin: 5
+    echo_pin: 6
+    name: "G1 Light Distance Sensor"
+    update_interval: 1s
+    timeout: 2m
+    filters:
+    - sliding_window_moving_average:
+        window_size: 60
+        send_every: 60
+# Outputs for PWM Fans
+output:
+  - platform: ledc
+    pin: 3  # GPIO3
+    id: fan_pwm_1
+    frequency: 25000 Hz  # 25 kHz is a common frequency for fans
+    channel: 0
+    # Optional: Set initial duty cycle to 0%
+    inverted: false
+
+  - platform: ledc
+    pin: 4  # GPIO4
+    id: fan_pwm_2
+    frequency: 25000 Hz
+    channel: 1
+    inverted: false
+
+# Fan Controls
+fan:
+  - platform: speed
+    name: "Wind Fan 1"
+    output: fan_pwm_1
+
+  - platform: speed
+    name: "Wind Fan 2"
+    output: fan_pwm_2

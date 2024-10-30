@@ -1,3 +1,13 @@
+
+# sensors: [
+#   'sensor.g1_canopy_bme680_humidity',
+#   'sensor.g1_wind_canopy_humidity',
+#   'sensor.g1_intake_bme680_humidity',
+#   'sensor.g1_canopy_bme680_temperature',
+#   'sensor.g1_wind_canopy_temperature',
+#   'sensor.g1_intake_bme680_temperature'
+# ]
+
 alias: 'Set Restart Flag on Sensor Failure'
 id: "automations_sensor_validation"
 trigger:
@@ -5,36 +15,23 @@ trigger:
     minutes: '/1'  # Check every minute
 action:
   - variables:
-      # sensors: [
-      #   'sensor.g1_canopy_bme680_humidity',
-      #   'sensor.g1_wind_canopy_humidity',
-      #   'sensor.g1_intake_bme680_humidity',
-      #   'sensor.g1_canopy_bme680_temperature',
-      #   'sensor.g1_wind_canopy_temperature',
-      #   'sensor.g1_intake_bme680_temperature'
-      # ]
-      sensors: [
-        'sensor.g1_canopy_bme680_temperature',
-      ]
-      failed: >
-        {# Use a namespace to allow 'failed' to persist outside the loop #}
-        {% set ns = namespace(failed=false) %}
-        {# Loop through all sensors to check their state #}
-        {% for sensor in sensors %}
-          {% set state = states(sensor) %}
-          {# Check if sensor is unavailable, unknown, none, or not updated in 300s #}
-          {% if state in ['unavailable', 'unknown', 'none'] or
-                (as_timestamp(now()) - as_timestamp(states[sensor].last_updated)) >= 300 %}
-            {% set ns.failed = true %}
-          {% endif %}
-        {% endfor %}
-        {{ ns.failed }}
+      sensors:
+        - 'sensor.g1_canopy_bme680_temperature'
+      failure_threshold: 3  # Number of consecutive failures allowed
   - choose:
-      - conditions: "{{ failed }}"
+      - conditions: >
+          {% set ns = namespace(failed_count = 0) %}
+          {% for sensor in sensors %}
+            {% set state = states(sensor) %}
+            {% if state in ['unavailable', 'unknown', 'none'] or
+                  (as_timestamp(now()) - as_timestamp(states[sensor].last_updated)) >= 600 %}
+              {% set ns.failed_count = ns.failed_count + 1 %}
+            {% endif %}
+          {% endfor %}
+          {{ ns.failed_count >= failure_threshold }}
         sequence:
           - service: input_boolean.turn_on
             entity_id: input_boolean.g1_restart_flag
-      - conditions: "{{ not failed }}"
-        sequence:
+      - default:
           - service: input_boolean.turn_off
             entity_id: input_boolean.g1_restart_flag

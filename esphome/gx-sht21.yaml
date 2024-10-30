@@ -31,8 +31,8 @@ wifi:
 captive_portal:
 
 i2c:
-  sda: 2
-  scl: 3
+  sda: 6
+  scl: 5
   scan: true
   id: bus_a
   frequency: 50kHz
@@ -40,16 +40,35 @@ i2c:
 switch:
   - platform: gpio
     pin: GPIO4
-    id: door_switch_enable
+    id: sht_gnd
     restore_mode: ALWAYS_OFF  # GPIO4 is always on, it is GND for SHT21
 
 sensor:
-  - platform: htu21d
-    model: SHT21
+  - platform: sht3xd
     temperature:
       name: "Temperature"
     humidity:
       name: "Humidity"
-    heater:
-      name: "Heater"
+    address: 0x44
     update_interval: 30s
+
+  - platform: bh1750
+    name: "G1 BH1750 Illuminance"
+    address: 0x23
+    update_interval: 1s
+    i2c_id: bus_a
+    filters:
+      - exponential_moving_average:
+          alpha: 0.1  # Adjust this value for stronger or weaker , 0 to 1
+          send_every: 5
+
+  - platform: ultrasonic
+    trigger_pin: 8
+    echo_pin: 7
+    name: "G1 Light Distance Sensor"
+    update_interval: 1s
+    timeout: 2m
+    filters:
+    - sliding_window_moving_average:
+        window_size: 60
+        send_every: 60
