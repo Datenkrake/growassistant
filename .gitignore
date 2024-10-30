@@ -7,3 +7,5 @@
 secrets.yaml
 *.log*
 home-assistant.log
+home-assistant.log.fault
+home-assistant.log.1
