@@ -6,3 +6,4 @@
 /www/*
 secrets.yaml
 *.log*
+home-assistant.log
