@@ -30,6 +30,20 @@ wifi:
 
 captive_portal:
 
+mqtt:
+  broker: !secret mqtt_broker
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+  on_message:
+    - topic: "g2/exhaust/fan/speed/set"
+      qos: 0
+      then:
+        - lambda: |-
+            int percent = atoi(x.c_str());
+            if (percent >= 0 && percent <= 100) {
+              id(exhaust_fan).set_percentage(percent);
+            }
+
 i2c:
   sda: 3
   scl: 4
@@ -86,7 +100,7 @@ fan:
       - output.set_level:
           id: fan1_pwm
           level: !lambda "return x / 100.0;"
-          
+
 sensor:
   - platform: bme68x_bsec2
     temperature:
