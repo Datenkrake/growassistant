@@ -53,14 +53,40 @@ output:
     inverted: True
     max_power: 1
 
+# fan:
+#   - platform: speed
+#     output: fan1_pwm
+#     name: "Exhaust Fan 1"
+#   - platform: speed
+#     output: fan1_pwm
+#     name: "Exhaust Fan 1"
 fan:
-  - platform: speed
-    output: fan1_pwm
+  - platform: template
     name: "Exhaust Fan 1"
-  - platform: speed
-    output: fan1_pwm
-    name: "Exhaust Fan 1"
-
+    id: exhaust_fan
+    speed_count: 100
+    availability:
+      topic: "g2-exhaust2/availability"
+      payload_available: "online"
+      payload_not_available: "offline"
+    turn_on_action:
+      - output.turn_on: fan1_pwm
+      - mqtt.publish:
+          topic: "g2/exhaust/fan/state/fan2"
+          payload: "ON"
+    turn_off_action:
+      - output.turn_off: fan1_pwm
+      - mqtt.publish:
+          topic: "g2/exhaust/fan/state/fan2"
+          payload: "OFF"
+    set_percentage:
+      - mqtt.publish:
+          topic: "g2/exhaust/speed/set/fan2"
+          payload: !lambda "return (int(x)).c_str();"
+      - output.set_level:
+          id: fan1_pwm
+          level: !lambda "return x / 100.0;"
+          
 sensor:
   - platform: bme68x_bsec2
     temperature:

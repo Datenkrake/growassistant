@@ -629,6 +629,24 @@ sensors:
         {{ 0 }}
       {% endif %}
 
+  g2_ppfd:
+    friendly_name: "G2 PPFD"
+    unit_of_measurement: "µmol/m²/s"
+    value_template: >
+      {% set lux = states('sensor.gx_sht21_g1_bh1750_illuminance') | float %}
+      {% set bh1750_cal = states('input_number.g2_bh1750_calibration_factor') | float %}
+      {% set calibrated_lux = lux * bh1750_cal %}
+      {% set ppfd = calibrated_lux * 0.017 %}
+      {{ ppfd | round(0) }}
+
+  g2_dli:
+    friendly_name: "DLI"
+    unit_of_measurement: "mol/m²/day"
+    value_template: >
+      {% set ppfd = states('sensor.g2_ppfd') | float(0) %}
+      {% set day_length = states('sensor.g2_day_length') | float(0) %}
+      {{ (ppfd * 0.0036 * day_length) | round(2) }}
+
   g2_exhaust1_exhaust_fan_1_percentage:
     friendly_name: "Exhaust Fan 1 Percentage"
     unit_of_measurement: "%"
@@ -700,3 +718,4 @@ sensors:
         {{ ((now - start_drying) / 86400) | round(0) }}
       {% endif %}
 
+  

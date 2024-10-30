@@ -29,7 +29,20 @@ wifi:
     password: "PVElaoAOyKbo"
 
 captive_portal:
-    
+
+mqtt:
+  broker: !secret mqtt_broker
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+  on_message:
+    - topic: "g2/exhaust/fan/speed/set"
+      qos: 0
+      then:
+        - lambda: |-
+            int percent = atoi(x.c_str());
+            if (percent >= 0 && percent <= 100) {
+              id(exhaust_fan).set_percentage(percent);
+            }
 
 # i2c:
 #   sda: 3
@@ -55,12 +68,33 @@ output:
     max_power: 1
 
 fan:
-  - platform: speed
-    output: fan1_pwm
+  - platform: template
     name: "Exhaust Fan 1"
-  - platform: speed
-    output: fan1_pwm
-    name: "Exhaust Fan 1"
+    id: exhaust_fan
+    speed_count: 100
+    availability:
+      topic: "g2-exhaust2/availability"
+      payload_available: "online"
+      payload_not_available: "offline"
+    turn_on_action:
+      - output.turn_on: fan1_pwm
+      - mqtt.publish:
+          topic: "g2/exhaust/fan/state/fan2"
+          payload: "ON"
+    turn_off_action:
+      - output.turn_off: fan1_pwm
+      - mqtt.publish:
+          topic: "g2/exhaust/fan/state/fan2"
+          payload: "OFF"
+    set_percentage:
+      - mqtt.publish:
+          topic: "g2/exhaust/speed/fan2"
+          payload: !lambda "return (int(x)).c_str();"
+      - output.set_level:
+          id: fan1_pwm
+          level: !lambda "return x / 100.0;"
+
+
 
 # sensor:
 #   - platform: bme68x_bsec2
