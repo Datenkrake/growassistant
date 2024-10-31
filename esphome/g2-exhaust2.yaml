@@ -35,14 +35,15 @@ mqtt:
   username: !secret mqtt_username
   password: !secret mqtt_password
   on_message:
-    - topic: "g2/exhaust/fan/speed/set"
+    - topic: "g2/exhaust/fan/set"
       qos: 0
       then:
         - lambda: |-
-            int percent = atoi(x.c_str());
-            if (percent >= 0 && percent <= 100) {
-              id(exhaust_fan).set_percentage(percent);
-            }
+            int speed = atoi(x.c_str());
+            if (speed < 0) speed = 0;
+            if (speed > 100) speed = 100;
+            id(fan1_pwm).set_level(speed / 100.0);
+            id(exhaust_fan).turn_on();
 
 # i2c:
 #   sda: 3
@@ -67,32 +68,51 @@ output:
     inverted: True
     max_power: 1
 
+
 fan:
   - platform: template
-    name: "Exhaust Fan 1"
+    name: "Exhaust Fan 2"
     id: exhaust_fan
     speed_count: 100
     availability:
-      topic: "g2-exhaust2/availability"
+      topic: "g2/exhaust/availability"
       payload_available: "online"
       payload_not_available: "offline"
-    turn_on_action:
+    on_turn_on:
       - output.turn_on: fan1_pwm
       - mqtt.publish:
           topic: "g2/exhaust/fan/state/fan2"
           payload: "ON"
-    turn_off_action:
+    on_turn_off:
       - output.turn_off: fan1_pwm
       - mqtt.publish:
           topic: "g2/exhaust/fan/state/fan2"
           payload: "OFF"
-    set_percentage:
+
+interval:
+  - interval: 60s  # Adjust this to your preferred interval
+    then:
       - mqtt.publish:
-          topic: "g2/exhaust/speed/fan2"
-          payload: !lambda "return (int(x)).c_str();"
-      - output.set_level:
-          id: fan1_pwm
-          level: !lambda "return x / 100.0;"
+          topic: "g2/exhaust/temperature"
+          payload: !lambda "return String(id(temperature).state).c_str();"
+      - mqtt.publish:
+          topic: "g2/exhaust/pressure"
+          payload: !lambda "return String(id(pressure).state).c_str();"
+      - mqtt.publish:
+          topic: "g2/exhaust/humidity"
+          payload: !lambda "return String(id(humidity).state).c_str();"
+      - mqtt.publish:
+          topic: "g2/exhaust/iaq"
+          payload: !lambda "return String(id(iaq).state).c_str();"
+      - mqtt.publish:
+          topic: "g2/exhaust/co2_equivalent"
+          payload: !lambda "return String(id(co2_equivalent).state).c_str();"
+      - mqtt.publish:
+          topic: "g2/exhaust/breath_voc_equivalent"
+          payload: !lambda "return String(id(breath_voc_equivalent).state).c_str();"
+      - mqtt.publish:
+          topic: "g2/exhaust/fan/speed"
+          payload: !lambda "return String(id(fan1_pwm).get_level() * 100).c_str();"
 
 
 

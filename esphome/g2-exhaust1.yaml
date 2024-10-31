@@ -135,3 +135,6 @@ interval:
       - mqtt.publish:
           topic: "g2/exhaust/breath_voc_equivalent"
           payload: !lambda "return String(id(breath_voc_equivalent).state).c_str();"
+      - mqtt.publish:
+          topic: "g2/exhaust/fan/speed"
+          payload: !lambda "return String(id(fan1_pwm).get_level() * 100).c_str();"
