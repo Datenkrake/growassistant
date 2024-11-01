@@ -11,9 +11,9 @@ esp32:
 logger:
 
 # Enable Home Assistant API
-api:
-  encryption:
-    key: "afF+LRRn2xJxO47lHzfxHAOmZksYw4lmOAZt1J83fxs="
+# api:
+#   encryption:
+#     key: "afF+LRRn2xJxO47lHzfxHAOmZksYw4lmOAZt1J83fxs="
 
 ota:
   - platform: esphome
@@ -30,13 +30,19 @@ wifi:
 
 captive_portal:
     
+mqtt:
+  broker: !secret mqtt_broker
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+  topic_prefix: "g2/water"
+
 switch:
   - platform: gpio
     pin: GPIO16
-    name: "Relay 1"
+    name: "Irrigation Pump"
     id: relay_1
 
   - platform: gpio
     pin: GPIO17
-    name: "Relay 2"
+    name: "Circulation Pump"
     id: relay_2

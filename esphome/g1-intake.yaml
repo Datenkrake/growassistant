@@ -11,9 +11,9 @@ esp32:
 logger:
 
 # Enable Home Assistant API
-api:
-  encryption:
-    key: "fJXKeoo4EVJYbZDSiKDT2TMY53kx7EYgg0zYEpbwMBA="
+# api:
+#   encryption:
+#     key: "fJXKeoo4EVJYbZDSiKDT2TMY53kx7EYgg0zYEpbwMBA="
 
 ota:
   - platform: esphome
@@ -30,6 +30,12 @@ wifi:
 
 captive_portal:
 
+mqtt:
+  broker: !secret mqtt_broker
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+  topic_prefix: "g1/intake"
+
 output:
   - platform: ledc
     pin: GPIO0
@@ -40,7 +46,7 @@ output:
 fan:
   - platform: speed
     output: fan_pwm
-    name: "Intake Fan"
+    name: "Intake"
 
 # Example configuration entry
 i2c:
@@ -59,28 +65,15 @@ bme68x_bsec2_i2c:
 sensor:
   - platform: bme68x_bsec2
     temperature:
-      name: "BME680 Temperature"
+      name: "Temperature"
     pressure:
-      name: "BME680 Pressure"
+      name: "Pressure"
     humidity:
-      name: "BME680 Humidity"
+      name: "Humidity"
     iaq:
-      name: "BME680 IAQ"
+      name: "IAQ"
       id: iaq
     co2_equivalent:
-      name: "BME680 CO2 Equivalent"
+      name: "CO2e"
     breath_voc_equivalent:
-      name: "BME680 Breath VOC Equivalent"
-
-  # - platform: bme680
-  #   temperature:
-  #     name: "BME680 Temperature"
-  #     oversampling: 16x
-  #   pressure:
-  #     name: "BME680 Pressure"
-  #   humidity:
-  #     name: "BME680 Humidity"
-  #   gas_resistance:
-  #     name: "BME680 Gas Resistance"
-  #   address: 0x77
-  #   update_interval: 60s
+      name: "bVOCe"

@@ -11,9 +11,9 @@ esp32:
 logger:
 
 # Enable Home Assistant API
-api:
-  encryption:
-    key: "XbvFchjTspxi0dk0Objx6+8XizJI+lwcPS6Ob2rDmD8="
+# api:
+#   encryption:
+#     key: "XbvFchjTspxi0dk0Objx6+8XizJI+lwcPS6Ob2rDmD8="
 
 ota:
   - platform: esphome
@@ -30,6 +30,12 @@ wifi:
 
 captive_portal:
 
+mqtt:
+  broker: !secret mqtt_broker
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+  topic_prefix: "g1/water"
+
 binary_sensor:
   - platform: gpio
     pin:
@@ -37,12 +43,13 @@ binary_sensor:
       mode: INPUT_PULLUP
       inverted: true
     name: "Door Switch"
+    state_topic: "g1/door_switch"
     device_class: door
 
 switch:
   - platform: gpio
     pin: GPIO9
-    name: "Irrigation Pump 1"
+    name: "Irrigation Pump"
   - platform: gpio
     pin: GPIO10
-    name: "Circulation Pump 1"
+    name: "Circulation Pump"

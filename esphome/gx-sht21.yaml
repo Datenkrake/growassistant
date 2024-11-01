@@ -1,6 +1,6 @@
 esphome:
   name: gx-sht21
-  friendly_name: GX_SHT21
+  friendly_name: G2_CANOPY
 
 esp32:
   board: esp32-c3-devkitm-1
@@ -11,9 +11,9 @@ esp32:
 logger:
 
 # Enable Home Assistant API
-api:
-  encryption:
-    key: "tTsVnmfwRjAJVXiTaDmPlbupV93rhvXhWV2fzj3TVeI="
+#api:
+#  encryption:
+#    key: "tTsVnmfwRjAJVXiTaDmPlbupV93rhvXhWV2fzj3TVeI="
 
 ota:
   - platform: esphome
@@ -29,6 +29,12 @@ wifi:
     password: "uWezis5Q2NxQ"
 
 captive_portal:
+
+mqtt:
+  broker: !secret mqtt_broker
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+  topic_prefix: "g2/canopy"
 
 i2c:
   sda: 6
@@ -47,13 +53,16 @@ sensor:
   - platform: sht3xd
     temperature:
       name: "Temperature"
+      id: temperature
     humidity:
       name: "Humidity"
+      id: humidity
     address: 0x44
     update_interval: 30s
 
   - platform: bh1750
-    name: "G1 BH1750 Illuminance"
+    name: "Illuminance"
+    id: illuminance
     address: 0x23
     update_interval: 1s
     i2c_id: bus_a
@@ -65,10 +74,89 @@ sensor:
   - platform: ultrasonic
     trigger_pin: 8
     echo_pin: 7
-    name: "G1 Light Distance Sensor"
+    name: "Cola Distance"
     update_interval: 1s
     timeout: 2m
     filters:
     - sliding_window_moving_average:
         window_size: 60
         send_every: 60
+
+  - platform: template
+    name: "VPD Sensor"
+    unit_of_measurement: "kPa"
+    update_interval: 30s
+    lambda: |
+      float temp = id(temperature).state;
+      float rh = id(humidity).state;
+      float leaf_offset = id(vpd_leaf_offset).state;
+      float LT = temp + leaf_offset;
+      float ASVP = 610.78 * exp((temp / (temp + 237.3)) * 17.2694);
+      float LSVP = 610.78 * exp((LT / (LT + 237.3)) * 17.2694);
+      float LVPD = (LSVP - (ASVP * (rh / 100.0))) / 1000.0;
+      return roundf(LVPD * 100.0) / 100.0;
+
+  - platform: template
+    name: "PPFD Sensor"
+    unit_of_measurement: "µmol/m²/s"
+    update_interval: 1s
+    lambda: |
+      float lux = id(illuminance).state;
+      float bh1750_cal = id(illuminance_calibration_factor).state;
+      float calibrated_lux = lux * bh1750_cal;
+      float ppfd = calibrated_lux * 0.017;
+      return roundf(ppfd);
+
+  - platform: template
+    name: "RH Target"
+    unit_of_measurement: "%"
+    update_interval: 30s
+    lambda: |
+      float T = id(temperature).state;
+      float LT = T - 2.0;
+      float ASVP = 610.78 * pow(2.71828, (T / (T + 237.3)) * 17.2694);
+      float LSVP = 610.78 * pow(2.71828, (LT / (LT + 237.3)) * 17.2694);
+      float LVPD_TARGET = id(vpd_target).state;
+      float RH_TARGET = (LSVP - LVPD_TARGET * 1000) / ASVP * 100;
+      return roundf(RH_TARGET * 10.0) / 10.0;
+
+  - platform: template
+    name: "Dew Point"
+    unit_of_measurement: "°C"
+    update_interval: 30s
+    lambda: |
+      float T = id(temperature).state;
+      float RH = id(humidity).state;
+      float a = 17.27;
+      float b = 237.7;
+      float alpha = ((a * T) / (b + T)) + log(RH / 100.0);
+      float dew_point = (b * alpha) / (a - alpha);
+      return roundf(dew_point * 10.0) / 10.0;
+
+number:
+  - platform: template
+    name: "Leaf Offset"
+    id: vpd_leaf_offset
+    optimistic: true
+    initial_value: 0.0
+    min_value: -10.0
+    max_value: 10.0
+    step: 0.1
+
+  - platform: template
+    name: "Illuminance Calibration Factor"
+    id: illuminance_calibration_factor
+    optimistic: true
+    initial_value: 3.0
+    min_value: 0.1
+    max_value: 5.0
+    step: 0.1
+
+  - platform: template
+    name: "VPD Target"
+    id: vpd_target
+    optimistic: true
+    initial_value: 1.0
+    min_value: 0.0
+    max_value: 5.0
+    step: 0.1

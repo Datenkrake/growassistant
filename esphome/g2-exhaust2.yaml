@@ -11,9 +11,9 @@ esp32:
 logger:
 
 # Enable Home Assistant API
-api:
-  encryption:
-    key: "Cei7W3tXSTZCJ1gwmfn9LsVYXQ2svBA00NYav8NneBQ="
+# api:
+#   encryption:
+#     key: "Cei7W3tXSTZCJ1gwmfn9LsVYXQ2svBA00NYav8NneBQ="
 
 ota:
   - platform: esphome
@@ -34,32 +34,8 @@ mqtt:
   broker: !secret mqtt_broker
   username: !secret mqtt_username
   password: !secret mqtt_password
-  on_message:
-    - topic: "g2/exhaust/fan/set"
-      qos: 0
-      then:
-        - lambda: |-
-            int speed = atoi(x.c_str());
-            if (speed < 0) speed = 0;
-            if (speed > 100) speed = 100;
-            id(fan1_pwm).set_level(speed / 100.0);
-            id(exhaust_fan).turn_on();
-
-# i2c:
-#   sda: 3
-#   scl: 4
-#   scan: true
-#   id: bus_a
-
-# bme68x_bsec2_i2c:
-#   address: 0x77
-#   model: bme680
-#   operating_age: 28d
-#   sample_rate: LP
-#   supply_voltage: 3.3V
-#   temperature_offset: 2.5
-
-
+  topic_prefix: "g2/exhaust"
+  
 output:
   - platform: ledc
     pin: GPIO5
@@ -68,66 +44,9 @@ output:
     inverted: True
     max_power: 1
 
-
 fan:
-  - platform: template
-    name: "Exhaust Fan 2"
+  - platform: speed
+    output: fan1_pwm
+    name: "Exhaust"
     id: exhaust_fan
     speed_count: 100
-    availability:
-      topic: "g2/exhaust/availability"
-      payload_available: "online"
-      payload_not_available: "offline"
-    on_turn_on:
-      - output.turn_on: fan1_pwm
-      - mqtt.publish:
-          topic: "g2/exhaust/fan/state/fan2"
-          payload: "ON"
-    on_turn_off:
-      - output.turn_off: fan1_pwm
-      - mqtt.publish:
-          topic: "g2/exhaust/fan/state/fan2"
-          payload: "OFF"
-
-interval:
-  - interval: 60s  # Adjust this to your preferred interval
-    then:
-      - mqtt.publish:
-          topic: "g2/exhaust/temperature"
-          payload: !lambda "return String(id(temperature).state).c_str();"
-      - mqtt.publish:
-          topic: "g2/exhaust/pressure"
-          payload: !lambda "return String(id(pressure).state).c_str();"
-      - mqtt.publish:
-          topic: "g2/exhaust/humidity"
-          payload: !lambda "return String(id(humidity).state).c_str();"
-      - mqtt.publish:
-          topic: "g2/exhaust/iaq"
-          payload: !lambda "return String(id(iaq).state).c_str();"
-      - mqtt.publish:
-          topic: "g2/exhaust/co2_equivalent"
-          payload: !lambda "return String(id(co2_equivalent).state).c_str();"
-      - mqtt.publish:
-          topic: "g2/exhaust/breath_voc_equivalent"
-          payload: !lambda "return String(id(breath_voc_equivalent).state).c_str();"
-      - mqtt.publish:
-          topic: "g2/exhaust/fan/speed"
-          payload: !lambda "return String(id(fan1_pwm).get_level() * 100).c_str();"
-
-
-
-# sensor:
-#   - platform: bme68x_bsec2
-#     temperature:
-#       name: "BME680 Temperature"
-#     pressure:
-#       name: "BME680 Pressure"
-#     humidity:
-#       name: "BME680 Humidity"
-#     iaq:
-#       name: "BME680 IAQ"
-#       id: iaq
-#     co2_equivalent:
-#       name: "BME680 CO2 Equivalent"
-#     breath_voc_equivalent:
-#       name: "BME680 Breath VOC Equivalent"

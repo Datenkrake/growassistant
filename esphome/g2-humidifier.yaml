@@ -11,9 +11,9 @@ esp32:
 logger:
 
 # Enable Home Assistant API
-api:
-  encryption:
-    key: "HhOA1PlgbsEhARTfOVv2uCTzB9MqmctIsjiBJH6rE1k="
+#api:
+#  encryption:
+#    key: "HhOA1PlgbsEhARTfOVv2uCTzB9MqmctIsjiBJH6rE1k="
 
 ota:
   - platform: esphome
@@ -30,6 +30,12 @@ wifi:
 
 captive_portal:
 
+mqtt:
+  broker: !secret mqtt_broker
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+  topic_prefix: "g2/humidifier"
+
 output:
   - platform: slow_pwm
     pin: GPIO10
@@ -42,7 +48,7 @@ fan:
     name: "Humidifier"
     id: humidifier_fan
     speed_count: 100  # Set the speed steps (0-100%)
-
+    
 
 binary_sensor:
   - platform: gpio
@@ -50,6 +56,7 @@ binary_sensor:
       number: GPIO20
       mode: INPUT_PULLDOWN  # Enable internal pull-down resistor
     name: "Door Switch"
+    state_topic: "g2/door_switch"
     id: door_switch
     device_class: door  # Classify the sensor as a door sensor
     filters:
@@ -61,3 +68,59 @@ switch:
     id: door_switch_enable
     restore_mode: ALWAYS_ON  # GPIO21 is always on
 
+sensor:
+  - platform: mqtt_subscribe
+    name: "Canopy RH"
+    id: canopy_rh
+    topic: "g2/canopy/sensor/humidity/state"
+    unit_of_measurement: "%"
+    qos: 1
+
+  - platform: mqtt_subscribe
+    name: "Canopy RH Target"
+    id: canopy_rh_target
+    topic: "g2/canopy/sensor/rh_target/state"
+    unit_of_measurement: "%"
+    qos: 1
+
+  - platform: mqtt_subscribe
+    name: "Gantry RH"
+    id: gantry_rh
+    topic: "g2/gantry/sensor/humidity/state"
+    unit_of_measurement: "%"
+    qos: 1
+
+  - platform: mqtt_subscribe
+    name: "Gantry RH Target"
+    id: gantry_rh_target
+    topic: "g2/gantry/sensor/rh_target/state"
+    unit_of_measurement: "%"
+    qos: 1
+
+  - platform: mqtt_subscribe
+    name: "Humidifier Enable"
+    id: humidifier_enable
+    topic: "g2/humidifier/enable"
+    unit_of_measurement: ""
+    qos: 1
+
+interval:
+  - interval: 30s
+    then:
+      - lambda: |-
+          if (id(humidifier_enable).state == 1.0f) {
+            float _canopy_rh_target = id(canopy_rh_target).state;
+            float _gantry_rh_target = id(gantry_rh_target).state;
+            float rh_target = !std::isnan(_canopy_rh_target) ? _canopy_rh_target : _gantry_rh_target;
+            float rh = !std::isnan(id(canopy_rh).state) ? id(canopy_rh).state : id(gantry_rh).state;
+            
+            float current_speed = id(humidifier_fan).speed;
+            
+            if (rh_target > rh) {
+              id(humidifier_fan).speed = std::min(current_speed + 0.01f, 1.0f);
+            } else if (rh_target < rh) {
+              id(humidifier_fan).speed = std::max(current_speed - 0.02f, 0.0f);
+            }
+          } else {
+            id(humidifier_fan).speed = 0.0f;  // Turn off humidifier if it's disabled
+          }

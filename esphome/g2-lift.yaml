@@ -11,9 +11,9 @@ esp32:
 logger:
 
 # Enable Home Assistant API
-api:
-  encryption:
-    key: "JAyX4MVGjZ30F/mszlgUWvy3H57dbL+ykhgDhG9PueY="
+# api:
+#   encryption:
+#     key: "JAyX4MVGjZ30F/mszlgUWvy3H57dbL+ykhgDhG9PueY="
 
 ota:
   - platform: esphome
@@ -30,12 +30,18 @@ wifi:
 
 captive_portal:
 
+mqtt:
+  broker: !secret mqtt_broker
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+  topic_prefix: "g2/lift"
+  
 stepper:
   - platform: a4988
     id: lift_stepper
     step_pin: GPIO6       # STEP pin
     dir_pin: GPIO5        # DIR pin
-    max_speed: 2500 steps/s
+    max_speed: 2000 steps/s
     acceleration: 2000 #steps/s²
     deceleration: 2000 #steps/s²
     # Optional: Enable pin (uncomment if connected)
@@ -49,7 +55,7 @@ stepper:
 
 switch:
   - platform: template
-    name: "Stepper Down"
+    name: "Step Down"
     turn_on_action:
       # Move 150 steps forward
       - stepper.report_position:
@@ -60,7 +66,7 @@ switch:
           target: 32000
 
   - platform: template
-    name: "Stepper Up"
+    name: "Step Up"
     turn_on_action:
       # Move 150 steps forward
       - stepper.report_position:
@@ -91,20 +97,9 @@ switch:
     restore_mode: ALWAYS_OFF
 
   - platform: gpio
-    name: "Stepper Enable"
+    name: "Enable"
     pin: GPIO21
     inverted: true  # Active LOW: true if LOW enables the driver
     restore_mode: ALWAYS_ON  # Enabled by default on boot
 
 
-number:
-  - platform: template
-    name: Stepper Control
-    min_value: -1000
-    max_value: 1000
-    step: 1
-    set_action:
-      then:
-        - stepper.set_target:
-            id: lift_stepper
-            target: !lambda 'return x;'

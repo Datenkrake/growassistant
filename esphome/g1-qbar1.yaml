@@ -11,9 +11,9 @@ esp32:
 logger:
 
 # Enable Home Assistant API
-api:
-  encryption:
-    key: "0pZoQWsj+fxA7UH5h8wWRvYo4CBaYNvgLR2B4o4s7wI="
+# api:
+#   encryption:
+#     key: "0pZoQWsj+fxA7UH5h8wWRvYo4CBaYNvgLR2B4o4s7wI="
 
 ota:
   - platform: esphome
@@ -30,6 +30,11 @@ wifi:
 
 captive_portal:
     
+mqtt:
+  broker: !secret mqtt_broker
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+  topic_prefix: "g1/light"
 
 # PWM controlled LED on GPIO8
 output:

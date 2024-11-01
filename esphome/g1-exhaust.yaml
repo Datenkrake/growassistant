@@ -11,9 +11,9 @@ esp32:
 logger:
 
 # Enable Home Assistant API
-api:
-  encryption:
-    key: "aaV/nMCt7Z7pdNZHDtFvNoL7krSrnPvIY2ucu0MJ7fQ="
+# api:
+#   encryption:
+#     key: "aaV/nMCt7Z7pdNZHDtFvNoL7krSrnPvIY2ucu0MJ7fQ="
 
 ota:
   - platform: esphome
@@ -30,6 +30,18 @@ wifi:
 
 captive_portal:
     
+globals:
+  - id: fan1_pwm_value
+    type: float
+    restore_value: no
+    initial_value: '0.0'
+
+mqtt:
+  broker: !secret mqtt_broker
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+  topic_prefix: "g1/exhaust"
+
 output:
   - platform: ledc
     pin: GPIO7
@@ -48,7 +60,8 @@ output:
 fan:
   - platform: speed
     output: fan1_pwm
-    name: "Exhaust Fan 1"
+    name: "Exhaust"
   - platform: speed
     output: fan2_pwm
-    name: "Exhaust Fan 2"
+    name: "Exhaust"
+    
