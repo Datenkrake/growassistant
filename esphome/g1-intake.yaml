@@ -30,23 +30,44 @@ wifi:
 
 captive_portal:
 
+globals:
+  - id: fan1_pwm_value
+    type: float
+    restore_value: no
+    initial_value: '0.0'
+  - id: door_open
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+
 mqtt:
   broker: !secret mqtt_broker
   username: !secret mqtt_username
   password: !secret mqtt_password
   topic_prefix: "g1/intake"
+  on_message:
+    - topic: g1/door_switch
+      then:
+        - lambda: |-
+            if (strcmp(x.c_str(), "ON") == 0) {
+              id(door_open) = true;
+            } else if (strcmp(x.c_str(), "OFF") == 0) {
+              id(door_open) = false;
+            }
+            id(update_fan_speed).execute();
 
 output:
   - platform: ledc
     pin: GPIO0
-    id: fan_pwm
-    frequency: 15000 Hz
+    id: fan1_pwm
+    frequency: 25000 Hz
     inverted: True
 
 fan:
   - platform: speed
-    output: fan_pwm
+    output: fan1_pwm
     name: "Intake"
+    id: intake_fan
 
 # Example configuration entry
 i2c:
@@ -77,3 +98,155 @@ sensor:
       name: "CO2e"
     breath_voc_equivalent:
       name: "bVOCe"
+    
+# MQTT Sensors
+  - platform: mqtt_subscribe
+    name: "Temperature Max"
+    id: temperature_max
+    topic: "g1/brain/number/temperature_max/state"
+
+  - platform: mqtt_subscribe
+    name: "VPD Target"
+    id: vpd_target
+    topic: "g1/brain/number/vpd_target/state"
+
+  - platform: mqtt_subscribe
+    name: "Canopy VPD"
+    id: canopy_vpd
+    topic: "g1/canopy/sensor/vpd/state"
+
+  - platform: mqtt_subscribe
+    name: "Canopy RH Target"
+    id: canopy_rh_target
+    topic: "g1/canopy/sensor/rh_target/state"
+
+  - platform: mqtt_subscribe
+    name: "Canopy Humidity"
+    id: canopy_humidity
+    topic: "g1/canopy/sensor/humidity/state"
+
+  - platform: mqtt_subscribe
+    name: "Canopy Temperature"
+    id: canopy_temperature
+    topic: "g1/canopy/sensor/temperature/state"
+
+  - platform: mqtt_subscribe
+    name: "Gantry VPD"
+    id: gantry_vpd
+    topic: "g1/gantry/sensor/vpd/state"
+
+  - platform: mqtt_subscribe
+    name: "Gantry RH Target"
+    id: gantry_rh_target
+    topic: "g1/gantry/sensor/rh_target/state"
+
+  - platform: mqtt_subscribe
+    name: "Gantry Humidity"
+    id: gantry_humidity
+    topic: "g1/gantry/sensor/humidity/state"
+
+  - platform: mqtt_subscribe
+    name: "Gantry Temperature"
+    id: gantry_temperature
+    topic: "g1/gantry/sensor/temperature/state"
+
+number:
+  - platform: template
+    name: "Intake Fan Speed Min B"
+    id: g1_intake_fan_speed_min_b
+    state_topic: "g1/intake/number/intake_fan_speed_min"
+    optimistic: True
+    initial_value: 0.0
+    min_value: 0.0
+    max_value: 100.0
+    step: 1.0
+    mode: box 
+    unit_of_measurement: "%"
+    retain: True
+    restore_value: True
+
+  - platform: template
+    name: "Intake Fan Speed Max B"
+    id: g1_intake_fan_speed_max_b
+    state_topic: "g1/intake/number/intake_fan_speed_max"
+    optimistic: True
+    initial_value: 60.0
+    min_value: 0.0
+    max_value: 100.0
+    step: 1.0
+    mode: box 
+    unit_of_measurement: "%"
+    retain: True
+    restore_value: True
+
+interval:
+  - interval: 60s
+    then:
+      - script.execute: update_fan_speed
+
+script:
+  - id: update_fan_speed
+    then:
+      lambda: |-
+        // Check if the door is open
+        if (id(door_open)) {
+          // Door is open; turn off both fans
+          auto call1 = id(intake_fan).turn_off();
+          call1.perform();
+          ESP_LOGD("fan", "Door is open. Turning off fans.");
+          return;
+        }
+
+        auto call2 = id(intake_fan).turn_on();
+        call2.perform();
+
+        // Door is closed; proceed with fan speed adjustments
+        // Default to gantry data
+        float temperature = id(canopy_temperature).state;
+        float humidity = id(canopy_humidity).state;
+        float rh_target = id(canopy_rh_target).state;
+
+        // Use canopy data if available
+        if (!isnan(id(gantry_temperature).state)) {
+          temperature = id(gantry_temperature).state;
+        }
+        if (!isnan(id(canopy_humidity).state)) {
+          humidity = id(gantry_humidity).state;
+        }
+        if (!isnan(id(gantry_rh_target).state)) {
+          rh_target = id(gantry_rh_target).state;
+        }
+
+        // Get temperature max value
+        float _temperature_max = id(temperature_max).state;
+
+        // Adjust fan speed based on conditions
+        float fan_value = id(fan1_pwm_value);
+
+        // If temperature exceeds temperature max, increase fan speed
+        if (temperature > _temperature_max) {
+          fan_value += 1.0;
+        }
+
+        // If humidity exceeds rh_target, increase fan speed, else decrease fan speed
+        if (humidity > rh_target) {
+          fan_value += 1.0;
+        } else {
+          fan_value -= 2.0;
+        }
+
+        // Retrieve min and max fan speeds
+        float fan_min = id(g1_intake_fan_speed_min_b).state;
+        float fan_max = id(g1_intake_fan_speed_max_b).state;
+
+        // Clamp the fan value between min and max
+        fan_value = fmax(fan_min, fmin(fan_max, fan_value));
+
+        // Update the global fan speed value
+        id(fan1_pwm_value) = fan_value;
+
+        // Set the fan speed to both fans
+        id(intake_fan).speed = fan_value;
+
+        ESP_LOGD("fan", "Updating fan speed to %.2f%% (Min: %.2f%%, Max: %.2f%%)", fan_value, fan_min, fan_max);
+

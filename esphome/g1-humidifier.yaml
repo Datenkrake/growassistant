@@ -29,12 +29,32 @@ wifi:
     password: "ngvELfWsYHo8"
 
 captive_portal:
-    
+
+globals:
+  - id: humidifier_enable_state
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+  - id: door_open
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+
 mqtt:
   broker: !secret mqtt_broker
   username: !secret mqtt_username
   password: !secret mqtt_password
   topic_prefix: "g1/humidifier"
+  on_message:
+    - topic: g1/door_switch
+      then:
+        - lambda: |-
+            if (strcmp(x.c_str(), "ON") == 0) {
+              id(door_open) = true;
+            } else if (strcmp(x.c_str(), "OFF") == 0) {
+              id(door_open) = false;
+            }
+            id(update_fan_speed).execute();
 
 output:
   - platform: slow_pwm
@@ -48,7 +68,6 @@ fan:
     name: "Humidifier"
     id: humidifier_fan
     speed_count: 100  # Set the speed steps (0-100%)
-
 
 sensor:
   - platform: mqtt_subscribe
@@ -79,18 +98,35 @@ sensor:
     unit_of_measurement: "%"
     qos: 1
 
-  - platform: mqtt_subscribe
+switch:
+  - platform: template
     name: "Humidifier Enable"
     id: humidifier_enable
-    topic: "g1/humidifier/enable"
-    unit_of_measurement: ""
-    qos: 1
-
+    optimistic: True
+    state_topic: "g1/humidifier/enable"
+    qos: 0
+    
 interval:
-  - interval: 30s
+  - interval: 60s
+    then:
+      - script.execute: update_fan_speed
+
+script:
+  - id: update_fan_speed
     then:
       - lambda: |-
-          if (id(humidifier_enable).state == 1.0f) {
+          // Check if the door is open
+          if (id(door_open)) {
+            // Door is open; turn off humidifier
+            id(humidifier_fan).turn_off();
+            ESP_LOGD("fan", "Door is open. Turning off fans.");
+            return;
+          }
+
+          if (id(humidifier_enable).state) {
+            auto call = id(humidifier_fan).turn_on();
+            call.perform();
+
             float _canopy_rh_target = id(canopy_rh_target).state;
             float _gantry_rh_target = id(gantry_rh_target).state;
             float rh_target = !std::isnan(_canopy_rh_target) ? _canopy_rh_target : _gantry_rh_target;
@@ -101,8 +137,10 @@ interval:
             if (rh_target > rh) {
               id(humidifier_fan).speed = std::min(current_speed + 0.01f, 1.0f);
             } else if (rh_target < rh) {
-              id(humidifier_fan).speed = std::max(current_speed - 0.02f, 0.0f);
+              //id(humidifier_fan).speed = std::max(current_speed - 0.02f, 0.0f);
+              id(humidifier_fan).speed = std::max(current_speed - 2.0f, 0.0f);
             }
           } else {
-            id(humidifier_fan).speed = 0.0f;  // Turn off humidifier if it's disabled
+            auto call = id(humidifier_fan).turn_off();
+            call.perform();
           }

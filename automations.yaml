@@ -35,3 +35,29 @@
       ki_vpd: input_number.g1_ki_vpd
       kd_vpd: input_number.g1_kd_vpd
       dt_vpd: input_number.g1_dt_vpd
+- id: '1730500192860'
+  alias: lights_off
+  description: ''
+  triggers:
+  - trigger: time
+    at: 02:00:00
+  conditions: []
+  actions:
+  - type: turn_off
+    device_id: c5ecf0c0d2ff3e67251a4a452b370396
+    entity_id: 300dc2e0024a5398ad2137677d4348ef
+    domain: light
+  mode: single
+- id: '1730500358998'
+  alias: light_on
+  description: ''
+  triggers:
+  - trigger: time
+    at: 08:00:00
+  conditions: []
+  actions:
+  - type: turn_on
+    device_id: c5ecf0c0d2ff3e67251a4a452b370396
+    entity_id: 300dc2e0024a5398ad2137677d4348ef
+    domain: light
+  mode: single

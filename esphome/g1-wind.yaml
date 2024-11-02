@@ -30,11 +30,31 @@ wifi:
 
 captive_portal:
     
+globals:
+  - id: fan_speed_step
+    type: int
+    restore_value: no
+    initial_value: '0'
+  - id: door_open
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+
 mqtt:
   broker: !secret mqtt_broker
   username: !secret mqtt_username
   password: !secret mqtt_password
   topic_prefix: "g1/gantry"
+  on_message:
+    - topic: g1/door_switch
+      then:
+        - lambda: |-
+            if (strcmp(x.c_str(), "ON") == 0) {
+              id(door_open) = true;
+            } else if (strcmp(x.c_str(), "OFF") == 0) {
+              id(door_open) = false;
+            }
+            id(update_fan_speed).execute();
 
 output:
   - platform: ledc
@@ -90,7 +110,8 @@ sensor:
       name: "Heater"
 
   - platform: template
-    name: "VPD Sensor"
+    name: "VPD"
+    id: g1_gantry_vpd
     unit_of_measurement: "kPa"
     update_interval: 30s
     lambda: |
@@ -105,6 +126,7 @@ sensor:
 
   - platform: template
     name: "RH Target"
+    id: g1_gantry_rh_target
     unit_of_measurement: "%"
     update_interval: 30s
     lambda: |
@@ -118,6 +140,7 @@ sensor:
 
   - platform: template
     name: "Dew Point"
+    id: g1_gantry_dew_point
     unit_of_measurement: "°C"
     update_interval: 30s
     lambda: |
@@ -130,30 +153,83 @@ sensor:
       return roundf(dew_point * 10.0) / 10.0;
 
   - platform: mqtt_subscribe
-    topic: "g1/config/vpd_leaf_offset"
+    topic: "g1/brain/number/vpd_leaf_offset"
     name: "VPD Leaf Offset"
     id: vpd_leaf_offset
 
   - platform: mqtt_subscribe
-    topic: "g1/config/vpd_target"
+    topic: "g1/brain/number/vpd_target"
     name: "VPD Target"
     id: vpd_target
 
-# number:
-#   - platform: template
-#     name: "Leaf Offset"
-#     id: vpd_leaf_offset
-#     optimistic: true
-#     initial_value: 0.0
-#     min_value: -10.0
-#     max_value: 10.0
-#     step: 0.1
+number:
+  - platform: template
+    name: "Wind Fan Speed Min"
+    id: g1_wind_fan_speed_min
+    optimistic: True
+    initial_value: 20
+    min_value: 0
+    max_value: 100
+    step: 1
+    mode: BOX 
+    unit_of_measurement: "%"
+    icon: mdi:fan
 
-  # - platform: template
-  #   name: "VPD Target"
-  #   id: vpd_target
-  #   optimistic: true
-  #   initial_value: 1.0
-  #   min_value: 0.0
-  #   max_value: 5.0
-  #   step: 0.1
+  - platform: template
+    name: "Wind Fan Speed Max"
+    id: g1_wind_fan_speed_max
+    optimistic: True
+    initial_value: 60
+    min_value: 0
+    max_value: 100
+    step: 1
+    mode: BOX 
+    unit_of_measurement: "%"
+    icon: mdi:fan
+
+  - platform: template
+    name: "Wind Sweep Duration"
+    id: g1_wind_sweep_duration
+    optimistic: true
+    initial_value: 60
+    min_value: 1
+    max_value: 180
+    step: 1
+    mode: BOX
+    unit_of_measurement: "min"
+    icon: mdi:timer
+
+interval:
+  - interval: 60s
+    then:
+      - script.execute: update_fan_speed
+
+script:
+  - id: update_fan_speed
+    then:
+      lambda: |-
+        // Check if the door is open
+        if (id(door_open)) {
+          // Door is open; turn off both fans
+          id(fan1_pwm).set_level(0.0);
+          id(fan2_pwm).set_level(0.0);
+          ESP_LOGD("fan", "Door is open. Turning off fans.");
+          return;
+        }
+
+        int step = id(fan_speed_step);
+        int duration = id(g1_wind_sweep_duration).state; // Duration in minutes
+        float min_speed = id(g1_wind_fan_speed_min).state;
+        float max_speed = id(g1_wind_fan_speed_max).state;
+
+        // Calculate the fan speed by linearly interpolating from min to max over 60 steps (1 hour)
+        float fan_speed = min_speed + (max_speed - min_speed) * (step / (float)duration);
+
+        // Increment the step counter, reset after 60 minutes
+        id(fan_speed_step) = (step + 1) % duration;
+
+        // Set the fan speeds to the calculated value
+        id(fan1_pwm).set_level(fan_speed / 100.0);
+        id(fan2_pwm).set_level(fan_speed / 100.0);
+
+        ESP_LOGD("fan", "Updating fan speed to %.2f%%", fan_speed);

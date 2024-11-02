@@ -2,133 +2,6 @@
 
 
 sensors:
-  g1_combined_humidity:
-    friendly_name: "G1 Combined Humidity"
-    unit_of_measurement: "%"
-    value_template: >
-      {% set sensors = [
-        'sensor.g1_canopy_bme680_humidity',
-        'sensor.g1_wind_canopy_humidity',
-        'sensor.g1_intake_bme680_humidity'
-      ] %}
-      {% set ns = namespace(value=None) %}
-      {% set last_updated = 0 %}
-      
-      {% for sensor in sensors %}
-        {% set sensor_state = states(sensor) %}
-        {% if sensor_state is not none %}
-          {% set sensor_value = sensor_state | float(default=None) %}
-          {% set sensor_last_updated = states[sensor].last_updated %}
-          
-          {% if sensor_value is not none and sensor_last_updated is not none %}
-            {% if (now() - sensor_last_updated).total_seconds() < 300 %}
-              {% set ns.value = sensor_value %}
-              {% break %}
-            {% else %}
-              {% set last_updated = max(last_updated, sensor_last_updated.timestamp()) %}
-            {% endif %}
-          {% endif %}
-        {% endif %}
-      {% endfor %}
-      
-      {% if ns.value is none and last_updated > 0 %}
-        {% set fallback_sensor = sensors | selectattr('last_updated', '>', (now() - timedelta(minutes=5))) | list | first %}
-        {% if fallback_sensor %}
-          {{ states(fallback_sensor) | float(0) }}
-        {% else %}
-          {{ 0 }}  # Default value if no sensors are available
-        {% endif %}
-      {% else %}
-        {{ ns.value | default(0) }}
-      {% endif %}
-
-  g1_combined_temperature:
-    friendly_name: "G1 Combined Temperature"
-    unit_of_measurement: "°C"
-    value_template: >
-      {% set sensors = [
-        'sensor.g1_canopy_bme680_temperature',
-        'sensor.g1_wind_canopy_temperature',
-        'sensor.g1_intake_bme680_temperature'
-      ] %}
-      {% set ns = namespace(value=None) %}
-      {% set last_updated = 0 %}
-      
-      {% for sensor in sensors %}
-        {% set sensor_state = states(sensor) %}
-        {% if sensor_state is not none %}
-          {% set sensor_value = sensor_state | float(default=None) %}
-          {% set sensor_last_updated = states[sensor].last_updated %}
-          
-          {% if sensor_value is not none and sensor_last_updated is not none %}
-            {% if (now() - sensor_last_updated).total_seconds() < 300 %}
-              {% set ns.value = sensor_value %}
-              {% break %}
-            {% else %}
-              {% set last_updated = max(last_updated, sensor_last_updated.timestamp()) %}
-            {% endif %}
-          {% endif %}
-        {% endif %}
-      {% endfor %}
-      
-      {% if ns.value is none and last_updated > 0 %}
-        {% set fallback_sensor = sensors | selectattr('last_updated', '>', (now() - timedelta(minutes=5))) | list | first %}
-        {% if fallback_sensor %}
-          {{ states(fallback_sensor) | float(0) }}
-        {% else %}
-          {{ 0 }}  # Default value if no sensors are available
-        {% endif %}
-      {% else %}
-        {{ ns.value | default(0) }}
-      {% endif %}
-
-
-
-  g1_cultivar_height:
-    friendly_name: "G1 Cultivar Height"
-    unit_of_measurement: "m"
-    value_template: "{{ states('input_number.g1_gantry_null_position') | float(0) - states('sensor.g1_qbar1_ultrasonic_sensor') | float(0) }}"
-
-  g1_vpd:
-    friendly_name: "G1 VPD"
-    unit_of_measurement: "kPa"
-    value_template: >
-      {% set T = states('sensor.g1_combined_temperature') | float(0) %}
-      {% set LTO = states('input_number.g1_vpd_leaf_offset') | float(0) %}
-      {% set LT = T + LTO %}
-      {% set RH = states('sensor.g1_combined_humidity') | float(0) %}
-      {% set ASVP = 610.78 * (2.71828 ** (T / (T + 237.3) * 17.2694)) %}
-      {% set LSVP = 610.78 * (2.71828 ** (LT / (LT + 237.3) * 17.2694)) %}
-      {% set VPD = (ASVP * (1 - RH / 100)) / 1000 %}
-      {% set LVPD = (LSVP - (ASVP * RH / 100)) / 1000 %}
-      {{ LVPD | round(2) }}
-
-  g1_vpd_intake:
-    friendly_name: G1 VPD Intake"
-    unit_of_measurement: "kPa"
-    value_template: >
-      {% set T = states('sensor.g1_intake_bme680_temperature') | float(0) %}
-      {% set LT = T - 2 %}
-      {% set RH = states('sensor.g1_intake_bme680_humidity') | float(0) %}
-      {% set ASVP = 610.78 * (2.71828 ** (T / (T + 237.3) * 17.2694)) %}
-      {% set LSVP = 610.78 * (2.71828 ** (LT / (LT + 237.3) * 17.2694)) %}
-      {% set VPD = (ASVP * (1 - RH / 100)) / 1000 %}
-      {% set LVPD = (LSVP - (ASVP * RH / 100)) / 1000 %}
-      {{ LVPD | round(2) }}
-
-  # based on uni-t ref measurement to get cal factor and factor 0.017 based on migro testing
-  # https://migrolight.de/en/blogs/grow-light-news/cheap-par-meter-hack-use-a-lux-meter-to-measure-par-accurately
-  g1_ppfd:
-    friendly_name: "G1 PPFD"
-    unit_of_measurement: "µmol/m²/s"
-    value_template: >
-      {% set lux = states('sensor.g1_canopy_g1_bh1750_illuminance') | float %}
-      {% set bh1750_cal = states('input_number.g1_bh1750_calibration_factor') | float %}
-      {% set calibrated_lux = lux * bh1750_cal %}
-      {% set ppfd = calibrated_lux * 0.017 %}
-      {{ ppfd | round(0) }}
-
-
   # Determine the current state of the growth cycle, vegetative, flipping, generative, drying, based on dates given in the input_datetime.yaml
   g1_growth_cycle:
     friendly_name: "G1 Growth Cycle"
@@ -215,30 +88,6 @@ sensors:
       {% set day_length = states('sensor.g1_day_length') | float(0) %}
       {{ (ppfd * 0.0036 * day_length) | round(2) }}
 
-  g1_rh_target:
-    friendly_name: "G1 RH Target"
-    unit_of_measurement: "%"
-    value_template: >
-      {% set T = states('sensor.g1_combined_temperature') | float %}
-      {% set LT = states('sensor.g1_combined_temperature') | float - 2 %}
-      {% set ASVP = 610.78 * (2.71828 ** (T / (T + 237.3) * 17.2694)) %}
-      {% set LSVP = 610.78 * (2.71828 ** (LT / (LT + 237.3) * 17.2694)) %}
-      {% set LVPD_TARGET = states('input_number.g1_vpd_target') | float %}
-      {% set RH_TARGET = (LSVP - LVPD_TARGET * 1000) / ASVP * 100 %}
-      {{ RH_TARGET | round(1)}}
-
-  g1_dew_point:
-    friendly_name: "G1 Dew Point"
-    unit_of_measurement: "°C"
-    value_template: >
-      {% set T = states('sensor.g1_combined_temperature') | float %}
-      {% set RH = states('sensor.g1_combined_humidity') | float %}
-      {% set a = 17.27 %}
-      {% set b = 237.7 %}
-      {% set alpha = ((a * T) / (b + T)) + (RH / 100) | log %}
-      {% set dew_point = (b * alpha) / (a - alpha) %}
-      {{ dew_point | round(1) }}
-
   # dayphase is 0 for night and 1 for day, decide based on lux sensor
   g1_dayphase:
     friendly_name: "Day Phase"
@@ -292,36 +141,6 @@ sensors:
         {{ 0 }}
       {% endif %}
 
-  g1_exhaust_exhaust_fan_1_percentage:
-    friendly_name: "Exhaust Fan 1 Percentage"
-    unit_of_measurement: "%"
-    value_template: "{{ state_attr('fan.g1_exhaust_exhaust_fan_1', 'percentage') }}"
-
-  g1_exhaust_exhaust_fan_2_percentage:
-    friendly_name: "Exhaust Fan 2 Percentage"
-    unit_of_measurement: "%"
-    value_template: "{{ state_attr('fan.g1_exhaust_exhaust_fan_2', 'percentage') }}"
-
-  g1_intake_intake_fan_percentage:
-    friendly_name: "Intake Fan Percentage"
-    unit_of_measurement: "%"
-    value_template: "{{ state_attr('fan.g1_intake_intake_fan', 'percentage') }}"
-
-  g1_humidifier_humidifier_percentage:
-    friendly_name: "Humidifier Percentage"
-    unit_of_measurement: "%"
-    value_template: "{{ state_attr('fan.g1_humidifier_humidifier', 'percentage') }}"
-
-  g1_qbar1_percentage:
-    friendly_name: "QBar1 Percentage"
-    unit_of_measurement: "%"
-    value_template: "{{ state_attr('light.g1_qbar1_pwm_qbar1', 'brightness') / 255 * 100 | round(0) }}"
-
-  g1_qbar2_percentage:
-    friendly_name: "QBar2 Percentage"
-    unit_of_measurement: "%"
-    value_template: "{{ state_attr('light.g1_qbar2_pwm_qbar2', 'brightness') / 255 * 100 | round(0) }}"
-
   g1_cultivar_age:
     friendly_name: "Cultivar Age"
     unit_of_measurement: "days"
@@ -373,115 +192,9 @@ sensors:
         {{ ((now - start_drying) / 86400) | round(0) }}
       {% endif %}
 
-
 #########################################################################################
 # G2
 #########################################################################################
-  
-  g2_combined_humidity:
-    friendly_name: "g2 Combined Humidity"
-    unit_of_measurement: "%"
-    value_template: >
-      {% set sensors = [
-        'sensor.gx_sht21_humidity',
-        'sensor.g2_intake_bme680_humidity'
-      ] %}
-      {% set ns = namespace(value=None) %}
-      {% set last_updated = 0 %}
-      
-      {% for sensor in sensors %}
-        {% set sensor_state = states(sensor) %}
-        {% if sensor_state is not none %}
-          {% set sensor_value = sensor_state | float(default=None) %}
-          {% set sensor_last_updated = states[sensor].last_updated %}
-          
-          {% if sensor_value is not none and sensor_last_updated is not none %}
-            {% if (now() - sensor_last_updated).total_seconds() < 300 %}
-              {% set ns.value = sensor_value %}
-              {% break %}
-            {% else %}
-              {% set last_updated = max(last_updated, sensor_last_updated.timestamp()) %}
-            {% endif %}
-          {% endif %}
-        {% endif %}
-      {% endfor %}
-      
-      {% if ns.value is none and last_updated > 0 %}
-        {% set fallback_sensor = sensors | selectattr('last_updated', '>', (now() - timedelta(minutes=5))) | list | first %}
-        {% if fallback_sensor %}
-          {{ states(fallback_sensor) | float(0) }}
-        {% else %}
-          {{ 0 }}  # Default value if no sensors are available
-        {% endif %}
-      {% else %}
-        {{ ns.value | default(0) }}
-      {% endif %}
-
-  g2_combined_temperature:
-    friendly_name: "g2 Combined Temperature"
-    unit_of_measurement: "°C"
-    value_template: >
-      {% set sensors = [
-        'sensor.gx_sht21_temperature',
-        'sensor.g2_intake_bme680_temperature'
-      ] %}
-      {% set ns = namespace(value=None) %}
-      {% set last_updated = 0 %}
-      
-      {% for sensor in sensors %}
-        {% set sensor_state = states(sensor) %}
-        {% if sensor_state is not none %}
-          {% set sensor_value = sensor_state | float(default=None) %}
-          {% set sensor_last_updated = states[sensor].last_updated %}
-          
-          {% if sensor_value is not none and sensor_last_updated is not none %}
-            {% if (now() - sensor_last_updated).total_seconds() < 300 %}
-              {% set ns.value = sensor_value %}
-              {% break %}
-            {% else %}
-              {% set last_updated = max(last_updated, sensor_last_updated.timestamp()) %}
-            {% endif %}
-          {% endif %}
-        {% endif %}
-      {% endfor %}
-      
-      {% if ns.value is none and last_updated > 0 %}
-        {% set fallback_sensor = sensors | selectattr('last_updated', '>', (now() - timedelta(minutes=5))) | list | first %}
-        {% if fallback_sensor %}
-          {{ states(fallback_sensor) | float(0) }}
-        {% else %}
-          {{ 0 }}  # Default value if no sensors are available
-        {% endif %}
-      {% else %}
-        {{ ns.value | default(0) }}
-      {% endif %}
-
-  g2_vpd:
-    friendly_name: "g2 VPD"
-    unit_of_measurement: "kPa"
-    value_template: >
-      {% set T = states('sensor.g2_combined_temperature') | float(0) %}
-      {% set LTO = states('input_number.g2_vpd_leaf_offset') | float(0) %}
-      {% set LT = T + LTO %}
-      {% set RH = states('sensor.g2_combined_humidity') | float(0) %}
-      {% set ASVP = 610.78 * (2.71828 ** (T / (T + 237.3) * 17.2694)) %}
-      {% set LSVP = 610.78 * (2.71828 ** (LT / (LT + 237.3) * 17.2694)) %}
-      {% set VPD = (ASVP * (1 - RH / 100)) / 1000 %}
-      {% set LVPD = (LSVP - (ASVP * RH / 100)) / 1000 %}
-      {{ LVPD | round(2) }}
-
-  g2_vpd_intake:
-    friendly_name: g2 VPD Intake"
-    unit_of_measurement: "kPa"
-    value_template: >
-      {% set T = states('sensor.g2_intake_bme680_temperature') | float(0) %}
-      {% set LT = T - 2 %}
-      {% set RH = states('sensor.g2_intake_bme680_humidity') | float(0) %}
-      {% set ASVP = 610.78 * (2.71828 ** (T / (T + 237.3) * 17.2694)) %}
-      {% set LSVP = 610.78 * (2.71828 ** (LT / (LT + 237.3) * 17.2694)) %}
-      {% set VPD = (ASVP * (1 - RH / 100)) / 1000 %}
-      {% set LVPD = (LSVP - (ASVP * RH / 100)) / 1000 %}
-      {{ LVPD | round(2) }}
 
   # Determine the current state of the growth cycle, vegetative, flipping, generative, drying, based on dates given in the input_datetime.yaml
   g2_growth_cycle:
@@ -564,30 +277,6 @@ sensors:
     value_template: >
       {{ 0 }}
 
-  g2_rh_target:
-    friendly_name: "g2 RH Target"
-    unit_of_measurement: "%"
-    value_template: >
-      {% set T = states('sensor.g2_combined_temperature') | float %}
-      {% set LT = states('sensor.g2_combined_temperature') | float - 2 %}
-      {% set ASVP = 610.78 * (2.71828 ** (T / (T + 237.3) * 17.2694)) %}
-      {% set LSVP = 610.78 * (2.71828 ** (LT / (LT + 237.3) * 17.2694)) %}
-      {% set LVPD_TARGET = states('input_number.g2_vpd_target') | float %}
-      {% set RH_TARGET = (LSVP - LVPD_TARGET * 1000) / ASVP * 100 %}
-      {{ RH_TARGET | round(1)}}
-
-  g2_dew_point:
-    friendly_name: "g2 Dew Point"
-    unit_of_measurement: "°C"
-    value_template: >
-      {% set T = states('sensor.g2_combined_temperature') | float %}
-      {% set RH = states('sensor.g2_combined_humidity') | float %}
-      {% set a = 17.27 %}
-      {% set b = 237.7 %}
-      {% set alpha = ((a * T) / (b + T)) + (RH / 100) | log %}
-      {% set dew_point = (b * alpha) / (a - alpha) %}
-      {{ dew_point | round(1) }}
-
   # dli_target is the target DLI for the current growth cycle and dayphase
   # during vegetative (now > vegetative_start), the dli_target shall be dli_vegetative_start linearly interpolated to dli_vegetative_end
   # during flipping (now > flip_date), the dli_target shall be linearly interpolated between dli_vegetative_end and dli_generative_start
@@ -629,16 +318,6 @@ sensors:
         {{ 0 }}
       {% endif %}
 
-  g2_ppfd:
-    friendly_name: "G2 PPFD"
-    unit_of_measurement: "µmol/m²/s"
-    value_template: >
-      {% set lux = states('sensor.gx_sht21_g1_bh1750_illuminance') | float %}
-      {% set bh1750_cal = states('input_number.g2_bh1750_calibration_factor') | float %}
-      {% set calibrated_lux = lux * bh1750_cal %}
-      {% set ppfd = calibrated_lux * 0.017 %}
-      {{ ppfd | round(0) }}
-
   g2_dli:
     friendly_name: "DLI"
     unit_of_measurement: "mol/m²/day"
@@ -646,26 +325,6 @@ sensors:
       {% set ppfd = states('sensor.g2_ppfd') | float(0) %}
       {% set day_length = states('sensor.g2_day_length') | float(0) %}
       {{ (ppfd * 0.0036 * day_length) | round(2) }}
-
-  g2_exhaust1_exhaust_fan_1_percentage:
-    friendly_name: "Exhaust Fan 1 Percentage"
-    unit_of_measurement: "%"
-    value_template: "{{ state_attr('fan.g2_exhaust1_exhaust_fan_1', 'percentage') }}"
-
-  g2_exhaust2_exhaust_fan_1_percentage:
-    friendly_name: "Exhaust Fan 2 Percentage"
-    unit_of_measurement: "%"
-    value_template: "{{ state_attr('fan.g2_exhaust2_exhaust_fan_1', 'percentage') }}"
-
-  g2_intake_intake_fan_percentage:
-    friendly_name: "Intake Fan Percentage"
-    unit_of_measurement: "%"
-    value_template: "{{ state_attr('fan.g2_intake_intake_fan', 'percentage') }}"
-
-  g2_humidifier_humidifier_percentage:
-    friendly_name: "Humidifier Percentage"
-    unit_of_measurement: "%"
-    value_template: "{{ state_attr('fan.g2_humidifier_humidifier', 'percentage') }}"
 
   g2_cultivar_age:
     friendly_name: "Cultivar Age"

@@ -42,11 +42,13 @@ output:
     pin: GPIO8
     id: led_pwm
     frequency: 100 Hz 
+    max_power: 0.95
 
 light:
   - platform: monochromatic
     output: led_pwm
-    name: "PWM QBAR1"
+    name: "Full Spectrum"
+    state_topic: "g1/light/light/full_spectrum/state"
 
 # Ultrasonic sensor on GPIO9 (TRIG) and GPIO10 (ECHO)
 sensor:

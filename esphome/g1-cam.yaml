@@ -46,7 +46,7 @@ esp32_camera:
   power_down_pin: GPIO32
 
   # Image settings
-  name: My Camera
+  name: G1 Camera
   max_framerate: 1 fps
   idle_framerate: 0.1 fps
   resolution: 1600x1200
@@ -57,3 +57,16 @@ esp32_camera:
   brightness: 0
   saturation: 0
   aec_mode: AUTO
+
+number:
+  - platform: template
+    name: "Timelapse Period"
+    id: g1_timlapse_period
+    optimistic: True
+    initial_value: 60
+    min_value: 1
+    max_value: 1440
+    step: 1
+    mode: BOX
+    unit_of_measurement: "minutes"
+    icon: mdi:camera-timer

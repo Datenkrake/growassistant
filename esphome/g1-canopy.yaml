@@ -30,12 +30,17 @@ wifi:
 
 captive_portal:
 
-
 mqtt:
   broker: !secret mqtt_broker
   username: !secret mqtt_username
   password: !secret mqtt_password
   topic_prefix: "g1/canopy"
+
+# Current time from MQTT
+time:
+  - platform: sntp
+    id: mqtt_time
+    timezone: CET
 
   # Example configuration entry for ESP32
 i2c:
@@ -53,8 +58,33 @@ bme68x_bsec2_i2c:
   supply_voltage: 3.3V
   temperature_offset: 2.5
 
+text_sensor:
+  - platform: mqtt_subscribe
+    name: "Current Brightness"
+    id: current_brightness_text_sensor  # Make sure this ID matches
+    topic: "g1/light/light/full_spectrum/state"
+    on_value:
+      then:
+        - lambda: |-
+            // Parse the JSON payload
+            DynamicJsonDocument doc(512);
+            auto error = deserializeJson(doc, x.c_str());
+            if (error) {
+              ESP_LOGW("main", "Failed to parse JSON: %s", error.c_str());
+              return;
+            }
 
-# Example configuration entry
+            // Check if "brightness" key exists
+            if (doc.containsKey("brightness")) {
+              int brightness = doc["brightness"].as<int>();
+
+              // Update the text sensor's state to the brightness value as a string
+              //id(full_spectrum_brightness_text_sensor).publish_state(std::to_string(brightness/255));
+              id(full_spectrum_brightness_number_sensor).publish_state(brightness/255.0f);
+            } else {
+              ESP_LOGW("main", "Brightness key not found in JSON.");
+            }
+
 sensor:
   - platform: bh1750
     name: "Illuminance"
@@ -62,6 +92,7 @@ sensor:
     address: 0x23
     update_interval: 1s
     i2c_id: bus_a
+    unit_of_measurement: "lx"
     filters:
       - exponential_moving_average:
           alpha: 0.1  # Adjust this value for stronger or weaker , 0 to 1
@@ -84,20 +115,19 @@ sensor:
       id: temperature
     pressure:
       name: "Pressure"
-      id: pressure
     humidity:
       name: "Humidity"
       id: humidity
     iaq:
       name: "IAQ"
-      id: iaq
     co2_equivalent:
       name: "CO2e"
     breath_voc_equivalent:
       name: "bVOCe"
 
   - platform: template
-    name: "VPD Sensor"
+    name: "VPD"
+    id: g1_canopy_vpd
     unit_of_measurement: "kPa"
     update_interval: 30s
     lambda: |
@@ -111,7 +141,8 @@ sensor:
       return roundf(LVPD * 100.0) / 100.0;
 
   - platform: template
-    name: "PPFD Sensor"
+    name: "PPFD"
+    id: g1_canopy_ppfd
     unit_of_measurement: "µmol/m²/s"
     update_interval: 1s
     lambda: |
@@ -122,7 +153,73 @@ sensor:
       return roundf(ppfd);
 
   - platform: template
+    name: "PPFD Target"
+    id: g1_ppfd_target
+    unit_of_measurement: "µmol/m²/s"
+    update_interval: 60s
+    lambda: |
+      if (!id(g1_dayphase_target).state) {
+        return 0;
+      }
+      float dli_target = id(g1_dli_target).state;
+      float day_length = id(g1_day_length).state;
+      if (day_length > 0) {
+        float ppfd_target = (dli_target * 1000000.0) / (day_length * 3600.0);
+        return roundf(ppfd_target);
+      } else {
+        return 0;
+      }
+
+  - platform: template
+    name: "DLI"
+    id: g1_dli
+    unit_of_measurement: "mol/m²/day"
+    update_interval: 60s
+    lambda: |
+      float ppfd = id(g1_canopy_ppfd).state;
+      float day_length = (int) (id(g1_day_length)->state);
+      float dli = ppfd * 0.0036 * day_length;
+      return roundf(dli * 100.0) / 100.0;
+
+  - platform: template
+    name: "DLI Target"
+    id: g1_dli_target
+    unit_of_measurement: "mol/m²/day"
+    update_interval: 60s
+    lambda: |
+      time_t now = id(mqtt_time).now().timestamp;
+      time_t start_vegetative = (time_t) id(start_date)->state;
+      time_t start_flipping = start_vegetative + (time_t)(id(duration_vegetative))->state * 86400;
+      time_t start_generative = start_flipping + (time_t)(id(duration_flipping))->state * 86400;
+      time_t generative_peak = start_generative + (time_t)(id(duration_generative))->state * 43200;
+      time_t start_drying = start_generative + (time_t)(id(duration_generative))->state * 86400;
+
+      if (now < start_vegetative) {
+        return 0;
+      } else if (now < start_flipping) {
+        float x = float(now - start_vegetative) / float(start_flipping - start_vegetative);
+        float dli_target = id(g1_dli_vegetative_start).state + x * (id(g1_dli_vegetative_end).state - id(g1_dli_vegetative_start).state);
+        return roundf(dli_target);
+      } else if (now < start_generative) {
+        float x = float(now - start_flipping) / float(start_generative - start_flipping);
+        float dli_target = id(g1_dli_vegetative_end).state + x * (id(g1_dli_generative_start).state - id(g1_dli_vegetative_end).state);
+        return roundf(dli_target);
+      } else if (now < generative_peak) {
+        float x = float(now - start_generative) / float(generative_peak - start_generative);
+        float dli_target = id(g1_dli_generative_start).state + x * (id(g1_dli_generative_peak).state - id(g1_dli_generative_start).state);
+        return roundf(dli_target);
+      } else if (now < start_drying) {
+        float x = float(now - generative_peak) / float(start_drying - generative_peak);
+        float dli_target = id(g1_dli_generative_peak).state + x * (id(g1_dli_generative_end).state - id(g1_dli_generative_peak).state);
+        return roundf(dli_target);
+      } else {
+        return 0;
+      }
+
+
+  - platform: template
     name: "RH Target"
+    id: g1_canopy_rh_target
     unit_of_measurement: "%"
     update_interval: 30s
     lambda: |
@@ -136,6 +233,7 @@ sensor:
 
   - platform: template
     name: "Dew Point"
+    id: g1_canopy_dew_point
     unit_of_measurement: "°C"
     update_interval: 30s
     lambda: |
@@ -147,16 +245,98 @@ sensor:
       float dew_point = (b * alpha) / (a - alpha);
       return roundf(dew_point * 10.0) / 10.0;
 
-number:
-  - platform: template
-    name: "Leaf Offset"
+  - platform: mqtt_subscribe
+    topic: "g1/brain/number/vpd_leaf_offset"
+    name: "VPD Leaf Offset"
     id: vpd_leaf_offset
-    optimistic: true
-    initial_value: 0.0
-    min_value: -10.0
-    max_value: 10.0
-    step: 0.1
 
+  - platform: mqtt_subscribe
+    topic: "g1/brain/number/vpd_target"
+    name: "VPD Target"
+    id: vpd_target
+
+  - platform: template
+    name: "G1 Growth Cycle"
+    id: g1_growth_cycle
+    update_interval: 60s
+    lambda: |-
+      time_t now = id(mqtt_time).now().timestamp;
+      time_t start_vegetative = (time_t) id(start_date)->state;
+      time_t start_flipping = start_vegetative + (time_t)(id(duration_vegetative))->state * 86400;
+      time_t start_generative = start_flipping + (time_t)(id(duration_flipping))->state * 86400;
+      time_t start_drying = start_generative + (time_t)(id(duration_generative))->state * 86400;
+
+      if (now < start_vegetative) {
+        return 0;  // Pre-vegetative
+      } else if (now < start_flipping) {
+        return 1;  // Vegetative
+      } else if (now < start_generative) {
+        return 2;  // Flipping
+      } else if (now < start_drying) {
+        return 3;  // Generative
+      } else {
+        return 4;  // Drying
+      }
+
+  # Sensor to calculate current day length
+  - platform: template
+    name: "G1 Day Length"
+    id: g1_day_length
+    unit_of_measurement: "hours"
+    update_interval: 60s
+    lambda: |-
+      time_t now = id(mqtt_time).now().timestamp;
+      time_t start_vegetative = (time_t) id(start_date)->state;
+      time_t start_flipping = start_vegetative + (time_t)(id(duration_vegetative))->state * 86400;
+      time_t start_generative = start_flipping + (time_t)(id(duration_flipping))->state * 86400;
+      time_t start_drying = start_generative + (time_t)(id(duration_generative))->state * 86400;
+
+      float _day_length_vegetative = id(day_length_vegetative)->state;
+      float _day_length_generative = id(day_length_generative)->state;
+
+      if (now > start_vegetative && now < start_flipping) {
+        return _day_length_vegetative;
+      } else if (now > start_flipping && now < start_generative) {
+        // Linear interpolation between vegetative and generative
+        float x = float(now - start_flipping) / float(start_generative - start_flipping);
+        return _day_length_vegetative + x * (_day_length_generative - _day_length_vegetative);
+      } else if (now > start_generative && now < start_drying) {
+        return _day_length_generative;
+      } else if (now > start_drying) {
+        return 0;
+      } else {
+        return 0;
+      }
+
+  - platform: template
+    name: "Full Spectrum Brightness"
+    id: full_spectrum_brightness_number_sensor
+    accuracy_decimals: 2
+
+# Day Phase Target sensor to determine day or night
+binary_sensor:
+  - platform: template
+    name: "G1 Day Phase Target"
+    id: g1_dayphase_target
+    lambda: |-
+      time_t now = id(mqtt_time).now().timestamp;
+
+      // Extract today's date
+      struct tm timeinfo;
+      localtime_r(&now, &timeinfo);
+      timeinfo.tm_hour = 0;
+      timeinfo.tm_min = 0;
+      timeinfo.tm_sec = 0;
+      time_t midnight_today = mktime(&timeinfo);
+
+      // Calculate today's sunrise time in seconds since epoch
+      time_t sunrise_today = midnight_today + (time_t) id(sunrise_time)->state;
+      int day_length_seconds = (int) (id(g1_day_length)->state * 3600);
+
+      // Determine if it is day or night
+      return (now >= sunrise_today) && (now < (sunrise_today + day_length_seconds));
+
+number:
   - platform: template
     name: "Illuminance Calibration Factor"
     id: illuminance_calibration_factor
@@ -165,13 +345,328 @@ number:
     min_value: 0.1
     max_value: 5.0
     step: 0.1
+    restore_value: True
+    retain: True
 
   - platform: template
     name: "VPD Target"
-    id: vpd_target
+    id: g1_vpd_target_2
+    state_topic: "g1/brain/number/vpd_target"
     optimistic: true
     initial_value: 1.0
     min_value: 0.0
     max_value: 5.0
     step: 0.1
+    mode: BOX
+    unit_of_measurement: "kPa"
+    restore_value: True
+    retain: True
 
+  - platform: template
+    name: "VPD Leaf Offset"
+    id: g1_vpd_leaf_offset
+    state_topic: "g1/brain/number/vpd_leaf_offset"
+    optimistic: true
+    initial_value: -2.0
+    min_value: -10.0
+    max_value: 10.0
+    step: 0.1
+    mode: BOX
+    unit_of_measurement: "°C"
+    restore_value: True
+    retain: True
+
+  - platform: template
+    name: "Cola Distance Threshold"
+    id: g1_cola_distance_threshold 
+    optimistic: true
+    initial_value: 0.3
+    min_value: 0.0
+    max_value: 1.0
+    step: 0.05
+    mode: box
+    unit_of_measurement: "m"
+    icon: mdi:ruler
+    restore_value: True
+    retain: True
+
+  - platform: template
+    name: "DLI Vegetative Start"
+    id: g1_dli_vegetative_start
+    optimistic: True
+    initial_value: 10
+    min_value: 1
+    max_value: 100
+    step: 1
+    mode: BOX
+    unit_of_measurement: "mol/m2/day"
+    icon: mdi:weather-sunny
+    restore_value: True
+    retain: True
+
+  - platform: template
+    name: "DLI Vegetative End"
+    id: g1_dli_vegetative_end
+    optimistic: True
+    initial_value: 20
+    min_value: 1
+    max_value: 100
+    step: 1
+    mode: BOX
+    unit_of_measurement: "mol/m2/day"
+    icon: mdi:weather-sunny
+    restore_value: True
+    retain: True
+
+  - platform: template
+    name: "DLI Generative Start"
+    id: g1_dli_generative_start
+    optimistic: True
+    initial_value: 20
+    min_value: 1
+    max_value: 100
+    step: 1
+    mode: BOX
+    unit_of_measurement: "mol/m2/day"
+    icon: mdi:weather-sunny
+    restore_value: True
+    retain: True
+
+  - platform: template
+    name: "DLI Generative Peak"
+    id: g1_dli_generative_peak
+    optimistic: True
+    initial_value: 40
+    min_value: 1
+    max_value: 100
+    step: 1
+    mode: BOX
+    unit_of_measurement: "mol/m2/day"
+    icon: mdi:weather-sunny
+    restore_value: True
+    retain: True
+
+  - platform: template
+    name: "DLI Generative End"
+    id: g1_dli_generative_end
+    optimistic: True
+    initial_value: 30
+    min_value: 1
+    max_value: 100
+    step: 1
+    mode: BOX
+    unit_of_measurement: "mol/m2/day"
+    icon: mdi:weather-sunny
+    restore_value: True
+    retain: True
+
+  - platform: template
+    name: "Temperature Max"
+    id: g1_temperature_max
+    optimistic: True
+    initial_value: 30
+    min_value: 20
+    max_value: 35
+    step: 1
+    mode: BOX
+    unit_of_measurement: "°C"
+    icon: mdi:thermometer
+    restore_value: True
+    retain: True
+
+  - platform: template
+    name: "Day Length Vegetative"
+    id: day_length_vegetative
+    optimistic: True
+    initial_value: 18
+    min_value: 0
+    max_value: 24
+    step: 1
+    mode: BOX
+    icon: mdi:weather-sunset-up
+    restore_value: True
+    retain: True
+
+  - platform: template
+    name: "Day Length Generative"
+    id: day_length_generative
+    optimistic: True
+    initial_value: 12
+    min_value: 0
+    max_value: 24
+    step: 1
+    mode: BOX
+    icon: mdi:weather-sunset-up
+    restore_value: True
+    retain: True
+
+  - platform: template
+    name: "Start Date (Epoch)"
+    id: start_date
+    optimistic: True
+    min_value: 0
+    max_value: 2147483647  # Maximum Unix timestamp
+    step: 1
+    initial_value: 0
+    mode: BOX
+    restore_value: True
+    retain: True
+
+  - platform: template
+    name: "Duration Vegetative (Days)"
+    id: duration_vegetative
+    optimistic: True
+    min_value: 0
+    max_value: 365
+    step: 1
+    initial_value: 30
+    mode: BOX
+    unit_of_measurement: "days"
+    restore_value: True
+    retain: True
+
+  - platform: template
+    name: "Duration Flipping (Days)"
+    id: duration_flipping
+    optimistic: True
+    min_value: 0
+    max_value: 365
+    step: 1
+    initial_value: 10
+    mode: BOX
+    unit_of_measurement: "days"
+    restore_value: True
+    retain: True
+
+  - platform: template
+    name: "Duration Generative (Days)"
+    id: duration_generative
+    optimistic: True
+    min_value: 0
+    max_value: 365
+    step: 1
+    initial_value: 50
+    mode: BOX
+    unit_of_measurement: "days"
+    restore_value: True
+    retain: True
+
+  - platform: template
+    name: "Duration Drying (Days)"
+    id: duration_drying
+    optimistic: True
+    min_value: 0
+    max_value: 365
+    step: 1
+    initial_value: 15
+    mode: BOX
+    unit_of_measurement: "days"
+    restore_value: True
+    retain: True
+
+  - platform: template
+    name: "Sunrise Time (Seconds from Midnight)"
+    id: sunrise_time
+    optimistic: True
+    min_value: 0
+    max_value: 86400  # Maximum seconds in a day
+    step: 1
+    initial_value: 21600
+    mode: BOX
+    unit_of_measurement: "seconds"
+    restore_value: True
+    retain: True
+
+globals:
+  - id: new_brightness_global
+    type: float
+    restore_value: no
+    initial_value: '0.0'
+
+# interval:
+#   - interval: 10s
+#     then:
+#       - lambda: |-
+#           // Get current brightness from the text sensor state
+#           //float current_brightness = atof(id(full_spectrum_brightness_text_sensor).state.c_str());
+#           float current_brightness = id(full_spectrum_brightness_number_sensor).state;
+#           //float current_brightness = id(new_brightness_global);
+
+#           // Get current PPFD and target PPFD values
+#           float ppfd = id(g1_canopy_ppfd).state;
+#           float ppfd_target = id(g1_ppfd_target).state;
+
+#           // Calculate the error and adjustment needed
+#           float error_value = ppfd_target - ppfd;
+#           float adjustment = error_value / 20000.0;
+#           float new_brightness = current_brightness + adjustment;
+
+#           // Ensure brightness stays between 0 and 1
+#           if (new_brightness > 1.0) {
+#             new_brightness = 1.0;
+#           } else if (new_brightness < 0.0) {
+#             new_brightness = 0.0;
+#           }
+
+#           // Update the global variable with the new brightness value
+#           id(new_brightness_global) = new_brightness;
+
+#       - mqtt.publish:
+#           topic: "g1/light/light/full_spectrum/command"
+#           payload: !lambda |-
+#             if (id(new_brightness_global) > 0.0) {
+#               return std::string("{\"state\": \"ON\", \"brightness\": ") + std::to_string((int)(id(new_brightness_global) * 255)) + "}";
+#             } else {
+#               return std::string("{\"state\": \"OFF\", \"brightness\": 0}");
+#             }
+          
+interval:
+  - interval: 30s
+    then:
+      - lambda: |-
+          // Get current brightness from the number sensor state
+          float current_brightness = id(full_spectrum_brightness_number_sensor).state;
+
+          // Get current PPFD and target PPFD values
+          float ppfd = id(g1_canopy_ppfd).state;
+          float ppfd_target = id(g1_ppfd_target).state;
+
+          // Log the current state of PPFD and brightness
+          ESP_LOGD("brightness_control", "Current PPFD: %.2f", ppfd);
+          ESP_LOGD("brightness_control", "Target PPFD: %.2f", ppfd_target);
+          ESP_LOGD("brightness_control", "Current Brightness: %.2f", current_brightness);
+
+          // Calculate the error and adjustment needed
+          float error_value = ppfd_target - ppfd;
+          float adjustment = error_value / 2000.0;  // Increase divisor for less aggressive adjustment
+
+          // Log the error and adjustment value
+          ESP_LOGD("brightness_control", "Error Value: %.2f", error_value);
+          ESP_LOGD("brightness_control", "Adjustment Value: %.5f", adjustment);
+
+          // Calculate new brightness value
+          float new_brightness = current_brightness + adjustment;
+
+          // Ensure brightness stays between 0 and 1
+          if (new_brightness > 1.0) {
+            new_brightness = 1.0;
+          } else if (new_brightness < 0.0) {
+            new_brightness = 0.0;
+          }
+
+          // Log the new brightness value after clamping
+          ESP_LOGD("brightness_control", "New Brightness (after clamping): %.2f", new_brightness);
+
+          // Update the global variable with the new brightness value
+          id(new_brightness_global) = new_brightness;
+
+      - mqtt.publish:
+          topic: "g1/light/light/full_spectrum/command"
+          payload: !lambda |-
+            if (id(new_brightness_global) > 0.0) {
+              ESP_LOGD("mqtt_publish", "Publishing Brightness ON: %d", (int)(id(new_brightness_global) * 255));
+              return std::string("{\"state\": \"ON\", \"brightness\": ") + std::to_string((int)(id(new_brightness_global) * 255)) + "}";
+            } else {
+              ESP_LOGD("mqtt_publish", "Publishing Brightness OFF");
+              return std::string("{\"state\": \"OFF\", \"brightness\": 0}");
+            }
