@@ -1,6 +1,6 @@
 # Include the sensors/combined-sensors.yaml file
-template: 
-  - !include sensors/combined-sensors.yaml
+#template: 
+  #- !include sensors/combined-sensors.yaml
 
 # template: !include_dir_merge_list templates/
 
@@ -22,13 +22,13 @@ frontend:
     - /hacsfiles/lovelace-multiline-text-input-card/lovelace-multiline-text-input-card.js
     - /hacsfiles/flex-horseshoe-card/flex-horseshoe-card.js
 
-input_boolean: !include entities/input_bools.yaml
-input_number: !include entities/input_numbers.yaml
-input_datetime: !include entities/input_datetime.yaml
-input_text: !include entities/input_texts.yaml
+#input_boolean: !include entities/input_bools.yaml
+#input_number: !include entities/input_numbers.yaml
+#input_datetime: !include entities/input_datetime.yaml
+#input_text: !include entities/input_texts.yaml
 # input_select: !include entities/input_selects.yaml
 
-automation: !include automations.yaml
+#automation: !include automations.yaml
 # automation:
   # - !include automations/light_height.yaml
   # - !include automations/timelapse.yaml

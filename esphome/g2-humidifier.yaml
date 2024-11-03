@@ -30,11 +30,27 @@ wifi:
 
 captive_portal:
 
+globals:
+  - id: door_open
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+
 mqtt:
   broker: !secret mqtt_broker
   username: !secret mqtt_username
   password: !secret mqtt_password
   topic_prefix: "g2/humidifier"
+  on_message:
+    - topic: g2/door_switch
+      then:
+        - lambda: |-
+            if (strcmp(x.c_str(), "ON") == 0) {
+              id(door_open) = true;
+            } else if (strcmp(x.c_str(), "OFF") == 0) {
+              id(door_open) = false;
+            }
+            id(update_fan_speed).execute();
 
 output:
   - platform: slow_pwm
@@ -45,8 +61,8 @@ output:
 fan:
   - platform: speed
     output: humidifier_pwm_output
-    name: "Humidifier"
-    id: humidifier_fan
+    name: "G2 Humidifier"
+    id: g2_humidifier_fan
     speed_count: 100  # Set the speed steps (0-100%)
     
 
@@ -55,9 +71,9 @@ binary_sensor:
     pin:
       number: GPIO20
       mode: INPUT_PULLDOWN  # Enable internal pull-down resistor
-    name: "Door Switch"
+    name: "G2 Door Switch"
     state_topic: "g2/door_switch"
-    id: door_switch
+    id: g2_door_switch
     device_class: door  # Classify the sensor as a door sensor
     filters:
       - invert:  # Inverts the logic of the binary sensor
@@ -68,59 +84,77 @@ switch:
     id: door_switch_enable
     restore_mode: ALWAYS_ON  # GPIO21 is always on
 
+  - platform: template
+    name: "G2 Humidifier Enable"
+    id: g2_humidifier_enable
+    optimistic: True
+    state_topic: "g2/humidifier/enable"
+    qos: 0
+
 sensor:
   - platform: mqtt_subscribe
-    name: "Canopy RH"
-    id: canopy_rh
+    name: "G2 Canopy RH"
+    id: g2_canopy_rh
     topic: "g2/canopy/sensor/humidity/state"
     unit_of_measurement: "%"
     qos: 1
 
   - platform: mqtt_subscribe
-    name: "Canopy RH Target"
-    id: canopy_rh_target
+    name: "G2 Canopy RH Target"
+    id: g2_canopy_rh_target
     topic: "g2/canopy/sensor/rh_target/state"
     unit_of_measurement: "%"
     qos: 1
 
   - platform: mqtt_subscribe
-    name: "Gantry RH"
-    id: gantry_rh
+    name: "G2 Gantry RH"
+    id: g2_gantry_rh
     topic: "g2/gantry/sensor/humidity/state"
     unit_of_measurement: "%"
     qos: 1
 
   - platform: mqtt_subscribe
-    name: "Gantry RH Target"
-    id: gantry_rh_target
+    name: "G2 Gantry RH Target"
+    id: g2_gantry_rh_target
     topic: "g2/gantry/sensor/rh_target/state"
     unit_of_measurement: "%"
     qos: 1
-
-  - platform: mqtt_subscribe
-    name: "Humidifier Enable"
-    id: humidifier_enable
-    topic: "g2/humidifier/enable"
-    unit_of_measurement: ""
-    qos: 1
-
+  
 interval:
-  - interval: 30s
+  - interval: 60s
+    then:
+      - script.execute: update_fan_speed
+
+script:
+  - id: update_fan_speed
     then:
       - lambda: |-
-          if (id(humidifier_enable).state == 1.0f) {
-            float _canopy_rh_target = id(canopy_rh_target).state;
-            float _gantry_rh_target = id(gantry_rh_target).state;
+          // Check if the door is open
+          if (id(door_open)) {
+            // Door is open; turn off humidifier
+            id(g2_humidifier_fan).turn_off();
+            ESP_LOGD("fan", "Door is open. Turning off fans.");
+            return;
+          }
+
+          if (id(g2_humidifier_enable).state) {
+            auto call = id(g2_humidifier_fan).turn_on();
+            call.perform();
+
+            float _canopy_rh_target = id(g2_canopy_rh_target).state;
+            float _gantry_rh_target = id(g2_gantry_rh_target).state;
             float rh_target = !std::isnan(_canopy_rh_target) ? _canopy_rh_target : _gantry_rh_target;
-            float rh = !std::isnan(id(canopy_rh).state) ? id(canopy_rh).state : id(gantry_rh).state;
+            float rh = !std::isnan(id(g2_canopy_rh).state) ? id(g2_canopy_rh).state : id(g2_gantry_rh).state;
             
-            float current_speed = id(humidifier_fan).speed;
+            float current_speed = id(g2_humidifier_fan).speed;
             
             if (rh_target > rh) {
-              id(humidifier_fan).speed = std::min(current_speed + 0.01f, 1.0f);
+              id(g2_humidifier_fan).speed = std::min(current_speed + 0.01f, 1.0f);
             } else if (rh_target < rh) {
-              id(humidifier_fan).speed = std::max(current_speed - 0.02f, 0.0f);
+              //id(g2_humidifier_fan).speed = std::max(current_speed - 0.02f, 0.0f);
+              id(g2_humidifier_fan).speed = std::max(current_speed - 2.0f, 0.0f);
             }
           } else {
-            id(humidifier_fan).speed = 0.0f;  // Turn off humidifier if it's disabled
+            auto call = id(g2_humidifier_fan).turn_off();
+            call.perform();
           }

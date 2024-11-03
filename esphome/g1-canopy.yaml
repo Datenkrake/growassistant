@@ -30,11 +30,31 @@ wifi:
 
 captive_portal:
 
+globals:
+  - id: door_open
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+  - id: new_brightness_global
+    type: float
+    restore_value: no
+    initial_value: '0.0'
+
 mqtt:
   broker: !secret mqtt_broker
   username: !secret mqtt_username
   password: !secret mqtt_password
   topic_prefix: "g1/canopy"
+  on_message:
+    - topic: g1/door_switch
+      then:
+        - lambda: |-
+            if (strcmp(x.c_str(), "ON") == 0) {
+              id(door_open) = true;
+            } else if (strcmp(x.c_str(), "OFF") == 0) {
+              id(door_open) = false;
+            }
+            id(adjust_brightness).execute();
 
 # Current time from MQTT
 time:
@@ -102,6 +122,7 @@ sensor:
     trigger_pin: 1
     echo_pin: 2
     name: "Cola Distance"
+    id: cola_distance
     update_interval: 1s
     timeout: 2m
     filters:
@@ -577,75 +598,94 @@ number:
     restore_value: True
     retain: True
 
-globals:
-  - id: new_brightness_global
-    type: float
-    restore_value: no
-    initial_value: '0.0'
+  - platform: template
+    name: "Door Open Brightness"
+    id: door_open_brightness
+    optimistic: True
+    min_value: 0
+    max_value: 1
+    step: 0.01
+    initial_value: 0.1
+    mode: BOX
+    unit_of_measurement: "%"
+    restore_value: True
+    retain: True
 
-# interval:
-#   - interval: 10s
-#     then:
-#       - lambda: |-
-#           // Get current brightness from the text sensor state
-#           //float current_brightness = atof(id(full_spectrum_brightness_text_sensor).state.c_str());
-#           float current_brightness = id(full_spectrum_brightness_number_sensor).state;
-#           //float current_brightness = id(new_brightness_global);
-
-#           // Get current PPFD and target PPFD values
-#           float ppfd = id(g1_canopy_ppfd).state;
-#           float ppfd_target = id(g1_ppfd_target).state;
-
-#           // Calculate the error and adjustment needed
-#           float error_value = ppfd_target - ppfd;
-#           float adjustment = error_value / 20000.0;
-#           float new_brightness = current_brightness + adjustment;
-
-#           // Ensure brightness stays between 0 and 1
-#           if (new_brightness > 1.0) {
-#             new_brightness = 1.0;
-#           } else if (new_brightness < 0.0) {
-#             new_brightness = 0.0;
-#           }
-
-#           // Update the global variable with the new brightness value
-#           id(new_brightness_global) = new_brightness;
-
-#       - mqtt.publish:
-#           topic: "g1/light/light/full_spectrum/command"
-#           payload: !lambda |-
-#             if (id(new_brightness_global) > 0.0) {
-#               return std::string("{\"state\": \"ON\", \"brightness\": ") + std::to_string((int)(id(new_brightness_global) * 255)) + "}";
-#             } else {
-#               return std::string("{\"state\": \"OFF\", \"brightness\": 0}");
-#             }
-          
 interval:
+  - interval: 5s  # Adjust as needed
+    then:
+      - script.execute: check_cola_distance
+
   - interval: 30s
     then:
+      - script.execute: adjust_brightness
+    
+
+script:
+  - id: check_cola_distance
+    then:
       - lambda: |-
-          // Get current brightness from the number sensor state
-          float current_brightness = id(full_spectrum_brightness_number_sensor).state;
+          // Get the current cola distance and threshold values
+          float _cola_distance = id(cola_distance).state;
+          float cola_distance_threshold = id(g1_cola_distance_threshold).state;
 
-          // Get current PPFD and target PPFD values
-          float ppfd = id(g1_canopy_ppfd).state;
-          float ppfd_target = id(g1_ppfd_target).state;
+          // Check if the door is closed and cola distance is below the threshold
+          if (!id(door_open) && _cola_distance < cola_distance_threshold) {
+            ESP_LOGD("cola_distance_check", "Cola distance detected: %.2f m, below threshold of %.2f m, and door is closed.", _cola_distance, cola_distance_threshold);
 
-          // Log the current state of PPFD and brightness
-          ESP_LOGD("brightness_control", "Current PPFD: %.2f", ppfd);
-          ESP_LOGD("brightness_control", "Target PPFD: %.2f", ppfd_target);
-          ESP_LOGD("brightness_control", "Current Brightness: %.2f", current_brightness);
+            // Publish MQTT message if the condition is met (true)
+            id(mqtt_publish_cola_detected_true).execute();
+          } else {
+            ESP_LOGD("cola_distance_check", "No cola detected or door is open.");
 
-          // Calculate the error and adjustment needed
-          float error_value = ppfd_target - ppfd;
-          float adjustment = error_value / 2000.0;  // Increase divisor for less aggressive adjustment
+            // Publish MQTT message if the condition is not met (false)
+            id(mqtt_publish_cola_detected_false).execute();
+          }
 
-          // Log the error and adjustment value
-          ESP_LOGD("brightness_control", "Error Value: %.2f", error_value);
-          ESP_LOGD("brightness_control", "Adjustment Value: %.5f", adjustment);
+  - id: mqtt_publish_cola_detected_true
+    then:
+      - mqtt.publish:
+          topic: "g1/canopy/sensor/cola_detected"
+          payload: !lambda |-
+            ESP_LOGD("mqtt_publish", "Publishing Cola Detected: true");
+            return std::string("{\"state\": \"true\"}");
 
-          // Calculate new brightness value
-          float new_brightness = current_brightness + adjustment;
+  - id: mqtt_publish_cola_detected_false
+    then:
+      - mqtt.publish:
+          topic: "g1/canopy/sensor/cola_detected"
+          payload: !lambda |-
+            ESP_LOGD("mqtt_publish", "Publishing Cola Detected: false");
+            return std::string("{\"state\": \"false\"}");
+
+  - id: adjust_brightness
+    then:
+      - lambda: |-
+          float new_brightness = id(door_open_brightness).state;
+          if (!id(door_open)) {
+            // Get current brightness from the number sensor state
+            float current_brightness = id(full_spectrum_brightness_number_sensor).state;
+
+            // Get current PPFD and target PPFD values
+            float ppfd = id(g1_canopy_ppfd).state;
+            float ppfd_target = id(g1_ppfd_target).state;
+
+            // Log the current state of PPFD and brightness
+            ESP_LOGD("brightness_control", "Current PPFD: %.2f", ppfd);
+            ESP_LOGD("brightness_control", "Target PPFD: %.2f", ppfd_target);
+            ESP_LOGD("brightness_control", "Current Brightness: %.2f", current_brightness);
+
+            // Calculate the error and adjustment needed
+            float error_value = ppfd_target - ppfd;
+            float adjustment = error_value / 2000.0;  // Increase divisor for less aggressive adjustment
+
+            // Log the error and adjustment value
+            ESP_LOGD("brightness_control", "Error Value: %.2f", error_value);
+            ESP_LOGD("brightness_control", "Adjustment Value: %.5f", adjustment);
+
+            // Calculate new brightness value
+            new_brightness = current_brightness + adjustment;
+          }
 
           // Ensure brightness stays between 0 and 1
           if (new_brightness > 1.0) {
@@ -663,10 +703,11 @@ interval:
       - mqtt.publish:
           topic: "g1/light/light/full_spectrum/command"
           payload: !lambda |-
-            if (id(new_brightness_global) > 0.0) {
+            if (id(new_brightness_global) > 0.0 && id(g1_dayphase_target).state) {
               ESP_LOGD("mqtt_publish", "Publishing Brightness ON: %d", (int)(id(new_brightness_global) * 255));
               return std::string("{\"state\": \"ON\", \"brightness\": ") + std::to_string((int)(id(new_brightness_global) * 255)) + "}";
             } else {
               ESP_LOGD("mqtt_publish", "Publishing Brightness OFF");
               return std::string("{\"state\": \"OFF\", \"brightness\": 0}");
             }
+

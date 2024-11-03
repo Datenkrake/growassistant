@@ -50,15 +50,73 @@ light:
     name: "Full Spectrum"
     state_topic: "g1/light/light/full_spectrum/state"
 
+number:
+  - platform: template
+    name: "Gantry Position Min"
+    id: gantry_position_min
+    min_value: 0
+    max_value: 1
+    step: 0.01
+    initial_value: 0.2
+    optimistic: True
+    restore_value: True
+    retain: True
+
+  - platform: template
+    name: "Gantry Position Max"
+    id: gantry_position_max
+    min_value: 0
+    max_value: 1.5
+    step: 0.01
+    initial_value: 1.1
+    optimistic: True
+    restore_value: True
+    retain: True
+
 # Ultrasonic sensor on GPIO9 (TRIG) and GPIO10 (ECHO)
 sensor:
   - platform: ultrasonic
     trigger_pin: GPIO9
     echo_pin: GPIO10
-    name: "Ultrasonic Sensor"
+    name: "Gantry Position"
+    id: gantry_position
     update_interval: 1s
     timeout: 2m
     filters:
       - sliding_window_moving_average:
           window_size: 60   # Number of readings to average
           send_every: 60    # How often to send the averaged result
+
+# Cola detection sensor via MQTT as text_sensor
+text_sensor:
+  - platform: mqtt_subscribe
+    name: "Cola Detected"
+    id: cola_detected
+    topic: "g1/canopy/sensor/cola_detected"
+
+interval:
+  - interval: 60min
+    then:
+      - lambda: |-
+          ESP_LOGD("debug", "Checking conditions for moving gantry...");
+          ESP_LOGD("debug", "Cola detected state: %s", id(cola_detected).state.c_str());
+          ESP_LOGD("debug", "Gantry position: %.2f, Min Position: %.2f", id(gantry_position).state, id(gantry_position_min).state);
+
+          if (id(cola_detected).state == "{\"state\": \"true\"}" && id(gantry_position).state > id(gantry_position_min).state) {
+            ESP_LOGD("main", "Conditions met. Calling REST endpoint to move gantry");
+            id(rest_move_up).execute();
+          } else {
+            ESP_LOGD("main", "Conditions not met. Skipping...");
+          }
+
+# Example rest_move_up script
+script:
+  - id: rest_move_up
+    then:
+      - http_request.get:
+          url: "http://g1.local:7125/printer/gcode/script?script=move_light%20DISTANCE=10"
+
+# Include the HTTP Request component
+http_request:
+  verify_ssl: false
+  useragent: esphome/device

@@ -30,6 +30,17 @@ wifi:
 
 captive_portal:
     
+
+globals:
+  - id: fan_speed_step
+    type: int
+    restore_value: no
+    initial_value: '0'
+  - id: door_open
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+
 mqtt:
   broker: !secret mqtt_broker
   username: !secret mqtt_username
@@ -41,89 +52,6 @@ i2c:
   sda: 0  # GPIO0
   scl: 1  # GPIO1
   scan: true  # Optional: enables scanning for I2C devices at startup
-
-# Sensors
-sensor:
-  - platform: sht3xd
-    temperature:
-      name: "Temperature"
-      id: temperature
-    humidity:
-      name: "Humidity"
-      id: humidity
-    address: 0x44
-    update_interval: 30s
-
-  - platform: ultrasonic
-    trigger_pin: 5
-    echo_pin: 6
-    name: "Position"
-    update_interval: 1s
-    timeout: 2m
-    filters:
-    - sliding_window_moving_average:
-        window_size: 60
-        send_every: 60
-
-  - platform: template
-    name: "VPD Sensor"
-    unit_of_measurement: "kPa"
-    update_interval: 30s
-    lambda: |
-      float temp = id(temperature).state;
-      float rh = id(humidity).state;
-      float leaf_offset = id(vpd_leaf_offset).state;
-      float LT = temp + leaf_offset;
-      float ASVP = 610.78 * exp((temp / (temp + 237.3)) * 17.2694);
-      float LSVP = 610.78 * exp((LT / (LT + 237.3)) * 17.2694);
-      float LVPD = (LSVP - (ASVP * (rh / 100.0))) / 1000.0;
-      return roundf(LVPD * 100.0) / 100.0;
-
-  - platform: template
-    name: "RH Target"
-    unit_of_measurement: "%"
-    update_interval: 30s
-    lambda: |
-      float T = id(temperature).state;
-      float LT = T - 2.0;
-      float ASVP = 610.78 * pow(2.71828, (T / (T + 237.3)) * 17.2694);
-      float LSVP = 610.78 * pow(2.71828, (LT / (LT + 237.3)) * 17.2694);
-      float LVPD_TARGET = id(vpd_target).state;
-      float RH_TARGET = (LSVP - LVPD_TARGET * 1000) / ASVP * 100;
-      return roundf(RH_TARGET * 10.0) / 10.0;
-
-  - platform: template
-    name: "Dew Point"
-    unit_of_measurement: "°C"
-    update_interval: 30s
-    lambda: |
-      float T = id(temperature).state;
-      float RH = id(humidity).state;
-      float a = 17.27;
-      float b = 237.7;
-      float alpha = ((a * T) / (b + T)) + log(RH / 100.0);
-      float dew_point = (b * alpha) / (a - alpha);
-      return roundf(dew_point * 10.0) / 10.0;
-
-number:
-  - platform: template
-    name: "Leaf Offset"
-    id: vpd_leaf_offset
-    optimistic: true
-    initial_value: 0.0
-    min_value: -10.0
-    max_value: 10.0
-    step: 0.1
-
-  - platform: template
-    name: "VPD Target"
-    id: vpd_target
-    optimistic: true
-    initial_value: 1.0
-    min_value: 0.0
-    max_value: 5.0
-    step: 0.1
-
 
 # Outputs for PWM Fans
 output:
@@ -146,8 +74,216 @@ output:
 fan:
   - platform: speed
     name: "Wind"
+    id: g2_wind_fan1
     output: fan_pwm_1
 
   - platform: speed
     name: "Wind"
+    id: g2_wind_fan2
     output: fan_pwm_2
+
+# Sensors
+sensor:
+  - platform: sht3xd
+    temperature:
+      name: "Temperature"
+      id: temperature
+    humidity:
+      name: "Humidity"
+      id: humidity
+    address: 0x44
+    update_interval: 30s
+
+  - platform: ultrasonic
+    trigger_pin: 5
+    echo_pin: 6
+    name: "G2 Gantry Position"
+    id: g2_gantry_position
+    update_interval: 1s
+    timeout: 2m
+    filters:
+    - sliding_window_moving_average:
+        window_size: 60
+        send_every: 60
+
+  - platform: template
+    name: "VPD Sensor"
+    unit_of_measurement: "kPa"
+    update_interval: 30s
+    lambda: |
+      float temp = id(temperature).state;
+      float rh = id(humidity).state;
+      float leaf_offset = id(g2_vpd_leaf_offset).state;
+      float LT = temp + leaf_offset;
+      float ASVP = 610.78 * exp((temp / (temp + 237.3)) * 17.2694);
+      float LSVP = 610.78 * exp((LT / (LT + 237.3)) * 17.2694);
+      float LVPD = (LSVP - (ASVP * (rh / 100.0))) / 1000.0;
+      return roundf(LVPD * 100.0) / 100.0;
+
+  - platform: template
+    name: "RH Target"
+    unit_of_measurement: "%"
+    update_interval: 30s
+    lambda: |
+      float T = id(temperature).state;
+      float LT = T - 2.0;
+      float ASVP = 610.78 * pow(2.71828, (T / (T + 237.3)) * 17.2694);
+      float LSVP = 610.78 * pow(2.71828, (LT / (LT + 237.3)) * 17.2694);
+      float LVPD_TARGET = id(g2_vpd_target).state;
+      float RH_TARGET = (LSVP - LVPD_TARGET * 1000) / ASVP * 100;
+      return roundf(RH_TARGET * 10.0) / 10.0;
+
+  - platform: template
+    name: "Dew Point"
+    unit_of_measurement: "°C"
+    update_interval: 30s
+    lambda: |
+      float T = id(temperature).state;
+      float RH = id(humidity).state;
+      float a = 17.27;
+      float b = 237.7;
+      float alpha = ((a * T) / (b + T)) + log(RH / 100.0);
+      float dew_point = (b * alpha) / (a - alpha);
+      return roundf(dew_point * 10.0) / 10.0;
+
+  - platform: mqtt_subscribe
+    topic: "g2/brain/number/vpd_leaf_offset"
+    name: "G2 VPD Leaf Offset"
+    id: g2_vpd_leaf_offset
+
+  - platform: mqtt_subscribe
+    topic: "g2/brain/number/vpd_target"
+    name: "G2 VPD Target"
+    id: g2_vpd_target
+
+number:
+  - platform: template
+    name: "G2 Wind Fan Speed Min"
+    id: g2_wind_fan_speed_min
+    optimistic: True
+    initial_value: 20
+    min_value: 0
+    max_value: 100
+    step: 1
+    mode: BOX 
+    unit_of_measurement: "%"
+    icon: mdi:fan
+
+  - platform: template
+    name: "G2 Wind Fan Speed Max"
+    id: g2_wind_fan_speed_max
+    optimistic: True
+    initial_value: 60
+    min_value: 0
+    max_value: 100
+    step: 1
+    mode: BOX 
+    unit_of_measurement: "%"
+    icon: mdi:fan
+
+  - platform: template
+    name: "G2 Wind Sweep Duration"
+    id: g2_wind_sweep_duration
+    optimistic: true
+    initial_value: 60
+    min_value: 1
+    max_value: 180
+    step: 1
+    mode: BOX
+    unit_of_measurement: "min"
+    icon: mdi:timer
+
+  - platform: template
+    name: "G2 Gantry Position Min"
+    id: g2_gantry_position_min
+    min_value: 0
+    max_value: 1
+    step: 0.01
+    initial_value: 0.2
+    optimistic: True
+    restore_value: True
+    retain: True
+
+  - platform: template
+    name: "G2 Gantry Position Max"
+    id: g2_gantry_position_max
+    min_value: 0
+    max_value: 1.5
+    step: 0.01
+    initial_value: 1.1
+    optimistic: True
+    restore_value: True
+    retain: True
+
+# Cola detection sensor via MQTT as text_sensor
+text_sensor:
+  - platform: mqtt_subscribe
+    name: "G2 Cola Detected"
+    id: g2_cola_detected
+    topic: "g2/canopy/sensor/cola_detected"
+
+
+interval:
+  - interval: 60s
+    then:
+      - script.execute: update_fan_speed
+  - interval: 60min
+    then:
+      - script.execute: update_gantry_height
+
+script:
+  - id: update_fan_speed
+    then:
+      lambda: |-
+        // Check if the door is open
+        if (id(door_open)) {
+          // Door is open; turn off both fans
+          auto call3 = id(g2_wind_fan1).turn_off();
+          call3.perform();
+          auto call4 = id(g2_wind_fan2).turn_off();
+          call4.perform();
+          ESP_LOGD("fan", "Door is open. Turning off fans.");
+          return;
+        }
+
+        auto call1 = id(g2_wind_fan1).turn_on();
+        call1.perform();
+        auto call2 = id(g2_wind_fan2).turn_on();
+        call2.perform();
+
+        int step = id(fan_speed_step);
+        int duration = id(g2_wind_sweep_duration).state; // Duration in minutes
+        float min_speed = id(g2_wind_fan_speed_min).state;
+        float max_speed = id(g2_wind_fan_speed_max).state;
+
+        // Calculate the fan speed by linearly interpolating from min to max over 60 steps (1 hour)
+        float fan_speed = min_speed + (max_speed - min_speed) * (step / (float)duration);
+
+        // Increment the step counter, reset after 60 minutes
+        id(fan_speed_step) = (step + 1) % duration;
+
+        // Set the fan speeds to the calculated value
+        id(g2_wind_fan1).speed = fan_speed;
+        id(g2_wind_fan2).speed = fan_speed;
+
+        ESP_LOGD("fan", "Updating fan speed to %.2f%%", fan_speed);
+  
+  - id: update_gantry_height
+    then:
+      - lambda: |-
+          ESP_LOGD("debug", "Checking conditions for moving gantry...");
+          ESP_LOGD("debug", "Cola detected state: %s", id(g2_cola_detected).state.c_str());
+          ESP_LOGD("debug", "Gantry position: %.2f, Min Position: %.2f", id(g2_gantry_position).state, id(g2_gantry_position_min).state);
+
+          if (id(g2_cola_detected).state == "{\"state\": \"true\"}" && id(g2_gantry_position).state > id(g2_gantry_position_min).state) {
+            ESP_LOGD("main", "Conditions met. Sending MQTT message to move gantry");
+            id(publish_gantry_step_up).execute();
+          } else {
+            ESP_LOGD("main", "Conditions not met. Skipping...");
+          }
+
+  - id: publish_gantry_step_up
+    then:
+      - mqtt.publish:
+          topic: "g2/lift/switch/g2_step_up/set"
+          payload: "ON"

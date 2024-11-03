@@ -73,9 +73,11 @@ fan:
   - platform: speed
     output: fan1_pwm
     name: "Wind"
+    id: g1_wind_fan1
   - platform: speed
     output: fan2_pwm
     name: "Wind"
+    id: g1_wind_fan2
 
   # Example configuration entry for ESP32
 i2c:
@@ -211,11 +213,18 @@ script:
         // Check if the door is open
         if (id(door_open)) {
           // Door is open; turn off both fans
-          id(fan1_pwm).set_level(0.0);
-          id(fan2_pwm).set_level(0.0);
+          auto call3 = id(g1_wind_fan1).turn_off();
+          call3.perform();
+          auto call4 = id(g1_wind_fan2).turn_off();
+          call4.perform();
           ESP_LOGD("fan", "Door is open. Turning off fans.");
           return;
         }
+
+        auto call1 = id(g1_wind_fan1).turn_on();
+        call1.perform();
+        auto call2 = id(g1_wind_fan2).turn_on();
+        call2.perform();
 
         int step = id(fan_speed_step);
         int duration = id(g1_wind_sweep_duration).state; // Duration in minutes
@@ -229,7 +238,7 @@ script:
         id(fan_speed_step) = (step + 1) % duration;
 
         // Set the fan speeds to the calculated value
-        id(fan1_pwm).set_level(fan_speed / 100.0);
-        id(fan2_pwm).set_level(fan_speed / 100.0);
+        id(g1_wind_fan1).speed = fan_speed;
+        id(g1_wind_fan2).speed = fan_speed;
 
         ESP_LOGD("fan", "Updating fan speed to %.2f%%", fan_speed);

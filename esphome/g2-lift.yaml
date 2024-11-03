@@ -55,7 +55,8 @@ stepper:
 
 switch:
   - platform: template
-    name: "Step Down"
+    name: "G2 Step Down"
+    id: g2_step_down
     turn_on_action:
       # Move 150 steps forward
       - stepper.report_position:
@@ -66,7 +67,8 @@ switch:
           target: 32000
 
   - platform: template
-    name: "Step Up"
+    name: "G2 Step Up"
+    id: g2_step_up
     turn_on_action:
       # Move 150 steps forward
       - stepper.report_position:
