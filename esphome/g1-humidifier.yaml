@@ -1,15 +1,3 @@
-esphome:
-  name: g1-humidifier
-  friendly_name: G1_HUMIDIFIER
-
-esp32:
-  board: esp32-c3-devkitm-1
-  framework:
-    type: arduino
-
-# Enable logging
-logger:
-
 # Enable Home Assistant API
 # api:
 #   encryption:
@@ -19,23 +7,98 @@ ota:
   - platform: esphome
     password: "ecf5a31fa356f2d267c8f046e257160c"
 
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
 
-  # Enable fallback hotspot (captive portal) in case wifi connection fails
-  ap:
-    ssid: "G1-Humidifier Fallback Hotspot"
-    password: "ngvELfWsYHo8"
-
 captive_portal:
 
+esphome:
+  name: g1-humidifier
+
+####################################################################
+# configure substitutions and friendly name
+####################################################################
+
+  friendly_name: ${area_id}_HUMIDIFIER${suffix}
+
+substitutions:
+  area_id: G1
+  suffix: ""
+  pin_humidifier_pwm_output: GPIO21
+
+####################################################################
+# generic yaml for humidifiers below
+####################################################################
+
+output:
+  - platform: slow_pwm
+    pin: ${pin_humidifier_pwm_output}
+    id: ${area_id}_humidifier_pwm_output${suffix}
+    period: 10s
+
+fan:
+  - platform: speed
+    output: ${area_id}_humidifier_pwm_output${suffix}
+    name: "Humidifier"
+    id: ${area_id}_humidifier_fan${suffix}
+    state_topic: "${area_id}/humidifier/fan/vapor/state"
+    speed_state_topic: "${area_id}/humidifer/fan/vapor/speed"
+    speed_level_state_topic: "${area_id}/humidifer/fan/vapor/level"
+    command_topic: "${area_id}/humidifer/fan/vapor/set_state"
+    speed_command_topic: "${area_id}/humidifer/fan/vapor/set_speed"
+    speed_level_command_topic: "${area_id}/humidifer/fan/vapor/set_level"
+    speed_count: 100  # Set the speed steps (0-100%)
+
+sensor:
+  - platform: mqtt_subscribe
+    name: "Canopy RH"
+    id: ${area_id}_humidifier_canopy_rh${suffix}
+    topic: "${area_id}/humidity/canopy"
+    unit_of_measurement: "%"
+    qos: 1
+
+  - platform: mqtt_subscribe
+    name: "Canopy RH Target"
+    id: ${area_id}_humidifier_canopy_rh_target${suffix}
+    topic: "${area_id}/rh_target/canopy"
+    unit_of_measurement: "%"
+    qos: 1
+
+  - platform: mqtt_subscribe
+    name: "Gantry RH"
+    id: ${area_id}_humidifier_gantry_rh${suffix}
+    topic: "${area_id}/humidity/gantry"
+    unit_of_measurement: "%"
+    qos: 1
+
+  - platform: mqtt_subscribe
+    name: "Gantry RH Target"
+    id: ${area_id}_humidifier_gantry_rh_target${suffix}
+    topic: "${area_id}/rh_target/gantry"
+    unit_of_measurement: "%"
+    qos: 1
+
+switch:
+  - platform: template
+    name: "Humidifier Enable"
+    id: ${area_id}_humidifier_enable${suffix}
+    optimistic: True
+    state_topic: "${area_id}/humidifier/humidifier_enable"
+    command_topic: "${area_id}/humidifier/humidifier_enable/set-state"
+    qos: 0
+    retain: True
+    
 globals:
-  - id: humidifier_enable_state
-    type: bool
-    restore_value: no
-    initial_value: 'false'
-  - id: door_open
+  - id: ${area_id}_door_open${suffix}
     type: bool
     restore_value: no
     initial_value: 'false'
@@ -44,68 +107,18 @@ mqtt:
   broker: !secret mqtt_broker
   username: !secret mqtt_username
   password: !secret mqtt_password
-  topic_prefix: "g1/humidifier"
+  topic_prefix: "${area_id}/humidifier"
   on_message:
-    - topic: g1/door_switch
+    - topic: ${area_id}/door_switch
       then:
         - lambda: |-
             if (strcmp(x.c_str(), "ON") == 0) {
-              id(door_open) = true;
+              id(${area_id}_door_open${suffix}) = true;
             } else if (strcmp(x.c_str(), "OFF") == 0) {
-              id(door_open) = false;
+              id(${area_id}_door_open${suffix}) = false;
             }
             id(update_fan_speed).execute();
 
-output:
-  - platform: slow_pwm
-    pin: GPIO21
-    id: humidifier_pwm_output
-    period: 10s
-
-fan:
-  - platform: speed
-    output: humidifier_pwm_output
-    name: "Humidifier"
-    id: humidifier_fan
-    speed_count: 100  # Set the speed steps (0-100%)
-
-sensor:
-  - platform: mqtt_subscribe
-    name: "Canopy RH"
-    id: canopy_rh
-    topic: "g1/canopy/sensor/humidity/state"
-    unit_of_measurement: "%"
-    qos: 1
-
-  - platform: mqtt_subscribe
-    name: "Canopy RH Target"
-    id: canopy_rh_target
-    topic: "g1/canopy/sensor/rh_target/state"
-    unit_of_measurement: "%"
-    qos: 1
-
-  - platform: mqtt_subscribe
-    name: "Gantry RH"
-    id: gantry_rh
-    topic: "g1/gantry/sensor/humidity/state"
-    unit_of_measurement: "%"
-    qos: 1
-
-  - platform: mqtt_subscribe
-    name: "Gantry RH Target"
-    id: gantry_rh_target
-    topic: "g1/gantry/sensor/rh_target/state"
-    unit_of_measurement: "%"
-    qos: 1
-
-switch:
-  - platform: template
-    name: "Humidifier Enable"
-    id: humidifier_enable
-    optimistic: True
-    state_topic: "g1/humidifier/enable"
-    qos: 0
-    
 interval:
   - interval: 60s
     then:
@@ -116,31 +129,30 @@ script:
     then:
       - lambda: |-
           // Check if the door is open
-          if (id(door_open)) {
+          if (id(${area_id}_door_open${suffix})) {
             // Door is open; turn off humidifier
-            id(humidifier_fan).turn_off();
+            id(${area_id}_humidifier_fan${suffix}).turn_off();
             ESP_LOGD("fan", "Door is open. Turning off fans.");
             return;
           }
 
-          if (id(humidifier_enable).state) {
-            auto call = id(humidifier_fan).turn_on();
+          if (id(${area_id}_humidifier_enable${suffix}).state) {
+            auto call = id(${area_id}_humidifier_fan${suffix}).turn_on();
             call.perform();
 
-            float _canopy_rh_target = id(canopy_rh_target).state;
-            float _gantry_rh_target = id(gantry_rh_target).state;
+            float _canopy_rh_target = id(${area_id}_humidifier_canopy_rh_target${suffix}).state;
+            float _gantry_rh_target = id(${area_id}_humidifier_gantry_rh_target${suffix}).state;
             float rh_target = !std::isnan(_canopy_rh_target) ? _canopy_rh_target : _gantry_rh_target;
-            float rh = !std::isnan(id(canopy_rh).state) ? id(canopy_rh).state : id(gantry_rh).state;
+            float rh = !std::isnan(id(${area_id}_humidifier_canopy_rh${suffix}).state) ? id(${area_id}_humidifier_canopy_rh${suffix}).state : id(${area_id}_humidifier_gantry_rh${suffix}).state;
             
-            float current_speed = id(humidifier_fan).speed;
+            float current_speed = id(${area_id}_humidifier_fan${suffix}).speed;
             
             if (rh_target > rh) {
-              id(humidifier_fan).speed = std::min(current_speed + 0.01f, 1.0f);
+              id(${area_id}_humidifier_fan${suffix}).speed = std::min(current_speed + 0.01f, 1.0f);
             } else if (rh_target < rh) {
-              //id(humidifier_fan).speed = std::max(current_speed - 0.02f, 0.0f);
-              id(humidifier_fan).speed = std::max(current_speed - 2.0f, 0.0f);
+              id(${area_id}_humidifier_fan${suffix}).speed = std::max(current_speed - 2.0f, 0.0f);
             }
           } else {
-            auto call = id(humidifier_fan).turn_off();
+            auto call = id(${area_id}_humidifier_fan${suffix}).turn_off();
             call.perform();
           }

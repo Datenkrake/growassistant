@@ -81,7 +81,7 @@ text_sensor:
   - platform: mqtt_subscribe
     name: "G2 Current Brightness"
     id: g2_current_brightness_text_sensor  # Make sure this ID matches
-    topic: "g2/light/light/full_spectrum/state"
+    topic: "g2/light/dimmer/status/light:0"
     on_value:
       then:
         - lambda: |-
@@ -98,7 +98,7 @@ text_sensor:
               int brightness = doc["brightness"].as<int>();
 
               // Update the text sensor's state to the brightness value as a string
-              id(g2_full_spectrum_brightness_number_sensor).publish_state(brightness/255.0f);
+              id(g2_full_spectrum_brightness_number_sensor).publish_state(brightness/100.0f);
             } else {
               ESP_LOGW("main", "Brightness key not found in JSON.");
             }
@@ -608,29 +608,42 @@ script:
     then:
       - lambda: |-
           float new_brightness = id(g2_door_open_brightness).state;
-          if (!id(door_open)) {
-            // Get current brightness from the number sensor state
-            float current_brightness = id(g2_full_spectrum_brightness_number_sensor).state;
 
-            // Get current PPFD and target PPFD values
-            float ppfd = id(g2_ppfd).state;
-            float ppfd_target = id(g2_ppfd_target).state;
+          // Get current PPFD and target PPFD values
+          float ppfd_target = id(g2_ppfd_target).state;
 
-            // Log the current state of PPFD and brightness
-            ESP_LOGD("brightness_control", "Current PPFD: %.2f", ppfd);
-            ESP_LOGD("brightness_control", "Target PPFD: %.2f", ppfd_target);
-            ESP_LOGD("brightness_control", "Current Brightness: %.2f", current_brightness);
+          if (ppfd_target < 0.01) {  // Using a small threshold for floating-point comparison
+            // PPFD target is zero, turn off the light
+            new_brightness = 0.0;
+          } else {
+            if (!id(door_open)) {
+              // Get current brightness from the number sensor state
+              float current_brightness = id(g2_full_spectrum_brightness_number_sensor).state;
+              // **Set current_brightness to 0 if it's NaN**
+              if (isnan(current_brightness)) {
+                current_brightness = 0.0;
+              }
 
-            // Calculate the error and adjustment needed
-            float error_value = ppfd_target - ppfd;
-            float adjustment = error_value / 2000.0;  // Increase divisor for less aggressive adjustment
+              // Get current PPFD value
+              float ppfd = id(g2_ppfd).state;
 
-            // Log the error and adjustment value
-            ESP_LOGD("brightness_control", "Error Value: %.2f", error_value);
-            ESP_LOGD("brightness_control", "Adjustment Value: %.5f", adjustment);
+              // Log the current state of PPFD and brightness
+              ESP_LOGD("brightness_control", "Current PPFD: %.2f", ppfd);
+              ESP_LOGD("brightness_control", "Target PPFD: %.2f", ppfd_target);
+              ESP_LOGD("brightness_control", "Current Brightness: %.2f", current_brightness);
 
-            // Calculate new brightness value
-            new_brightness = current_brightness + adjustment;
+              // Calculate the error and adjustment needed
+              float error_value = ppfd_target - ppfd;
+              float adjustment = error_value / 2000.0;  // Increase divisor for less aggressive adjustment
+              adjustment = roundf(adjustment * 100.0f) / 100.0f;
+
+              // Log the error and adjustment value
+              ESP_LOGD("brightness_control", "Error Value: %.2f", error_value);
+              ESP_LOGD("brightness_control", "Adjustment Value: %.5f", adjustment);
+
+              // Calculate new brightness value
+              new_brightness = current_brightness + adjustment;
+            }
           }
 
           // Ensure brightness stays between 0 and 1
@@ -644,16 +657,45 @@ script:
           ESP_LOGD("brightness_control", "New Brightness (after clamping): %.2f", new_brightness);
 
           // Update the global variable with the new brightness value
+          if(g2_ppfd_target != 0 && new_brightness == 0) {
+            new_brightness = 0.01;
+          }
           id(new_brightness_global) = new_brightness;
 
       - mqtt.publish:
-          topic: "g2/light/dimmer/command"
+          topic: "g2/mains/light/command/switch:0"
           payload: !lambda |-
             if (id(new_brightness_global) > 0.0) {
-              float dimmer_value = id(new_brightness_global) * 10.0; // Scale to 0-10V
-              ESP_LOGD("mqtt_publish", "Publishing Dimmer Value: %.2f V", dimmer_value);
-              return std::to_string(dimmer_value);
+              ESP_LOGD("mqtt_publish", "Turning Light ON");
+              return "on";
             } else {
-              ESP_LOGD("mqtt_publish", "Turning off Dimmer");
-              return std::string("0");
+              ESP_LOGD("mqtt_publish", "Turning Light OFF");
+              return "off";
+            }
+
+      - mqtt.publish_json:
+          topic: "g2/light/dimmer/rpc"
+          payload: !lambda |-
+            if (id(new_brightness_global) > 0.0) {
+              int brightness_percent = (int)(id(new_brightness_global) * 100);
+              ESP_LOGD("mqtt_publish", "Publishing Brightness: %d%%", brightness_percent);
+
+              // Construct the JSON payload to turn on the light with specified brightness
+              root["id"] = 1;
+              root["src"] = "user";
+              root["method"] = "Light.Set";
+              auto params = root.createNestedObject("params");
+              params["id"] = 0;
+              params["on"] = true;
+              params["brightness"] = brightness_percent;
+            } else {
+              ESP_LOGD("mqtt_publish", "Turning off Light");
+
+              // Construct the JSON payload to turn off the light
+              root["id"] = 1;
+              root["src"] = "user";
+              root["method"] = "Light.Set";
+              auto params = root.createNestedObject("params");
+              params["id"] = 0;
+              params["on"] = false;
             }
