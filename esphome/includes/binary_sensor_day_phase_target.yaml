@@ -24,7 +24,7 @@ lambda: |-
     time_t sunrise_yesterday = midnight_yesterday + (time_t) id(${area_id}_${device_id}${suffix}_sunrise_time)->state;
 
     // Get day length in seconds
-    int day_length_seconds = (int)(id(${area_id}_day_length)->state * 3600);
+    int day_length_seconds = (int)(id(${area_id}_${device_id}${suffix}_day_length)->state * 3600);
 
     // Determine if it's day phase
     bool is_day = false;

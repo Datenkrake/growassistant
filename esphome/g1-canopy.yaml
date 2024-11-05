@@ -56,7 +56,7 @@ mqtt:
   broker: !secret mqtt_broker
   username: !secret mqtt_username
   password: !secret mqtt_password
-  topic_prefix: "${area_id}/canopy"
+  topic_prefix: "${area_id}/${device_id}"
   on_message:
     - topic: ${area_id}/door_switch
       then:
@@ -80,7 +80,7 @@ text_sensor:
 sensor:
   # physical sensors
   - !include includes/sensor_bh1750.yaml
-  - !include includes/sensor_ultrasonic.yaml
+  - !include includes/sensor_cola_ultrasonic.yaml
   - !include includes/sensor_bme68x_bsec2.yaml
   # calculated sensors
   - !include includes/sensor_vpd.yaml

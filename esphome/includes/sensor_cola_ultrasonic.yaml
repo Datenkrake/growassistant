@@ -1,9 +1,9 @@
 platform: ultrasonic
 trigger_pin: ${pin_trigger}
 echo_pin: ${pin_echo}
-name: "Canopy Cola Distance [${area_id}_${device_id}${suffix}]"
-id: ${area_id}_${device_id}${suffix}_canopy_cola_distance
-state_topic: "${area_id}/cola_distance/canopy"
+name: "Cola Distance [${area_id}_${device_id}${suffix}]"
+id: ${area_id}_${device_id}${suffix}_cola_distance
+state_topic: "${area_id}/cola_distance"
 update_interval: 1s
 timeout: 2m
 filters:
