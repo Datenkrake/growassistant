@@ -47,7 +47,7 @@ globals:
     type: bool
     restore_value: no
     initial_value: 'false'
-  - id: ${area_id}_${device_id}${suffix}_ew_brightness_global
+  - id: ${area_id}_${device_id}${suffix}_new_brightness_global
     type: float
     restore_value: no
     initial_value: '0.0'
