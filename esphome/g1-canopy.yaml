@@ -78,9 +78,11 @@ text_sensor:
   - !include includes/text_sensor_full_spectrum_brightness_json.yaml
 
 sensor:
+  # physical sensors
   - !include includes/sensor_bh1750.yaml
   - !include includes/sensor_ultrasonic.yaml
   - !include includes/sensor_bme68x_bsec2.yaml
+  # calculated sensors
   - !include includes/sensor_canopy_vpd.yaml
   - !include includes/sensor_canopy_ppfd.yaml
   - !include includes/sensor_canopy_ppfd_target.yaml
