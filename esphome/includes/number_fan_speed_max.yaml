@@ -1,14 +1,14 @@
-  - platform: template
-    name: "Fan Speed Max [${area_id}_${device_id}${suffix}]"
-    id: ${area_id}_${device_id}${suffix}_fan_speed_max
-    state_topic: "${area_id}/${device_id}/fan_speed_max"
-    command_topic: "${area_id}/${device_id}/fan_speed_max/set-state"
-    optimistic: True
-    initial_value: 60.0
-    min_value: 0.0
-    max_value: 100.0
-    step: 1.0
-    mode: box 
-    unit_of_measurement: "%"
-    retain: True
-    restore_value: True
+platform: template
+name: "Fan Speed Max [${area_id}_${device_id}${suffix}]"
+id: ${area_id}_${device_id}${suffix}_fan_speed_max
+state_topic: "${area_id}/${device_id}/fan_speed_max"
+command_topic: "${area_id}/${device_id}/fan_speed_max/set-state"
+optimistic: True
+initial_value: 60.0
+min_value: 0.0
+max_value: 100.0
+step: 1.0
+mode: box 
+unit_of_measurement: "%"
+retain: True
+restore_value: True
