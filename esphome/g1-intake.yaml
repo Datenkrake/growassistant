@@ -33,6 +33,7 @@ esphome:
 # configure substitutions and friendly name
 ####################################################################
 
+  area: ${area_id}
   friendly_name: ${area_id}_INTAKE${suffix}
 
 substitutions:

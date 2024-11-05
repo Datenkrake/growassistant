@@ -34,6 +34,7 @@ esphome:
 # configure substitutions and friendly name
 ####################################################################
 
+  area: ${area_id}
   friendly_name: ${area_id}_CANOPY${suffix}
 
 substitutions:
@@ -128,18 +129,19 @@ text_sensor:
             }
 
 sensor:
-  - platform: bh1750
-    name: "Canopy Illuminance [${area_id}${suffix}]"
-    id: ${area_id}_canopy_illuminance
-    state_topic: "${area_id}/illuminance/canopy"
-    address: ${address_bh1750}
-    update_interval: 1s
-    i2c_id: bus_a
-    unit_of_measurement: "lx"
-    filters:
-      - exponential_moving_average:
-          alpha: 0.1  # Adjust this value for stronger or weaker , 0 to 1
-          send_every: 5
+  - !include includes/sensor_bh1750.yaml
+  # - platform: bh1750
+  #   name: "Canopy Illuminance [${area_id}${suffix}]"
+  #   id: ${area_id}_canopy_illuminance
+  #   state_topic: "${area_id}/illuminance/canopy"
+  #   address: ${address_bh1750}
+  #   update_interval: 1s
+  #   i2c_id: bus_a
+  #   unit_of_measurement: "lx"
+  #   filters:
+  #     - exponential_moving_average:
+  #         alpha: 0.1  # Adjust this value for stronger or weaker , 0 to 1
+  #         send_every: 5
 
   - platform: ultrasonic
     trigger_pin: ${pin_trigger}
