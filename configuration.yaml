@@ -41,7 +41,7 @@ frontend:
   # - !include automations/sensor_validation.yaml
   # - !include automations/reset.yaml
 
-rest_command: !include rest_commands.yaml
+#rest_command: !include rest_commands.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml
 
@@ -84,9 +84,3 @@ recorder:
   #   entities:
   #     - input_number.some_excluded_entity
 
-# light:
-#   - platform: group
-#     name: Full Spectrum Light
-#     entities:
-#       - light.g1_qbar1_pwm_qbar1
-#       - light.g1_qbar2_pwm_qbar2
