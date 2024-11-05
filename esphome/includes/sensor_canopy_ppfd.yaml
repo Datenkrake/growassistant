@@ -5,8 +5,8 @@ state_topic: "${area_id}/ppfd/canopy"
 unit_of_measurement: "µmol/m²/s"
 update_interval: 1s
 lambda: |
-    float lux = id(${area_id}_${device_id}${suffix}_canopy_illuminance).state;
-    float bh1750_cal = id(${area_id}_${device_id}${suffix}_canopy_illuminance_calibration_factor).state;
+    float lux = id(${area_id}_${device_id}${suffix}_illuminance).state;
+    float bh1750_cal = id(${area_id}_${device_id}${suffix}_illuminance_calibration_factor).state;
     float calibrated_lux = lux * bh1750_cal;
     float ppfd = calibrated_lux * 0.017;
     return roundf(ppfd);

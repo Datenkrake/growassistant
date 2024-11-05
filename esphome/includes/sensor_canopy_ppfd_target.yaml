@@ -9,7 +9,7 @@ lambda: |
     return 0;
     }
 
-    float dli_target = id(${area_id}_${device_id}${suffix}_canopy_dli_target).state;
+    float dli_target = id(${area_id}_${device_id}${suffix}_dli_target).state;
     float day_length = id(${area_id}_${device_id}${suffix}_day_length).state;
 
     if (day_length > 0) {
