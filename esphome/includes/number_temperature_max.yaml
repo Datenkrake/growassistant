@@ -1,5 +1,5 @@
 platform: template
-name: "Temperature Max [${area_id}$_${device_id}{suffix}]"
+name: "Temperature Max [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_temperature_max
 state_topic: "${area_id}/${device_id}/temperature_max"
 command_topic: "${area_id}/${device_id}/temperature_max/set-state"
