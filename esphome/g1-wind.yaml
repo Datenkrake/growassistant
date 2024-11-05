@@ -110,11 +110,11 @@ i2c:
 sensor:
   - platform: sgp4x
     voc:
-      name: "VOC Index"
+      name: "Gantry VOC Index [${area_id}${suffix}]"
       state_topic: "${area_id}/voc_index/gantry"
       id: ${area_id}_gantry_voc_index${suffix}
     nox:
-      name: "NOx Index"
+      name: "Gantry NOx Index [${area_id}${suffix}]"
       state_topic: "${area_id}/nox_index/gantry"
       id: ${area_id}_gantry_nox_index${suffix}
     compensation:
@@ -127,18 +127,18 @@ sensor:
   - platform: htu21d
     model: htu21d
     temperature:
-      name: "Temperature"
+      name: "Gantry Temperature [${area_id}${suffix}]"
       id: ${area_id}_gantry_temperature${suffix}
       state_topic: "${area_id}/temperature/gantry"
     humidity:
-      name: "Humidity"
+      name: "Gantry Humidity [${area_id}${suffix}]"
       id: ${area_id}_gantry_humidity${suffix}
       state_topic: "${area_id}/humidity/gantry"
     heater:
       name: "Heater"
 
   - platform: template
-    name: "VPD"
+    name: "Gantry VPD [${area_id}${suffix}]"
     id: ${area_id}_gantry_vpd${suffix}
     state_topic: "${area_id}/vpd/gantry"
     unit_of_measurement: "kPa"
@@ -154,7 +154,7 @@ sensor:
       return roundf(LVPD * 100.0) / 100.0;
 
   - platform: template
-    name: "RH Target"
+    name: "Gantry RH Target [${area_id}${suffix}]"
     id: ${area_id}_gantry_rh_target${suffix}
     state_topic: "${area_id}/rh_target/gantry"
     unit_of_measurement: "%"
@@ -169,7 +169,7 @@ sensor:
       return roundf(RH_TARGET * 10.0) / 10.0;
 
   - platform: template
-    name: "Dew Point"
+    name: "Gantry Dew Point [${area_id}${suffix}]"
     id: ${area_id}_gantry_dew_point${suffix}
     state_topic: "${area_id}/dew_point/gantry"
     unit_of_measurement: "°C"
@@ -185,21 +185,21 @@ sensor:
 
   - platform: mqtt_subscribe
     topic: "${area_id}/vpd_leaf_offset/canopy"
-    name: "VPD Leaf Offset"
+    name: "Gantry VPD Leaf Offset [${area_id}${suffix}]"
     id: ${area_id}_gantry_canopy_vpd_leaf_offset${suffix}
     state_topic: "${area_id}/vpd_leaf_offset/gantry"
     retain: True
 
   - platform: mqtt_subscribe
     topic: "${area_id}/vpd_target/canopy"
-    name: "VPD Target"
+    name: "Gantry VPD Target [${area_id}${suffix}]"
     id: ${area_id}_gantry_canopy_vpd_target${suffix}
     state_topic: "${area_id}/vpd_target/gantry"
     retain: True
 
 number:
   - platform: template
-    name: "Wind Fan Speed Min"
+    name: "Gantry Wind Fan Speed Min [${area_id}${suffix}]"
     id: ${area_id}_wind_fan_speed_min${suffix}
     state_topic: "${area_id}/wind_fan_speed_min"
     command_topic: "${area_id}/wind_fan_speed_min/set-state"
@@ -215,7 +215,7 @@ number:
     retain: True
 
   - platform: template
-    name: "Wind Fan Speed Max"
+    name: "Gantry Wind Fan Speed Max [${area_id}${suffix}]"
     id: ${area_id}_wind_fan_speed_max${suffix}
     state_topic: "${area_id}/wind_fan_speed_max"
     command_topic: "${area_id}/wind_fan_speed_max/set-state"
@@ -229,7 +229,7 @@ number:
     icon: mdi:fan
 
   - platform: template
-    name: "Wind Sweep Duration"
+    name: "Gantry Wind Sweep Duration [${area_id}${suffix}]"
     id: ${area_id}_wind_sweep_duration${suffix}
     state_topic: "${area_id}/wind_fan_sweep_duration"
     command_topic: "${area_id}/wind_fan_sweep_duration/set-state"
@@ -252,7 +252,7 @@ script:
     then:
       lambda: |-
         // Check if the door is open
-        if (id(${area_id}_fan_speed_step${suffix})) {
+        if (id(${area_id}_door_open${suffix})) {
           // Door is open; turn off both fans
           auto call3 = id(${area_id}_wind_fan1${suffix}).turn_off();
           call3.perform();

@@ -1,7 +1,3 @@
-esphome:
-  name: g2-exhaust2
-  friendly_name: G2_EXHAUST2
-
 esp32:
   board: esp32-c3-devkitm-1
   framework:
@@ -30,12 +26,37 @@ wifi:
 
 captive_portal:
 
+esphome:
+  name: g2-exhaust2
+
+####################################################################
+# configure substitutions and friendly name
+####################################################################
+
+  friendly_name: ${area_id}_EXHAUST${suffix}
+
+substitutions:
+  area_id: G2
+  suffix: "_B"
+  #pin_sda: GPIO3
+  #pin_scl: GPIO4
+  pin_fan1_pwm: GPIO5
+  pin_fan2_pwm: GPIO6
+  #address_bme680: "0x77"
+  #bme680_temp_offset: "2.5"
+  fan1_max: "1.0"
+  fan2_max: "1.0"
+
+####################################################################
+# generic yaml for humidifiers below
+####################################################################
+    
 globals:
-  - id: fan1_pwm_value
+  - id: ${area_id}_fan1_pwm_value${suffix}
     type: float
     restore_value: no
     initial_value: '0.0'
-  - id: door_open
+  - id: ${area_id}_door_open${suffix}
     type: bool
     restore_value: no
     initial_value: 'false'
@@ -44,92 +65,137 @@ mqtt:
   broker: !secret mqtt_broker
   username: !secret mqtt_username
   password: !secret mqtt_password
-  topic_prefix: "g2/exhaust"
+  topic_prefix: "${area_id}/exhaust"
   on_message:
-    - topic: g2/door_switch
+    - topic: ${area_id}/door_switch
       then:
         - lambda: |-
             if (strcmp(x.c_str(), "ON") == 0) {
-              id(door_open) = true;
+              id(${area_id}_door_open${suffix}) = true;
             } else if (strcmp(x.c_str(), "OFF") == 0) {
-              id(door_open) = false;
+              id(${area_id}_door_open${suffix}) = false;
             }
             id(update_fan_speed).execute();
-  
+
 output:
   - platform: ledc
-    pin: GPIO5
-    id: fan1_pwm
-    frequency: 15000 Hz
+    pin: ${pin_fan1_pwm}
+    id: ${area_id}_fan1_pwm${suffix}
+    frequency: 25000 Hz
     inverted: True
-    max_power: 1
+    max_power: ${fan1_max}
+
+  - platform: ledc
+    pin: ${pin_fan2_pwm}
+    id: ${area_id}_fan2_pwm${suffix}
+    frequency: 25000 Hz
+    inverted: True
+    max_power: ${fan2_max}
 
 fan:
   - platform: speed
-    output: fan1_pwm
-    name: "G2 Exhaust 2"
-    id: g2_exhaust_fan2
-    speed_count: 100
-
-
+    output: ${area_id}_fan1_pwm${suffix}
+    name: "Exhaust [${area_id}${suffix}]"
+    id: ${area_id}_exhaust_fan1${suffix}
+    state_topic: "${area_id}/exhaust/fan/state"
+    speed_state_topic: "${area_id}/exhaust/fan/speed"
+    command_topic: "${area_id}/exhaust/fan/set-state"
+    speed_command_topic: "${area_id}/exhaust/fan/set-speed"
+  - platform: speed
+    output: ${area_id}_fan2_pwm${suffix}
+    name: "Exhaust [${area_id}${suffix}]"
+    id: ${area_id}_exhaust_fan2${suffix}
+    state_topic: "${area_id}/exhaust/fan/state"
+    speed_state_topic: "${area_id}/exhaust/fan/speed"
+    command_topic: "${area_id}/exhaust/fan/set-state"
+    speed_command_topic: "${area_id}/exhaust/fan/set-speed"
+    
+# MQTT Sensors
 sensor:
-  - platform: mqtt_subscribe
-    name: "G2 Temperature Max"
-    id: g2_temperature_max
-    topic: "g2/brain/number/temperature_max/state"
+  # - platform: bme68x_bsec2
+  #   temperature:
+  #     name: "Canopy Temperature"
+  #     id: ${area_id}_canopy_temperature
+  #     state_topic: "${area_id}/temperature/canopy"
+  #   pressure:
+  #     name: "Canopy Pressure"
+  #     id: ${area_id}_canopy_pressure
+  #     state_topic: "${area_id}/pressure/canopy"
+  #   humidity:
+  #     name: "Canopy Humidity"
+  #     id: ${area_id}_canopy_humidity
+  #     state_topic: "${area_id}/humidity/canopy"
+  #   iaq:
+  #     name: "Canopy IAQ"
+  #     id: ${area_id}_canopy_iaq
+  #     state_topic: "${area_id}/iaq/canopy"
+  #   co2_equivalent:
+  #     name: "Canopy CO2e"
+  #     id: ${area_id}_canopy_co2e
+  #     state_topic: "${area_id}/co2e/canopy"
+  #   breath_voc_equivalent:
+  #     name: "Canopy bVOCe"
+  #     id: ${area_id}_canopy_voce
+  #     state_topic: "${area_id}/bvoce/canopy"
 
   - platform: mqtt_subscribe
-    name: "G2 VPD Target"
-    id: g2_vpd_target
-    topic: "g2/brain/number/vpd_target/state"
+    name: "Temperature Max [${area_id}${suffix}]"
+    id: ${area_id}_exhaust_temperature_max
+    topic: "${area_id}/temperature_max"
 
   - platform: mqtt_subscribe
-    name: "G2 Canopy VPD"
-    id: g2_canopy_vpd
-    topic: "g2/canopy/sensor/vpd/state"
+    name: "Canopy VPD Target [${area_id}${suffix}]"
+    id: ${area_id}_exhaust_vpd_target
+    topic: "${area_id}/vpd_target/canopy"
 
   - platform: mqtt_subscribe
-    name: "G2 Canopy RH Target"
-    id: g2_canopy_rh_target
-    topic: "g2/canopy/sensor/rh_target/state"
+    name: "Canopy VPD [${area_id}${suffix}]"
+    id: ${area_id}_exhaust_canopy_vpd
+    topic: "${area_id}/vpd/canopy"
 
   - platform: mqtt_subscribe
-    name: "G2 Canopy Humidity"
-    id: g2_canopy_humidity
-    topic: "g2/canopy/sensor/humidity/state"
+    name: "Canopy RH Target [${area_id}${suffix}]"
+    id: ${area_id}_exhaust_canopy_rh_target
+    topic: "${area_id}/rh_target/canopy"
 
   - platform: mqtt_subscribe
-    name: "G2 Canopy Temperature"
-    id: g2_canopy_temperature
-    topic: "g2/canopy/sensor/temperature/state"
+    name: "Canopy Humidity [${area_id}${suffix}]"
+    id: ${area_id}_exhaust_canopy_humidity
+    topic: "${area_id}/humidity/canopy"
 
   - platform: mqtt_subscribe
-    name: "G2 Gantry VPD"
-    id: g2_gantry_vpd
-    topic: "g2/gantry/sensor/vpd/state"
+    name: "Canopy Temperature [${area_id}${suffix}]"
+    id: ${area_id}_exhaust_canopy_temperature
+    topic: "${area_id}/temperature/canopy"
 
   - platform: mqtt_subscribe
-    name: "G2 Gantry RH Target"
-    id: g2_gantry_rh_target
-    topic: "g2/gantry/sensor/rh_target/state"
+    name: "Gantry VPD [${area_id}${suffix}]"
+    id: ${area_id}_exhaust_gantry_vpd
+    topic: "${area_id}/vpd/gantry"
 
   - platform: mqtt_subscribe
-    name: "G2 Gantry Humidity"
-    id: g2_gantry_humidity
-    topic: "g2/gantry/sensor/humidity/state"
+    name: "Gantry RH Target [${area_id}${suffix}]"
+    id: ${area_id}_exhaust_gantry_rh_target
+    topic: "${area_id}/rh_target/gantry"
 
   - platform: mqtt_subscribe
-    name: "G2 Gantry Temperature"
-    id: g2_gantry_temperature
-    topic: "g2/gantry/sensor/temperature/state"
+    name: "Gantry Humidity [${area_id}${suffix}]"
+    id: ${area_id}_exhaust_gantry_humidity
+    topic: "${area_id}/humidity/gantry"
+
+  - platform: mqtt_subscribe
+    name: "Gantry Temperature [${area_id}${suffix}]"
+    id: ${area_id}_exhaust_gantry_temperature
+    topic: "${area_id}/temperature/gantry"
 
 number:
   - platform: template
-    name: "G2 Exhaust Fan Speed Min B"
-    id: g2_exhaust_fan_speed_min_b
-    state_topic: "g2/exhaust/number/exhaust_fan_speed_min"
+    name: "Exhaust Fan Speed Min [${area_id}${suffix}]"
+    id: ${area_id}_exhaust_fan_speed_min
+    state_topic: "${area_id}/exhaust_fan_speed_min"
+    command_topic: "${area_id}/exhaust_fan_speed_min/set-state"
     optimistic: True
-    initial_value: 20.0
+    initial_value: 0.0
     min_value: 0.0
     max_value: 100.0
     step: 1.0
@@ -139,9 +205,10 @@ number:
     restore_value: True
 
   - platform: template
-    name: "G2 Exhaust Fan Speed Max B"
-    id: g2_exhaust_fan_speed_max_b
-    state_topic: "g2/exhaust/number/exhaust_fan_speed_max"
+    name: "Exhaust Fan Speed Max [${area_id}${suffix}]"
+    id: ${area_id}_exhaust_fan_speed_max
+    state_topic: "${area_id}/exhaust_fan_speed_max"
+    command_topic: "${area_id}/exhaust_fan_speed_max/set-state"
     optimistic: True
     initial_value: 60.0
     min_value: 0.0
@@ -162,41 +229,46 @@ script:
     then:
       lambda: |-
         // Check if the door is open
-        if (id(door_open)) {
+        if (id(${area_id}_door_open${suffix})) {
           // Door is open; turn off both fans
-          //id(fan1_pwm).set_level(0.0);
-          //id(fan1_pwm_value) = 0.0;
-          auto call3 = id(g2_exhaust_fan2).turn_off();
+          //id(${area_id}_fan1_pwm${suffix}).set_level(0.0);
+          //id(${area_id}_fan2_pwm${suffix}).set_level(0.0);
+          //id(${area_id}_fan1_pwm_value${suffix}) = 0.0;
+          auto call3 = id(${area_id}_exhaust_fan1${suffix}).turn_off();
           call3.perform();
+          auto call4 = id(${area_id}_exhaust_fan2${suffix}).turn_off();
+          call4.perform();
           ESP_LOGD("fan", "Door is open. Turning off fans.");
           return;
         }
 
-        auto call1 = id(g2_exhaust_fan2).turn_on();
+        auto call1 = id(${area_id}_exhaust_fan1${suffix}).turn_on();
         call1.perform();
+        auto call2 = id(${area_id}_exhaust_fan2${suffix}).turn_on();
+        call2.perform();
 
         // Door is closed; proceed with fan speed adjustments
         // Default to gantry data
-        float temperature = id(g2_canopy_temperature).state;
-        float humidity = id(g2_canopy_humidity).state;
-        float rh_target = id(g2_canopy_rh_target).state;
+        float temperature = id(${area_id}_exhaust_canopy_temperature).state;
+        float humidity = id(${area_id}_exhaust_canopy_humidity).state;
+        float rh_target = id(${area_id}_exhaust_canopy_rh_target).state;
 
         // Use canopy data if available
-        if (!isnan(id(g2_gantry_temperature).state)) {
-          temperature = id(g2_gantry_temperature).state;
+        if (!isnan(id(${area_id}_exhaust_gantry_temperature).state)) {
+          temperature = id(${area_id}_exhaust_gantry_temperature).state;
         }
-        if (!isnan(id(g2_canopy_humidity).state)) {
-          humidity = id(g2_gantry_humidity).state;
+        if (!isnan(id(${area_id}_exhaust_canopy_humidity).state)) {
+          humidity = id(${area_id}_exhaust_gantry_humidity).state;
         }
-        if (!isnan(id(g2_gantry_rh_target).state)) {
-          rh_target = id(g2_gantry_rh_target).state;
+        if (!isnan(id(${area_id}_exhaust_gantry_rh_target).state)) {
+          rh_target = id(${area_id}_exhaust_gantry_rh_target).state;
         }
 
         // Get temperature max value
-        float _temperature_max = id(g2_temperature_max).state;
+        float _temperature_max = id(${area_id}_exhaust_temperature_max).state;
 
         // Adjust fan speed based on conditions
-        float fan_value = id(fan1_pwm_value);
+        float fan_value = id(${area_id}_fan1_pwm_value${suffix});
 
         // If temperature exceeds temperature max, increase fan speed
         if (temperature > _temperature_max) {
@@ -211,20 +283,21 @@ script:
         }
 
         // Retrieve min and max fan speeds
-        float fan_min = id(g2_exhaust_fan_speed_min_b).state;
-        float fan_max = id(g2_exhaust_fan_speed_max_b).state;
+        float fan_min = id(${area_id}_exhaust_fan_speed_min).state;
+        float fan_max = id(${area_id}_exhaust_fan_speed_max).state;
 
         // Clamp the fan value between min and max
         fan_value = fmax(fan_min, fmin(fan_max, fan_value));
 
         // Update the global fan speed value
-        id(fan1_pwm_value) = fan_value;
+        id(${area_id}_fan1_pwm_value${suffix}) = fan_value;
 
         // Set the fan speed to both fans
-        //id(fan1_pwm).set_level(fan_value / 100.0);
-        //id(fan2_pwm).set_level(fan_value / 100.0);
+        //id(${area_id}_fan1_pwm${suffix}).set_level(fan_value / 100.0);
+        //id(${area_id}_fan2_pwm${suffix}).set_level(fan_value / 100.0);
 
-        id(g2_exhaust_fan2).speed = fan_value;
+        id(${area_id}_exhaust_fan1${suffix}).speed = fan_value;
+        id(${area_id}_exhaust_fan2${suffix}).speed = fan_value;
 
         ESP_LOGD("fan", "Updating fan speed to %.2f%% (Min: %.2f%%, Max: %.2f%%)", fan_value, fan_min, fan_max);
 

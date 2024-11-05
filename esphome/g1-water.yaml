@@ -33,6 +33,7 @@ esphome:
 # configure substitutions and friendly name
 ####################################################################
 
+  area: ${area_id}
   friendly_name: ${area_id}_WATER${suffix}
 
 substitutions:
@@ -58,7 +59,7 @@ binary_sensor:
       number: ${pin_door_switch}
       mode: INPUT_PULLUP
       inverted: true
-    name: "Door Switch"
+    name: "Door Switch [${area_id}${suffix}]"
     id: ${area_id}_water_door_switch${suffix}
     state_topic: "${area_id}/door_switch"
     device_class: door
@@ -66,20 +67,20 @@ binary_sensor:
 switch:
   - platform: gpio
     pin: ${pin_irrigation_output}
-    name: "Irrigation Pump"
+    name: "Irrigation Pump [${area_id}${suffix}]"
     id: ${area_id}_water_irrigation_pump${suffix}
     state_topic: "${area_id}/irrigation_pump"
     command_topic: "${area_id}/irrigation_pump/set-state"
 
   - platform: gpio
     pin: ${pin_circulation_output}
-    name: "Circulation Pump"
+    name: "Circulation Pump [${area_id}${suffix}]"
     id: ${area_id}_water_circulation_pump${suffix}
     state_topic: "${area_id}/circulation_pump"
     command_topic: "${area_id}/circulation_pump/set-state"
 
   - platform: template
-    name: "Water Enable"
+    name: "Irrigation Enable [${area_id}${suffix}]"
     id: ${area_id}_water_enable${suffix}
     optimistic: true
     state_topic: "${area_id}/water_enable"
@@ -89,7 +90,7 @@ switch:
 
 number:
   - platform: template
-    name: "Irrigation Period"
+    name: "Irrigation Period [${area_id}${suffix}]"
     id: ${area_id}_water_irrigation_period${suffix}
     state_topic: "${area_id}/irrigation_period"
     command_topic: "${area_id}/irrigation_period/set-state"
@@ -105,7 +106,7 @@ number:
     retain: True
 
   - platform: template
-    name: "Irrigation Duration"
+    name: "Irrigation Duration [${area_id}${suffix}]"
     id: ${area_id}_water_irrigation_duration${suffix}
     state_topic: "${area_id}/irrigation_duration"
     command_topic: "${area_id}/irrigation_duration/set-state"
@@ -121,7 +122,7 @@ number:
     restore_value: True
 
   - platform: template
-    name: "Circulation Period"
+    name: "Circulation Period [${area_id}${suffix}]"
     id: ${area_id}_water_circulation_period${suffix}
     state_topic: "${area_id}/circulation_period"
     command_topic: "${area_id}/circulation_period/set-state"
@@ -137,7 +138,7 @@ number:
     retain: True
   
   - platform: template
-    name: "Circulation Duration"
+    name: "Circulation Duration [${area_id}${suffix}]"
     id: ${area_id}_water_circulation_duration${suffix}
     state_topic: "${area_id}/circulation_duration"
     command_topic: "${area_id}/circulation_duration/set-state"

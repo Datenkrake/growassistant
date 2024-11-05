@@ -60,7 +60,7 @@ esp32_camera:
 
 number:
   - platform: template
-    name: "Timelapse Period"
+    name: "Canopy Timelapse Period [G1]"
     id: g1_timlapse_period
     optimistic: True
     initial_value: 60

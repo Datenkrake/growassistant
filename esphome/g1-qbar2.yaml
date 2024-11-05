@@ -1,7 +1,3 @@
-esphome:
-  name: g1-qbar2
-  friendly_name: G1_QBAR2
-
 esp32:
   board: esp32-c3-devkitm-1
   framework:
@@ -11,9 +7,9 @@ esp32:
 logger:
 
 # Enable Home Assistant API
-api:
-  encryption:
-    key: "EJ5yzkvX09ZYh7ILJu6ykonx6gKIX8kAS8CRqDma4cc="
+#api:
+#  encryption:
+#    key: "EJ5yzkvX09ZYh7ILJu6ykonx6gKIX8kAS8CRqDma4cc="
 
 ota:
   - platform: esphome
@@ -30,6 +26,25 @@ wifi:
 
 captive_portal:
 
+esphome:
+  name: g1-qbar2
+
+####################################################################
+# configure substitutions and friendly name
+####################################################################
+
+  friendly_name: ${area_id}_QBAR${suffix}
+
+substitutions:
+  area_id: G1
+  suffix: "_B"
+  pin_light_pwm: GPIO8
+  pin_sda: GPIO9
+  pin_scl: GPIO10
+
+####################################################################
+# generic yaml for humidifiers below
+####################################################################
 
 i2c:
   sda: 9
@@ -38,65 +53,99 @@ i2c:
   id: bus_a
   # frequency: 400kHz 
 
+mqtt:
+  broker: !secret mqtt_broker
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+  topic_prefix: "${area_id}/light"
+
 # PWM controlled LED on GPIO8
 output:
   - platform: ledc
-    pin: GPIO8
-    id: led_pwm
+    pin: ${pin_light_pwm}
+    id: ${area_id}_led_pwm${suffix}
     frequency: 100 Hz 
+    max_power: 0.95
 
 light:
   - platform: monochromatic
-    output: led_pwm
-    name: "PWM QBAR2"
+    output: ${area_id}_led_pwm${suffix}
+    name: "Full Spectrum [${area_id}${suffix}]"
+    state_topic: "${area_id}/light/full_spectrum/state"
+    command_topic: "${area_id}/light/full_spectrum/set-state"
+
+# number:
+#   - platform: template
+#     name: "Gantry Position Min"
+#     id: ${area_id}_qbar1_gantry_position_min${suffix}
+#     state_topic: "${area_id}/gantry_position_min"
+#     command_topic: "${area_id}/gantry_position_min/set-state"
+#     min_value: 0
+#     max_value: 1
+#     step: 0.01
+#     initial_value: 0.2
+#     optimistic: True
+#     restore_value: True
+#     retain: True
+
+#   - platform: template
+#     name: "Gantry Position Max"
+#     id: ${area_id}_qbar1_gantry_position_max${suffix}
+#     state_topic: "${area_id}/gantry_position_max"
+#     command_topic: "${area_id}/gantry_position_max/set-state"
+#     min_value: 0
+#     max_value: 1.5
+#     step: 0.01
+#     initial_value: 1.1
+#     optimistic: True
+#     restore_value: True
+#     retain: True
 
 # Ultrasonic sensor on GPIO9 (TRIG) and GPIO10 (ECHO)
-sensor:
+# sensor:
+#   - platform: ultrasonic
+#     trigger_pin: ${pin_trigger}
+#     echo_pin: ${pin_echo}
+#     name: "Gantry Position"
+#     id: ${area_id}_qbar1_gantry_position${suffix}
+#     state_topic: "${area_id}/gantry_position"
+#     update_interval: 1s
+#     timeout: 2m
+#     filters:
+#       - sliding_window_moving_average:
+#           window_size: 60   # Number of readings to average
+#           send_every: 60    # How often to send the averaged result
 
-  - platform: bh1750
-    name: "G1 BH1750 Illuminance"
-    address: 0x23
-    update_interval: 60s
-    i2c_id: bus_a
+# Cola detection sensor via MQTT as text_sensor
+# text_sensor:
+#   - platform: mqtt_subscribe
+#     name: "Cola Detected"
+#     id: ${area_id}_qbar1_cola_detected${suffix}
+#     topic: "${area_id}/cola_detected/canopy"
 
-  # - platform: ultrasonic
-  #   trigger_pin: GPIO9
-  #   echo_pin: GPIO10
-  #   name: "Ultrasonic Sensor"
-  #   update_interval: 1s
-  #   timeout: 2m
+# interval:
+#   - interval: 60min
+#     then:
+#       - lambda: |-
+#           ESP_LOGD("debug", "Checking conditions for moving gantry...");
+#           ESP_LOGD("debug", "Cola detected state: %s", id(${area_id}_qbar1_cola_detected${suffix}).state.c_str());
+#           ESP_LOGD("debug", "Gantry position: %.2f, Min Position: %.2f", id(${area_id}_qbar1_gantry_position${suffix}).state, id(${area_id}_qbar1_gantry_position_min${suffix}).state);
 
-  # - platform: bh1750
-  #   name: "G1 BH1750 Illuminance"
-  #   address: 0x23
-  #   update_interval: 60s
-  #   i2c_id: bus_a
+#           if (id(${area_id}_qbar1_cola_detected${suffix}).state == "{\"state\": \"true\"}" && id(${area_id}_qbar1_gantry_position${suffix}).state > id(${area_id}_qbar1_gantry_position_min${suffix}).state) {
+#             ESP_LOGD("main", "Conditions met. Calling REST endpoint to move gantry");
+#             id(rest_move_up).execute();
+#           } else {
+#             ESP_LOGD("main", "Conditions not met. Skipping...");
+#           }
 
-  # - platform: ultrasonic
-    # trigger_pin: 1
-    # echo_pin: 2
-    # update_interval: 10s
-    # pulse_time: 1000us
-    # name: "G1 Light Distance Sensor"
-    # filters:
-    # - sliding_window_moving_average:
-    #     window_size: 60
-    #     send_every: 60
+# # Example rest_move_up script
+# script:
+#   - id: rest_move_up
+#     then:
+#       - http_request.get:
+#           url: "http://g1.local:7125/printer/gcode/script?script=move_light%20DISTANCE=10"
 
-  # - platform: bme680
-  #   temperature:
-  #     name: "BME680 Temperature"
-  #     id: bme680_temperature
-  #     oversampling: 16x
-  #   pressure:
-  #     name: "BME680 Pressure"
-  #     id: bme680_pressure
-  #   humidity:
-  #     name: "BME680 Humidity"
-  #     id: bme680_humidity
-  #   gas_resistance:
-  #     name: "BME680 Gas Resistance"
-  #     id: bme680_gas
-  #   address: 0x77
-  #   update_interval: 60s
-  #   i2c_id: bus_a
+# # Include the HTTP Request component
+# http_request:
+#   verify_ssl: false
+#   useragent: esphome/device

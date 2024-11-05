@@ -104,84 +104,84 @@ bme68x_bsec2_i2c:
 sensor:
   - platform: bme68x_bsec2
     temperature:
-      name: "Temperature"
+      name: "Intake Temperature [${area_id}${suffix}]"
       id: ${area_id}_intake_temperature${suffix}
       state_topic: "${area_id}/temperature/intake"
     pressure:
-      name: "Pressure"
+      name: "Intake Pressure [${area_id}${suffix}]"
       id: ${area_id}_intake_pressure${suffix}
       state_topic: "${area_id}/pressure/intake"
     humidity:
-      name: "Humidity"
+      name: "Intake Humidity [${area_id}${suffix}]"
       id: ${area_id}_intake_humidity${suffix}
       state_topic: "${area_id}/humidity/intake"
     iaq:
-      name: "IAQ"
+      name: "Intake IAQ [${area_id}${suffix}]"
       id: ${area_id}_intake_iaq${suffix}
       state_topic: "${area_id}/iaq/intake"
     co2_equivalent:
-      name: "CO2e"
+      name: "Intake CO2e [${area_id}${suffix}]"
       id: ${area_id}_intake_co2e${suffix}
       state_topic: "${area_id}/co2e/intake"
     breath_voc_equivalent:
-      name: "bVOCe"
+      name: "Intake bVOCe [${area_id}${suffix}]"
       id: ${area_id}_bvoce_intake${suffix}
       state_topic: "${area_id}/bvoce/intake"
     
 # MQTT Sensors
   - platform: mqtt_subscribe
-    name: "Temperature Max"
+    name: "Temperature Max [${area_id}${suffix}]"
     id: ${area_id}_intake_temperature_max${suffix}
     topic: "${area_id}/temperature_max"
 
   - platform: mqtt_subscribe
-    name: "VPD Target"
+    name: "Canopy VPD Target [${area_id}${suffix}]"
     id: ${area_id}_intake_canopy_vpd_target${suffix}
     topic: "${area_id}/vpd_target/canopy"
 
   - platform: mqtt_subscribe
-    name: "Canopy VPD"
+    name: "Canopy VPD [${area_id}${suffix}]"
     id: ${area_id}_intake_canopy_vpd${suffix}
     topic: "${area_id}/vpd/canopy"
 
   - platform: mqtt_subscribe
-    name: "Canopy RH Target"
+    name: "Canopy RH Target [${area_id}${suffix}]"
     id: ${area_id}_intake_canopy_rh_target${suffix}
     topic: "${area_id}/rh_target/canopy"
 
   - platform: mqtt_subscribe
-    name: "Canopy Humidity"
+    name: "Canopy Humidity [${area_id}${suffix}]"
     id: ${area_id}_intake_canopy_humidity${suffix}
     topic: "${area_id}/humidity/canopy"
 
   - platform: mqtt_subscribe
-    name: "Canopy Temperature"
+    name: "Canopy Temperature [${area_id}${suffix}]"
     id: ${area_id}_intake_canopy_temperature${suffix}
     topic: "${area_id}/temperature/canopy"
 
   - platform: mqtt_subscribe
-    name: "Gantry VPD"
+    name: "Gantry VPD [${area_id}${suffix}]"
     id: ${area_id}_intake_gantry_vpd${suffix}
     topic: "${area_id}/vpd/gantry"
 
   - platform: mqtt_subscribe
-    name: "Gantry RH Target"
+    name: "Gantry RH Target [${area_id}${suffix}]"
     id: ${area_id}_intake_gantry_rh_target${suffix}
     topic: "${area_id}//rh_target/gantry"
 
   - platform: mqtt_subscribe
-    name: "Gantry Humidity"
+    name: "Gantry Humidity [${area_id}${suffix}]"
     id: ${area_id}_intake_gantry_humidity${suffix}
     topic: "${area_id}/humidity/gantry"
 
   - platform: mqtt_subscribe
-    name: "Gantry Temperature"
+    name: "Gantry Temperature [${area_id}${suffix}]"
     id: ${area_id}_intake_gantry_temperature${suffix}
     topic: "${area_id}/temperature/gantry"
 
 number:
   - platform: template
-    name: "Intake Fan Speed Min"
+    name: "Intake Fan Speed Min [${area_id}${suffix}]"
     id: ${area_id}_intake_fan_speed_min${suffix}
     state_topic: "${area_id}/intake_fan_speed_min"
     command_topic: "${area_id}/intake_fan_speed_min/set-state"
@@ -196,7 +196,7 @@ number:
     restore_value: True
 
   - platform: template
-    name: "Intake Fan Speed Max"
+    name: "Intake Fan Speed Max [${area_id}${suffix}]"
     id: ${area_id}_intake_fan_speed_max${suffix}
     state_topic: "${area_id}/intake_fan_speed_max"
     command_topic: "${area_id}/intake_fan_speed_max/set-state"

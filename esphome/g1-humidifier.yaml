@@ -48,40 +48,40 @@ output:
 fan:
   - platform: speed
     output: ${area_id}_humidifier_pwm_output${suffix}
-    name: "Humidifier"
+    name: "Humidifier [${area_id}${suffix}]"
     id: ${area_id}_humidifier_fan${suffix}
     state_topic: "${area_id}/humidifier/fan/vapor/state"
-    speed_state_topic: "${area_id}/humidifer/fan/vapor/speed"
-    speed_level_state_topic: "${area_id}/humidifer/fan/vapor/level"
-    command_topic: "${area_id}/humidifer/fan/vapor/set_state"
-    speed_command_topic: "${area_id}/humidifer/fan/vapor/set_speed"
-    speed_level_command_topic: "${area_id}/humidifer/fan/vapor/set_level"
+    speed_state_topic: "${area_id}/humidifier/fan/vapor/speed"
+    speed_level_state_topic: "${area_id}/humidifier/fan/vapor/level"
+    command_topic: "${area_id}/humidifier/fan/vapor/set_state"
+    speed_command_topic: "${area_id}/humidifier/fan/vapor/set_speed"
+    speed_level_command_topic: "${area_id}/humidifier/fan/vapor/set_level"
     speed_count: 100  # Set the speed steps (0-100%)
 
 sensor:
   - platform: mqtt_subscribe
-    name: "Canopy RH"
+    name: "Canopy RH [${area_id}${suffix}]"
     id: ${area_id}_humidifier_canopy_rh${suffix}
     topic: "${area_id}/humidity/canopy"
     unit_of_measurement: "%"
     qos: 1
 
   - platform: mqtt_subscribe
-    name: "Canopy RH Target"
+    name: "Canopy RH Target [${area_id}${suffix}]"
     id: ${area_id}_humidifier_canopy_rh_target${suffix}
     topic: "${area_id}/rh_target/canopy"
     unit_of_measurement: "%"
     qos: 1
 
   - platform: mqtt_subscribe
-    name: "Gantry RH"
+    name: "Gantry RH [${area_id}${suffix}]"
     id: ${area_id}_humidifier_gantry_rh${suffix}
     topic: "${area_id}/humidity/gantry"
     unit_of_measurement: "%"
     qos: 1
 
   - platform: mqtt_subscribe
-    name: "Gantry RH Target"
+    name: "Gantry RH Target [${area_id}${suffix}]"
     id: ${area_id}_humidifier_gantry_rh_target${suffix}
     topic: "${area_id}/rh_target/gantry"
     unit_of_measurement: "%"
@@ -89,7 +89,7 @@ sensor:
 
 switch:
   - platform: template
-    name: "Humidifier Enable"
+    name: "Humidifier Enable [${area_id}${suffix}]"
     id: ${area_id}_humidifier_enable${suffix}
     optimistic: True
     state_topic: "${area_id}/humidifier/humidifier_enable"

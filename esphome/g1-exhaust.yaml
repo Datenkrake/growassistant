@@ -93,7 +93,7 @@ output:
 fan:
   - platform: speed
     output: fan1_pwm
-    name: "Exhaust"
+    name: "Exhaust [${area_id}${suffix}]"
     id: exhaust_fan1
     state_topic: "${area_id}/exhaust/fan/state"
     speed_state_topic: "${area_id}/exhaust/fan/speed"
@@ -111,58 +111,58 @@ fan:
 # MQTT Sensors
 sensor:
   - platform: mqtt_subscribe
-    name: "Temperature Max"
+    name: "Temperature Max [${area_id}${suffix}]"
     id: ${area_id}_exhaust_temperature_max
     topic: "${area_id}/temperature_max"
 
   - platform: mqtt_subscribe
-    name: "VPD Target"
+    name: "Canopy VPD Target [${area_id}${suffix}]"
     id: ${area_id}_exhaust_vpd_target
     topic: "${area_id}/vpd_target/canopy"
 
   - platform: mqtt_subscribe
-    name: "Canopy VPD"
+    name: "Canopy VPD [${area_id}${suffix}]"
     id: ${area_id}_exhaust_canopy_vpd
     topic: "${area_id}/vpd/canopy"
 
   - platform: mqtt_subscribe
-    name: "Canopy RH Target"
+    name: "Canopy RH Target [${area_id}${suffix}]"
     id: ${area_id}_exhaust_canopy_rh_target
     topic: "${area_id}/rh_target/canopy"
 
   - platform: mqtt_subscribe
-    name: "Canopy Humidity"
+    name: "Canopy Humidity [${area_id}${suffix}]"
     id: ${area_id}_exhaust_canopy_humidity
     topic: "${area_id}/humidity/canopy"
 
   - platform: mqtt_subscribe
-    name: "Canopy Temperature"
+    name: "Canopy Temperature [${area_id}${suffix}]"
     id: ${area_id}_exhaust_canopy_temperature
     topic: "${area_id}/temperature/canopy"
 
   - platform: mqtt_subscribe
-    name: "Gantry VPD"
+    name: "Gantry VPD [${area_id}${suffix}]"
     id: ${area_id}_exhaust_gantry_vpd
     topic: "${area_id}/vpd/gantry"
 
   - platform: mqtt_subscribe
-    name: "Gantry RH Target"
+    name: "Gantry RH Target [${area_id}${suffix}]"
     id: ${area_id}_exhaust_gantry_rh_target
     topic: "${area_id}/rh_target/gantry"
 
   - platform: mqtt_subscribe
-    name: "Gantry Humidity"
+    name: "Gantry Humidity [${area_id}${suffix}]"
     id: ${area_id}_exhaust_gantry_humidity
     topic: "${area_id}/humidity/gantry"
 
   - platform: mqtt_subscribe
-    name: "Gantry Temperature"
+    name: "Gantry Temperature [${area_id}${suffix}]"
     id: ${area_id}_exhaust_gantry_temperature
     topic: "${area_id}/temperature/gantry"
 
 number:
   - platform: template
-    name: "Exhaust Fan Speed Min"
+    name: "Exhaust Fan Speed Min [${area_id}${suffix}]"
     id: ${area_id}_exhaust_fan_speed_min
     state_topic: "${area_id}/exhaust_fan_speed_min"
     command_topic: "${area_id}/exhaust_fan_speed_min/set-state"
@@ -177,7 +177,7 @@ number:
     restore_value: True
 
   - platform: template
-    name: "Exhaust Fan Speed Max"
+    name: "Exhaust Fan Speed Max [${area_id}${suffix}]"
     id: ${area_id}_exhaust_fan_speed_max
     state_topic: "${area_id}/exhaust_fan_speed_max"
     command_topic: "${area_id}/exhaust_fan_speed_max/set-state"

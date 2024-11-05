@@ -1,7 +1,3 @@
-esphome:
-  name: gx-sht21
-  friendly_name: G2_CANOPY
-
 esp32:
   board: esp32-c3-devkitm-1
   framework:
@@ -30,12 +26,42 @@ wifi:
 
 captive_portal:
 
+switch:
+  - platform: gpio
+    pin: GPIO4
+    id: sht_gnd
+    restore_mode: ALWAYS_OFF  # GPIO4 is always on, it is GND for SHT21
+
+esphome:
+  name: g2-canopy
+
+####################################################################
+# configure substitutions and friendly name
+####################################################################
+
+  friendly_name: ${area_id}_CANOPY${suffix}
+
+substitutions:
+  area_id: G2
+  suffix: ""
+  pin_sda: GPIO6
+  pin_scl: GPIO5
+  pin_echo: GPIO2
+  pin_trigger: GPIO1
+  address_sht3xd: "0x44"
+  address_bh1750: "0x23"
+
+####################################################################
+# generic yaml for humidifiers below
+####################################################################
+
+
 globals:
-  - id: door_open
+  - id: ${area_id}_door_open${suffix}
     type: bool
     restore_value: no
     initial_value: 'false'
-  - id: new_brightness_global
+  - id: ${area_id}_new_brightness_global${suffix}
     type: float
     restore_value: no
     initial_value: '0.0'
@@ -44,18 +70,17 @@ mqtt:
   broker: !secret mqtt_broker
   username: !secret mqtt_username
   password: !secret mqtt_password
-  topic_prefix: "g2/canopy"
+  topic_prefix: "${area_id}/canopy"
   on_message:
-    - topic: g2/door_switch
+    - topic: ${area_id}/door_switch
       then:
         - lambda: |-
             if (strcmp(x.c_str(), "ON") == 0) {
-              id(door_open) = true;
+              id(${area_id}_door_open${suffix}) = true;
             } else if (strcmp(x.c_str(), "OFF") == 0) {
-              id(door_open) = false;
+              id(${area_id}_door_open${suffix}) = false;
             }
             id(adjust_brightness).execute();
-
 
 # Current time from MQTT
 time:
@@ -63,25 +88,19 @@ time:
     id: mqtt_time
     timezone: CET
 
-
+  # Example configuration entry for ESP32
 i2c:
-  sda: 6
-  scl: 5
+  sda: ${pin_sda}
+  scl: ${pin_scl}
   scan: true
   id: bus_a
   frequency: 50kHz
 
-switch:
-  - platform: gpio
-    pin: GPIO4
-    id: sht_gnd
-    restore_mode: ALWAYS_OFF  # GPIO4 is always on, it is GND for SHT21
-
 text_sensor:
   - platform: mqtt_subscribe
-    name: "G2 Current Brightness"
-    id: g2_current_brightness_text_sensor  # Make sure this ID matches
-    topic: "g2/light/dimmer/status/light:0"
+    name: "Current Brightness [${area_id}${suffix}]"
+    id: ${area_id}_current_brightness_text_sensor  # Make sure this ID matches
+    topic: "${area_id}/light/full_spectrum/state"
     on_value:
       then:
         - lambda: |-
@@ -98,38 +117,32 @@ text_sensor:
               int brightness = doc["brightness"].as<int>();
 
               // Update the text sensor's state to the brightness value as a string
-              id(g2_full_spectrum_brightness_number_sensor).publish_state(brightness/100.0f);
+              //id(full_spectrum_brightness_text_sensor).publish_state(std::to_string(brightness/255));
+              id(full_spectrum_brightness_number_sensor).publish_state(brightness/255.0f);
             } else {
               ESP_LOGW("main", "Brightness key not found in JSON.");
             }
 
 sensor:
-  - platform: sht3xd
-    temperature:
-      name: "Temperature"
-      id: temperature
-    humidity:
-      name: "Humidity"
-      id: humidity
-    address: 0x44
-    update_interval: 30s
-
   - platform: bh1750
-    name: "Illuminance"
-    id: illuminance
-    address: 0x23
+    name: "Canopy Illuminance [${area_id}${suffix}]"
+    id: ${area_id}_canopy_illuminance
+    state_topic: "${area_id}/illuminance/canopy"
+    address: ${address_bh1750}
     update_interval: 1s
     i2c_id: bus_a
+    unit_of_measurement: "lx"
     filters:
       - exponential_moving_average:
           alpha: 0.1  # Adjust this value for stronger or weaker , 0 to 1
           send_every: 5
 
   - platform: ultrasonic
-    trigger_pin: 8
-    echo_pin: 7
-    name: "Cola Distance"
-    id: g2_cola_distance
+    trigger_pin: ${pin_trigger}
+    echo_pin: ${pin_echo}
+    name: "Canopy Cola Distance [${area_id}${suffix}]"
+    id: ${area_id}_canopy_cola_distance
+    state_topic: "${area_id}/cola_distance/canopy"
     update_interval: 1s
     timeout: 2m
     filters:
@@ -137,15 +150,28 @@ sensor:
         window_size: 60
         send_every: 60
 
+  - platform: sht3xd
+    temperature:
+      name: "Canopy Temperature [${area_id}${suffix}]"
+      id: ${area_id}_canopy_temperature
+      state_topic: "${area_id}/temperature/canopy"
+    humidity:
+      name: "Canopy Humidity [${area_id}${suffix}]"
+      id: ${area_id}_canopy_humidity
+      state_topic: "${area_id}/humidity/canopy"
+    address: ${address_sht3xd}
+    update_interval: 30s
+
   - platform: template
-    name: "G2 Canopy VPD"
-    id: g2_canopy_vpd
+    name: "Canopy VPD [${area_id}${suffix}]"
+    id: ${area_id}_canopy_vpd
+    state_topic: "${area_id}/vpd/canopy"
     unit_of_measurement: "kPa"
     update_interval: 30s
     lambda: |
-      float temp = id(temperature).state;
-      float rh = id(humidity).state;
-      float leaf_offset = id(g2_vpd_leaf_offset).state;
+      float temp = id(${area_id}_canopy_temperature).state;
+      float rh = id(${area_id}_canopy_humidity).state;
+      float leaf_offset = id(${area_id}_canopy_vpd_leaf_offset).state;
       float LT = temp + leaf_offset;
       float ASVP = 610.78 * exp((temp / (temp + 237.3)) * 17.2694);
       float LSVP = 610.78 * exp((LT / (LT + 237.3)) * 17.2694);
@@ -153,124 +179,158 @@ sensor:
       return roundf(LVPD * 100.0) / 100.0;
 
   - platform: template
-    name: "G2 DLI"
-    id: g2_dli
-    unit_of_measurement: "mol/m²/day"
-    update_interval: 60s
-    lambda: |
-      float ppfd = id(g2_ppfd).state;
-      float day_length = (int) (id(g2_day_length)->state);
-      float dli = ppfd * 0.0036 * day_length;
-      return roundf(dli * 100.0) / 100.0;
-
-  - platform: template
-    name: "G2 DLI Target"
-    id: g2_dli_target
-    unit_of_measurement: "mol/m²/day"
-    update_interval: 60s
-    lambda: |
-      time_t now = id(mqtt_time).now().timestamp;
-      time_t start_vegetative = (time_t) id(g2_start_date)->state;
-      time_t start_flipping = start_vegetative + (time_t)(id(g2_duration_vegetative))->state * 86400;
-      time_t start_generative = start_flipping + (time_t)(id(g2_duration_flipping))->state * 86400;
-      time_t generative_peak = start_generative + (time_t)(id(g2_duration_generative))->state * 43200;
-      time_t start_drying = start_generative + (time_t)(id(g2_duration_generative))->state * 86400;
-
-      if (now < start_vegetative) {
-        return 0;
-      } else if (now < start_flipping) {
-        float x = float(now - start_vegetative) / float(start_flipping - start_vegetative);
-        float dli_target = id(g2_dli_vegetative_start).state + x * (id(g2_dli_vegetative_end).state - id(g2_dli_vegetative_start).state);
-        return roundf(dli_target);
-      } else if (now < start_generative) {
-        float x = float(now - start_flipping) / float(start_generative - start_flipping);
-        float dli_target = id(g2_dli_vegetative_end).state + x * (id(g2_dli_generative_start).state - id(g2_dli_vegetative_end).state);
-        return roundf(dli_target);
-      } else if (now < generative_peak) {
-        float x = float(now - start_generative) / float(generative_peak - start_generative);
-        float dli_target = id(g2_dli_generative_start).state + x * (id(g2_dli_generative_peak).state - id(g2_dli_generative_start).state);
-        return roundf(dli_target);
-      } else if (now < start_drying) {
-        float x = float(now - generative_peak) / float(start_drying - generative_peak);
-        float dli_target = id(g2_dli_generative_peak).state + x * (id(g2_dli_generative_end).state - id(g2_dli_generative_peak).state);
-        return roundf(dli_target);
-      } else {
-        return 0;
-      }
-
-  - platform: template
-    name: "G2 PPFD"
-    id: g2_ppfd
+    name: "Canopy PPFD [${area_id}${suffix}]"
+    id: ${area_id}_canopy_ppfd
+    state_topic: "${area_id}/ppfd/canopy"
     unit_of_measurement: "µmol/m²/s"
     update_interval: 1s
     lambda: |
-      float lux = id(illuminance).state;
-      float bh1750_cal = id(g2_illuminance_calibration_factor).state;
+      float lux = id(${area_id}_canopy_illuminance).state;
+      float bh1750_cal = id(${area_id}_canopy_illuminance_calibration_factor).state;
       float calibrated_lux = lux * bh1750_cal;
       float ppfd = calibrated_lux * 0.017;
       return roundf(ppfd);
 
   - platform: template
-    name: "G2 PPFD Target"
-    id: g2_ppfd_target
+    name: "Canopy PPFD Target [${area_id}${suffix}]"
+    id: ${area_id}_canopy_ppfd_target
+    state_topic: "${area_id}/ppfd_target/canopy"
     unit_of_measurement: "µmol/m²/s"
     update_interval: 60s
     lambda: |
-      if (!id(g2_dayphase_target).state) {
+      if (!id(${area_id}_dayphase_target).state) {
         return 0;
       }
-      float dli_target = id(g2_dli_target).state;
-      float day_length = id(g2_day_length).state;
+
+      float dli_target = id(${area_id}_canopy_dli_target).state;
+      float day_length = id(${area_id}_day_length).state;
+
       if (day_length > 0) {
         float ppfd_target = (dli_target * 1000000.0) / (day_length * 3600.0);
         return roundf(ppfd_target);
       } else {
         return 0;
       }
-      
+
   - platform: template
-    name: "G2 Canopy RH Target"
-    id: g2_canopy_rh_target
+    name: "Canopy DLI [${area_id}${suffix}]"
+    id: ${area_id}_canopy_dli
+    state_topic: "${area_id}/dli/canopy"
+    unit_of_measurement: "mol/m²/day"
+    update_interval: 60s
+    lambda: |
+      float ppfd = id(${area_id}_canopy_ppfd).state;
+      float day_length = (int) (id(${area_id}_day_length)->state);
+      float dli = ppfd * 0.0036 * day_length;
+      return roundf(dli * 100.0) / 100.0;
+
+  - platform: template
+    name: "Canopy DLI Target [${area_id}${suffix}]"
+    id: ${area_id}_canopy_dli_target
+    state_topic: "${area_id}/dli_target/canopy"
+    unit_of_measurement: "mol/m²/day"
+    update_interval: 60s
+    lambda: |
+      time_t now = id(mqtt_time).now().timestamp;
+      time_t start_vegetative = (time_t) id(${area_id}_start_date)->state;
+      time_t start_flipping = start_vegetative + (time_t)(id(${area_id}_duration_vegetative))->state * 86400;
+      time_t start_generative = start_flipping + (time_t)(id(${area_id}_duration_flipping))->state * 86400;
+      time_t generative_peak = start_generative + (time_t)(id(${area_id}_duration_generative))->state * 43200;
+      time_t start_drying = start_generative + (time_t)(id(${area_id}_duration_generative))->state * 86400;
+
+      if (now < start_vegetative) {
+        return 0;
+      } else if (now < start_flipping) {
+        float x = float(now - start_vegetative) / float(start_flipping - start_vegetative);
+        float dli_target = id(${area_id}_dli_vegetative_start).state + x * (id(${area_id}_dli_vegetative_end).state - id(${area_id}_dli_vegetative_start).state);
+        return roundf(dli_target);
+      } else if (now < start_generative) {
+        float x = float(now - start_flipping) / float(start_generative - start_flipping);
+        float dli_target = id(${area_id}_dli_vegetative_end).state + x * (id(${area_id}_dli_generative_start).state - id(${area_id}_dli_vegetative_end).state);
+        return roundf(dli_target);
+      } else if (now < generative_peak) {
+        float x = float(now - start_generative) / float(generative_peak - start_generative);
+        float dli_target = id(${area_id}_dli_generative_start).state + x * (id(${area_id}_dli_generative_peak).state - id(${area_id}_dli_generative_start).state);
+        return roundf(dli_target);
+      } else if (now < start_drying) {
+        float x = float(now - generative_peak) / float(start_drying - generative_peak);
+        float dli_target = id(${area_id}_dli_generative_peak).state + x * (id(${area_id}_dli_generative_end).state - id(${area_id}_dli_generative_peak).state);
+        return roundf(dli_target);
+      } else {
+        return 0;
+      }
+
+
+  - platform: template
+    name: "Canopy RH Target [${area_id}${suffix}]"
+    id: ${area_id}_canopy_rh_target
+    state_topic: "${area_id}/rh_target/canopy"
     unit_of_measurement: "%"
     update_interval: 30s
     lambda: |
-      float T = id(temperature).state;
+      float T = id(${area_id}_canopy_temperature).state;
       float LT = T - 2.0;
       float ASVP = 610.78 * pow(2.71828, (T / (T + 237.3)) * 17.2694);
       float LSVP = 610.78 * pow(2.71828, (LT / (LT + 237.3)) * 17.2694);
-      float LVPD_TARGET = id(g2_vpd_target).state;
+      float LVPD_TARGET = id(${area_id}_canopy_vpd_target).state;
       float RH_TARGET = (LSVP - LVPD_TARGET * 1000) / ASVP * 100;
       return roundf(RH_TARGET * 10.0) / 10.0;
 
   - platform: template
-    name: "G2 Canopy Dew Point"
-    id: g2_canopy_dew_point
+    name: "Canopy Dew Point [${area_id}${suffix}]"
+    id: ${area_id}_canopy_dew_point
+    state_topic: "${area_id}/dew_point/canopy"
     unit_of_measurement: "°C"
     update_interval: 30s
     lambda: |
-      float T = id(temperature).state;
-      float RH = id(humidity).state;
+      float T = id(${area_id}_canopy_temperature).state;
+      float RH = id(${area_id}_canopy_humidity).state;
       float a = 17.27;
       float b = 237.7;
       float alpha = ((a * T) / (b + T)) + log(RH / 100.0);
       float dew_point = (b * alpha) / (a - alpha);
       return roundf(dew_point * 10.0) / 10.0;
 
+  - platform: template
+    name: "Growth Cycle [${area_id}${suffix}]"
+    id: ${area_id}_growth_cycle
+    state_topic: "${area_id}/growth_cycle"
+    update_interval: 60s
+    lambda: |-
+      time_t now = id(mqtt_time).now().timestamp;
+      time_t start_vegetative = (time_t) id(${area_id}_start_date)->state;
+      time_t start_flipping = start_vegetative + (time_t)(id(${area_id}_duration_vegetative))->state * 86400;
+      time_t start_generative = start_flipping + (time_t)(id(${area_id}_duration_flipping))->state * 86400;
+      time_t start_drying = start_generative + (time_t)(id(${area_id}_duration_generative))->state * 86400;
+
+      if (now < start_vegetative) {
+        return 0;  // Pre-vegetative
+      } else if (now < start_flipping) {
+        return 1;  // Vegetative
+      } else if (now < start_generative) {
+        return 2;  // Flipping
+      } else if (now < start_drying) {
+        return 3;  // Generative
+      } else {
+        return 4;  // Drying
+      }
+
   # Sensor to calculate current day length
   - platform: template
-    name: "G2 Day Length"
-    id: g2_day_length
+    name: "Day Length [${area_id}${suffix}]"
+    id: ${area_id}_day_length
+    state_topic: "${area_id}/day_length"
     unit_of_measurement: "hours"
     update_interval: 60s
     lambda: |-
       time_t now = id(mqtt_time).now().timestamp;
-      time_t start_vegetative = (time_t) id(g2_start_date)->state;
-      time_t start_flipping = start_vegetative + (time_t)(id(g2_duration_vegetative))->state * 86400;
-      time_t start_generative = start_flipping + (time_t)(id(g2_duration_flipping))->state * 86400;
-      time_t start_drying = start_generative + (time_t)(id(g2_duration_generative))->state * 86400;
+      time_t start_vegetative = (time_t) id(${area_id}_start_date)->state;
+      time_t start_flipping = start_vegetative + (time_t)(id(${area_id}_duration_vegetative))->state * 86400;
+      time_t start_generative = start_flipping + (time_t)(id(${area_id}_duration_flipping))->state * 86400;
+      time_t start_drying = start_generative + (time_t)(id(${area_id}_duration_generative))->state * 86400;
 
-      float _day_length_vegetative = id(g2_day_length_vegetative)->state;
-      float _day_length_generative = id(g2_day_length_generative)->state;
+      float _day_length_vegetative = id(${area_id}_day_length_vegetative)->state;
+      float _day_length_generative = id(${area_id}_day_length_generative)->state;
 
       if (now > start_vegetative && now < start_flipping) {
         return _day_length_vegetative;
@@ -287,41 +347,110 @@ sensor:
       }
 
   - platform: template
-    name: "G2 Full Spectrum Brightness"
-    id: g2_full_spectrum_brightness_number_sensor
+    name: "Full Spectrum Brightness [${area_id}${suffix}]"
+    id: full_spectrum_brightness_number_sensor
+    state_topic: "${area_id}/brightness/full_spectrum"
     accuracy_decimals: 2
+
+binary_sensor:
+  - platform: template
+    name: "Day Phase Target [${area_id}${suffix}]"
+    id: ${area_id}_dayphase_target
+    state_topic: "${area_id}/dayphase_target"
+    lambda: |-
+      // Get the current timestamp
+      time_t now = id(mqtt_time).now().timestamp;
+
+      // Extract today's date
+      struct tm timeinfo;
+      localtime_r(&now, &timeinfo);
+
+      // Calculate midnight today
+      timeinfo.tm_hour = 0;
+      timeinfo.tm_min = 0;
+      timeinfo.tm_sec = 0;
+      time_t midnight_today = mktime(&timeinfo);
+
+      // Calculate midnight yesterday
+      time_t midnight_yesterday = midnight_today - 86400; // Subtract 24 hours in seconds
+
+      // Get sunrise times
+      time_t sunrise_today = midnight_today + (time_t) id(${area_id}_sunrise_time)->state;
+      time_t sunrise_yesterday = midnight_yesterday + (time_t) id(${area_id}_sunrise_time)->state;
+
+      // Get day length in seconds
+      int day_length_seconds = (int)(id(${area_id}_day_length)->state * 3600);
+
+      // Determine if it's day phase
+      bool is_day = false;
+
+      if (now >= sunrise_yesterday && now < (sunrise_yesterday + day_length_seconds)) {
+        is_day = true;
+      } else if (now >= sunrise_today && now < (sunrise_today + day_length_seconds)) {
+        is_day = true;
+      }
+
+      // Log the important time values
+      //ESP_LOGD("day_phase_target", "Current Time: %ld", now);
+      //ESP_LOGD("day_phase_target", "Midnight Today: %ld", midnight_today);
+      //ESP_LOGD("day_phase_target", "Midnight Yesterday: %ld", midnight_yesterday);
+      //ESP_LOGD("day_phase_target", "Sunrise Yesterday: %ld", sunrise_yesterday);
+      //ESP_LOGD("day_phase_target", "Sunrise Today: %ld", sunrise_today);
+      //ESP_LOGD("day_phase_target", "Day Length (seconds): %d", day_length_seconds);
+      //ESP_LOGD("day_phase_target", "Is it day phase? %s", is_day ? "Yes" : "No");
+
+      return is_day;
 
 number:
   - platform: template
-    name: "G2 Leaf Offset"
-    id: g2_vpd_leaf_offset
-    optimistic: true
-    initial_value: 0.0
-    min_value: -10.0
-    max_value: 10.0
-    step: 0.1
-
-  - platform: template
-    name: "G2 Illuminance Calibration Factor"
-    id: g2_illuminance_calibration_factor
+    name: "Illuminance Calibration Factor [${area_id}${suffix}]"
+    id: ${area_id}_canopy_illuminance_calibration_factor
+    state_topic: "${area_id}/illuminance_calibration_factor/canopy"
+    command_topic: "${area_id}/illuminance_calibration_factor/canopy/set-state"
     optimistic: true
     initial_value: 3.0
     min_value: 0.1
     max_value: 5.0
     step: 0.1
+    mode: BOX
+    restore_value: True
+    retain: True
 
   - platform: template
-    name: "G2 VPD Target"
-    id: g2_vpd_target
+    name: "Canopy VPD Target [${area_id}${suffix}]"
+    id: ${area_id}_canopy_vpd_target
+    state_topic: "${area_id}/vpd_target/canopy"
+    command_topic: "${area_id}/vpd_target/canopy/set-state"
     optimistic: true
     initial_value: 1.0
     min_value: 0.0
     max_value: 5.0
     step: 0.1
+    mode: BOX
+    unit_of_measurement: "kPa"
+    restore_value: True
+    retain: True
 
   - platform: template
-    name: "G2 Cola Distance Threshold"
-    id: g2_cola_distance_threshold 
+    name: "VPD Leaf Offset [${area_id}${suffix}]"
+    id: ${area_id}_canopy_vpd_leaf_offset
+    state_topic: "${area_id}/vpd_leaf_offset/canopy"
+    command_topic: "${area_id}/vpd_leaf_offset/canopy/set-state"
+    optimistic: true
+    initial_value: -2.0
+    min_value: -10.0
+    max_value: 10.0
+    step: 0.1
+    mode: BOX
+    unit_of_measurement: "°C"
+    restore_value: True
+    retain: True
+
+  - platform: template
+    name: "Canopy Cola Distance Threshold [${area_id}${suffix}]"
+    id: ${area_id}_cola_distance_threshold 
+    state_topic: "${area_id}/cola_distance_threshold/canopy"
+    command_topic: "${area_id}/cola_distance_threshold/canopy/set-state"
     optimistic: true
     initial_value: 0.3
     min_value: 0.0
@@ -334,8 +463,10 @@ number:
     retain: True
 
   - platform: template
-    name: "G2 DLI Vegetative Start"
-    id: g2_dli_vegetative_start
+    name: "DLI Vegetative Start [${area_id}${suffix}]"
+    id: ${area_id}_dli_vegetative_start
+    state_topic: "${area_id}/dli_vegetative_start"
+    command_topic: "${area_id}/dli_vegetative_start/set-state"
     optimistic: True
     initial_value: 10
     min_value: 1
@@ -348,8 +479,10 @@ number:
     retain: True
 
   - platform: template
-    name: "G2 DLI Vegetative End"
-    id: g2_dli_vegetative_end
+    name: "DLI Vegetative End [${area_id}${suffix}]"
+    id: ${area_id}_dli_vegetative_end
+    state_topic: "${area_id}/dli_vegetative_end"
+    command_topic: "${area_id}/dli_vegetative_end/set-state"
     optimistic: True
     initial_value: 20
     min_value: 1
@@ -362,8 +495,10 @@ number:
     retain: True
 
   - platform: template
-    name: "G2 DLI Generative Start"
-    id: g2_dli_generative_start
+    name: "DLI Generative Start [${area_id}${suffix}]"
+    id: ${area_id}_dli_generative_start
+    state_topic: "${area_id}/dli_generative_start"
+    command_topic: "${area_id}/dli_generative_start/set-state"
     optimistic: True
     initial_value: 20
     min_value: 1
@@ -376,8 +511,10 @@ number:
     retain: True
 
   - platform: template
-    name: "G2 DLI Generative Peak"
-    id: g2_dli_generative_peak
+    name: "DLI Generative Peak [${area_id}${suffix}]"
+    id: ${area_id}_dli_generative_peak
+    state_topic: "${area_id}/dli_generative_peak"
+    command_topic: "${area_id}/dli_generative_peak/set-state"
     optimistic: True
     initial_value: 40
     min_value: 1
@@ -390,8 +527,10 @@ number:
     retain: True
 
   - platform: template
-    name: "G2 DLI Generative End"
-    id: g2_dli_generative_end
+    name: "DLI Generative End [${area_id}${suffix}]"
+    id: ${area_id}_dli_generative_end
+    state_topic: "${area_id}/dli_generative_end"
+    command_topic: "${area_id}/dli_generative_end/set-state"
     optimistic: True
     initial_value: 30
     min_value: 1
@@ -404,8 +543,10 @@ number:
     retain: True
 
   - platform: template
-    name: "G2 Temperature Max"
-    id: g2_temperature_max
+    name: "Temperature Max [${area_id}${suffix}]"
+    id: ${area_id}_temperature_max
+    state_topic: "${area_id}/temperature_max"
+    command_topic: "${area_id}/temperature_max/set-state"
     optimistic: True
     initial_value: 30
     min_value: 20
@@ -418,8 +559,10 @@ number:
     retain: True
 
   - platform: template
-    name: "G2 Day Length Vegetative"
-    id: g2_day_length_vegetative
+    name: "Day Length Vegetative [${area_id}${suffix}]"
+    id: ${area_id}_day_length_vegetative
+    state_topic: "${area_id}/day_length_vegetative"
+    command_topic: "${area_id}/day_length_vegetative/set-state"
     optimistic: True
     initial_value: 18
     min_value: 0
@@ -431,8 +574,10 @@ number:
     retain: True
 
   - platform: template
-    name: "G2 Day Length Generative"
-    id: g2_day_length_generative
+    name: "Day Length Generative [${area_id}${suffix}]"
+    id: ${area_id}_day_length_generative
+    state_topic: "${area_id}/day_length_generative"
+    command_topic: "${area_id}/day_length_generative/set-state"
     optimistic: True
     initial_value: 12
     min_value: 0
@@ -444,8 +589,10 @@ number:
     retain: True
 
   - platform: template
-    name: "G2 Start Date (Epoch)"
-    id: g2_start_date
+    name: "Start Date (Epoch) [${area_id}${suffix}]"
+    id: ${area_id}_start_date
+    state_topic: "${area_id}/start_date"
+    command_topic: "${area_id}/start_date/set-state"
     optimistic: True
     min_value: 0
     max_value: 2147483647  # Maximum Unix timestamp
@@ -456,8 +603,10 @@ number:
     retain: True
 
   - platform: template
-    name: "G2 Duration Vegetative (Days)"
-    id: g2_duration_vegetative
+    name: "Duration Vegetative [${area_id}${suffix}]"
+    id: ${area_id}_duration_vegetative
+    state_topic: "${area_id}/duration_vegetative"
+    command_topic: "${area_id}/duration_vegetative/set-state"
     optimistic: True
     min_value: 0
     max_value: 365
@@ -469,8 +618,10 @@ number:
     retain: True
 
   - platform: template
-    name: "G2 Duration Flipping (Days)"
-    id: g2_duration_flipping
+    name: "Duration Flipping [${area_id}${suffix}]"
+    id: ${area_id}_duration_flipping
+    state_topic: "${area_id}/duration_flipping"
+    command_topic: "${area_id}/duration_flipping/set-state"
     optimistic: True
     min_value: 0
     max_value: 365
@@ -482,8 +633,10 @@ number:
     retain: True
 
   - platform: template
-    name: "G2 Duration Generative (Days)"
-    id: g2_duration_generative
+    name: "Duration Generative [${area_id}${suffix}]"
+    id: ${area_id}_duration_generative
+    state_topic: "${area_id}/duration_generative"
+    command_topic: "${area_id}/duration_generative/set-state"
     optimistic: True
     min_value: 0
     max_value: 365
@@ -495,8 +648,10 @@ number:
     retain: True
 
   - platform: template
-    name: "G2 Duration Drying (Days)"
-    id: g2_duration_drying
+    name: "Duration Drying [${area_id}${suffix}]"
+    id: ${area_id}_duration_drying
+    state_topic: "${area_id}/dutation_drying"
+    command_topic: "${area_id}/dutation_drying/set-state"
     optimistic: True
     min_value: 0
     max_value: 365
@@ -508,8 +663,10 @@ number:
     retain: True
 
   - platform: template
-    name: "G2 Sunrise Time (Seconds from Midnight)"
-    id: g2_sunrise_time
+    name: "Sunrise Time (Seconds from Midnight) [${area_id}${suffix}]"
+    id: ${area_id}_sunrise_time
+    state_topic: "${area_id}/sunrise_time"
+    command_topic: "${area_id}/sunrise_time/set-state"
     optimistic: True
     min_value: 0
     max_value: 86400  # Maximum seconds in a day
@@ -521,8 +678,9 @@ number:
     retain: True
 
   - platform: template
-    name: "G2 Door Open Brightness"
-    id: g2_door_open_brightness
+    name: "Door Open Brightness [${area_id}${suffix}]"
+    id: ${area_id}_door_open_brightness
+    state_topic: "${area_id}/brightness/door_open"
     optimistic: True
     min_value: 0
     max_value: 1
@@ -532,30 +690,6 @@ number:
     unit_of_measurement: "%"
     restore_value: True
     retain: True
-
-# Day Phase Target sensor to determine day or night
-binary_sensor:
-  - platform: template
-    name: "G2 Day Phase Target"
-    id: g2_dayphase_target
-    lambda: |-
-      time_t now = id(mqtt_time).now().timestamp;
-
-      // Extract today's date
-      struct tm timeinfo;
-      localtime_r(&now, &timeinfo);
-      timeinfo.tm_hour = 0;
-      timeinfo.tm_min = 0;
-      timeinfo.tm_sec = 0;
-      time_t midnight_today = mktime(&timeinfo);
-
-      // Calculate today's sunrise time in seconds since epoch
-      time_t sunrise_today = midnight_today + (time_t) id(g2_sunrise_time)->state;
-      int day_length_seconds = (int) (id(g2_day_length)->state * 3600);
-
-      // Determine if it is day or night
-      return (now >= sunrise_today) && (now < (sunrise_today + day_length_seconds));
-
 
 interval:
   - interval: 5s  # Adjust as needed
@@ -572,11 +706,11 @@ script:
     then:
       - lambda: |-
           // Get the current cola distance and threshold values
-          float _cola_distance = id(g2_cola_distance).state;
-          float cola_distance_threshold = id(g2_cola_distance_threshold).state;
+          float _cola_distance = id(${area_id}_canopy_cola_distance).state;
+          float cola_distance_threshold = id(${area_id}_cola_distance_threshold).state;
 
           // Check if the door is closed and cola distance is below the threshold
-          if (!id(door_open) && _cola_distance < cola_distance_threshold) {
+          if (!id(${area_id}_door_open${suffix}) && _cola_distance < cola_distance_threshold) {
             ESP_LOGD("cola_distance_check", "Cola distance detected: %.2f m, below threshold of %.2f m, and door is closed.", _cola_distance, cola_distance_threshold);
 
             // Publish MQTT message if the condition is met (true)
@@ -591,7 +725,7 @@ script:
   - id: mqtt_publish_cola_detected_true
     then:
       - mqtt.publish:
-          topic: "g2/canopy/sensor/cola_detected"
+          topic: "${area_id}/canopy/sensor/cola_detected"
           payload: !lambda |-
             ESP_LOGD("mqtt_publish", "Publishing Cola Detected: true");
             return std::string("{\"state\": \"true\"}");
@@ -599,7 +733,7 @@ script:
   - id: mqtt_publish_cola_detected_false
     then:
       - mqtt.publish:
-          topic: "g2/canopy/sensor/cola_detected"
+          topic: "${area_id}/canopy/sensor/cola_detected"
           payload: !lambda |-
             ESP_LOGD("mqtt_publish", "Publishing Cola Detected: false");
             return std::string("{\"state\": \"false\"}");
@@ -607,25 +741,20 @@ script:
   - id: adjust_brightness
     then:
       - lambda: |-
-          float new_brightness = id(g2_door_open_brightness).state;
-
           // Get current PPFD and target PPFD values
-          float ppfd_target = id(g2_ppfd_target).state;
+          float ppfd_target = id(${area_id}_canopy_ppfd_target).state;
+          float new_brightness = id(${area_id}_door_open_brightness).state;
 
           if (ppfd_target < 0.01) {  // Using a small threshold for floating-point comparison
             // PPFD target is zero, turn off the light
             new_brightness = 0.0;
           } else {
-            if (!id(door_open)) {
+            if (!id(${area_id}_door_open${suffix})) {
               // Get current brightness from the number sensor state
-              float current_brightness = id(g2_full_spectrum_brightness_number_sensor).state;
-              // **Set current_brightness to 0 if it's NaN**
-              if (isnan(current_brightness)) {
-                current_brightness = 0.0;
-              }
+              float current_brightness = id(full_spectrum_brightness_number_sensor).state;
 
-              // Get current PPFD value
-              float ppfd = id(g2_ppfd).state;
+              // Get current PPFD and target PPFD values
+              float ppfd = id(${area_id}_canopy_ppfd).state;
 
               // Log the current state of PPFD and brightness
               ESP_LOGD("brightness_control", "Current PPFD: %.2f", ppfd);
@@ -635,7 +764,6 @@ script:
               // Calculate the error and adjustment needed
               float error_value = ppfd_target - ppfd;
               float adjustment = error_value / 2000.0;  // Increase divisor for less aggressive adjustment
-              adjustment = roundf(adjustment * 100.0f) / 100.0f;
 
               // Log the error and adjustment value
               ESP_LOGD("brightness_control", "Error Value: %.2f", error_value);
@@ -657,45 +785,16 @@ script:
           ESP_LOGD("brightness_control", "New Brightness (after clamping): %.2f", new_brightness);
 
           // Update the global variable with the new brightness value
-          if(g2_ppfd_target != 0 && new_brightness == 0) {
-            new_brightness = 0.01;
-          }
-          id(new_brightness_global) = new_brightness;
+          id(${area_id}_new_brightness_global${suffix}) = new_brightness;
 
       - mqtt.publish:
-          topic: "g2/mains/light/command/switch:0"
+          topic: "${area_id}/light/full_spectrum/set-state"
           payload: !lambda |-
-            if (id(new_brightness_global) > 0.0) {
-              ESP_LOGD("mqtt_publish", "Turning Light ON");
-              return "on";
+            if (id(${area_id}_new_brightness_global${suffix}) > 0.0 && id(${area_id}_dayphase_target).state) {
+              ESP_LOGD("mqtt_publish", "Publishing Brightness ON: %d", (int)(id(${area_id}_new_brightness_global${suffix}) * 255));
+              return std::string("{\"state\": \"ON\", \"brightness\": ") + std::to_string((int)(id(${area_id}_new_brightness_global${suffix}) * 255)) + "}";
             } else {
-              ESP_LOGD("mqtt_publish", "Turning Light OFF");
-              return "off";
+              ESP_LOGD("mqtt_publish", "Publishing Brightness OFF");
+              return std::string("{\"state\": \"OFF\", \"brightness\": 0}");
             }
 
-      - mqtt.publish_json:
-          topic: "g2/light/dimmer/rpc"
-          payload: !lambda |-
-            if (id(new_brightness_global) > 0.0) {
-              int brightness_percent = (int)(id(new_brightness_global) * 100);
-              ESP_LOGD("mqtt_publish", "Publishing Brightness: %d%%", brightness_percent);
-
-              // Construct the JSON payload to turn on the light with specified brightness
-              root["id"] = 1;
-              root["src"] = "user";
-              root["method"] = "Light.Set";
-              auto params = root.createNestedObject("params");
-              params["id"] = 0;
-              params["on"] = true;
-              params["brightness"] = brightness_percent;
-            } else {
-              ESP_LOGD("mqtt_publish", "Turning off Light");
-
-              // Construct the JSON payload to turn off the light
-              root["id"] = 1;
-              root["src"] = "user";
-              root["method"] = "Light.Set";
-              auto params = root.createNestedObject("params");
-              params["id"] = 0;
-              params["on"] = false;
-            }

@@ -1,7 +1,3 @@
-esphome:
-  name: g2-gantry
-  friendly_name: G2_GANTRY
-
 esp32:
   board: esp32-c3-devkitm-1
   framework:
@@ -29,14 +25,40 @@ wifi:
     password: "sdeWIJobDX5x"
 
 captive_portal:
-    
+  
+esphome:
+  name: g2-gantry
+
+####################################################################
+# configure substitutions and friendly name
+####################################################################
+
+  friendly_name: ${area_id}_GANTRY${suffix}
+
+substitutions:
+  area_id: G2
+  suffix: ""
+  pin_sda: GPIO0
+  pin_scl: GPIO1
+  pin_fan1_pwm: GPIO3
+  pin_fan2_pwm: GPIO4
+  pin_trigger: GPIO5
+  pin_echo: GPIO6
+  #pin_sgp4x_address: "0x59"
+  pin_sht3xd_address: "0x44"
+  #address_bme680: "0x76"
+  #bme680_temp_offset: "2.5"
+
+####################################################################
+# generic yaml for humidifiers below
+####################################################################
 
 globals:
-  - id: fan_speed_step
+  - id: ${area_id}_fan_speed_step${suffix}
     type: int
     restore_value: no
     initial_value: '0'
-  - id: door_open
+  - id: ${area_id}_door_open${suffix}
     type: bool
     restore_value: no
     initial_value: 'false'
@@ -45,60 +67,67 @@ mqtt:
   broker: !secret mqtt_broker
   username: !secret mqtt_username
   password: !secret mqtt_password
-  topic_prefix: "g2/gantry"
+  topic_prefix: "${area_id}/gantry"
+  on_message:
+    - topic: ${area_id}/door_switch
+      then:
+        - lambda: |-
+            if (strcmp(x.c_str(), "ON") == 0) {
+              id(${area_id}_door_open${suffix}) = true;
+            } else if (strcmp(x.c_str(), "OFF") == 0) {
+              id(${area_id}_door_open${suffix}) = false;
+            }
+            id(update_fan_speed).execute();
 
-# I2C Bus Configuration
-i2c:
-  sda: 0  # GPIO0
-  scl: 1  # GPIO1
-  scan: true  # Optional: enables scanning for I2C devices at startup
-
-# Outputs for PWM Fans
 output:
   - platform: ledc
-    pin: 3  # GPIO3
-    id: fan_pwm_1
-    frequency: 25000 Hz  # 25 kHz is a common frequency for fans
-    channel: 0
-    # Optional: Set initial duty cycle to 0%
-    inverted: true
+    pin: GPIO7
+    id: fan1_pwm${suffix}
+    frequency: 15000 Hz
+    inverted: True
 
   - platform: ledc
-    pin: 4  # GPIO4
-    id: fan_pwm_2
-    frequency: 25000 Hz
-    channel: 1
-    inverted: true
+    pin: GPIO8
+    id: fan2_pwm${suffix}
+    frequency: 15000 Hz
+    inverted: True
 
-# Fan Controls
 fan:
   - platform: speed
+    output: fan1_pwm
     name: "Wind"
-    id: g2_wind_fan1
-    output: fan_pwm_1
-
+    id: ${area_id}_wind_fan1${suffix}
   - platform: speed
+    output: fan2_pwm
     name: "Wind"
-    id: g2_wind_fan2
-    output: fan_pwm_2
+    id: ${area_id}_wind_fan2${suffix}
 
-# Sensors
+  # Example configuration entry for ESP32
+i2c:
+  sda: ${pin_sda}
+  scl: ${pin_scl}
+  scan: true
+  id: bus_a
+
+# Example configuration entry
 sensor:
   - platform: sht3xd
     temperature:
-      name: "Temperature"
-      id: temperature
+      name: "Gantry Temperature [${area_id}${suffix}]"
+      id: ${area_id}_gantry_temperature${suffix}
+      state_topic: "${area_id}/temperature/gantry"
     humidity:
-      name: "Humidity"
-      id: humidity
-    address: 0x44
+      name: "Gantry Humidity [${area_id}${suffix}]"
+      id: ${area_id}_gantry_humidity${suffix}
+      state_topic: "${area_id}/humidity/gantry"
+    address: ${pin_sht3xd_address}
     update_interval: 30s
 
   - platform: ultrasonic
-    trigger_pin: 5
-    echo_pin: 6
-    name: "G2 Gantry Position"
-    id: g2_gantry_position
+    trigger_pin: ${pin_trigger}
+    echo_pin: ${pin_echo}
+    name: "Gantry Position [${area_id}${suffix}]"
+    id: ${area_id}_gantry_position${suffix}
     update_interval: 1s
     timeout: 2m
     filters:
@@ -106,14 +135,45 @@ sensor:
         window_size: 60
         send_every: 60
 
+  # - platform: sgp4x
+  #   voc:
+  #     name: "VOC Index"
+  #     state_topic: "${area_id}/voc_index/gantry"
+  #     id: ${area_id}_gantry_voc_index${suffix}
+  #   nox:
+  #     name: "NOx Index"
+  #     state_topic: "${area_id}/nox_index/gantry"
+  #     id: ${area_id}_gantry_nox_index${suffix}
+  #   compensation:
+  #     humidity_source: ${area_id}_gantry_humidity${suffix}
+  #     temperature_source: ${area_id}_gantry_temperature${suffix}
+  #   address: ${pin_sgp4x_address}
+  #   update_interval: 60s
+  #   i2c_id: bus_a
+
+  # - platform: htu21d
+  #   model: htu21d
+  #   temperature:
+  #     name: "Gantry Temperature"
+  #     id: ${area_id}_gantry_temperature${suffix}
+  #     state_topic: "${area_id}/temperature/gantry"
+  #   humidity:
+  #     name: "Gantry Humidity"
+  #     id: ${area_id}_gantry_humidity${suffix}
+  #     state_topic: "${area_id}/humidity/gantry"
+  #   heater:
+  #     name: "Heater"
+
   - platform: template
-    name: "VPD Sensor"
+    name: "Gantry VPD [${area_id}${suffix}]"
+    id: ${area_id}_gantry_vpd${suffix}
+    state_topic: "${area_id}/vpd/gantry"
     unit_of_measurement: "kPa"
     update_interval: 30s
     lambda: |
-      float temp = id(temperature).state;
-      float rh = id(humidity).state;
-      float leaf_offset = id(g2_vpd_leaf_offset).state;
+      float temp = id(${area_id}_gantry_temperature${suffix}).state;
+      float rh = id(${area_id}_gantry_humidity${suffix}).state;
+      float leaf_offset = id(${area_id}_gantry_canopy_vpd_leaf_offset).state;
       float LT = temp + leaf_offset;
       float ASVP = 610.78 * exp((temp / (temp + 237.3)) * 17.2694);
       float LSVP = 610.78 * exp((LT / (LT + 237.3)) * 17.2694);
@@ -121,25 +181,29 @@ sensor:
       return roundf(LVPD * 100.0) / 100.0;
 
   - platform: template
-    name: "RH Target"
+    name: "Gantry RH Target [${area_id}${suffix}]"
+    id: ${area_id}_gantry_rh_target${suffix}
+    state_topic: "${area_id}/rh_target/gantry"
     unit_of_measurement: "%"
     update_interval: 30s
     lambda: |
-      float T = id(temperature).state;
+      float T = id(${area_id}_gantry_temperature${suffix}).state;
       float LT = T - 2.0;
       float ASVP = 610.78 * pow(2.71828, (T / (T + 237.3)) * 17.2694);
       float LSVP = 610.78 * pow(2.71828, (LT / (LT + 237.3)) * 17.2694);
-      float LVPD_TARGET = id(g2_vpd_target).state;
+      float LVPD_TARGET = id(${area_id}_gantry_canopy_vpd_target${suffix}).state;
       float RH_TARGET = (LSVP - LVPD_TARGET * 1000) / ASVP * 100;
       return roundf(RH_TARGET * 10.0) / 10.0;
 
   - platform: template
-    name: "Dew Point"
+    name: "Gantry Dew Point [${area_id}${suffix}]"
+    id: ${area_id}_gantry_dew_point${suffix}
+    state_topic: "${area_id}/dew_point/gantry"
     unit_of_measurement: "°C"
     update_interval: 30s
     lambda: |
-      float T = id(temperature).state;
-      float RH = id(humidity).state;
+      float T = id(${area_id}_gantry_temperature${suffix}).state;
+      float RH = id(${area_id}_gantry_humidity${suffix}).state;
       float a = 17.27;
       float b = 237.7;
       float alpha = ((a * T) / (b + T)) + log(RH / 100.0);
@@ -147,19 +211,32 @@ sensor:
       return roundf(dew_point * 10.0) / 10.0;
 
   - platform: mqtt_subscribe
-    topic: "g2/brain/number/vpd_leaf_offset"
-    name: "G2 VPD Leaf Offset"
-    id: g2_vpd_leaf_offset
+    topic: "${area_id}/vpd_leaf_offset/canopy"
+    name: "Gantry VPD Leaf Offset [${area_id}${suffix}]"
+    id: ${area_id}_gantry_canopy_vpd_leaf_offset${suffix}
+    state_topic: "${area_id}/vpd_leaf_offset/gantry"
+    retain: True
 
   - platform: mqtt_subscribe
-    topic: "g2/brain/number/vpd_target"
-    name: "G2 VPD Target"
-    id: g2_vpd_target
+    topic: "${area_id}/vpd_target/canopy"
+    name: "Gantry VPD Target [${area_id}${suffix}]"
+    id: ${area_id}_gantry_canopy_vpd_target${suffix}
+    state_topic: "${area_id}/vpd_target/gantry"
+    retain: True
+
+# Cola detection sensor via MQTT as text_sensor
+text_sensor:
+  - platform: mqtt_subscribe
+    name: "Canopy Cola Detected [${area_id}${suffix}]"
+    id: ${area_id}_cola_detected${suffix}
+    topic: "${area_id}/canopy/sensor/cola_detected"
 
 number:
   - platform: template
-    name: "G2 Wind Fan Speed Min"
-    id: g2_wind_fan_speed_min
+    name: "Wind Fan Speed Min [${area_id}${suffix}]"
+    id: ${area_id}_wind_fan_speed_min${suffix}
+    state_topic: "${area_id}/wind_fan_speed_min"
+    command_topic: "${area_id}/wind_fan_speed_min/set-state"
     optimistic: True
     initial_value: 20
     min_value: 0
@@ -168,10 +245,14 @@ number:
     mode: BOX 
     unit_of_measurement: "%"
     icon: mdi:fan
+    restore_value: True
+    retain: True
 
   - platform: template
-    name: "G2 Wind Fan Speed Max"
-    id: g2_wind_fan_speed_max
+    name: "Wind Fan Speed Max [${area_id}${suffix}]"
+    id: ${area_id}_wind_fan_speed_max${suffix}
+    state_topic: "${area_id}/wind_fan_speed_max"
+    command_topic: "${area_id}/wind_fan_speed_max/set-state"
     optimistic: True
     initial_value: 60
     min_value: 0
@@ -182,8 +263,10 @@ number:
     icon: mdi:fan
 
   - platform: template
-    name: "G2 Wind Sweep Duration"
-    id: g2_wind_sweep_duration
+    name: "Wind Sweep Duration [${area_id}${suffix}]"
+    id: ${area_id}_wind_sweep_duration${suffix}
+    state_topic: "${area_id}/wind_fan_sweep_duration"
+    command_topic: "${area_id}/wind_fan_sweep_duration/set-state"
     optimistic: true
     initial_value: 60
     min_value: 1
@@ -194,8 +277,8 @@ number:
     icon: mdi:timer
 
   - platform: template
-    name: "G2 Gantry Position Min"
-    id: g2_gantry_position_min
+    name: "Gantry Position Min [${area_id}${suffix}]"
+    id: ${area_id}_gantry_position_min${suffix}
     min_value: 0
     max_value: 1
     step: 0.01
@@ -205,8 +288,8 @@ number:
     retain: True
 
   - platform: template
-    name: "G2 Gantry Position Max"
-    id: g2_gantry_position_max
+    name: "Gantry Position Max [${area_id}${suffix}]"
+    id: ${area_id}_gantry_position_max${suffix}
     min_value: 0
     max_value: 1.5
     step: 0.01
@@ -214,14 +297,6 @@ number:
     optimistic: True
     restore_value: True
     retain: True
-
-# Cola detection sensor via MQTT as text_sensor
-text_sensor:
-  - platform: mqtt_subscribe
-    name: "G2 Cola Detected"
-    id: g2_cola_detected
-    topic: "g2/canopy/sensor/cola_detected"
-
 
 interval:
   - interval: 60s
@@ -231,59 +306,62 @@ interval:
     then:
       - script.execute: update_gantry_height
 
+
 script:
   - id: update_fan_speed
     then:
       lambda: |-
         // Check if the door is open
-        if (id(door_open)) {
+        if (id(${area_id}_door_open${suffix})) {
           // Door is open; turn off both fans
-          auto call3 = id(g2_wind_fan1).turn_off();
+          auto call3 = id(${area_id}_wind_fan1${suffix}).turn_off();
           call3.perform();
-          auto call4 = id(g2_wind_fan2).turn_off();
+          auto call4 = id(${area_id}_wind_fan2${suffix}).turn_off();
           call4.perform();
           ESP_LOGD("fan", "Door is open. Turning off fans.");
           return;
         }
 
-        auto call1 = id(g2_wind_fan1).turn_on();
+        auto call1 = id(${area_id}_wind_fan1${suffix}).turn_on();
         call1.perform();
-        auto call2 = id(g2_wind_fan2).turn_on();
+        auto call2 = id(${area_id}_wind_fan2${suffix}).turn_on();
         call2.perform();
 
-        int step = id(fan_speed_step);
-        int duration = id(g2_wind_sweep_duration).state; // Duration in minutes
-        float min_speed = id(g2_wind_fan_speed_min).state;
-        float max_speed = id(g2_wind_fan_speed_max).state;
+        int step = id(${area_id}_fan_speed_step${suffix});
+        int duration = id(${area_id}_wind_sweep_duration).state; // Duration in minutes
+        float min_speed = id(${area_id}_wind_fan_speed_min).state;
+        float max_speed = id(${area_id}_wind_fan_speed_max).state;
 
         // Calculate the fan speed by linearly interpolating from min to max over 60 steps (1 hour)
         float fan_speed = min_speed + (max_speed - min_speed) * (step / (float)duration);
 
         // Increment the step counter, reset after 60 minutes
-        id(fan_speed_step) = (step + 1) % duration;
+        id(${area_id}_fan_speed_step${suffix}) = (step + 1) % duration;
 
         // Set the fan speeds to the calculated value
-        id(g2_wind_fan1).speed = fan_speed;
-        id(g2_wind_fan2).speed = fan_speed;
+        id(${area_id}_wind_fan1${suffix}).speed = fan_speed;
+        id(${area_id}_wind_fan2${suffix}).speed = fan_speed;
 
         ESP_LOGD("fan", "Updating fan speed to %.2f%%", fan_speed);
-  
+
   - id: update_gantry_height
     then:
       - lambda: |-
           ESP_LOGD("debug", "Checking conditions for moving gantry...");
-          ESP_LOGD("debug", "Cola detected state: %s", id(g2_cola_detected).state.c_str());
-          ESP_LOGD("debug", "Gantry position: %.2f, Min Position: %.2f", id(g2_gantry_position).state, id(g2_gantry_position_min).state);
+          ESP_LOGD("debug", "Cola detected state: %s", id(${area_id}_cola_detected${suffix}).state.c_str());
+          ESP_LOGD("debug", "Gantry position: %.2f, Min Position: %.2f", id(${area_id}_gantry_position${suffix}).state, id(${area_id}_gantry_position_min${suffix}).state);
 
-          if (id(g2_cola_detected).state == "{\"state\": \"true\"}" && id(g2_gantry_position).state > id(g2_gantry_position_min).state) {
+          if (id(${area_id}_cola_detected${suffix}).state == "{\"state\": \"true\"}" && id(${area_id}_gantry_position${suffix}).state > id(${area_id}_gantry_position_min${suffix}).state) {
             ESP_LOGD("main", "Conditions met. Sending MQTT message to move gantry");
-            id(publish_gantry_step_up).execute();
+            id(${area_id}_publish_gantry_step_up${suffix}).execute();
           } else {
             ESP_LOGD("main", "Conditions not met. Skipping...");
           }
 
-  - id: publish_gantry_step_up
+  - id: ${area_id}_publish_gantry_step_up${suffix}
     then:
       - mqtt.publish:
-          topic: "g2/lift/switch/g2_step_up/set"
+          topic: "${area_id}/lift/switch/g2_step_up/set-state"
           payload: "ON"
+
+

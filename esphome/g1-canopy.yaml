@@ -82,7 +82,7 @@ mqtt:
 time:
   - platform: sntp
     id: mqtt_time
-    timezone: CET
+    timezone: Europe/Berlin
 
   # Example configuration entry for ESP32
 i2c:
@@ -102,9 +102,9 @@ bme68x_bsec2_i2c:
 
 text_sensor:
   - platform: mqtt_subscribe
-    name: "Current Brightness"
+    name: "Canopy Current Brightness [${area_id}${suffix}]"
     id: ${area_id}_current_brightness_text_sensor  # Make sure this ID matches
-    topic: "${area_id}/light/light/full_spectrum/state"
+    topic: "${area_id}/light/full_spectrum/state"
     on_value:
       then:
         - lambda: |-
@@ -129,7 +129,7 @@ text_sensor:
 
 sensor:
   - platform: bh1750
-    name: "Canopy Illuminance"
+    name: "Canopy Illuminance [${area_id}${suffix}]"
     id: ${area_id}_canopy_illuminance
     state_topic: "${area_id}/illuminance/canopy"
     address: ${address_bh1750}
@@ -144,7 +144,7 @@ sensor:
   - platform: ultrasonic
     trigger_pin: ${pin_trigger}
     echo_pin: ${pin_echo}
-    name: "Cola Distance"
+    name: "Canopy Cola Distance [${area_id}${suffix}]"
     id: ${area_id}_canopy_cola_distance
     state_topic: "${area_id}/cola_distance/canopy"
     update_interval: 1s
@@ -156,32 +156,32 @@ sensor:
 
   - platform: bme68x_bsec2
     temperature:
-      name: "Canopy Temperature"
+      name: "Canopy Temperature [${area_id}${suffix}]"
       id: ${area_id}_canopy_temperature
       state_topic: "${area_id}/temperature/canopy"
     pressure:
-      name: "Canopy Pressure"
+      name: "Canopy Pressure [${area_id}${suffix}]"
       id: ${area_id}_canopy_pressure
       state_topic: "${area_id}/pressure/canopy"
     humidity:
-      name: "Canopy Humidity"
+      name: "Canopy Humidity [${area_id}${suffix}]"
       id: ${area_id}_canopy_humidity
       state_topic: "${area_id}/humidity/canopy"
     iaq:
-      name: "Canopy IAQ"
+      name: "Canopy IAQ [${area_id}${suffix}]"
       id: ${area_id}_canopy_iaq
       state_topic: "${area_id}/iaq/canopy"
     co2_equivalent:
-      name: "Canopy CO2e"
+      name: "Canopy CO2e [${area_id}${suffix}]"
       id: ${area_id}_canopy_co2e
       state_topic: "${area_id}/co2e/canopy"
     breath_voc_equivalent:
-      name: "Canopy bVOCe"
+      name: "Canopy bVOCe [${area_id}${suffix}]"
       id: ${area_id}_canopy_voce
       state_topic: "${area_id}/bvoce/canopy"
 
   - platform: template
-    name: "Canopy VPD"
+    name: "Canopy VPD [${area_id}${suffix}]"
     id: ${area_id}_canopy_vpd
     state_topic: "${area_id}/vpd/canopy"
     unit_of_measurement: "kPa"
@@ -197,7 +197,7 @@ sensor:
       return roundf(LVPD * 100.0) / 100.0;
 
   - platform: template
-    name: "Canopy PPFD"
+    name: "Canopy PPFD [${area_id}${suffix}]"
     id: ${area_id}_canopy_ppfd
     state_topic: "${area_id}/ppfd/canopy"
     unit_of_measurement: "µmol/m²/s"
@@ -210,7 +210,7 @@ sensor:
       return roundf(ppfd);
 
   - platform: template
-    name: "Canopy PPFD Target"
+    name: "Canopy PPFD Target [${area_id}${suffix}]"
     id: ${area_id}_canopy_ppfd_target
     state_topic: "${area_id}/ppfd_target/canopy"
     unit_of_measurement: "µmol/m²/s"
@@ -231,7 +231,7 @@ sensor:
       }
 
   - platform: template
-    name: "Canopy DLI"
+    name: "Canopy DLI [${area_id}${suffix}]"
     id: ${area_id}_canopy_dli
     state_topic: "${area_id}/dli/canopy"
     unit_of_measurement: "mol/m²/day"
@@ -243,7 +243,7 @@ sensor:
       return roundf(dli * 100.0) / 100.0;
 
   - platform: template
-    name: "Canopy DLI Target"
+    name: "Canopy DLI Target [${area_id}${suffix}]"
     id: ${area_id}_canopy_dli_target
     state_topic: "${area_id}/dli_target/canopy"
     unit_of_measurement: "mol/m²/day"
@@ -280,7 +280,7 @@ sensor:
 
 
   - platform: template
-    name: "Canopy RH Target"
+    name: "Canopy RH Target [${area_id}${suffix}]"
     id: ${area_id}_canopy_rh_target
     state_topic: "${area_id}/rh_target/canopy"
     unit_of_measurement: "%"
@@ -295,7 +295,7 @@ sensor:
       return roundf(RH_TARGET * 10.0) / 10.0;
 
   - platform: template
-    name: "Canopy Dew Point"
+    name: "Canopy Dew Point [${area_id}${suffix}]"
     id: ${area_id}_canopy_dew_point
     state_topic: "${area_id}/dew_point/canopy"
     unit_of_measurement: "°C"
@@ -310,7 +310,7 @@ sensor:
       return roundf(dew_point * 10.0) / 10.0;
 
   - platform: template
-    name: "Growth Cycle"
+    name: "Growth Cycle [${area_id}${suffix}]"
     id: ${area_id}_growth_cycle
     state_topic: "${area_id}/growth_cycle"
     update_interval: 60s
@@ -335,7 +335,7 @@ sensor:
 
   # Sensor to calculate current day length
   - platform: template
-    name: "Day Length"
+    name: "Day Length [${area_id}${suffix}]"
     id: ${area_id}_day_length
     state_topic: "${area_id}/day_length"
     unit_of_measurement: "hours"
@@ -365,38 +365,63 @@ sensor:
       }
 
   - platform: template
-    name: "Full Spectrum Brightness"
+    name: "Full Spectrum Brightness [${area_id}${suffix}]"
     id: full_spectrum_brightness_number_sensor
     state_topic: "${area_id}/brightness/full_spectrum"
     accuracy_decimals: 2
 
-# Day Phase Target sensor to determine day or night
 binary_sensor:
   - platform: template
-    name: "Day Phase Target"
+    name: "Day Phase Target [${area_id}${suffix}]"
     id: ${area_id}_dayphase_target
     state_topic: "${area_id}/dayphase_target"
     lambda: |-
+      // Get the current timestamp
       time_t now = id(mqtt_time).now().timestamp;
 
       // Extract today's date
       struct tm timeinfo;
       localtime_r(&now, &timeinfo);
+
+      // Calculate midnight today
       timeinfo.tm_hour = 0;
       timeinfo.tm_min = 0;
       timeinfo.tm_sec = 0;
       time_t midnight_today = mktime(&timeinfo);
 
-      // Calculate today's sunrise time in seconds since epoch
-      time_t sunrise_today = midnight_today + (time_t) id(${area_id}_sunrise_time)->state;
-      int day_length_seconds = (int) (id(${area_id}_day_length)->state * 3600);
+      // Calculate midnight yesterday
+      time_t midnight_yesterday = midnight_today - 86400; // Subtract 24 hours in seconds
 
-      // Determine if it is day or night
-      return (now >= sunrise_today) && (now < (sunrise_today + day_length_seconds));
+      // Get sunrise times
+      time_t sunrise_today = midnight_today + (time_t) id(${area_id}_sunrise_time)->state;
+      time_t sunrise_yesterday = midnight_yesterday + (time_t) id(${area_id}_sunrise_time)->state;
+
+      // Get day length in seconds
+      int day_length_seconds = (int)(id(${area_id}_day_length)->state * 3600);
+
+      // Determine if it's day phase
+      bool is_day = false;
+
+      if (now >= sunrise_yesterday && now < (sunrise_yesterday + day_length_seconds)) {
+        is_day = true;
+      } else if (now >= sunrise_today && now < (sunrise_today + day_length_seconds)) {
+        is_day = true;
+      }
+
+      // Log the important time values
+      //ESP_LOGD("day_phase_target", "Current Time: %ld", now);
+      //ESP_LOGD("day_phase_target", "Midnight Today: %ld", midnight_today);
+      //ESP_LOGD("day_phase_target", "Midnight Yesterday: %ld", midnight_yesterday);
+      //ESP_LOGD("day_phase_target", "Sunrise Yesterday: %ld", sunrise_yesterday);
+      //ESP_LOGD("day_phase_target", "Sunrise Today: %ld", sunrise_today);
+      //ESP_LOGD("day_phase_target", "Day Length (seconds): %d", day_length_seconds);
+      //ESP_LOGD("day_phase_target", "Is it day phase? %s", is_day ? "Yes" : "No");
+
+      return is_day;
 
 number:
   - platform: template
-    name: "Illuminance Calibration Factor"
+    name: "Illuminance Calibration Factor [${area_id}${suffix}]"
     id: ${area_id}_canopy_illuminance_calibration_factor
     state_topic: "${area_id}/illuminance_calibration_factor/canopy"
     command_topic: "${area_id}/illuminance_calibration_factor/canopy/set-state"
@@ -405,11 +430,12 @@ number:
     min_value: 0.1
     max_value: 5.0
     step: 0.1
+    mode: BOX
     restore_value: True
     retain: True
 
   - platform: template
-    name: "Canopy VPD Target"
+    name: "Canopy VPD Target [${area_id}${suffix}]"
     id: ${area_id}_canopy_vpd_target
     state_topic: "${area_id}/vpd_target/canopy"
     command_topic: "${area_id}/vpd_target/canopy/set-state"
@@ -424,7 +450,7 @@ number:
     retain: True
 
   - platform: template
-    name: "VPD Leaf Offset"
+    name: "Canopy VPD Leaf Offset [${area_id}${suffix}]"
     id: ${area_id}_canopy_vpd_leaf_offset
     state_topic: "${area_id}/vpd_leaf_offset/canopy"
     command_topic: "${area_id}/vpd_leaf_offset/canopy/set-state"
@@ -439,7 +465,7 @@ number:
     retain: True
 
   - platform: template
-    name: "Cola Distance Threshold"
+    name: "Canopy Cola Distance Threshold [${area_id}${suffix}]"
     id: ${area_id}_cola_distance_threshold 
     state_topic: "${area_id}/cola_distance_threshold/canopy"
     command_topic: "${area_id}/cola_distance_threshold/canopy/set-state"
@@ -455,7 +481,7 @@ number:
     retain: True
 
   - platform: template
-    name: "DLI Vegetative Start"
+    name: "DLI Vegetative Start [${area_id}${suffix}]"
     id: ${area_id}_dli_vegetative_start
     state_topic: "${area_id}/dli_vegetative_start"
     command_topic: "${area_id}/dli_vegetative_start/set-state"
@@ -471,7 +497,7 @@ number:
     retain: True
 
   - platform: template
-    name: "DLI Vegetative End"
+    name: "DLI Vegetative End [${area_id}${suffix}]"
     id: ${area_id}_dli_vegetative_end
     state_topic: "${area_id}/dli_vegetative_end"
     command_topic: "${area_id}/dli_vegetative_end/set-state"
@@ -487,7 +513,7 @@ number:
     retain: True
 
   - platform: template
-    name: "DLI Generative Start"
+    name: "DLI Generative Start [${area_id}${suffix}]"
     id: ${area_id}_dli_generative_start
     state_topic: "${area_id}/dli_generative_start"
     command_topic: "${area_id}/dli_generative_start/set-state"
@@ -503,7 +529,7 @@ number:
     retain: True
 
   - platform: template
-    name: "DLI Generative Peak"
+    name: "DLI Generative Peak [${area_id}${suffix}]"
     id: ${area_id}_dli_generative_peak
     state_topic: "${area_id}/dli_generative_peak"
     command_topic: "${area_id}/dli_generative_peak/set-state"
@@ -519,7 +545,7 @@ number:
     retain: True
 
   - platform: template
-    name: "DLI Generative End"
+    name: "DLI Generative End [${area_id}${suffix}]"
     id: ${area_id}_dli_generative_end
     state_topic: "${area_id}/dli_generative_end"
     command_topic: "${area_id}/dli_generative_end/set-state"
@@ -535,7 +561,7 @@ number:
     retain: True
 
   - platform: template
-    name: "Temperature Max"
+    name: "Temperature Max [${area_id}${suffix}]"
     id: ${area_id}_temperature_max
     state_topic: "${area_id}/temperature_max"
     command_topic: "${area_id}/temperature_max/set-state"
@@ -551,7 +577,7 @@ number:
     retain: True
 
   - platform: template
-    name: "Day Length Vegetative"
+    name: "Day Length Vegetative [${area_id}${suffix}]"
     id: ${area_id}_day_length_vegetative
     state_topic: "${area_id}/day_length_vegetative"
     command_topic: "${area_id}/day_length_vegetative/set-state"
@@ -566,7 +592,7 @@ number:
     retain: True
 
   - platform: template
-    name: "Day Length Generative"
+    name: "Day Length Generative [${area_id}${suffix}]"
     id: ${area_id}_day_length_generative
     state_topic: "${area_id}/day_length_generative"
     command_topic: "${area_id}/day_length_generative/set-state"
@@ -581,7 +607,7 @@ number:
     retain: True
 
   - platform: template
-    name: "Start Date (Epoch)"
+    name: "Start Date (Epoch) [${area_id}${suffix}]"
     id: ${area_id}_start_date
     state_topic: "${area_id}/start_date"
     command_topic: "${area_id}/start_date/set-state"
@@ -595,7 +621,7 @@ number:
     retain: True
 
   - platform: template
-    name: "Duration Vegetative (Days)"
+    name: "Duration Vegetative (Days) [${area_id}${suffix}]"
     id: ${area_id}_duration_vegetative
     state_topic: "${area_id}/duration_vegetative"
     command_topic: "${area_id}/duration_vegetative/set-state"
@@ -610,7 +636,7 @@ number:
     retain: True
 
   - platform: template
-    name: "Duration Flipping (Days)"
+    name: "Duration Flipping (Days) [${area_id}${suffix}]"
     id: ${area_id}_duration_flipping
     state_topic: "${area_id}/duration_flipping"
     command_topic: "${area_id}/duration_flipping/set-state"
@@ -625,7 +651,7 @@ number:
     retain: True
 
   - platform: template
-    name: "Duration Generative (Days)"
+    name: "Duration Generative (Days) [${area_id}${suffix}]"
     id: ${area_id}_duration_generative
     state_topic: "${area_id}/duration_generative"
     command_topic: "${area_id}/duration_generative/set-state"
@@ -640,7 +666,7 @@ number:
     retain: True
 
   - platform: template
-    name: "Duration Drying (Days)"
+    name: "Duration Drying (Days) [${area_id}${suffix}]"
     id: ${area_id}_duration_drying
     state_topic: "${area_id}/dutation_drying"
     command_topic: "${area_id}/dutation_drying/set-state"
@@ -655,7 +681,7 @@ number:
     retain: True
 
   - platform: template
-    name: "Sunrise Time (Seconds from Midnight)"
+    name: "Sunrise Time (Seconds from Midnight) [${area_id}${suffix}]"
     id: ${area_id}_sunrise_time
     state_topic: "${area_id}/sunrise_time"
     command_topic: "${area_id}/sunrise_time/set-state"
@@ -670,7 +696,7 @@ number:
     retain: True
 
   - platform: template
-    name: "Door Open Brightness"
+    name: "Door Open Brightness [${area_id}${suffix}]"
     id: ${area_id}_door_open_brightness
     state_topic: "${area_id}/brightness/door_open"
     optimistic: True
@@ -755,7 +781,7 @@ script:
 
               // Calculate the error and adjustment needed
               float error_value = ppfd_target - ppfd;
-              float adjustment = error_value / 2000.0;  // Increase divisor for less aggressive adjustment
+              float adjustment = error_value / 5000.0;  // Increase divisor for less aggressive adjustment
 
               // Log the error and adjustment value
               ESP_LOGD("brightness_control", "Error Value: %.2f", error_value);

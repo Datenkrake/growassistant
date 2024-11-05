@@ -1,7 +1,3 @@
-esphome:
-  name: g2-lift
-  friendly_name: G2_LIFT
-
 esp32:
   board: esp32-c3-devkitm-1
   framework:
@@ -25,20 +21,50 @@ wifi:
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
-    ssid: "G2-Lift Fallback Hotspot"
+    ssid: "${area_id}-Lift Fallback Hotspot"
     password: "mtIjicW6W0Xe"
 
 captive_portal:
+
+esphome:
+  name: g2-lift
+
+####################################################################
+# configure substitutions and friendly name
+####################################################################
+
+  area: ${area_id}
+  friendly_name: ${area_id}_LIFT${suffix}
+
+substitutions:
+  area_id: G2
+  suffix: ""
+  #pin_door_switch: GPIO21
+  pin_irrigation_output: GPIO16
+  pin_circulation_output: GPIO17
+
+####################################################################
+# generic yaml for humidifiers below
+####################################################################
+globals:
+  - id: ${area_id}_fan_speed_step${suffix}
+    type: int
+    restore_value: no
+    initial_value: '0'
+  - id: ${area_id}_door_open${suffix}
+    type: bool
+    restore_value: no
+    initial_value: 'false'
 
 mqtt:
   broker: !secret mqtt_broker
   username: !secret mqtt_username
   password: !secret mqtt_password
-  topic_prefix: "g2/lift"
-  
+  topic_prefix: "${area_id}/lift"
+
 stepper:
   - platform: a4988
-    id: lift_stepper
+    id: ${area_id}_lift_stepper${suffix}
     step_pin: GPIO6       # STEP pin
     dir_pin: GPIO5        # DIR pin
     max_speed: 2000 steps/s
@@ -55,51 +81,51 @@ stepper:
 
 switch:
   - platform: template
-    name: "G2 Step Down"
-    id: g2_step_down
+    name: "Step Down [${area_id}${suffix}]"
+    id: ${area_id}_step_down
     turn_on_action:
       # Move 150 steps forward
       - stepper.report_position:
-          id: lift_stepper
+          id: ${area_id}_lift_stepper${suffix}
           position: 0
       - stepper.set_target:
-          id: lift_stepper
+          id: ${area_id}_lift_stepper${suffix}
           target: 32000
 
   - platform: template
-    name: "G2 Step Up"
-    id: g2_step_up
+    name: "Step Up [${area_id}${suffix}]"
+    id: ${area_id}_step_up
     turn_on_action:
       # Move 150 steps forward
       - stepper.report_position:
-          id: lift_stepper
+          id: ${area_id}_lift_stepper${suffix}
           position: 0
       - stepper.set_target:
-          id: lift_stepper
+          id: ${area_id}_lift_stepper${suffix}
           target: -32000
   
   # HHL = 8x mixrostepping, HHH = 16x
   # 8, with 80:1, 128000 steps per rotation
   - platform: gpio
-    name: "MS1 HIGH"
+    name: "MS1 HIGH [${area_id}${suffix}]"
     pin: GPIO20
     inverted: false
     restore_mode: ALWAYS_ON
 
   - platform: gpio
-    name: "MS2 HIGH"
+    name: "MS2 HIGH [${area_id}${suffix}]"
     pin: GPIO10
     inverted: false
     restore_mode: ALWAYS_ON
 
   - platform: gpio
-    name: "MS3 LOW"
+    name: "MS3 LOW [${area_id}${suffix}]"
     pin: GPIO9
     inverted: true
     restore_mode: ALWAYS_OFF
 
   - platform: gpio
-    name: "Enable"
+    name: "Lift Stepper Enable [${area_id}${suffix}]"
     pin: GPIO21
     inverted: true  # Active LOW: true if LOW enables the driver
     restore_mode: ALWAYS_ON  # Enabled by default on boot
