@@ -2,7 +2,7 @@ id: update_fan_speed
 then:
     lambda: |-
     // Check if the door is open
-    if (id(${area_id}_door_open${suffix})) {
+    if (id(${area_id}_${device_id}${suffix}_door_open)) {
         // Door is open; turn off both fans
         //id(fan1_pwm).set_level(0.0);
         //id(fan2_pwm).set_level(0.0);
