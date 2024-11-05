@@ -92,7 +92,8 @@ sensor:
   - !include includes/sensor_dew_point.yaml
   - !include includes/sensor_growth_cycle.yaml
   - !include includes/sensor_day_length.yaml
-  - !include includes/sensor_full_spectrum_brightness.yaml
+  # mqtt sensors
+  - !include includes/sensor_mqtt_full_spectrum_brightness.yaml
 
 binary_sensor:
   - !include includes/binary_sensor_day_phase_target.yaml
