@@ -12,11 +12,6 @@ ota:
   - platform: esphome
     password: "136bf7560393d6572af9c6feac1b12a7"
 
-  # Enable fallback hotspot (captive portal) in case wifi connection fails
-  ap:
-    ssid: "${area_id}-Exhaust Fallback Hotspot"
-    password: "Iu5Jmv8ML5Em"
-
 esphome:
   name: g1-exhaust
 
