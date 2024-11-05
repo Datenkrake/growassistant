@@ -39,20 +39,20 @@ wifi:
 output:
   - platform: slow_pwm
     pin: ${pin_humidifier_pwm_output}
-    id: ${area_id}_humidifier_pwm_output${suffix}
+    id: ${area_id}_${device_id}${suffix}_pwm_output
     period: 10s
 
 fan:
   - platform: speed
-    output: ${area_id}_humidifier_pwm_output${suffix}
-    name: "Humidifier [${area_id}${suffix}]"
-    id: ${area_id}_humidifier_fan${suffix}
-    state_topic: "${area_id}/humidifier/fan/vapor/state"
-    speed_state_topic: "${area_id}/humidifier/fan/vapor/speed"
-    speed_level_state_topic: "${area_id}/humidifier/fan/vapor/level"
-    command_topic: "${area_id}/humidifier/fan/vapor/set_state"
-    speed_command_topic: "${area_id}/humidifier/fan/vapor/set_speed"
-    speed_level_command_topic: "${area_id}/humidifier/fan/vapor/set_level"
+    output: ${area_id}_${device_id}${suffix}_pwm_output
+    name: "Humidifier [${area_id}_${device_id}${suffix}]"
+    id: ${area_id}_${device_id}${suffix}_humidifier
+    state_topic: "${area_id}/${device_id}/fan/vapor/state"
+    speed_state_topic: "${area_id}/${device_id}/fan/vapor/speed"
+    speed_level_state_topic: "${area_id}/${device_id}/fan/vapor/level"
+    command_topic: "${area_id}/${device_id}/fan/vapor/set_state"
+    speed_command_topic: "${area_id}/${device_id}/fan/vapor/set_speed"
+    speed_level_command_topic: "${area_id}/${device_id}/fan/vapor/set_level"
     speed_count: 100  # Set the speed steps (0-100%)
 
 sensor:
@@ -65,7 +65,7 @@ switch:
   - !inlcude includes/switch_enable.yaml
 
 globals:
-  - id: ${area_id}_door_open${suffix}
+  - id: ${area_id}_${device_id}${suffix}_door_open
     type: bool
     restore_value: no
     initial_value: 'false'

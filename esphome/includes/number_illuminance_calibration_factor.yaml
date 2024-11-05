@@ -1,8 +1,8 @@
 platform: template
 name: "Illuminance Calibration Factor [${area_id}_${device_id}${suffix}]"
-id: ${area_id}_${device_id}${suffix}_canopy_illuminance_calibration_factor
-state_topic: "${area_id}/${device_id}/illuminance_calibration_factor/canopy"
-command_topic: "${area_id}/${device_id}/illuminance_calibration_factor/canopy/set-state"
+id: ${area_id}_${device_id}${suffix}_illuminance_calibration_factor
+state_topic: "${area_id}/${device_id}/illuminance_calibration_factor"
+command_topic: "${area_id}/${device_id}/illuminance_calibration_factor/set-state"
 optimistic: true
 initial_value: 3.0
 min_value: 0.1
