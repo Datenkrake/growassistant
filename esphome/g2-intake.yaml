@@ -38,6 +38,7 @@ esphome:
 
 substitutions:
   area_id: G2
+  device_id: INTAKE
   suffix: ""
   pin_fan1_pwm: GPIO3
   pin_sda: GPIO2

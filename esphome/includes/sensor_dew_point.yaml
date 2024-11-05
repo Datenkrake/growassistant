@@ -1,0 +1,14 @@
+platform: template
+name: "Dew Point [${area_id}_${device_id}${suffix}]"
+id: ${area_id}_${device_id}${suffix}_dew_point
+state_topic: "${area_id}/${device_id}/dew_point"
+unit_of_measurement: "°C"
+update_interval: 30s
+lambda: |
+    float T = id(${area_id}_${device_id}${suffix}_temperature).state;
+    float RH = id(${area_id}_${device_id}${suffix}_humidity).state;
+    float a = 17.27;
+    float b = 237.7;
+    float alpha = ((a * T) / (b + T)) + log(RH / 100.0);
+    float dew_point = (b * alpha) / (a - alpha);
+    return roundf(dew_point * 10.0) / 10.0;

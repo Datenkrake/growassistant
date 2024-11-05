@@ -1,0 +1,15 @@
+platform: template
+name: "DLI Vegetative Start [${area_id}_${device_id}${suffix}]"
+id: ${area_id}_${device_id}${suffix}_dli_vegetative_start
+state_topic: "${area_id}/${device_id}/dli_vegetative_start"
+command_topic: "${area_id}/${device_id}/dli_vegetative_start/set-state"
+optimistic: True
+initial_value: 10
+min_value: 1
+max_value: 100
+step: 1
+mode: BOX
+unit_of_measurement: "mol/m2/day"
+icon: mdi:weather-sunny
+restore_value: True
+retain: True

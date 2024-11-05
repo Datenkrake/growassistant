@@ -1,0 +1,19 @@
+id: check_cola_distance
+then:
+    - lambda: |-
+        // Get the current cola distance and threshold values
+        float _cola_distance = id(${area_id}_${device_id}${suffix}_canopy_cola_distance).state;
+        float cola_distance_threshold = id(${area_id}_${device_id}${suffix}_cola_distance_threshold).state;
+
+        // Check if the door is closed and cola distance is below the threshold
+        if (!id(${area_id}_door_open${suffix}) && _cola_distance < cola_distance_threshold) {
+        ESP_LOGD("cola_distance_check", "Cola distance detected: %.2f m, below threshold of %.2f m, and door is closed.", _cola_distance, cola_distance_threshold);
+
+        // Publish MQTT message if the condition is met (true)
+        id(mqtt_publish_cola_detected_true).execute();
+        } else {
+        ESP_LOGD("cola_distance_check", "No cola detected or door is open.");
+
+        // Publish MQTT message if the condition is not met (false)
+        id(mqtt_publish_cola_detected_false).execute();
+        }

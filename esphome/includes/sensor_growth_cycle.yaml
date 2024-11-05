@@ -1,0 +1,23 @@
+platform: template
+name: "Growth Cycle [${area_id}_${device_id}${suffix}]"
+id: ${area_id}_${device_id}${suffix}_growth_cycle
+state_topic: "${area_id}/${device_id}/growth_cycle"
+update_interval: 60s
+lambda: |-
+    time_t now = id(mqtt_time).now().timestamp;
+    time_t start_vegetative = (time_t) id(${area_id}_${device_id}${suffix}_start_date)->state;
+    time_t start_flipping = start_vegetative + (time_t)(id(${area_id}_${device_id}${suffix}_duration_vegetative))->state * 86400;
+    time_t start_generative = start_flipping + (time_t)(id(${area_id}_${device_id}${suffix}_duration_flipping))->state * 86400;
+    time_t start_drying = start_generative + (time_t)(id(${area_id}_${device_id}${suffix}_duration_generative))->state * 86400;
+
+    if (now < start_vegetative) {
+    return 0;  // Pre-vegetative
+    } else if (now < start_flipping) {
+    return 1;  // Vegetative
+    } else if (now < start_generative) {
+    return 2;  // Flipping
+    } else if (now < start_drying) {
+    return 3;  // Generative
+    } else {
+    return 4;  // Drying
+    }

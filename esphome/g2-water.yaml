@@ -38,6 +38,7 @@ esphome:
 
 substitutions:
   area_id: G2
+  device_id: WATER
   suffix: ""
   #pin_door_switch: GPIO21
   pin_irrigation_output: GPIO16

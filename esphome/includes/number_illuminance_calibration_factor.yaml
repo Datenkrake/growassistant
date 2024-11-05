@@ -1,0 +1,13 @@
+platform: template
+name: "Illuminance Calibration Factor [${area_id}_${device_id}${suffix}]"
+id: ${area_id}_${device_id}${suffix}_canopy_illuminance_calibration_factor
+state_topic: "${area_id}/${device_id}/illuminance_calibration_factor/canopy"
+command_topic: "${area_id}/${device_id}/illuminance_calibration_factor/canopy/set-state"
+optimistic: true
+initial_value: 3.0
+min_value: 0.1
+max_value: 5.0
+step: 0.1
+mode: BOX
+restore_value: True
+retain: True

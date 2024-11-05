@@ -1,0 +1,25 @@
+platform: bme68x_bsec2
+temperature:
+    name: "Canopy Temperature [${area_id}_${device_id}${suffix}]"
+    id: ${area_id}_${device_id}${suffix}_temperature
+    state_topic: "${area_id}/${device_id}/temperature"
+pressure:
+    name: "Canopy Pressure [${area_id}${suffix}]"
+    id: ${area_id}_${device_id}${suffix}_pressure
+    state_topic: "${area_id}/${device_id}/pressure"
+humidity:
+    name: "Canopy Humidity [${area_id}${suffix}]"
+    id: ${area_id}_${device_id}${suffix}_humidity
+    state_topic: "${area_id}/${device_id}/humidity"
+iaq:
+    name: "Canopy IAQ [${area_id}${suffix}]"
+    id: ${area_id}_${device_id}${suffix}_iaq
+    state_topic: "${area_id}/${device_id}/iaq"
+co2_equivalent:
+    name: "Canopy CO2e [${area_id}${suffix}]"
+    id: ${area_id}_${device_id}${suffix}_co2e
+    state_topic: "${area_id}/${device_id}/co2e"
+breath_voc_equivalent:
+    name: "Canopy bVOCe [${area_id}${suffix}]"
+    id: ${area_id}_c${device_id}${suffix}_voce
+    state_topic: "${area_id}/${device_id}/bvoce"

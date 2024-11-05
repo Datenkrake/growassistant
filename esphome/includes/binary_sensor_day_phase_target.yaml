@@ -1,0 +1,47 @@
+platform: template
+name: "Day Phase Target [${area_id}_${device_id}${suffix}]"
+id: ${area_id}_${device_id}${suffix}_dayphase_target
+state_topic: "${area_id}/${device_id}/dayphase_target"
+lambda: |-
+    // Get the current timestamp
+    time_t now = id(mqtt_time).now().timestamp;
+
+    // Extract today's date
+    struct tm timeinfo;
+    localtime_r(&now, &timeinfo);
+
+    // Calculate midnight today
+    timeinfo.tm_hour = 0;
+    timeinfo.tm_min = 0;
+    timeinfo.tm_sec = 0;
+    time_t midnight_today = mktime(&timeinfo);
+
+    // Calculate midnight yesterday
+    time_t midnight_yesterday = midnight_today - 86400; // Subtract 24 hours in seconds
+
+    // Get sunrise times
+    time_t sunrise_today = midnight_today + (time_t) id(${area_id}_sunrise_time)->state;
+    time_t sunrise_yesterday = midnight_yesterday + (time_t) id(${area_id}_sunrise_time)->state;
+
+    // Get day length in seconds
+    int day_length_seconds = (int)(id(${area_id}_day_length)->state * 3600);
+
+    // Determine if it's day phase
+    bool is_day = false;
+
+    if (now >= sunrise_yesterday && now < (sunrise_yesterday + day_length_seconds)) {
+    is_day = true;
+    } else if (now >= sunrise_today && now < (sunrise_today + day_length_seconds)) {
+    is_day = true;
+    }
+
+    // Log the important time values
+    //ESP_LOGD("day_phase_target", "Current Time: %ld", now);
+    //ESP_LOGD("day_phase_target", "Midnight Today: %ld", midnight_today);
+    //ESP_LOGD("day_phase_target", "Midnight Yesterday: %ld", midnight_yesterday);
+    //ESP_LOGD("day_phase_target", "Sunrise Yesterday: %ld", sunrise_yesterday);
+    //ESP_LOGD("day_phase_target", "Sunrise Today: %ld", sunrise_today);
+    //ESP_LOGD("day_phase_target", "Day Length (seconds): %d", day_length_seconds);
+    //ESP_LOGD("day_phase_target", "Is it day phase? %s", is_day ? "Yes" : "No");
+
+    return is_day;

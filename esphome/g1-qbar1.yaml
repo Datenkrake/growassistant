@@ -3,9 +3,6 @@ esp32:
   framework:
     type: arduino
 
-# Enable logging
-logger:
-
 # Enable Home Assistant API
 # api:
 #   encryption:
@@ -14,17 +11,6 @@ logger:
 ota:
   - platform: esphome
     password: "5157826e92224d258b36f366a1b17de1"
-
-wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_password
-
-  # Enable fallback hotspot (captive portal) in case wifi connection fails
-  ap:
-    ssid: "${area_id}-Qbar1 Fallback Hotspot"
-    password: "svdO7P6q7ySX"
-
-captive_portal:
     
 esphome:
   name: g1-qbar1
@@ -33,10 +19,12 @@ esphome:
 # configure substitutions and friendly name
 ####################################################################
 
+  area: ${area_id}
   friendly_name: ${area_id}_QBAR${suffix}
 
 substitutions:
   area_id: G1
+  device_id: QBAR
   suffix: "_A"
   pin_light_pwm: GPIO8
   pin_trigger: GPIO9
@@ -45,6 +33,10 @@ substitutions:
 ####################################################################
 # generic yaml for humidifiers below
 ####################################################################
+logger:
+captive_portal:
+wifi:
+  !include includes/wifi_default.yaml
 
 mqtt:
   broker: !secret mqtt_broker
@@ -68,74 +60,34 @@ light:
     command_topic: "${area_id}/light/full_spectrum/set-state"
 
 number:
-  - platform: template
-    name: "Gantry Position Min [${area_id}${suffix}]"
-    id: ${area_id}_qbar1_gantry_position_min${suffix}
-    state_topic: "${area_id}/gantry_position_min"
-    command_topic: "${area_id}/gantry_position_min/set-state"
-    min_value: 0
-    max_value: 1
-    step: 0.01
-    initial_value: 0.2
-    optimistic: True
-    mode: BOX
-    restore_value: True
-    retain: True
-
-  - platform: template
-    name: "Gantry Position Max [${area_id}${suffix}]"
-    id: ${area_id}_qbar1_gantry_position_max${suffix}
-    state_topic: "${area_id}/gantry_position_max"
-    command_topic: "${area_id}/gantry_position_max/set-state"
-    min_value: 0
-    max_value: 1.5
-    step: 0.01
-    initial_value: 1.1
-    optimistic: True
-    mode: BOX
-    restore_value: True
-    retain: True
+  - !include includes/number_gantry_position_min.yaml
+  - !include includes/number_gantry_position_max.yaml
 
 # Ultrasonic sensor on GPIO9 (TRIG) and GPIO10 (ECHO)
 sensor:
-  - platform: ultrasonic
-    trigger_pin: ${pin_trigger}
-    echo_pin: ${pin_echo}
-    name: "Gantry Position [${area_id}${suffix}]"
-    id: ${area_id}_qbar1_gantry_position${suffix}
-    state_topic: "${area_id}/gantry_position"
-    update_interval: 1s
-    timeout: 2m
-    filters:
-      - sliding_window_moving_average:
-          window_size: 60   # Number of readings to average
-          send_every: 60    # How often to send the averaged result
+  - !include includes/sensor_ultrasonic.yaml
 
-# Cola detection sensor via MQTT as text_sensor
 text_sensor:
-  - platform: mqtt_subscribe
-    name: "Canopy Cola Detected [${area_id}${suffix}]"
-    id: ${area_id}_qbar1_cola_detected${suffix}
-    topic: "${area_id}/cola_detected/canopy"
+  - !include includes/text_sensor_cola_detected.yaml
 
 interval:
   - interval: 60min
     then:
       - lambda: |-
           ESP_LOGD("debug", "Checking conditions for moving gantry...");
-          ESP_LOGD("debug", "Cola detected state: %s", id(${area_id}_qbar1_cola_detected${suffix}).state.c_str());
-          ESP_LOGD("debug", "Gantry position: %.2f, Min Position: %.2f", id(${area_id}_qbar1_gantry_position${suffix}).state, id(${area_id}_qbar1_gantry_position_min${suffix}).state);
+          ESP_LOGD("debug", "Cola detected state: %s", id(${area_id}_${device_id}${suffix}_cola_detected).state.c_str());
+          ESP_LOGD("debug", "Gantry position: %.2f, Min Position: %.2f", id(${area_id}_${device_id}${suffix}_gantry_position$).state, id(${area_id}_${device_id}${suffix}_gantry_position_min).state);
 
-          if (id(${area_id}_qbar1_cola_detected${suffix}).state == "{\"state\": \"true\"}" && id(${area_id}_qbar1_gantry_position${suffix}).state > id(${area_id}_qbar1_gantry_position_min${suffix}).state) {
+          if (id(${area_id}_${device_id}${suffix}_cola_detected).state == "{\"state\": \"true\"}" && id(${area_id}_${device_id}${suffix}_gantry_position).state > id(${area_id}_${device_id}${suffix}_gantry_position_min).state) {
             ESP_LOGD("main", "Conditions met. Calling REST endpoint to move gantry");
-            id(rest_move_up).execute();
+            id(${area_id}_rest_move_up).execute();
           } else {
             ESP_LOGD("main", "Conditions not met. Skipping...");
           }
 
 # Example rest_move_up script
 script:
-  - id: rest_move_up
+  - id: ${area_id}_rest_move_up
     then:
       - http_request.get:
           url: "http://g1.local:7125/printer/gcode/script?script=move_light%20DISTANCE=10"

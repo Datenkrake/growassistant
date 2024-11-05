@@ -1,0 +1,14 @@
+platform: template
+name: "Sunrise Time (Seconds from Midnight) [${area_id}_${device_id}${suffix}]"
+id: ${area_id}_${device_id}${suffix}_sunrise_time
+state_topic: "${area_id}/${device_id}/sunrise_time"
+command_topic: "${area_id}/${device_id}/sunrise_time/set-state"
+optimistic: True
+min_value: 0
+max_value: 86400  # Maximum seconds in a day
+step: 1
+initial_value: 28800
+mode: BOX
+unit_of_measurement: "seconds"
+restore_value: True
+retain: True

@@ -1,0 +1,12 @@
+platform: htu21d
+model: htu21d
+temperature:
+    name: "Temperature [${area_id}_${device_id}${suffix}]"
+    id: ${area_id}_${device_id}${suffix}_temperature
+    state_topic: "${area_id}/${device_id}/temperature"
+humidity:
+    name: "Humidity [${area_id}_${device_id}${suffix}]"
+    id: ${area_id}_${device_id}${suffix}_humidity
+    state_topic: "${area_id}/${device_id}/humidity"
+heater:
+    name: "Heater"

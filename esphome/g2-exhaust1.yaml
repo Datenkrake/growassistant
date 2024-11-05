@@ -51,6 +51,7 @@ esphome:
 
 substitutions:
   area_id: G2
+  device_id: EXHAUST
   suffix: "_A"
   pin_sda: GPIO3
   pin_scl: GPIO4

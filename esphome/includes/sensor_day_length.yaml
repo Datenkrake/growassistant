@@ -1,0 +1,30 @@
+  # Sensor to calculate current day length
+platform: template
+name: "Day Length [${area_id}_${device_id}${suffix}]"
+id: ${area_id}_${device_id}${suffix}_day_length
+state_topic: "${area_id}/day_length"
+unit_of_measurement: "hours"
+update_interval: 60s
+lambda: |-
+    time_t now = id(mqtt_time).now().timestamp;
+    time_t start_vegetative = (time_t) id(${area_id}_${device_id}${suffix}_start_date)->state;
+    time_t start_flipping = start_vegetative + (time_t)(id(${area_id}_${device_id}${suffix}_duration_vegetative))->state * 86400;
+    time_t start_generative = start_flipping + (time_t)(id(${area_id}_${device_id}${suffix}_duration_flipping))->state * 86400;
+    time_t start_drying = start_generative + (time_t)(id(${area_id}_${device_id}${suffix}_duration_generative))->state * 86400;
+
+    float _day_length_vegetative = id(${area_id}_${device_id}${suffix}_day_length_vegetative)->state;
+    float _day_length_generative = id(${area_id}_${device_id}${suffix}_day_length_generative)->state;
+
+    if (now > start_vegetative && now < start_flipping) {
+    return _day_length_vegetative;
+    } else if (now > start_flipping && now < start_generative) {
+    // Linear interpolation between vegetative and generative
+    float x = float(now - start_flipping) / float(start_generative - start_flipping);
+    return _day_length_vegetative + x * (_day_length_generative - _day_length_vegetative);
+    } else if (now > start_generative && now < start_drying) {
+    return _day_length_generative;
+    } else if (now > start_drying) {
+    return 0;
+    } else {
+    return 0;
+    }

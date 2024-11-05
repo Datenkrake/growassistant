@@ -1,0 +1,6 @@
+platform: mqtt_subscribe
+name: "Gantry Humidity [${area_id}_${device_id}_${device_id}${suffix}]"
+id: ${area_id}_${device_id}${suffix}_humidifier_gantry_rh
+topic: "${area_id}/GANTRY/humidity"
+unit_of_measurement: "%"
+qos: 1

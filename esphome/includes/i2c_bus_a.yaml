@@ -1,0 +1,5 @@
+sda: ${pin_sda}
+scl: ${pin_scl}
+scan: true
+id: bus_a
+frequency: 50kHz

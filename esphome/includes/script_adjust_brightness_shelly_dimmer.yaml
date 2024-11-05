@@ -1,0 +1,95 @@
+id: adjust_brightness_shelly_dimmer
+then:
+    - lambda: |-
+        float new_brightness = id(${area_id}_${device_id}${suffix}_door_open_brightness).state;
+
+        // Get current PPFD and target PPFD values
+        float ppfd_target = id(${area_id}_${device_id}${suffix}_ppfd_target).state;
+
+        if (ppfd_target < 0.01) {  // Using a small threshold for floating-point comparison
+        // PPFD target is zero, turn off the light
+        new_brightness = 0.0;
+        } else {
+        if (!id(door_open)) {
+            // Get current brightness from the number sensor state
+            float current_brightness = id(${area_id}_${device_id}${suffix}_full_spectrum_brightness_number_sensor).state;
+            // **Set current_brightness to 0 if it's NaN**
+            if (isnan(current_brightness)) {
+            current_brightness = 0.0;
+            }
+
+            // Get current PPFD value
+            float ppfd = id(${area_id}_${device_id}${suffix}_ppfd).state;
+
+            // Log the current state of PPFD and brightness
+            ESP_LOGD("brightness_control", "Current PPFD: %.2f", ppfd);
+            ESP_LOGD("brightness_control", "Target PPFD: %.2f", ppfd_target);
+            ESP_LOGD("brightness_control", "Current Brightness: %.2f", current_brightness);
+
+            // Calculate the error and adjustment needed
+            float error_value = ppfd_target - ppfd;
+            float adjustment = error_value / 2000.0;  // Increase divisor for less aggressive adjustment
+            adjustment = roundf(adjustment * 100.0f) / 100.0f;
+
+            // Log the error and adjustment value
+            ESP_LOGD("brightness_control", "Error Value: %.2f", error_value);
+            ESP_LOGD("brightness_control", "Adjustment Value: %.5f", adjustment);
+
+            // Calculate new brightness value
+            new_brightness = current_brightness + adjustment;
+        }
+        }
+
+        // Ensure brightness stays between 0 and 1
+        if (new_brightness > 1.0) {
+        new_brightness = 1.0;
+        } else if (new_brightness < 0.0) {
+        new_brightness = 0.0;
+        }
+
+        // Log the new brightness value after clamping
+        ESP_LOGD("brightness_control", "New Brightness (after clamping): %.2f", new_brightness);
+
+        // Update the global variable with the new brightness value
+        if(g2_ppfd_target != 0 && new_brightness == 0) {
+        new_brightness = 0.01;
+        }
+        id(new_brightness_global) = new_brightness;
+
+    - mqtt.publish:
+        topic: "${area_id}/mains/light/command/switch:0"
+        payload: !lambda |-
+        if (id(new_brightness_global) > 0.0) {
+            ESP_LOGD("mqtt_publish", "Turning Light ON");
+            return "on";
+        } else {
+            ESP_LOGD("mqtt_publish", "Turning Light OFF");
+            return "off";
+        }
+
+    - mqtt.publish_json:
+        topic: "${area_id}/light/dimmer/rpc"
+        payload: !lambda |-
+        if (id(new_brightness_global) > 0.0) {
+            int brightness_percent = (int)(id(new_brightness_global) * 100);
+            ESP_LOGD("mqtt_publish", "Publishing Brightness: %d%%", brightness_percent);
+
+            // Construct the JSON payload to turn on the light with specified brightness
+            root["id"] = 1;
+            root["src"] = "user";
+            root["method"] = "Light.Set";
+            auto params = root.createNestedObject("params");
+            params["id"] = 0;
+            params["on"] = true;
+            params["brightness"] = brightness_percent;
+        } else {
+            ESP_LOGD("mqtt_publish", "Turning off Light");
+
+            // Construct the JSON payload to turn off the light
+            root["id"] = 1;
+            root["src"] = "user";
+            root["method"] = "Light.Set";
+            auto params = root.createNestedObject("params");
+            params["id"] = 0;
+            params["on"] = false;
+        }

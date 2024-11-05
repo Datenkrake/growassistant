@@ -1,0 +1,8 @@
+platform: template
+name: "Enable [${area_id}_${device_id}${suffix}]"
+id: ${area_id}_${device_id}${suffix}_enable
+optimistic: True
+state_topic: "${area_id}/${device_id}/enable"
+command_topic: "${area_id}/${device_id}/enable/set-state"
+qos: 0
+retain: True

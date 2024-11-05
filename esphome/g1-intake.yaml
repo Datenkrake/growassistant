@@ -3,9 +3,6 @@ esp32:
   framework:
     type: arduino
 
-# Enable logging
-logger:
-
 # Enable Home Assistant API
 # api:
 #   encryption:
@@ -14,17 +11,6 @@ logger:
 ota:
   - platform: esphome
     password: "b502f059d691352b31de26c9c4fd75c2"
-
-wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_password
-  domain: .local
-  # Enable fallback hotspot (captive portal) in case wifi connection fails
-  ap:
-    ssid: "${area_id}-Intake Fallback Hotspot"
-    password: "iT87sU68QxKq"
-
-captive_portal:
 
 esphome:
   name: g1-intake
@@ -38,6 +24,7 @@ esphome:
 
 substitutions:
   area_id: G1
+  device_id: INTAKE
   suffix: ""
   pin_fan1_pwm: GPIO0
   pin_sda: GPIO20
@@ -48,13 +35,17 @@ substitutions:
 ####################################################################
 # generic yaml for humidifiers below
 ####################################################################
+logger:
+captive_portal:
+wifi:
+  !include includes/wifi_default.yaml
 
 globals:
-  - id: ${area_id}_fan1_pwm_value${suffix}
+  - id: ${area_id}_${device_id}${suffix}_fan1_pwm_value
     type: float
     restore_value: no
     initial_value: '0.0'
-  - id: ${area_id}_door_open${suffix}
+  - id: ${area_id}_${device_id}${suffix}_door_open
     type: bool
     restore_value: no
     initial_value: 'false'
@@ -88,128 +79,40 @@ fan:
     name: "Intake"
     id: intake_fan
 
-# Example configuration entry
 i2c:
-  sda: ${pin_sda}
-  scl: ${pin_scl}
-  timeout: 1ms
-
+  !include includes/i2c_bus_a.yaml
 bme68x_bsec2_i2c:
-  address: ${address_bme680}
-  model: bme680
-  operating_age: 28d
-  sample_rate: LP
-  supply_voltage: 3.3V
-  temperature_offset: ${bme680_temp_offset}
+  !include includes/bme680x_bsec2_i2c.yaml
   
 sensor:
-  - platform: bme68x_bsec2
-    temperature:
-      name: "Intake Temperature [${area_id}${suffix}]"
-      id: ${area_id}_intake_temperature${suffix}
-      state_topic: "${area_id}/temperature/intake"
-    pressure:
-      name: "Intake Pressure [${area_id}${suffix}]"
-      id: ${area_id}_intake_pressure${suffix}
-      state_topic: "${area_id}/pressure/intake"
-    humidity:
-      name: "Intake Humidity [${area_id}${suffix}]"
-      id: ${area_id}_intake_humidity${suffix}
-      state_topic: "${area_id}/humidity/intake"
-    iaq:
-      name: "Intake IAQ [${area_id}${suffix}]"
-      id: ${area_id}_intake_iaq${suffix}
-      state_topic: "${area_id}/iaq/intake"
-    co2_equivalent:
-      name: "Intake CO2e [${area_id}${suffix}]"
-      id: ${area_id}_intake_co2e${suffix}
-      state_topic: "${area_id}/co2e/intake"
-    breath_voc_equivalent:
-      name: "Intake bVOCe [${area_id}${suffix}]"
-      id: ${area_id}_bvoce_intake${suffix}
-      state_topic: "${area_id}/bvoce/intake"
+  - !include includes/sensor_bh1750.yaml
+  - !include includes/sensor_ultrasonic.yaml
+
+  - !include includes/sensor_bme68x_bsec2.yaml
+  - !include includes/sensor_temperature_max.yaml
+  
+  - !include includes/sensor_mqtt_canopy_vpd.yaml
+  - !include includes/sensor_mqtt_canopy_ppfd.yaml
+  - !include includes/sensor_mqtt_canopy_ppfd_target.yaml
+  - !include includes/sensor_mqtt_canopy_dli.yaml
+  - !include includes/sensor_mqtt_canopy_dli_target.yaml
+  - !include includes/sensor_mqtt_canopy_rh_target.yaml
+  - !include includes/sensor_mqtt_gantry_rh_target.yaml
+  - !include includes/sensor_mqtt_canopy_humidity.yaml
+  - !include includes/sensor_mqtt_gantry_humidity.yaml
+  - !include includes/sensor_mqtt_canopy_temperature.yaml
+  - !include includes/sensor_mqtt_gantry_temperature.yaml
+  - !include includes/sensor_mqtt_canopy_vpd_target.yaml
+  - !include includes/sensor_mqtt_canopy_vpd.yaml
+  - !include includes/sensor_mqtt_gantry_vpd.yaml
+  - !include includes/sensor_mqtt_canopy_dew_point.yaml
+  - !include includes/sensor_mqtt_growth_cycle.yaml
+  - !include includes/sensor_mqtt_day_length.yaml
+  - !include includes/sensor_mqtt_full_spectrum_brightness.yaml
     
-# MQTT Sensors
-  - platform: mqtt_subscribe
-    name: "Temperature Max [${area_id}${suffix}]"
-    id: ${area_id}_intake_temperature_max${suffix}
-    topic: "${area_id}/temperature_max"
-
-  - platform: mqtt_subscribe
-    name: "Canopy VPD Target [${area_id}${suffix}]"
-    id: ${area_id}_intake_canopy_vpd_target${suffix}
-    topic: "${area_id}/vpd_target/canopy"
-
-  - platform: mqtt_subscribe
-    name: "Canopy VPD [${area_id}${suffix}]"
-    id: ${area_id}_intake_canopy_vpd${suffix}
-    topic: "${area_id}/vpd/canopy"
-
-  - platform: mqtt_subscribe
-    name: "Canopy RH Target [${area_id}${suffix}]"
-    id: ${area_id}_intake_canopy_rh_target${suffix}
-    topic: "${area_id}/rh_target/canopy"
-
-  - platform: mqtt_subscribe
-    name: "Canopy Humidity [${area_id}${suffix}]"
-    id: ${area_id}_intake_canopy_humidity${suffix}
-    topic: "${area_id}/humidity/canopy"
-
-  - platform: mqtt_subscribe
-    name: "Canopy Temperature [${area_id}${suffix}]"
-    id: ${area_id}_intake_canopy_temperature${suffix}
-    topic: "${area_id}/temperature/canopy"
-
-  - platform: mqtt_subscribe
-    name: "Gantry VPD [${area_id}${suffix}]"
-    id: ${area_id}_intake_gantry_vpd${suffix}
-    topic: "${area_id}/vpd/gantry"
-
-  - platform: mqtt_subscribe
-    name: "Gantry RH Target [${area_id}${suffix}]"
-    id: ${area_id}_intake_gantry_rh_target${suffix}
-    topic: "${area_id}//rh_target/gantry"
-
-  - platform: mqtt_subscribe
-    name: "Gantry Humidity [${area_id}${suffix}]"
-    id: ${area_id}_intake_gantry_humidity${suffix}
-    topic: "${area_id}/humidity/gantry"
-
-  - platform: mqtt_subscribe
-    name: "Gantry Temperature [${area_id}${suffix}]"
-    id: ${area_id}_intake_gantry_temperature${suffix}
-    topic: "${area_id}/temperature/gantry"
-
 number:
-  - platform: template
-    name: "Intake Fan Speed Min [${area_id}${suffix}]"
-    id: ${area_id}_intake_fan_speed_min${suffix}
-    state_topic: "${area_id}/intake_fan_speed_min"
-    command_topic: "${area_id}/intake_fan_speed_min/set-state"
-    optimistic: True
-    initial_value: 0.0
-    min_value: 0.0
-    max_value: 100.0
-    step: 1.0
-    mode: box 
-    unit_of_measurement: "%"
-    retain: True
-    restore_value: True
-
-  - platform: template
-    name: "Intake Fan Speed Max [${area_id}${suffix}]"
-    id: ${area_id}_intake_fan_speed_max${suffix}
-    state_topic: "${area_id}/intake_fan_speed_max"
-    command_topic: "${area_id}/intake_fan_speed_max/set-state"
-    optimistic: True
-    initial_value: 60.0
-    min_value: 0.0
-    max_value: 100.0
-    step: 1.0
-    mode: box 
-    unit_of_measurement: "%"
-    retain: True
-    restore_value: True
+  - !include includes/number_fan_speed_min.yaml
+  - !include includes/number_fan_speed_max.yaml
 
 interval:
   - interval: 60s
@@ -217,68 +120,4 @@ interval:
       - script.execute: update_fan_speed
 
 script:
-  - id: update_fan_speed
-    then:
-      lambda: |-
-        // Check if the door is open
-        if (id(${area_id}_door_open${suffix})) {
-          // Door is open; turn off both fans
-          auto call1 = id(intake_fan).turn_off();
-          call1.perform();
-          ESP_LOGD("fan", "Door is open. Turning off fans.");
-          return;
-        }
-
-        auto call2 = id(intake_fan).turn_on();
-        call2.perform();
-
-        // Door is closed; proceed with fan speed adjustments
-        // Default to gantry data
-        float temperature = id(${area_id}_intake_canopy_temperature).state;
-        float humidity = id(${area_id}_intake_canopy_humidity).state;
-        float rh_target = id(${area_id}_intake_canopy_rh_target).state;
-
-        // Use canopy data if available
-        if (!isnan(id(${area_id}_intake_gantry_temperature).state)) {
-          temperature = id(${area_id}_intake_gantry_temperature).state;
-        }
-        if (!isnan(id(${area_id}_intake_canopy_humidity).state)) {
-          humidity = id(${area_id}_intake_gantry_humidity).state;
-        }
-        if (!isnan(id(${area_id}_intake_gantry_rh_target).state)) {
-          rh_target = id(${area_id}_intake_gantry_rh_target).state;
-        }
-
-        // Get temperature max value
-        float _temperature_max = id(${area_id}_intake_temperature_max).state;
-
-        // Adjust fan speed based on conditions
-        float fan_value = id(${area_id}_fan1_pwm_value${suffix});
-
-        // If temperature exceeds temperature max, increase fan speed
-        if (temperature > _temperature_max) {
-          fan_value += 1.0;
-        }
-
-        // If humidity exceeds rh_target, increase fan speed, else decrease fan speed
-        if (humidity > rh_target) {
-          fan_value += 1.0;
-        } else {
-          fan_value -= 2.0;
-        }
-
-        // Retrieve min and max fan speeds
-        float fan_min = id(${area_id}_intake_fan_speed_min).state;
-        float fan_max = id(${area_id}_intake_fan_speed_max).state;
-
-        // Clamp the fan value between min and max
-        fan_value = fmax(fan_min, fmin(fan_max, fan_value));
-
-        // Update the global fan speed value
-        id(${area_id}_fan1_pwm_value${suffix}) = fan_value;
-
-        // Set the fan speed to both fans
-        id(intake_fan).speed = fan_value;
-
-        ESP_LOGD("fan", "Updating fan speed to %.2f%% (Min: %.2f%%, Max: %.2f%%)", fan_value, fan_min, fan_max);
-
+- !include includes/script_update_fan_speed.yaml

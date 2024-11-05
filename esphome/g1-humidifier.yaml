@@ -1,3 +1,8 @@
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: arduino
+
 # Enable Home Assistant API
 # api:
 #   encryption:
@@ -6,20 +11,6 @@
 ota:
   - platform: esphome
     password: "ecf5a31fa356f2d267c8f046e257160c"
-
-esp32:
-  board: esp32-c3-devkitm-1
-  framework:
-    type: arduino
-
-# Enable logging
-logger:
-
-wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_password
-
-captive_portal:
 
 esphome:
   name: g1-humidifier
@@ -33,12 +24,17 @@ esphome:
 
 substitutions:
   area_id: G1
+  device_id: HUMIDIFIER
   suffix: ""
   pin_humidifier_pwm_output: GPIO21
 
 ####################################################################
 # generic yaml for humidifiers below
 ####################################################################
+logger:
+captive_portal:
+wifi:
+  !include includes/wifi_default.yaml
 
 output:
   - platform: slow_pwm
@@ -60,44 +56,14 @@ fan:
     speed_count: 100  # Set the speed steps (0-100%)
 
 sensor:
-  - platform: mqtt_subscribe
-    name: "Canopy RH [${area_id}${suffix}]"
-    id: ${area_id}_humidifier_canopy_rh${suffix}
-    topic: "${area_id}/humidity/canopy"
-    unit_of_measurement: "%"
-    qos: 1
-
-  - platform: mqtt_subscribe
-    name: "Canopy RH Target [${area_id}${suffix}]"
-    id: ${area_id}_humidifier_canopy_rh_target${suffix}
-    topic: "${area_id}/rh_target/canopy"
-    unit_of_measurement: "%"
-    qos: 1
-
-  - platform: mqtt_subscribe
-    name: "Gantry RH [${area_id}${suffix}]"
-    id: ${area_id}_humidifier_gantry_rh${suffix}
-    topic: "${area_id}/humidity/gantry"
-    unit_of_measurement: "%"
-    qos: 1
-
-  - platform: mqtt_subscribe
-    name: "Gantry RH Target [${area_id}${suffix}]"
-    id: ${area_id}_humidifier_gantry_rh_target${suffix}
-    topic: "${area_id}/rh_target/gantry"
-    unit_of_measurement: "%"
-    qos: 1
+  - !include includes/sensor_mqtt_canopy_rh.yaml
+  - !include includes/sensor_mqtt_canopy_rh_target.yaml
+  - !include includes/sensor_mqtt_gantry_rh.yaml
+  - !include includes/sensor_mqtt_gantry_rh_target.yaml
 
 switch:
-  - platform: template
-    name: "Humidifier Enable [${area_id}${suffix}]"
-    id: ${area_id}_humidifier_enable${suffix}
-    optimistic: True
-    state_topic: "${area_id}/humidifier/humidifier_enable"
-    command_topic: "${area_id}/humidifier/humidifier_enable/set-state"
-    qos: 0
-    retain: True
-    
+  - !inlcude includes/switch_enable.yaml
+
 globals:
   - id: ${area_id}_door_open${suffix}
     type: bool
@@ -123,37 +89,7 @@ mqtt:
 interval:
   - interval: 60s
     then:
-      - script.execute: update_fan_speed
+      - script.execute: update_humidifier_speed
 
 script:
-  - id: update_fan_speed
-    then:
-      - lambda: |-
-          // Check if the door is open
-          if (id(${area_id}_door_open${suffix})) {
-            // Door is open; turn off humidifier
-            id(${area_id}_humidifier_fan${suffix}).turn_off();
-            ESP_LOGD("fan", "Door is open. Turning off fans.");
-            return;
-          }
-
-          if (id(${area_id}_humidifier_enable${suffix}).state) {
-            auto call = id(${area_id}_humidifier_fan${suffix}).turn_on();
-            call.perform();
-
-            float _canopy_rh_target = id(${area_id}_humidifier_canopy_rh_target${suffix}).state;
-            float _gantry_rh_target = id(${area_id}_humidifier_gantry_rh_target${suffix}).state;
-            float rh_target = !std::isnan(_canopy_rh_target) ? _canopy_rh_target : _gantry_rh_target;
-            float rh = !std::isnan(id(${area_id}_humidifier_canopy_rh${suffix}).state) ? id(${area_id}_humidifier_canopy_rh${suffix}).state : id(${area_id}_humidifier_gantry_rh${suffix}).state;
-            
-            float current_speed = id(${area_id}_humidifier_fan${suffix}).speed;
-            
-            if (rh_target > rh) {
-              id(${area_id}_humidifier_fan${suffix}).speed = std::min(current_speed + 0.01f, 1.0f);
-            } else if (rh_target < rh) {
-              id(${area_id}_humidifier_fan${suffix}).speed = std::max(current_speed - 2.0f, 0.0f);
-            }
-          } else {
-            auto call = id(${area_id}_humidifier_fan${suffix}).turn_off();
-            call.perform();
-          }
+  - !include includes/script_update_humidifier_speed.yaml

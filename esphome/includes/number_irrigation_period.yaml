@@ -1,0 +1,15 @@
+platform: template
+name: "Irrigation Period [${area_id}_${device_id}${suffix}]"
+id: ${area_id}_${device_id}${suffix}_water_irrigation_period${suffix}
+state_topic: "${area_id}/${device_id}/irrigation_period"
+command_topic: "${area_id}/${device_id}/irrigation_period/set-state"
+optimistic: True
+initial_value: 60
+min_value: 1
+max_value: 1440
+step: 1
+mode: BOX
+unit_of_measurement: "minutes"
+icon: mdi:water-pump
+restore_value: True
+retain: True

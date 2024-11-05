@@ -37,6 +37,7 @@ esphome:
 
 substitutions:
   area_id: G2
+  device_id: HUMIDIFIER
   suffix: ""
   pin_humidifier_pwm_output: GPIO10
   pin_door_switch: GPIO20

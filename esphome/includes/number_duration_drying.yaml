@@ -1,0 +1,14 @@
+platform: template
+name: "Duration Drying (Days) [${area_id}_${device_id}${suffix}]"
+id: ${area_id}_${device_id}${suffix}_duration_drying
+state_topic: "${area_id}/${device_id}/dutation_drying"
+command_topic: "${area_id}/${device_id}/dutation_drying/set-state"
+optimistic: True
+min_value: 0
+max_value: 365
+step: 1
+initial_value: 15
+mode: BOX
+unit_of_measurement: "days"
+restore_value: True
+retain: True

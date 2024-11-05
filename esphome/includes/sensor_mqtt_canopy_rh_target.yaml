@@ -1,0 +1,6 @@
+platform: mqtt_subscribe
+name: "canopy RH Target [${area_id}_${device_id}${suffix}]"
+id: ${area_id}_${device_id}${suffix}_humidifier_canopy_rh_target
+topic: "${area_id}/CANOPY/rh_target"
+unit_of_measurement: "%"
+qos: 1

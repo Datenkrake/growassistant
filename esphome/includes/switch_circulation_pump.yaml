@@ -1,0 +1,6 @@
+platform: gpio
+pin: ${pin_circulation_output}
+name: "Circulation Pump [${area_id}_${device_id}${suffix}]"
+id: ${area_id}_${device_id}${suffix}_water_circulation_pump
+state_topic: "${area_id}/${device_id}/circulation_pump"
+command_topic: "${area_id}/${device_id}/circulation_pump/set-state"

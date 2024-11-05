@@ -1,0 +1,6 @@
+address: ${address_bme680}
+model: bme680
+operating_age: 28d
+sample_rate: LP
+supply_voltage: 3.3V
+temperature_offset: ${bme680_temp_offset}

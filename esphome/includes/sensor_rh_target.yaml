@@ -1,0 +1,14 @@
+platform: template
+name: "RH Target [${area_id}_${device_id}${suffix}]"
+id: ${area_id}_${device_id}${suffix}_rh_target
+state_topic: "${area_id}/${device_id}/rh_target"
+unit_of_measurement: "%"
+update_interval: 30s
+lambda: |
+    float T = id(${area_id}_${device_id}${suffix}_temperature).state;
+    float LT = T - 2.0;
+    float ASVP = 610.78 * pow(2.71828, (T / (T + 237.3)) * 17.2694);
+    float LSVP = 610.78 * pow(2.71828, (LT / (LT + 237.3)) * 17.2694);
+    float LVPD_TARGET = id(${area_id}_${device_id}${suffix}_vpd_target).state;
+    float RH_TARGET = (LSVP - LVPD_TARGET * 1000) / ASVP * 100;
+    return roundf(RH_TARGET * 10.0) / 10.0;

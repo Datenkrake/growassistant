@@ -37,6 +37,7 @@ esphome:
 
 substitutions:
   area_id: G2
+  device_id: GANTRY
   suffix: ""
   pin_sda: GPIO0
   pin_scl: GPIO1

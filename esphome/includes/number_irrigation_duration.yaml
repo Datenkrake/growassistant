@@ -1,0 +1,15 @@
+platform: template
+name: "Irrigation Duration [${area_id}_${device_id}${suffix}]"
+id: ${area_id}_${device_id}${suffix}_water_irrigation_duration
+state_topic: "${area_id}/${device_id}/irrigation_duration"
+command_topic: "${area_id}/${device_id}/irrigation_duration/set-state"
+optimistic: True
+initial_value: 30
+min_value: 1
+max_value: 300
+step: 1
+mode: BOX
+unit_of_measurement: "seconds"
+icon: mdi:water-pump
+retain: True
+restore_value: True

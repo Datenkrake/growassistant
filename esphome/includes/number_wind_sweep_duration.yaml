@@ -1,0 +1,13 @@
+platform: template
+name: "Wind Sweep Duration [${area_id}_${device_id}${suffix}]"
+id: ${area_id}_${device_id}${suffix}_wind_sweep_duration
+state_topic: "${area_id}/${device_id}/wind_fan_sweep_duration"
+command_topic: "${area_id}/${device_id}/wind_fan_sweep_duration/set-state"
+optimistic: true
+initial_value: 60
+min_value: 1
+max_value: 180
+step: 1
+mode: BOX
+unit_of_measurement: "min"
+icon: mdi:timer

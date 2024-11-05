@@ -1,0 +1,15 @@
+platform: template
+name: "Circulation Duration [${area_id}_${device_id}${suffix}]"
+id: ${area_id}_${device_id}${suffix}_water_circulation_duration
+state_topic: "${area_id}/${device_id}/circulation_duration"
+command_topic: "${area_id}/${device_id}/circulation_duration/set-state"
+optimistic: True
+initial_value: 5
+min_value: 1
+max_value: 30
+step: 1
+mode: BOX
+unit_of_measurement: "minutes"
+icon: mdi:water-pump
+restore_value: True
+retain: True

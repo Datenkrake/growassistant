@@ -1,0 +1,14 @@
+platform: template
+name: "VPD Target [${area_id}$_${device_id}{suffix}]"
+id: ${area_id}_${device_id}${suffix}_vpd_target
+state_topic: "${area_id}/${device_id}/vpd_target"
+command_topic: "${area_id}/${device_id}/vpd_target/set-state"
+optimistic: true
+initial_value: 1.0
+min_value: 0.0
+max_value: 5.0
+step: 0.1
+mode: BOX
+unit_of_measurement: "kPa"
+restore_value: True
+retain: True

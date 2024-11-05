@@ -1,0 +1,35 @@
+platform: template
+name: "DLI Target [${area_id}_${device_id}${suffix}]"
+id: ${area_id}_${device_id}${suffix}_dli_target
+state_topic: "${area_id}/${device_id}/dli_target"
+unit_of_measurement: "mol/m²/day"
+update_interval: 60s
+lambda: |
+    time_t now = id(mqtt_time).now().timestamp;
+    time_t start_vegetative = (time_t) id(${area_id}_${device_id}${suffix}_start_date)->state;
+    time_t start_flipping = start_vegetative + (time_t)(id(${area_id}_${device_id}${suffix}_duration_vegetative))->state * 86400;
+    time_t start_generative = start_flipping + (time_t)(id(${area_id}_${device_id}${suffix}_duration_flipping))->state * 86400;
+    time_t generative_peak = start_generative + (time_t)(id(${area_id}_${device_id}${suffix}_duration_generative))->state * 43200;
+    time_t start_drying = start_generative + (time_t)(id(${area_id}_${device_id}${suffix}_duration_generative))->state * 86400;
+
+    if (now < start_vegetative) {
+    return 0;
+    } else if (now < start_flipping) {
+    float x = float(now - start_vegetative) / float(start_flipping - start_vegetative);
+    float dli_target = id(${area_id}_${device_id}${suffix}_dli_vegetative_start).state + x * (id(${area_id}_${device_id}${suffix}_dli_vegetative_end).state - id(${area_id}_${device_id}${suffix}_dli_vegetative_start).state);
+    return roundf(dli_target);
+    } else if (now < start_generative) {
+    float x = float(now - start_flipping) / float(start_generative - start_flipping);
+    float dli_target = id(${area_id}_${device_id}${suffix}_dli_vegetative_end).state + x * (id(${area_id}_${device_id}${suffix}_dli_generative_start).state - id(${area_id}_${device_id}${suffix}_dli_vegetative_end).state);
+    return roundf(dli_target);
+    } else if (now < generative_peak) {
+    float x = float(now - start_generative) / float(generative_peak - start_generative);
+    float dli_target = id(${area_id}_${device_id}${suffix}_dli_generative_start).state + x * (id(${area_id}_${device_id}${suffix}_dli_generative_peak).state - id(${area_id}_${device_id}${suffix}_dli_generative_start).state);
+    return roundf(dli_target);
+    } else if (now < start_drying) {
+    float x = float(now - generative_peak) / float(start_drying - generative_peak);
+    float dli_target = id(${area_id}_${device_id}${suffix}_dli_generative_peak).state + x * (id(${area_id}_${device_id}${suffix}_dli_generative_end).state - id(${area_id}_${device_id}${suffix}_dli_generative_peak).state);
+    return roundf(dli_target);
+    } else {
+    return 0;
+    }

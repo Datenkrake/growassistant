@@ -1,0 +1,15 @@
+platform: template
+name: "Cola Distance Threshold [${area_id}_${device_id}${suffix}]"
+id: ${area_id}_${device_id}${suffix}_cola_distance_threshold 
+state_topic: "${area_id}/${device_id}/cola_distance_threshold"
+command_topic: "${area_id}/${device_id}/cola_distance_threshold/set-state"
+optimistic: true
+initial_value: 0.3
+min_value: 0.0
+max_value: 1.0
+step: 0.05
+mode: box
+unit_of_measurement: "m"
+icon: mdi:ruler
+restore_value: True
+retain: True

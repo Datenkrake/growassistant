@@ -1,0 +1,9 @@
+platform: gpio
+pin:
+    number: ${pin_door_switch}
+    mode: INPUT_PULLUP
+    inverted: true
+name: "Door Switch [${area_id}_${device_id}${suffix}]"
+id: ${area_id}_${device_id}${suffix}_water_door_switch
+state_topic: "${area_id}/door_switch"
+device_class: door

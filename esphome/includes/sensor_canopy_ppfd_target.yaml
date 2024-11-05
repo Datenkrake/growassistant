@@ -1,0 +1,20 @@
+platform: template
+name: "Canopy PPFD Target [${area_id}_${device_id}${suffix}]"
+id: ${area_id}_${device_id}${suffix}_canopy_ppfd_target
+state_topic: "${area_id}/ppfd_target/canopy"
+unit_of_measurement: "µmol/m²/s"
+update_interval: 60s
+lambda: |
+    if (!id(${area_id}_${device_id}${suffix}_dayphase_target).state) {
+    return 0;
+    }
+
+    float dli_target = id(${area_id}_${device_id}${suffix}_canopy_dli_target).state;
+    float day_length = id(${area_id}_${device_id}${suffix}_day_length).state;
+
+    if (day_length > 0) {
+    float ppfd_target = (dli_target * 1000000.0) / (day_length * 3600.0);
+    return roundf(ppfd_target);
+    } else {
+    return 0;
+    }

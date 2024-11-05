@@ -1,0 +1,35 @@
+id: update_wind_fan_speed
+then:
+    lambda: |-
+    // Check if the door is open
+    if (id(${area_id}_${device_id}${suffix}_door_open)) {
+        // Door is open; turn off both fans
+        auto call3 = id(${area_id}_${device_id}${suffix}_wind_fan1).turn_off();
+        call3.perform();
+        auto call4 = id(${area_id}_${device_id}${suffix}_wind_fan2).turn_off();
+        call4.perform();
+        ESP_LOGD("fan", "Door is open. Turning off fans.");
+        return;
+    }
+
+    auto call1 = id(${area_id}_${device_id}${suffix}_wind_fan1).turn_on();
+    call1.perform();
+    auto call2 = id(${area_id}_${device_id}${suffix}_wind_fan2).turn_on();
+    call2.perform();
+
+    int step = id(${area_id}_${device_id}${suffix}_fan_speed_step);
+    int duration = id(${area_id}_${device_id}${suffix}_wind_sweep_duration).state; // Duration in minutes
+    float min_speed = id(${area_id}_${device_id}${suffix}_wind_fan_speed_min).state;
+    float max_speed = id(${area_id}_${device_id}${suffix}_wind_fan_speed_max).state;
+
+    // Calculate the fan speed by linearly interpolating from min to max over 60 steps (1 hour)
+    float fan_speed = min_speed + (max_speed - min_speed) * (step / (float)duration);
+
+    // Increment the step counter, reset after 60 minutes
+    id(${area_id}_${device_id}${suffix}_fan_speed_step) = (step + 1) % duration;
+
+    // Set the fan speeds to the calculated value
+    id(${area_id}_${device_id}${suffix}_wind_fan1).speed = fan_speed;
+    id(${area_id}_${device_id}${suffix}_wind_fan2).speed = fan_speed;
+
+    ESP_LOGD("fan", "Updating fan speed to %.2f%%", fan_speed);

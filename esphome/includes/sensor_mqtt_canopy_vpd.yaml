@@ -1,0 +1,4 @@
+platform: mqtt_subscribe
+name: "VPD [${area_id}_${device_id}${suffix}]"
+id: ${area_id}_${device_id}${suffix}_vpd
+topic: "${area_id}/${device_id}/vpd"
