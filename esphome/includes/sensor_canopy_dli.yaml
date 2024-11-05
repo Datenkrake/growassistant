@@ -6,6 +6,6 @@ unit_of_measurement: "mol/m²/day"
 update_interval: 60s
 lambda: |
     float ppfd = id(${area_id}_${device_id}${suffix}_ppfd).state;
-    float day_length = (int) (id(${area_id}${device_id}${suffix}_day_length)->state);
+    float day_length = (int) (id(${area_id}_${device_id}${suffix}_day_length)->state);
     float dli = ppfd * 0.0036 * day_length;
     return roundf(dli * 100.0) / 100.0;
