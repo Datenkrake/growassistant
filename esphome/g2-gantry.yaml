@@ -74,9 +74,9 @@ mqtt:
       then:
         - lambda: |-
             if (strcmp(x.c_str(), "ON") == 0) {
-              id(${area_id}_door_open${suffix}) = true;
+              id(${area_id}_${device_id}${suffix}_door_open${suffix}) = true;
             } else if (strcmp(x.c_str(), "OFF") == 0) {
-              id(${area_id}_door_open${suffix}) = false;
+              id(${area_id}_${device_id}${suffix}_door_open${suffix}) = false;
             }
             id(update_fan_speed).execute();
 
