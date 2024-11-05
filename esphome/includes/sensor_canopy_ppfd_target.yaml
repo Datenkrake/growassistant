@@ -1,7 +1,7 @@
 platform: template
-name: "Canopy PPFD Target [${area_id}_${device_id}${suffix}]"
-id: ${area_id}_${device_id}${suffix}_canopy_ppfd_target
-state_topic: "${area_id}/ppfd_target/canopy"
+name: "PPFD Target [${area_id}_${device_id}${suffix}]"
+id: ${area_id}_${device_id}${suffix}_ppfd_target
+state_topic: "${area_id}/${device_id}/ppfd_target"
 unit_of_measurement: "µmol/m²/s"
 update_interval: 60s
 lambda: |
