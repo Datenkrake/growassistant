@@ -75,7 +75,7 @@ i2c:
 bme68x_bsec2_i2c:
   !include includes/bme680x_bsec2_i2c.yaml
 text_sensor:
-  - !include includes/text_sensor_full_spectrum_brightness_json.yaml
+  - !include includes/text_sensor_mqtt_full_spectrum_brightness_json.yaml
 
 sensor:
   # physical sensors
@@ -83,13 +83,13 @@ sensor:
   - !include includes/sensor_ultrasonic.yaml
   - !include includes/sensor_bme68x_bsec2.yaml
   # calculated sensors
-  - !include includes/sensor_canopy_vpd.yaml
+  - !include includes/sensor_vpd.yaml
   - !include includes/sensor_canopy_ppfd.yaml
   - !include includes/sensor_canopy_ppfd_target.yaml
   - !include includes/sensor_canopy_dli.yaml
   - !include includes/sensor_canopy_dli_target.yaml
-  - !include includes/sensor_canopy_rh_target.yaml
-  - !include includes/sensor_canopy_dew_point.yaml
+  - !include includes/sensor_rh_target.yaml
+  - !include includes/sensor_dew_point.yaml
   - !include includes/sensor_growth_cycle.yaml
   - !include includes/sensor_day_length.yaml
   - !include includes/sensor_full_spectrum_brightness.yaml

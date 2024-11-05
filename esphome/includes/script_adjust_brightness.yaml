@@ -1,20 +1,20 @@
 id: adjust_brightness
 then:
-    - lambda: |-
-        // Get current PPFD and target PPFD values
-        float ppfd_target = id(${area_id}_${device_id}${suffix}_canopy_ppfd_target).state;
-        float new_brightness = id(${area_id}_${device_id}${suffix}_door_open_brightness).state;
+- lambda: |-
+    // Get current PPFD and target PPFD values
+    float ppfd_target = id(${area_id}_${device_id}${suffix}_ppfd_target).state;
+    float new_brightness = id(${area_id}_${device_id}${suffix}_door_open_brightness).state;
 
-        if (ppfd_target < 0.01) {  // Using a small threshold for floating-point comparison
+    if (ppfd_target < 0.01) {  // Using a small threshold for floating-point comparison
         // PPFD target is zero, turn off the light
         new_brightness = 0.0;
-        } else {
+    } else {
         if (!id(${area_id}_${device_id}${suffix}_door_open)) {
             // Get current brightness from the number sensor state
-            float current_brightness = id(full_spectrum_brightness_number_sensor).state;
+            float current_brightness = id(${area_id}_${device_id}${suffix}_full_spectrum_brightness_number_sensor).state;
 
             // Get current PPFD and target PPFD values
-            float ppfd = id(${area_id}_${device_id}${suffix}_canopy_ppfd).state;
+            float ppfd = id(${area_id}_${device_id}${suffix}_ppfd).state;
 
             // Log the current state of PPFD and brightness
             ESP_LOGD("brightness_control", "Current PPFD: %.2f", ppfd);
@@ -32,25 +32,25 @@ then:
             // Calculate new brightness value
             new_brightness = current_brightness + adjustment;
         }
-        }
+    }
 
-        // Ensure brightness stays between 0 and 1
-        if (new_brightness > 1.0) {
+    // Ensure brightness stays between 0 and 1
+    if (new_brightness > 1.0) {
         new_brightness = 1.0;
-        } else if (new_brightness < 0.0) {
+    } else if (new_brightness < 0.0) {
         new_brightness = 0.0;
-        }
+    }
 
-        // Log the new brightness value after clamping
-        ESP_LOGD("brightness_control", "New Brightness (after clamping): %.2f", new_brightness);
+    // Log the new brightness value after clamping
+    ESP_LOGD("brightness_control", "New Brightness (after clamping): %.2f", new_brightness);
 
-        // Update the global variable with the new brightness value
-        id(${area_id}_new_brightness_global${suffix}) = new_brightness;
+    // Update the global variable with the new brightness value
+    id(${area_id}_${device_id}${suffix}_new_brightness_global) = new_brightness;
 
-    - mqtt.publish:
-        topic: "${area_id}/light/full_spectrum/set-state"
-        payload: !lambda |-
-        if (id(${area_id}_new_brightness_global${suffix}) > 0.0 && id(${area_id}_${device_id}${suffix}_dayphase_target).state) {
+- mqtt.publish:
+    topic: "${area_id}/light/full_spectrum/set-state"
+    payload: !lambda |-
+        if (id(${area_id}_${device_id}${suffix}_new_brightness_global) > 0.0 && id(${area_id}_${device_id}${suffix}_dayphase_target).state) {
             ESP_LOGD("mqtt_publish", "Publishing Brightness ON: %d", (int)(id(${area_id}_${device_id}${suffix}_new_brightness_global) * 255));
             return std::string("{\"state\": \"ON\", \"brightness\": ") + std::to_string((int)(id(${area_id}_${device_id}${suffix}_new_brightness_global) * 255)) + "}";
         } else {
