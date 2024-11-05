@@ -1,5 +1,5 @@
 platform: template
-name: "Canopy DLI [${area_id}_${device_id}${suffix}]"
+name: "DLI [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_dli
 state_topic: "${area_id}/${device_id}/dli"
 unit_of_measurement: "mol/m²/day"
