@@ -22,23 +22,23 @@ then:
 
         // Door is closed; proceed with fan speed adjustments
         // Default to gantry data
-        float temperature = id(${area_id}_${device_id}${suffix}_exhaust_canopy_temperature).state;
-        float humidity = id(${area_id}_${device_id}${suffix}_exhaust_canopy_humidity).state;
-        float rh_target = id(${area_id}_${device_id}${suffix}_exhaust_canopy_rh_target).state;
+        float temperature = id(${area_id}_${device_id}${suffix}_canopy_temperature).state;
+        float humidity = id(${area_id}_${device_id}${suffix}_canopy_humidity).state;
+        float rh_target = id(${area_id}_${device_id}${suffix}_canopy_rh_target).state;
 
         // Use canopy data if available
-        if (!isnan(id(${area_id}_${device_id}${suffix}_exhaust_gantry_temperature).state)) {
-            temperature = id(${area_id}_${device_id}${suffix}_exhaust_gantry_temperature).state;
+        if (!isnan(id(${area_id}_${device_id}${suffix}_gantry_temperature).state)) {
+            temperature = id(${area_id}_${device_id}${suffix}_gantry_temperature).state;
         }
-        if (!isnan(id(${area_id}_${device_id}${suffix}_exhaust_canopy_humidity).state)) {
-            humidity = id(${area_id}_${device_id}${suffix}_exhaust_gantry_humidity).state;
+        if (!isnan(id(${area_id}_${device_id}${suffix}_canopy_humidity).state)) {
+            humidity = id(${area_id}_${device_id}${suffix}_gantry_humidity).state;
         }
-        if (!isnan(id(${area_id}_${device_id}${suffix}_exhaust_gantry_rh_target).state)) {
-            rh_target = id(${area_id}_${device_id}${suffix}_exhaust_gantry_rh_target).state;
+        if (!isnan(id(${area_id}_${device_id}${suffix}_gantry_rh_target).state)) {
+            rh_target = id(${area_id}_${device_id}${suffix}_gantry_rh_target).state;
         }
 
         // Get temperature max value
-        float _temperature_max = id(${area_id}_${device_id}${suffix}_exhaust_temperature_max).state;
+        float _temperature_max = id(${area_id}_${device_id}${suffix}_temperature_max).state;
 
         // Adjust fan speed based on conditions
         float fan_value = id(${area_id}_${device_id}${suffix}_fan1_pwm_value${suffix});
@@ -56,8 +56,8 @@ then:
         }
 
         // Retrieve min and max fan speeds
-        float fan_min = id(${area_id}_${device_id}${suffix}_exhaust_fan_speed_min).state;
-        float fan_max = id(${area_id}_${device_id}${suffix}_exhaust_fan_speed_max).state;
+        float fan_min = id(${area_id}_${device_id}${suffix}_fan_speed_min).state;
+        float fan_max = id(${area_id}_${device_id}${suffix}_fan_speed_max).state;
 
         // Clamp the fan value between min and max
         fan_value = fmax(fan_min, fmin(fan_max, fan_value));
