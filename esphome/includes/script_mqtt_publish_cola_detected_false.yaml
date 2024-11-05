@@ -3,5 +3,5 @@ then:
 - mqtt.publish:
     topic: "${area_id}/CANOPY/sensor/cola_detected"
     payload: !lambda |-
-    ESP_LOGD("mqtt_publish", "Publishing Cola Detected: false");
-    return std::string("{\"state\": \"false\"}");
+        ESP_LOGD("mqtt_publish", "Publishing Cola Detected: false");
+        return "{\"state\": \"false\"}";
