@@ -20,8 +20,8 @@ lambda: |-
     time_t midnight_yesterday = midnight_today - 86400; // Subtract 24 hours in seconds
 
     // Get sunrise times
-    time_t sunrise_today = midnight_today + (time_t) id(${area_id}_sunrise_time)->state;
-    time_t sunrise_yesterday = midnight_yesterday + (time_t) id(${area_id}_sunrise_time)->state;
+    time_t sunrise_today = midnight_today + (time_t) id(${area_id}_${device_id}${suffix}sunrise_time)->state;
+    time_t sunrise_yesterday = midnight_yesterday + (time_t) id(${area_id}_${device_id}${suffix}_sunrise_time)->state;
 
     // Get day length in seconds
     int day_length_seconds = (int)(id(${area_id}_day_length)->state * 3600);
