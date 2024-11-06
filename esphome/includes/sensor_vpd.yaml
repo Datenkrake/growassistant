@@ -4,6 +4,7 @@ id: ${area_id}_${device_id}${suffix}_vpd
 state_topic: "${area_id}/${device_id}/vpd"
 unit_of_measurement: "kPa"
 update_interval: 30s
+accuracy_decimals: 2
 lambda: |
     float temp = id(${area_id}_${device_id}${suffix}_temperature).state;
     float rh = id(${area_id}_${device_id}${suffix}_humidity).state;
@@ -12,4 +13,4 @@ lambda: |
     float ASVP = 610.78 * exp((temp / (temp + 237.3)) * 17.2694);
     float LSVP = 610.78 * exp((LT / (LT + 237.3)) * 17.2694);
     float LVPD = (LSVP - (ASVP * (rh / 100.0))) / 1000.0;
-    return roundf(LVPD * 100.0) / 100.0;
+    return LVPD;
