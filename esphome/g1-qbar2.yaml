@@ -39,7 +39,7 @@ wifi:
   !include includes/wifi_default.yaml
 
 i2c:
-  !include includes/i2c_default.yaml
+  !include includes/i2c_bus_a.yaml
 
 mqtt:
   broker: !secret mqtt_broker

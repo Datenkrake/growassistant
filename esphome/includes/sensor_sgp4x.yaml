@@ -1,15 +1,15 @@
-  - platform: sgp4x
-    voc:
-      name: "VOC Index [${area_id}_${device_id}${suffix}]"
-      state_topic: "${area_id}/${device_id}/voc_index"
-      id: ${area_id}_${device_id}${suffix}_voc_index
-    nox:
-      name: "NOx Index [${area_id}_${device_id}${suffix}]"
-      state_topic: "${area_id}/${device_id}/nox_index"
-      id: ${area_id}_${device_id}${suffix}_gantry_nox_index
-    compensation:
-      humidity_source: ${area_id}_${device_id}${suffix}_humidity
-      temperature_source: ${area_id}_${device_id}${suffix}_temperature
-    address: ${sgp4x_address}
-    update_interval: 60s
-    i2c_id: bus_a
+platform: sgp4x
+voc:
+  name: "VOC Index [${area_id}_${device_id}${suffix}]"
+  state_topic: "${area_id}/${device_id}/voc_index"
+  id: ${area_id}_${device_id}${suffix}_voc_index
+nox:
+  name: "NOx Index [${area_id}_${device_id}${suffix}]"
+  state_topic: "${area_id}/${device_id}/nox_index"
+  id: ${area_id}_${device_id}${suffix}_gantry_nox_index
+compensation:
+  humidity_source: ${area_id}_${device_id}${suffix}_humidity
+  temperature_source: ${area_id}_${device_id}${suffix}_temperature
+address: ${sgp4x_address}
+update_interval: 60s
+i2c_id: bus_a

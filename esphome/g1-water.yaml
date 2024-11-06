@@ -64,19 +64,19 @@ interval:
     then:
       - if:
           condition:
-            lambda: 'return id(${area_id}_${device_id}${suffix}_enable).state && (millis() / 60000) % ((int) id(${area_id}_water_irrigation_period).state) == 0;'
+            lambda: 'return id(${area_id}_${device_id}${suffix}_enable).state && (millis() / 60000) % ((int) id(${area_id}_${device_id}${suffix}_irrigation_period).state) == 0;'
           then:
-            - switch.turn_on: ${area_id}_water_irrigation_pump${suffix}
-            - delay: !lambda 'return (int) id(${area_id}_water_irrigation_duration).state * 1000;'
-            - switch.turn_off: ${area_id}_water_irrigation_pump${suffix}
+            - switch.turn_on: ${area_id}_${device_id}${suffix}_irrigation_pump${suffix}
+            - delay: !lambda 'return (int) id(${area_id}_${device_id}${suffix}_irrigation_duration).state * 1000;'
+            - switch.turn_off: ${area_id}_${device_id}${suffix}_irrigation_pump
 
   # Circulation Interval
   - interval: 1min  # This interval will check every minute
     then:
       - if:
           condition:
-            lambda: 'return id(${area_id}_${device_id}${suffix}_enable).state && (millis() / 60000) % ((int) id(${area_id}_water_circulation_period).state) == 0;'
+            lambda: 'return id(${area_id}_${device_id}${suffix}_enable).state && (millis() / 60000) % ((int) id(${area_id}_${device_id}${suffix}_circulation_period).state) == 0;'
           then:
-            - switch.turn_on: ${area_id}_${device_id}${suffix}_water_circulation_pump
-            - delay: !lambda 'return (int) id(${area_id}_${device_id}${suffix}_water_circulation_duration).state * 60000;'
-            - switch.turn_off: ${area_id}_${device_id}${suffix}_water_circulation_pump
+            - switch.turn_on: ${area_id}_${device_id}${suffix}_circulation_pump
+            - delay: !lambda 'return (int) id(${area_id}_${device_id}${suffix}_circulation_duration).state * 60000;'
+            - switch.turn_off: ${area_id}_${device_id}${suffix}_circulation_pump

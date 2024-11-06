@@ -4,28 +4,28 @@ then:
         // Check if the door is open
         if (id(${area_id}_${device_id}${suffix}_door_open)) {
         // Door is open; turn off humidifier
-        id(${area_id}_${device_id}${suffix}_humidifier_fan).turn_off();
+        id(${area_id}_${device_id}${suffix}_humidifier).turn_off();
         ESP_LOGD("fan", "Door is open. Turning off fans.");
         return;
         }
 
-        if (id(${area_id}_humidifier_enable${suffix}).state) {
-        auto call = id(${area_id}_${device_id}${suffix}_humidifier_fan).turn_on();
+        if (id(${area_id}_${device_id}${suffix}_enable).state) {
+        auto call = id(${area_id}_${device_id}${suffix}_humidifier).turn_on();
         call.perform();
 
-        float _canopy_rh_target = id(${area_id}_${device_id}${suffix}_humidifier_canopy_rh_target).state;
-        float _gantry_rh_target = id(${area_id}_${device_id}${suffix}_humidifier_gantry_rh_target).state;
+        float _canopy_rh_target = id(${area_id}_${device_id}${suffix}_canopy_rh_target).state;
+        float _gantry_rh_target = id(${area_id}_${device_id}${suffix}_gantry_rh_target).state;
         float rh_target = !std::isnan(_canopy_rh_target) ? _canopy_rh_target : _gantry_rh_target;
-        float rh = !std::isnan(id(${area_id}_${device_id}${suffix}_humidifier_canopy_rh).state) ? id(${area_id}_${device_id}${suffix}_humidifier_canopy_rh).state : id(${area_id}_${device_id}${suffix}_humidifier_gantry_rh).state;
+        float rh = !std::isnan(id(${area_id}_${device_id}${suffix}_canopy_humidity).state) ? id(${area_id}_${device_id}${suffix}_canopy_humidity).state : id(${area_id}_${device_id}${suffix}_gantry_humidity).state;
         
-        float current_speed = id(${area_id}_${device_id}${suffix}_humidifier_fan).speed;
+        float current_speed = id(${area_id}_${device_id}${suffix}_humidifier).speed;
         
         if (rh_target > rh) {
-            id(${area_id}_${device_id}${suffix}_humidifier_fan).speed = std::min(current_speed + 0.01f, 1.0f);
+            id(${area_id}_${device_id}${suffix}_humidifier).speed = std::min(current_speed + 0.01f, 1.0f);
         } else if (rh_target < rh) {
-            id(${area_id}_${device_id}${suffix}_humidifier_fan).speed = std::max(current_speed - 2.0f, 0.0f);
+            id(${area_id}_${device_id}${suffix}_humidifier).speed = std::max(current_speed - 2.0f, 0.0f);
         }
         } else {
-        auto call = id(${area_id}_${device_id}${suffix}_humidifier_fan).turn_off();
+        auto call = id(${area_id}_${device_id}${suffix}_humidifier).turn_off();
         call.perform();
         }

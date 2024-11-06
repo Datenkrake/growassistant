@@ -1,0 +1,76 @@
+id: update_exhaust_fan_speed
+then:
+    - lambda: |-
+        // Check if the door is open
+        if (id(${area_id}_${device_id}${suffix}_door_open)) {
+            // Door is open; turn off both fans
+            //id(fan1_pwm).set_level(0.0);
+            //id(fan2_pwm).set_level(0.0);
+            //id(${area_id}_fan1_pwm_value${suffix}) = 0.0;
+            auto call3 = id(exhaust_fan1).turn_off();
+            call3.perform();
+            auto call4 = id(exhaust_fan2).turn_off();
+            call4.perform();
+            ESP_LOGD("fan", "Door is open. Turning off fans.");
+            return;
+        }
+
+        auto call1 = id(exhaust_fan1).turn_on();
+        call1.perform();
+        auto call2 = id(exhaust_fan2).turn_on();
+        call2.perform();
+
+        // Door is closed; proceed with fan speed adjustments
+        // Default to gantry data
+        float temperature = id(${area_id}_${device_id}${suffix}_canopy_temperature).state;
+        float humidity = id(${area_id}_${device_id}${suffix}_canopy_humidity).state;
+        float rh_target = id(${area_id}_${device_id}${suffix}_canopy_rh_target).state;
+
+        // Use canopy data if available
+        if (!isnan(id(${area_id}_${device_id}${suffix}_gantry_temperature).state)) {
+            temperature = id(${area_id}_${device_id}${suffix}_gantry_temperature).state;
+        }
+        if (!isnan(id(${area_id}_${device_id}${suffix}_canopy_humidity).state)) {
+            humidity = id(${area_id}_${device_id}${suffix}_gantry_humidity).state;
+        }
+        if (!isnan(id(${area_id}_${device_id}${suffix}_gantry_rh_target).state)) {
+            rh_target = id(${area_id}_${device_id}${suffix}_gantry_rh_target).state;
+        }
+
+        // Get temperature max value
+        float _temperature_max = id(${area_id}_${device_id}${suffix}_temperature_max).state;
+
+        // Adjust fan speed based on conditions
+        float fan_value = id(${area_id}_${device_id}${suffix}_fan1_pwm_value${suffix});
+
+        // If temperature exceeds temperature max, increase fan speed
+        if (temperature > _temperature_max) {
+            fan_value += 1.0;
+        }
+
+        // If humidity exceeds rh_target, increase fan speed, else decrease fan speed
+        if (humidity > rh_target) {
+            fan_value += 1.0;
+        } else {
+            fan_value -= 2.0;
+        }
+
+        // Retrieve min and max fan speeds
+        float fan_min = id(${area_id}_${device_id}${suffix}_fan_speed_min).state;
+        float fan_max = id(${area_id}_${device_id}${suffix}_fan_speed_max).state;
+
+        // Clamp the fan value between min and max
+        fan_value = fmax(fan_min, fmin(fan_max, fan_value));
+
+        // Update the global fan speed value
+        id(${area_id}_${device_id}${suffix}_fan1_pwm_value${suffix}) = fan_value;
+
+        // Set the fan speed to both fans
+        //id(fan1_pwm).set_level(fan_value / 100.0);
+        //id(fan2_pwm).set_level(fan_value / 100.0);
+
+        id(exhaust_fan1).speed = fan_value;
+        id(exhaust_fan2).speed = fan_value;
+
+        ESP_LOGD("fan", "Updating fan speed to %.2f%% (Min: %.2f%%, Max: %.2f%%)", fan_value, fan_min, fan_max);
+

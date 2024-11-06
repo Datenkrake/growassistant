@@ -24,7 +24,7 @@ esphome:
 
 substitutions:
   area_id: G1
-  device_id: WIND
+  device_id: GANTRY
   suffix: ""
   pin_sda: GPIO21
   pin_scl: GPIO20
@@ -43,11 +43,11 @@ wifi:
   !include includes/wifi_default.yaml
 
 globals:
-  - id: ${area_id}_fan_speed_step${suffix}
+  - id: ${area_id}_${device_id}${suffix}_fan_speed_step
     type: int
     restore_value: no
     initial_value: '0'
-  - id: ${area_id}_door_open${suffix}
+  - id: ${area_id}_${device_id}${suffix}_door_open
     type: bool
     restore_value: no
     initial_value: 'false'
@@ -56,7 +56,7 @@ mqtt:
   broker: !secret mqtt_broker
   username: !secret mqtt_username
   password: !secret mqtt_password
-  topic_prefix: "${area_id}/gantry"
+  topic_prefix: "${area_id}/${device_id}"
   on_message:
     - topic: ${area_id}/door_switch
       then:
@@ -66,33 +66,33 @@ mqtt:
             } else if (strcmp(x.c_str(), "OFF") == 0) {
               id(${area_id}_${device_id}${suffix}_door_open${suffix}) = false;
             }
-            id(update_fan_speed).execute();
+            id(update_wind_fan_speed).execute();
 
 output:
   - platform: ledc
     pin: GPIO7
-    id: fan1_pwm${suffix}
+    id: ${area_id}_${device_id}${suffix}_fan1_pwm
     frequency: 15000 Hz
     inverted: True
 
   - platform: ledc
     pin: GPIO8
-    id: fan2_pwm${suffix}
+    id: ${area_id}_${device_id}${suffix}_fan2_pwm
     frequency: 15000 Hz
     inverted: True
 
 fan:
   - platform: speed
-    output: fan1_pwm
+    output: ${area_id}_${device_id}${suffix}_fan1_pwm
     name: "Wind"
-    id: ${area_id}_wind_fan1${suffix}
+    id: ${area_id}_${device_id}${suffix}_fan1
   - platform: speed
-    output: fan2_pwm
+    output: ${area_id}_${device_id}${suffix}_fan2_pwm
     name: "Wind"
-    id: ${area_id}_wind_fan2${suffix}
+    id: ${area_id}_${device_id}${suffix}_fan2
 
 i2c:
-  !include includes/i2c_default.yaml
+  !include includes/i2c_bus_a.yaml
 
 # Example configuration entry
 sensor:
@@ -101,7 +101,7 @@ sensor:
   - !include includes/sensor_htu21d.yaml
   # calculated sensors
   - !include includes/sensor_vpd.yaml
-  - !include includes/sensor_rh_target.yaml
+  - !include includes/sensor_gantry_rh_target.yaml
   # mqtt sensors
   - !include includes/sensor_dew_point.yaml
   - !include includes/sensor_mqtt_vpd_leaf_offset.yaml

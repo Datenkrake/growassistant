@@ -1,6 +1,6 @@
 platform: template
 name: "Position Max [${area_id}_${device_id}${suffix}]"
-id: ${area_id}_${device_id}${suffix}_position_min
+id: ${area_id}_${device_id}${suffix}_position_max
 state_topic: "${area_id}/${device_id}/position_max"
 command_topic: "${area_id}/${device_id}/position_max/set-state"
 min_value: 0

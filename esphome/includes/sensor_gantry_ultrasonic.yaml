@@ -1,0 +1,12 @@
+platform: ultrasonic
+trigger_pin: ${pin_trigger}
+echo_pin: ${pin_echo}
+name: "Gantry Position [${area_id}_${device_id}${suffix}]"
+id: ${area_id}_${device_id}${suffix}_gantry_position
+state_topic: "${area_id}/gantry_position"
+update_interval: 1s
+timeout: 2m
+filters:
+- sliding_window_moving_average:
+    window_size: 60
+    send_every: 60

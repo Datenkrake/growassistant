@@ -1,0 +1,6 @@
+platform: gpio
+pin: ${pin_irrigation_output}
+name: "Irrigation Pump [${area_id}_${device_id}${suffix}]"
+id: ${area_id}_${device_id}${suffix}_irrigation_pump
+state_topic: "${area_id}/${device_id}/irrigation_pump"
+command_topic: "${area_id}/${device_id}/irrigation_pump/set-state"

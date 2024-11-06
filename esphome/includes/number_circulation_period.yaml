@@ -1,6 +1,6 @@
 platform: template
 name: "Circulation Period [${area_id}_${device_id}${suffix}]"
-id: ${area_id}_${device_id}${suffix}_water_circulation_period
+id: ${area_id}_${device_id}${suffix}_circulation_period
 state_topic: "${area_id}/${device_id}/circulation_period"
 command_topic: "${area_id}/${device_id}/circulation_period/set-state"
 optimistic: True

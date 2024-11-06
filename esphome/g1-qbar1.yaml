@@ -65,7 +65,7 @@ number:
 
 # Ultrasonic sensor on GPIO9 (TRIG) and GPIO10 (ECHO)
 sensor:
-  - !include includes/sensor_ultrasonic.yaml
+  - !include includes/sensor_gantry_ultrasonic.yaml
 
 text_sensor:
   - !include includes/text_sensor_cola_detected.yaml
@@ -76,9 +76,9 @@ interval:
       - lambda: |-
           ESP_LOGD("debug", "Checking conditions for moving gantry...");
           ESP_LOGD("debug", "Cola detected state: %s", id(${area_id}_${device_id}${suffix}_cola_detected).state.c_str());
-          ESP_LOGD("debug", "Gantry position: %.2f, Min Position: %.2f", id(${area_id}_${device_id}${suffix}_gantry_position$).state, id(${area_id}_${device_id}${suffix}_gantry_position_min).state);
+          ESP_LOGD("debug", "Gantry position: %.2f, Min Position: %.2f", id(${area_id}_${device_id}${suffix}_gantry_position).state, id(${area_id}_${device_id}${suffix}_position_min).state);
 
-          if (id(${area_id}_${device_id}${suffix}_cola_detected).state == "{\"state\": \"true\"}" && id(${area_id}_${device_id}${suffix}_gantry_position).state > id(${area_id}_${device_id}${suffix}_gantry_position_min).state) {
+          if (id(${area_id}_${device_id}${suffix}_cola_detected).state == "{\"state\": \"true\"}" && id(${area_id}_${device_id}${suffix}_gantry_position).state > id(${area_id}_${device_id}${suffix}_position_min).state) {
             ESP_LOGD("main", "Conditions met. Calling REST endpoint to move gantry");
             id(${area_id}_rest_move_up).execute();
           } else {

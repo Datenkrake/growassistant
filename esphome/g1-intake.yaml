@@ -60,24 +60,24 @@ mqtt:
       then:
         - lambda: |-
             if (strcmp(x.c_str(), "ON") == 0) {
-              id(${area_id}_${device_id}${suffix}_door_open${suffix}) = true;
+              id(${area_id}_${device_id}${suffix}_door_open) = true;
             } else if (strcmp(x.c_str(), "OFF") == 0) {
-              id(${area_id}_${device_id}${suffix}_door_open${suffix}) = false;
+              id(${area_id}_${device_id}${suffix}_door_open) = false;
             }
-            id(update_fan_speed).execute();
+            id(update_intake_fan_speed).execute();
 
 output:
   - platform: ledc
     pin: ${pin_fan1_pwm}
-    id: ${area_id}_fan1_pwm${suffix}
+    id: ${area_id}_${device_id}${suffix}_fan1_pwm
     frequency: 25000 Hz
     inverted: True
 
 fan:
   - platform: speed
-    output: ${area_id}_fan1_pwm${suffix}
+    output: ${area_id}_${device_id}${suffix}_fan1_pwm
     name: "Intake"
-    id: intake_fan
+    id: ${area_id}_${device_id}${suffix}_intake_fan
 
 i2c:
   !include includes/i2c_bus_a.yaml
@@ -85,12 +85,10 @@ bme68x_bsec2_i2c:
   !include includes/bme680x_bsec2_i2c.yaml
   
 sensor:
-  - !include includes/sensor_bh1750.yaml
-  - !include includes/sensor_ultrasonic.yaml
-
+  # physical sensors
   - !include includes/sensor_bme68x_bsec2.yaml
-  - !include includes/sensor_temperature_max.yaml
-  
+  # mqtt sensors
+  - !include includes/sensor_mqtt_temperature_max.yaml
   - !include includes/sensor_mqtt_canopy_vpd.yaml
   - !include includes/sensor_mqtt_canopy_ppfd.yaml
   - !include includes/sensor_mqtt_canopy_ppfd_target.yaml
@@ -103,7 +101,6 @@ sensor:
   - !include includes/sensor_mqtt_canopy_temperature.yaml
   - !include includes/sensor_mqtt_gantry_temperature.yaml
   - !include includes/sensor_mqtt_canopy_vpd_target.yaml
-  - !include includes/sensor_mqtt_canopy_vpd.yaml
   - !include includes/sensor_mqtt_gantry_vpd.yaml
   - !include includes/sensor_mqtt_canopy_dew_point.yaml
   - !include includes/sensor_mqtt_growth_cycle.yaml
@@ -117,7 +114,7 @@ number:
 interval:
   - interval: 60s
     then:
-      - script.execute: update_fan_speed
+      - script.execute: update_intake_fan_speed
 
 script:
-- !include includes/script_update_fan_speed.yaml
+- !include includes/script_update_intake_fan_speed.yaml

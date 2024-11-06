@@ -56,13 +56,13 @@ fan:
     speed_count: 100  # Set the speed steps (0-100%)
 
 sensor:
-  - !include includes/sensor_mqtt_canopy_rh.yaml
+  - !include includes/sensor_mqtt_canopy_humidity.yaml
   - !include includes/sensor_mqtt_canopy_rh_target.yaml
-  - !include includes/sensor_mqtt_gantry_rh.yaml
+  - !include includes/sensor_mqtt_gantry_humidity.yaml
   - !include includes/sensor_mqtt_gantry_rh_target.yaml
 
 switch:
-  - !inlcude includes/switch_enable.yaml
+  - !include includes/switch_enable.yaml
 
 globals:
   - id: ${area_id}_${device_id}${suffix}_door_open
@@ -80,11 +80,11 @@ mqtt:
       then:
         - lambda: |-
             if (strcmp(x.c_str(), "ON") == 0) {
-              id(${area_id}_${device_id}${suffix}_door_open${suffix}) = true;
+              id(${area_id}_${device_id}${suffix}_door_open) = true;
             } else if (strcmp(x.c_str(), "OFF") == 0) {
-              id(${area_id}_${device_id}${suffix}_door_open${suffix}) = false;
+              id(${area_id}_${device_id}${suffix}_door_open) = false;
             }
-            id(update_fan_speed).execute();
+            id(update_humidifier_speed).execute();
 
 interval:
   - interval: 60s

@@ -65,7 +65,7 @@ mqtt:
             } else if (strcmp(x.c_str(), "OFF") == 0) {
               id(${area_id}_${device_id}${suffix}_door_open${suffix}) = false;
             }
-            id(update_fan_speed).execute();
+            id(update_exhaust_fan_speed).execute();
 
 output:
   - platform: ledc
@@ -120,7 +120,7 @@ number:
 interval:
   - interval: 60s
     then:
-      - script.execute: update_fan_speed
+      - script.execute: update_exhaust_fan_speed
 
 script:
-  - !include includes/script_update_fan_speed.yaml
+  - !include includes/script_update_exhaust_fan_speed.yaml

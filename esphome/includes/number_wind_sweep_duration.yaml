@@ -1,8 +1,8 @@
 platform: template
-name: "Wind Sweep Duration [${area_id}_${device_id}${suffix}]"
-id: ${area_id}_${device_id}${suffix}_wind_sweep_duration
-state_topic: "${area_id}/${device_id}/wind_fan_sweep_duration"
-command_topic: "${area_id}/${device_id}/wind_fan_sweep_duration/set-state"
+name: "Sweep Duration [${area_id}_${device_id}${suffix}]"
+id: ${area_id}_${device_id}${suffix}_sweep_duration
+state_topic: "${area_id}/${device_id}/fan_sweep_duration"
+command_topic: "${area_id}/${device_id}/fan_sweep_duration/set-state"
 optimistic: true
 initial_value: 60
 min_value: 1
