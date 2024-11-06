@@ -26,24 +26,13 @@ frontend:
 #input_number: !include entities/input_numbers.yaml
 #input_datetime: !include entities/input_datetime.yaml
 #input_text: !include entities/input_texts.yaml
-# input_select: !include entities/input_selects.yaml
+#input_select: !include entities/input_selects.yaml
 
 #automation: !include automations.yaml
-# automation:
-  # - !include automations/light_height.yaml
-  # - !include automations/timelapse.yaml
-  # - !include automations/vpd_bp_g1.yaml
-  # - !include automations/vpd_bp_g2.yaml
-  # - !include automations/water_autopot.yaml
-  # - !include automations/water_circulation.yaml
-  # - !include automations/dli.yaml
-  # - !include automations/wind.yaml
-  # - !include automations/sensor_validation.yaml
-  # - !include automations/reset.yaml
 
 #rest_command: !include rest_commands.yaml
-script: !include scripts.yaml
-scene: !include scenes.yaml
+#script: !include scripts.yaml
+#scene: !include scenes.yaml
 
 # Example configuration.yaml entry
 logger:
