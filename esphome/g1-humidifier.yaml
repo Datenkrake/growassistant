@@ -20,11 +20,11 @@ esphome:
 ####################################################################
 
   area: ${area_id}
-  friendly_name: ${area_id}_HUMIDIFIER${suffix}
+  friendly_name: ${area_id}_${device_id}${suffix}
 
 substitutions:
   area_id: G1
-  device_id: HUMIDIFIER
+  device_id: "HUMIDIFIER"
   suffix: ""
   pin_humidifier_pwm_output: GPIO21
 

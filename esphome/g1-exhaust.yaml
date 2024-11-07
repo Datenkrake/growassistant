@@ -24,7 +24,7 @@ esphome:
 
 substitutions:
   area_id: G1
-  device_id: EXHAUST
+  device_id: "EXHAUST"
   suffix: ""
   #pin_sda: 
   #pin_scl: 
@@ -42,11 +42,11 @@ wifi:
   !include includes/wifi_default.yaml
 
 globals:
-  - id: ${area_id}_${device_id}${suffix}_fan1_pwm_value${suffix}
+  - id: ${area_id}_${device_id}${suffix}_fan1_pwm_value
     type: float
     restore_value: no
     initial_value: '0.0'
-  - id: ${area_id}_${device_id}${suffix}_door_open${suffix}
+  - id: ${area_id}_${device_id}${suffix}_door_open
     type: bool
     restore_value: no
     initial_value: 'false'
@@ -61,54 +61,51 @@ mqtt:
       then:
         - lambda: |-
             if (strcmp(x.c_str(), "ON") == 0) {
-              id(${area_id}_${device_id}${suffix}_door_open${suffix}) = true;
+              id(${area_id}_${device_id}${suffix}_door_open) = true;
             } else if (strcmp(x.c_str(), "OFF") == 0) {
-              id(${area_id}_${device_id}${suffix}_door_open${suffix}) = false;
+              id(${area_id}_${device_id}${suffix}_door_open) = false;
             }
             id(update_exhaust_fan_speed).execute();
 
 output:
   - platform: ledc
     pin: ${pin_fan1_pwm}
-    id: fan1_pwm
+    id: ${area_id}_${device_id}${suffix}_fan1_pwm
     frequency: 15000 Hz
     inverted: True
     max_power: 0.8
 
   - platform: ledc
     pin: ${pin_fan2_pwm}
-    id: fan2_pwm
+    id: ${area_id}_${device_id}${suffix}_fan2_pwm
     frequency: 15000 Hz
     inverted: True
     max_power: 0.5
 
 fan:
   - platform: speed
-    output: fan1_pwm
+    output: ${area_id}_${device_id}${suffix}_fan1_pwm
     name: "Exhaust [${area_id}${suffix}]"
-    id: exhaust_fan1
-    state_topic: "${area_id}/exhaust/fan/state"
-    speed_state_topic: "${area_id}/exhaust/fan/speed"
-    command_topic: "${area_id}/exhaust/fan/set-state"
-    speed_command_topic: "${area_id}/exhaust/fan/set-speed"
+    id: ${area_id}_${device_id}${suffix}_fan1
+    state_topic: "${area_id}/${device_id}/fan/state"
+    speed_state_topic: "${area_id}/${device_id}/fan/speed"
+    command_topic: "${area_id}/${device_id}/fan/set-state"
+    speed_command_topic: "${area_id}/${device_id}/fan/set-speed"
   - platform: speed
-    output: fan2_pwm
-    name: "Exhaust"
-    id: exhaust_fan2
-    state_topic: "${area_id}/exhaust/fan/state"
-    speed_state_topic: "${area_id}/exhaust/fan/speed"
-    command_topic: "${area_id}/exhaust/fan/set-state"
-    speed_command_topic: "${area_id}/exhaust/fan/set-speed"
+    output: ${area_id}_${device_id}${suffix}_fan2_pwm
+    name: "Exhaust [${area_id}${suffix}]"
+    id: ${area_id}_${device_id}${suffix}_fan2
+    state_topic: "${area_id}/${device_id}/fan/state"
+    speed_state_topic: "${area_id}/${device_id}/fan/speed"
+    command_topic: "${area_id}/${device_id}/fan/set-state"
+    speed_command_topic: "${area_id}/${device_id}/fan/set-speed"
     
 # MQTT Sensors
 sensor:
   - !include includes/sensor_mqtt_temperature_max.yaml
-  - !include includes/sensor_mqtt_canopy_vpd_target.yaml
-  - !include includes/sensor_mqtt_canopy_vpd.yaml
   - !include includes/sensor_mqtt_canopy_rh_target.yaml
   - !include includes/sensor_mqtt_canopy_humidity.yaml
   - !include includes/sensor_mqtt_canopy_temperature.yaml
-  - !include includes/sensor_mqtt_gantry_vpd.yaml
   - !include includes/sensor_mqtt_gantry_rh_target.yaml
   - !include includes/sensor_mqtt_gantry_humidity.yaml
   - !include includes/sensor_mqtt_gantry_temperature.yaml
@@ -118,7 +115,7 @@ number:
   - !include includes/number_fan_speed_max.yaml
 
 interval:
-  - interval: 60s
+  - interval: 10s
     then:
       - script.execute: update_exhaust_fan_speed
 

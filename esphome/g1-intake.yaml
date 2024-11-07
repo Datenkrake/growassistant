@@ -21,10 +21,14 @@ esphome:
 
   area: ${area_id}
   friendly_name: ${area_id}_INTAKE${suffix}
+  on_boot: 
+    priority: 600.0  # Priority ensures this runs early
+    then:
+      - fan.turn_off: ${area_id}_${device_id}${suffix}_intake_fan
 
 substitutions:
   area_id: G1
-  device_id: INTAKE
+  device_id: "INTAKE"
   suffix: ""
   pin_fan1_pwm: GPIO0
   pin_sda: GPIO20
@@ -54,7 +58,7 @@ mqtt:
   broker: !secret mqtt_broker
   username: !secret mqtt_username
   password: !secret mqtt_password
-  topic_prefix: "${area_id}/intake"
+  topic_prefix: "${area_id}/${device_id}"
   on_message:
     - topic: ${area_id}/door_switch
       then:
@@ -87,25 +91,17 @@ bme68x_bsec2_i2c:
 sensor:
   # physical sensors
   - !include includes/sensor_bme68x_bsec2.yaml
+  #calculated sensors
+  - !include includes/sensor_vpd.yaml
+  - !include includes/sensor_dew_point.yaml
   # mqtt sensors
   - !include includes/sensor_mqtt_temperature_max.yaml
-  - !include includes/sensor_mqtt_canopy_vpd.yaml
-  - !include includes/sensor_mqtt_canopy_ppfd.yaml
-  - !include includes/sensor_mqtt_canopy_ppfd_target.yaml
-  - !include includes/sensor_mqtt_canopy_dli.yaml
-  - !include includes/sensor_mqtt_canopy_dli_target.yaml
   - !include includes/sensor_mqtt_canopy_rh_target.yaml
   - !include includes/sensor_mqtt_gantry_rh_target.yaml
   - !include includes/sensor_mqtt_canopy_humidity.yaml
   - !include includes/sensor_mqtt_gantry_humidity.yaml
   - !include includes/sensor_mqtt_canopy_temperature.yaml
   - !include includes/sensor_mqtt_gantry_temperature.yaml
-  - !include includes/sensor_mqtt_canopy_vpd_target.yaml
-  - !include includes/sensor_mqtt_gantry_vpd.yaml
-  - !include includes/sensor_mqtt_canopy_dew_point.yaml
-  - !include includes/sensor_mqtt_growth_cycle.yaml
-  - !include includes/sensor_mqtt_day_length.yaml
-  - !include includes/sensor_mqtt_full_spectrum_brightness.yaml
     
 number:
   - !include includes/number_fan_speed_min.yaml

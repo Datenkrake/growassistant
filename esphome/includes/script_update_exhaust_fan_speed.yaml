@@ -7,17 +7,17 @@ then:
             //id(fan1_pwm).set_level(0.0);
             //id(fan2_pwm).set_level(0.0);
             //id(${area_id}_fan1_pwm_value${suffix}) = 0.0;
-            auto call3 = id(exhaust_fan1).turn_off();
+            auto call3 = id(${area_id}_${device_id}${suffix}_fan1).turn_off();
             call3.perform();
-            auto call4 = id(exhaust_fan2).turn_off();
+            auto call4 = id(${area_id}_${device_id}${suffix}_fan2).turn_off();
             call4.perform();
             ESP_LOGD("fan", "Door is open. Turning off fans.");
             return;
         }
 
-        auto call1 = id(exhaust_fan1).turn_on();
+        auto call1 = id(${area_id}_${device_id}${suffix}_fan1).turn_on();
         call1.perform();
-        auto call2 = id(exhaust_fan2).turn_on();
+        auto call2 = id(${area_id}_${device_id}${suffix}_fan2).turn_on();
         call2.perform();
 
         // Door is closed; proceed with fan speed adjustments
@@ -41,7 +41,7 @@ then:
         float _temperature_max = id(${area_id}_${device_id}${suffix}_temperature_max).state;
 
         // Adjust fan speed based on conditions
-        float fan_value = id(${area_id}_${device_id}${suffix}_fan1_pwm_value${suffix});
+        float fan_value = id(${area_id}_${device_id}${suffix}_fan1_pwm_value);
 
         // If temperature exceeds temperature max, increase fan speed
         if (temperature > _temperature_max) {
@@ -63,14 +63,14 @@ then:
         fan_value = fmax(fan_min, fmin(fan_max, fan_value));
 
         // Update the global fan speed value
-        id(${area_id}_${device_id}${suffix}_fan1_pwm_value${suffix}) = fan_value;
+        id(${area_id}_${device_id}${suffix}_fan1_pwm_value) = fan_value;
 
         // Set the fan speed to both fans
         //id(fan1_pwm).set_level(fan_value / 100.0);
         //id(fan2_pwm).set_level(fan_value / 100.0);
 
-        id(exhaust_fan1).speed = fan_value;
-        id(exhaust_fan2).speed = fan_value;
+        id(${area_id}_${device_id}${suffix}_fan1).speed = fan_value;
+        id(${area_id}_${device_id}${suffix}_fan2).speed = fan_value;
 
         ESP_LOGD("fan", "Updating fan speed to %.2f%% (Min: %.2f%%, Max: %.2f%%)", fan_value, fan_min, fan_max);
 

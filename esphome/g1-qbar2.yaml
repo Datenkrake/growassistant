@@ -24,7 +24,7 @@ esphome:
 
 substitutions:
   area_id: G1
-  device_id: QBAR
+  device_id: "QBAR"
   suffix: "_B"
   pin_light_pwm: GPIO8
   pin_sda: GPIO9
@@ -51,13 +51,13 @@ mqtt:
 output:
   - platform: ledc
     pin: ${pin_light_pwm}
-    id: ${area_id}_led_pwm${suffix}
+    id: ${area_id}_${device_id}${suffix}_led_pwm
     frequency: 100 Hz 
     max_power: 0.95
 
 light:
   - platform: monochromatic
-    output: ${area_id}_led_pwm${suffix}
+    output: ${area_id}_${device_id}${suffix}_led_pwm
     name: "Full Spectrum [${area_id}${suffix}]"
     state_topic: "${area_id}/light/full_spectrum/state"
     command_topic: "${area_id}/light/full_spectrum/set-state"

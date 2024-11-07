@@ -1,4 +1,4 @@
 platform: mqtt_subscribe
 name: "Cola Detected [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_cola_detected
-topic: "${area_id}/CANOPY/cola_detected"
+topic: "${area_id}/${device_id}/cola_detected"

@@ -6,7 +6,7 @@ voc:
 nox:
   name: "NOx Index [${area_id}_${device_id}${suffix}]"
   state_topic: "${area_id}/${device_id}/nox_index"
-  id: ${area_id}_${device_id}${suffix}_gantry_nox_index
+  id: ${area_id}_${device_id}${suffix}_nox_index
 compensation:
   humidity_source: ${area_id}_${device_id}${suffix}_humidity
   temperature_source: ${area_id}_${device_id}${suffix}_temperature

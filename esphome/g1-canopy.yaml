@@ -20,11 +20,11 @@ esphome:
 ####################################################################
 
   area: ${area_id}
-  friendly_name: ${area_id}_CANOPY${suffix}
+  friendly_name: ${area_id}_${device_id}${suffix}
 
 substitutions:
   area_id: G1
-  device_id: CANOPY
+  device_id: "CANOPY"
   suffix: ""
   pin_sda: GPIO7
   pin_scl: GPIO6
@@ -62,9 +62,9 @@ mqtt:
       then:
         - lambda: |-
             if (strcmp(x.c_str(), "ON") == 0) {
-              id(${area_id}_${device_id}${suffix}_door_open${suffix}) = true;
+              id(${area_id}_${device_id}${suffix}_door_open) = true;
             } else if (strcmp(x.c_str(), "OFF") == 0) {
-              id(${area_id}_${device_id}${suffix}_door_open${suffix}) = false;
+              id(${area_id}_${device_id}${suffix}_door_open) = false;
             }
             id(adjust_brightness).execute();
 
@@ -78,46 +78,58 @@ text_sensor:
   - !include includes/text_sensor_mqtt_full_spectrum_brightness_json.yaml
 
 sensor:
-  # physical sensors
+  # PHYSICAL SENSORS
+  ## LUX
   - !include includes/sensor_bh1750.yaml
+  ## ULTRASONIC
   - !include includes/sensor_cola_ultrasonic.yaml
+  ## TEMPERATURE, HUMIDITY
   - !include includes/sensor_bme68x_bsec2.yaml
-  # calculated sensors
+  # CALCULATED SENSORS
+  ## CLIMATE
   - !include includes/sensor_vpd.yaml
-  - !include includes/sensor_canopy_ppfd.yaml
-  - !include includes/sensor_canopy_ppfd_target.yaml
-  - !include includes/sensor_canopy_dli.yaml
-  - !include includes/sensor_canopy_dli_target.yaml
   - !include includes/sensor_rh_target.yaml
   - !include includes/sensor_dew_point.yaml
+  ## LIGHT INTENSITY
+  - !include includes/sensor_ppfd.yaml
+  - !include includes/sensor_ppfd_target.yaml
+  - !include includes/sensor_dli.yaml
+  - !include includes/sensor_dli_target.yaml
   - !include includes/sensor_growth_cycle.yaml
   - !include includes/sensor_day_length.yaml
-  # mqtt sensors
+  # MQTT
   - !include includes/sensor_mqtt_full_spectrum_brightness.yaml
 
 binary_sensor:
+  # LIGHT SWITCH
   - !include includes/binary_sensor_day_phase_target.yaml
 
 number:
-  - !include includes/number_illuminance_calibration_factor.yaml
-  - !include includes/number_canopy_vpd_target.yaml
-  - !include includes/number_canopy_leaf_offset.yaml
-  - !include includes/number_canopy_cola_distance_threshold.yaml
+  # USER INPUTS
+  ## SCHEDULING
+  - !include includes/number_start_date.yaml
+  - !include includes/number_sunrise_time.yaml
+  - !include includes/number_day_length_vegetative.yaml
+  - !include includes/number_day_length_generative.yaml
+  ## CYCLE DURATIONS
+  - !include includes/number_duration_vegetative.yaml
+  - !include includes/number_duration_flipping.yaml
+  - !include includes/number_duration_generative.yaml
+  - !include includes/number_duration_drying.yaml
+  ## LIGHT INTENSITY CONFIG
   - !include includes/number_dli_vegetative_start.yaml
   - !include includes/number_dli_vegetative_end.yaml
   - !include includes/number_dli_generative_start.yaml
   - !include includes/number_dli_generative_peak.yaml
   - !include includes/number_dli_generative_end.yaml
+  ## CLIMATE CONTROLS
   - !include includes/number_temperature_max.yaml
-  - !include includes/number_day_length_vegetative.yaml
-  - !include includes/number_day_length_generative.yaml
-  - !include includes/number_start_date.yaml
-  - !include includes/number_duration_vegetative.yaml
-  - !include includes/number_duration_flipping.yaml
-  - !include includes/number_duration_generative.yaml
-  - !include includes/number_duration_drying.yaml
-  - !include includes/number_sunrise_time.yaml
+  - !include includes/number_vpd_target.yaml
+  - !include includes/number_leaf_offset.yaml
+  ## SENSOR THINGIES
+  - !include includes/number_illuminance_calibration_factor.yaml
   - !include includes/number_door_open_brightness.yaml
+  - !include includes/number_cola_distance_threshold.yaml
 
 interval:
   - interval: 60s  # Adjust as needed

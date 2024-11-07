@@ -60,5 +60,5 @@ then:
 
         // Set the fan speed to both fans
         id(${area_id}_${device_id}${suffix}_intake_fan).speed = fan_value;
-
+           
         ESP_LOGD("fan", "Updating fan speed to %.2f%% (Min: %.2f%%, Max: %.2f%%)", fan_value, fan_min, fan_max);

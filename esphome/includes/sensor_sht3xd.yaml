@@ -1,11 +1,11 @@
 platform: sht3xd
 temperature:
-    name: "Canopy Temperature [${area_id}${suffix}]"
-    id: ${area_id}_canopy_temperature
-    state_topic: "${area_id}/temperature/canopy"
+    name: "Temperature [${area_id}_${device_id}${suffix}]"
+    id: ${area_id}_${device_id}${suffix}_temperature
+    state_topic: "${area_id}/${device_id}/temperature"
 humidity:
-    name: "Canopy Humidity [${area_id}${suffix}]"
-    id: ${area_id}_canopy_humidity
-    state_topic: "${area_id}/humidity/canopy"
+    name: "Humidity [${area_id}_${device_id}${suffix}]"
+    id: ${area_id}_${device_id}${suffix}_humidity
+    state_topic: "${area_id}/${device_id}/humidity"
 address: ${address_sht3xd}
 update_interval: 30s

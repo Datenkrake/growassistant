@@ -20,11 +20,11 @@ esphome:
 ####################################################################
 
   area: ${area_id}
-  friendly_name: ${area_id}_GANTRY${suffix}
+  friendly_name: ${area_id}_${device_id}${suffix}
 
 substitutions:
   area_id: G1
-  device_id: GANTRY
+  device_id: "GANTRY"
   suffix: ""
   pin_sda: GPIO21
   pin_scl: GPIO20
@@ -101,11 +101,11 @@ sensor:
   - !include includes/sensor_htu21d.yaml
   # calculated sensors
   - !include includes/sensor_vpd.yaml
-  - !include includes/sensor_gantry_rh_target.yaml
-  # mqtt sensors
+  - !include includes/sensor_rh_target.yaml
   - !include includes/sensor_dew_point.yaml
+  # mqtt sensors
   - !include includes/sensor_mqtt_vpd_leaf_offset.yaml
-  - !include includes/sensor_mqtt_canopy_vpd_target.yaml
+  - !include includes/sensor_mqtt_vpd_target.yaml
 
 number:
   - !include includes/number_fan_speed_min.yaml

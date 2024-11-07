@@ -38,7 +38,7 @@ esphome:
 
 substitutions:
   area_id: G2
-  device_id: WATER
+  device_id: "WATER"
   suffix: ""
   #pin_door_switch: GPIO21
   pin_irrigation_output: GPIO16
@@ -47,6 +47,10 @@ substitutions:
 ####################################################################
 # generic yaml for humidifiers below
 ####################################################################
+logger:
+captive_portal:
+wifi:
+  !include includes/wifi_default.yaml
 
 mqtt:
   broker: !secret mqtt_broker
@@ -54,105 +58,19 @@ mqtt:
   password: !secret mqtt_password
   topic_prefix: "${area_id}/water"
 
-# binary_sensor:
-#   - platform: gpio
-#     pin:
-#       number: ${pin_door_switch}
-#       mode: INPUT_PULLUP
-#       inverted: true
-#     name: "Door Switch"
-#     id: ${area_id}_water_door_switch${suffix}
-#     state_topic: "${area_id}/door_switch"
-#     device_class: door
+binary_sensor:
+  - !include includes/binary_sensor_door_switch.yaml
 
 switch:
-  - platform: gpio
-    pin: ${pin_irrigation_output}
-    name: "Irrigation Pump [${area_id}${suffix}]"
-    id: ${area_id}_water_irrigation_pump${suffix}
-    state_topic: "${area_id}/irrigation_pump"
-    command_topic: "${area_id}/irrigation_pump/set-state"
-
-  - platform: gpio
-    pin: ${pin_circulation_output}
-    name: "Circulation Pump [${area_id}${suffix}]"
-    id: ${area_id}_water_circulation_pump${suffix}
-    state_topic: "${area_id}/circulation_pump"
-    command_topic: "${area_id}/circulation_pump/set-state"
-
-  - platform: template
-    name: "Irrigation Enable [${area_id}${suffix}]"
-    id: ${area_id}_water_enable${suffix}
-    optimistic: true
-    state_topic: "${area_id}/water_enable"
-    command_topic: "${area_id}/water_enable/set-state"
-    restore_mode: ALWAYS_OFF
-    retain: True
+  - !include includes/switch_enable.yaml
+  - !include includes/switch_circulation_pump.yaml
+  - !include includes/switch_irrigation_pump.yaml
 
 number:
-  - platform: template
-    name: "Irrigation Period [${area_id}${suffix}]"
-    id: ${area_id}_water_irrigation_period${suffix}
-    state_topic: "${area_id}/irrigation_period"
-    command_topic: "${area_id}/irrigation_period/set-state"
-    optimistic: True
-    initial_value: 60
-    min_value: 1
-    max_value: 1440
-    step: 1
-    mode: BOX
-    unit_of_measurement: "minutes"
-    icon: mdi:water-pump
-    restore_value: True
-    retain: True
-
-  - platform: template
-    name: "Irrigation Duration [${area_id}${suffix}]"
-    id: ${area_id}_water_irrigation_duration${suffix}
-    state_topic: "${area_id}/irrigation_duration"
-    command_topic: "${area_id}/irrigation_duration/set-state"
-    optimistic: True
-    initial_value: 30
-    min_value: 1
-    max_value: 300
-    step: 1
-    mode: BOX
-    unit_of_measurement: "seconds"
-    icon: mdi:water-pump
-    retain: True
-    restore_value: True
-
-  - platform: template
-    name: "Circulation Period [${area_id}${suffix}]"
-    id: ${area_id}_water_circulation_period${suffix}
-    state_topic: "${area_id}/circulation_period"
-    command_topic: "${area_id}/circulation_period/set-state"
-    optimistic: True
-    initial_value: 60
-    min_value: 1
-    max_value: 1440
-    step: 1
-    mode: BOX
-    unit_of_measurement: "minutes"
-    icon: mdi:water-pump
-    restore_value: True
-    retain: True
-  
-  - platform: template
-    name: "Circulation Duration [${area_id}${suffix}]"
-    id: ${area_id}_water_circulation_duration${suffix}
-    state_topic: "${area_id}/circulation_duration"
-    command_topic: "${area_id}/circulation_duration/set-state"
-    optimistic: True
-    initial_value: 5
-    min_value: 1
-    max_value: 30
-    step: 1
-    mode: BOX
-    unit_of_measurement: "minutes"
-    icon: mdi:water-pump
-    restore_value: True
-    retain: True
+  - !include includes/number_irrigation_period.yaml
+  - !include includes/number_irrigation_duration.yaml
+  - !include includes/number_circulation_period.yaml
+  - !include includes/number_circulation_duration.yaml
 
 interval:
   # Irrigation Interval
@@ -160,19 +78,19 @@ interval:
     then:
       - if:
           condition:
-            lambda: 'return id(${area_id}_water_enable).state && (millis() / 60000) % ((int) id(${area_id}_water_irrigation_period).state) == 0;'
+            lambda: 'return id(${area_id}_${device_id}${suffix}_enable).state && (millis() / 60000) % ((int) id(${area_id}_${device_id}${suffix}_irrigation_period).state) == 0;'
           then:
-            - switch.turn_on: ${area_id}_water_irrigation_pump${suffix}
-            - delay: !lambda 'return (int) id(${area_id}_water_irrigation_duration).state * 1000;'
-            - switch.turn_off: ${area_id}_water_irrigation_pump${suffix}
+            - switch.turn_on: ${area_id}_${device_id}${suffix}_irrigation_pump${suffix}
+            - delay: !lambda 'return (int) id(${area_id}_${device_id}${suffix}_irrigation_duration).state * 1000;'
+            - switch.turn_off: ${area_id}_${device_id}${suffix}_irrigation_pump
 
   # Circulation Interval
   - interval: 1min  # This interval will check every minute
     then:
       - if:
           condition:
-            lambda: 'return id(${area_id}_water_enable).state && (millis() / 60000) % ((int) id(${area_id}_water_circulation_period).state) == 0;'
+            lambda: 'return id(${area_id}_${device_id}${suffix}_enable).state && (millis() / 60000) % ((int) id(${area_id}_${device_id}${suffix}_circulation_period).state) == 0;'
           then:
-            - switch.turn_on: ${area_id}_water_circulation_pump${suffix}
-            - delay: !lambda 'return (int) id(${area_id}_water_circulation_duration).state * 60000;'
-            - switch.turn_off: ${area_id}_water_circulation_pump${suffix}
+            - switch.turn_on: ${area_id}_${device_id}${suffix}_circulation_pump
+            - delay: !lambda 'return (int) id(${area_id}_${device_id}${suffix}_circulation_duration).state * 60000;'
+            - switch.turn_off: ${area_id}_${device_id}${suffix}_circulation_pump

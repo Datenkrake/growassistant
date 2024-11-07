@@ -24,7 +24,7 @@ esphome:
 
 substitutions:
   area_id: G1
-  device_id: QBAR
+  device_id: "QBAR"
   suffix: "_A"
   pin_light_pwm: GPIO8
   pin_trigger: GPIO9

@@ -33,11 +33,11 @@ esphome:
 # configure substitutions and friendly name
 ####################################################################
 
-  friendly_name: ${area_id}_EXHAUST${suffix}
+  friendly_name: ${area_id}_${device_id}${suffix}
 
 substitutions:
   area_id: G2
-  device_id: EXHAUST
+  device_id: "EXHAUST"
   suffix: "_B"
   #pin_sda: GPIO3
   #pin_scl: GPIO4
@@ -47,6 +47,107 @@ substitutions:
   #bme680_temp_offset: "2.5"
   fan1_max: "1.0"
   fan2_max: "1.0"
+
+
+####################################################################
+# generic yaml for humidifiers below
+####################################################################
+logger:
+captive_portal:
+wifi:
+  !include includes/wifi_default.yaml
+
+globals:
+  - id: ${area_id}_${device_id}${suffix}_fan1_pwm_value
+    type: float
+    restore_value: no
+    initial_value: '0.0'
+  - id: ${area_id}_${device_id}${suffix}_door_open
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+
+mqtt:
+  broker: !secret mqtt_broker
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+  topic_prefix: "${area_id}/exhaust"
+  on_message:
+    - topic: ${area_id}/door_switch
+      then:
+        - lambda: |-
+            if (strcmp(x.c_str(), "ON") == 0) {
+              id(${area_id}_${device_id}${suffix}_door_open) = true;
+            } else if (strcmp(x.c_str(), "OFF") == 0) {
+              id(${area_id}_${device_id}${suffix}_door_open) = false;
+            }
+            id(update_exhaust_fan_speed).execute();
+
+output:
+  - platform: ledc
+    pin: ${pin_fan1_pwm}
+    id: ${area_id}_${device_id}${suffix}_fan1_pwm
+    frequency: 15000 Hz
+    inverted: True
+    max_power: 0.8
+
+  - platform: ledc
+    pin: ${pin_fan2_pwm}
+    id: ${area_id}_${device_id}${suffix}_fan2_pwm
+    frequency: 15000 Hz
+    inverted: True
+    max_power: 0.5
+
+fan:
+  - platform: speed
+    output: ${area_id}_${device_id}${suffix}_fan1_pwm
+    name: "Exhaust [${area_id}${suffix}]"
+    id: ${area_id}_${device_id}${suffix}_fan1
+    state_topic: "${area_id}/${device_id}/fan/state"
+    speed_state_topic: "${area_id}/${device_id}/fan/speed"
+    command_topic: "${area_id}/${device_id}/fan/set-state"
+    speed_command_topic: "${area_id}/${device_id}/fan/set-speed"
+  - platform: speed
+    output: ${area_id}_${device_id}${suffix}_fan2_pwm
+    name: "Exhaust [${area_id}${suffix}]"
+    id: ${area_id}_${device_id}${suffix}_fan2
+    state_topic: "${area_id}/${device_id}/fan/state"
+    speed_state_topic: "${area_id}/${device_id}/fan/speed"
+    command_topic: "${area_id}/${device_id}/fan/set-state"
+    speed_command_topic: "${area_id}/${device_id}/fan/set-speed"
+    
+i2c:
+  !include includes/i2c_bus_a.yaml
+bme68x_bsec2_i2c:
+  !include includes/bme680x_bsec2_i2c.yaml
+  
+sensor:
+  # physical sensors
+  - !include includes/sensor_bme68x_bsec2.yaml
+  #calculated sensors
+  - !include includes/sensor_vpd.yaml
+  - !include includes/sensor_dew_point.yaml
+# MQTT Sensors
+  - !include includes/sensor_mqtt_temperature_max.yaml
+  - !include includes/sensor_mqtt_canopy_rh_target.yaml
+  - !include includes/sensor_mqtt_canopy_humidity.yaml
+  - !include includes/sensor_mqtt_canopy_temperature.yaml
+  - !include includes/sensor_mqtt_gantry_rh_target.yaml
+  - !include includes/sensor_mqtt_gantry_humidity.yaml
+  - !include includes/sensor_mqtt_gantry_temperature.yaml
+
+number:
+  - !include includes/number_fan_speed_min.yaml
+  - !include includes/number_fan_speed_max.yaml
+
+interval:
+  - interval: 10s
+    then:
+      - script.execute: update_exhaust_fan_speed
+
+script:
+  - !include includes/script_update_exhaust_fan_speed.yaml
+
 
 ####################################################################
 # generic yaml for humidifiers below
