@@ -20,7 +20,7 @@ esphome:
 ####################################################################
 
   area: ${area_id}
-  friendly_name: ${area_id}_INTAKE${suffix}
+  friendly_name: ${area_id}_${device_id}${suffix}
   on_boot: 
     priority: 600.0  # Priority ensures this runs early
     then:
@@ -95,6 +95,7 @@ sensor:
   - !include includes/sensor_vpd.yaml
   - !include includes/sensor_dew_point.yaml
   # mqtt sensors
+  - !include includes/sensor_mqtt_vpd_leaf_offset.yaml
   - !include includes/sensor_mqtt_temperature_max.yaml
   - !include includes/sensor_mqtt_canopy_rh_target.yaml
   - !include includes/sensor_mqtt_gantry_rh_target.yaml

@@ -3,9 +3,6 @@ esp32:
   framework:
     type: arduino
 
-# Enable logging
-logger:
-
 # Enable Home Assistant API
 # api:
 #   encryption:
@@ -14,17 +11,6 @@ logger:
 ota:
   - platform: esphome
     password: "f2f855f8e0b8d178f386c3f8773972f7"
-
-wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_password
-  domain: .local
-  # Enable fallback hotspot (captive portal) in case wifi connection fails
-  ap:
-    ssid: "G2-Intake Fallback Hotspot"
-    password: "Na1KtN4vGGSR"
-
-captive_portal:
 
 esphome:
   name: g2-intake
@@ -105,6 +91,7 @@ sensor:
   - !include includes/sensor_vpd.yaml
   - !include includes/sensor_dew_point.yaml
   # mqtt sensors
+  - !include includes/sensor_mqtt_vpd_leaf_offset.yaml
   - !include includes/sensor_mqtt_temperature_max.yaml
   - !include includes/sensor_mqtt_canopy_rh_target.yaml
   - !include includes/sensor_mqtt_gantry_rh_target.yaml

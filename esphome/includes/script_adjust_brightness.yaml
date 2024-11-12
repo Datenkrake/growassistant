@@ -13,6 +13,12 @@ then:
             // Get current brightness from the number sensor state
             float current_brightness = id(${area_id}_${device_id}${suffix}_full_spectrum_brightness).state;
 
+            // Check if new_brightness is NaN and set to 0 if true
+            if (isnan(current_brightness)) {
+                ESP_LOGW("brightness_control", "New brightness is NaN. Setting to 0.");
+                current_brightness = 0;
+            }
+            
             // Get current PPFD and target PPFD values
             float ppfd = id(${area_id}_${device_id}${suffix}_ppfd).state;
 

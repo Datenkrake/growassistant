@@ -3,9 +3,6 @@ esp32:
   framework:
     type: arduino
 
-# Enable logging
-logger:
-
 # Enable Home Assistant API
 # api:
 #   encryption:
@@ -14,31 +11,6 @@ logger:
 ota:
   - platform: esphome
     password: "ec6726c739a9331f01e4c7ef2b5f9e17"
-
-wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_password
-
-  # Enable fallback hotspot (captive portal) in case wifi connection fails
-  ap:
-    ssid: "G2-Exhaust1 Fallback Hotspot"
-    password: "fFBllyqlcT54"
-
-captive_portal:
-
-i2c:
-  sda: ${pin_sda}
-  scl: ${pin_scl}
-  scan: true
-  id: bus_a
-
-bme68x_bsec2_i2c:
-  address: ${address_bme680}
-  model: bme680
-  operating_age: 28d
-  sample_rate: LP
-  supply_voltage: 3.3V
-  temperature_offset: ${bme680_temp_offset}
 
 esphome:
   name: g2-exhaust1            
@@ -141,6 +113,7 @@ sensor:
   - !include includes/sensor_vpd.yaml
   - !include includes/sensor_dew_point.yaml
 # MQTT Sensors
+  - !include includes/sensor_mqtt_vpd_leaf_offset.yaml
   - !include includes/sensor_mqtt_temperature_max.yaml
   - !include includes/sensor_mqtt_canopy_rh_target.yaml
   - !include includes/sensor_mqtt_canopy_humidity.yaml

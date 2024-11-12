@@ -4,21 +4,21 @@ id: ${area_id}_${device_id}${suffix}_current_brightness_text_sensor  # Make sure
 topic: "${area_id}/light/full_spectrum/state"
 on_value:
     then:
-    - lambda: |-
-        // Parse the JSON payload
-        DynamicJsonDocument doc(512);
-        auto error = deserializeJson(doc, x.c_str());
-        if (error) {
-            ESP_LOGW("main", "Failed to parse JSON: %s", error.c_str());
-            return;
-        }
+        - lambda: |-
+            // Parse the JSON payload
+            DynamicJsonDocument doc(512);
+            auto error = deserializeJson(doc, x.c_str());
+            if (error) {
+                ESP_LOGW("main", "Failed to parse JSON: %s", error.c_str());
+                return;
+            }
 
-        // Check if "brightness" key exists
-        if (doc.containsKey("brightness")) {
-            int brightness = doc["brightness"].as<int>();
+            // Check if "brightness" key exists
+            if (doc.containsKey("brightness")) {
+                int brightness = doc["brightness"].as<int>();
 
-            // Update the text sensor's state to the brightness value as a string
-            id(${area_id}_${device_id}${suffix}_full_spectrum_brightness).publish_state(brightness/255.0f);
-        } else {
-            ESP_LOGW("main", "Brightness key not found in JSON.");
-        }
+                // Update the text sensor's state to the brightness value as a string
+                id(${area_id}_${device_id}${suffix}_full_spectrum_brightness).publish_state(brightness/255.0f);
+            } else {
+                ESP_LOGW("main", "Brightness key not found in JSON.");
+            }

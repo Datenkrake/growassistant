@@ -70,14 +70,14 @@ mqtt:
             } else if (strcmp(x.c_str(), "OFF") == 0) {
               id(${area_id}_${device_id}${suffix}_door_open) = false;
             }
-            id(adjust_brightness).execute();
+            id(adjust_brightness_shelly_dimmer).execute();
 
 time:
   - !include includes/time_mqtt.yaml
 i2c:
   !include includes/i2c_bus_a.yaml
 text_sensor:
-  - !include includes/text_sensor_mqtt_full_spectrum_brightness_json.yaml
+  - !include includes/text_sensor_mqtt_full_spectrum_brightness_json_shelly_dimmer.yaml
 
 sensor:
   # PHYSICAL SENSORS
@@ -100,7 +100,8 @@ sensor:
   - !include includes/sensor_growth_cycle.yaml
   - !include includes/sensor_day_length.yaml
   # MQTT
-  - !include includes/sensor_mqtt_full_spectrum_brightness.yaml
+  #- !include includes/sensor_mqtt_full_spectrum_brightness.yaml
+  - !include includes/sensor_full_spectrum_brightness.yaml
 
 binary_sensor:
   # LIGHT SWITCH

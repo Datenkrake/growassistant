@@ -3,9 +3,6 @@ esp32:
   framework:
     type: arduino
 
-# Enable logging
-logger:
-
 # Enable Home Assistant API
 # api:
 #   encryption:
@@ -15,17 +12,6 @@ ota:
   - platform: esphome
     password: "f494367364d46032c189203283b27107"
 
-wifi:
-  ssid: !secret wifi_ssid
-  password: !secret wifi_password
-
-  # Enable fallback hotspot (captive portal) in case wifi connection fails
-  ap:
-    ssid: "G2-Gantry Fallback Hotspot"
-    password: "sdeWIJobDX5x"
-
-captive_portal:
-  
 esphome:
   name: g2-gantry
 
@@ -46,7 +32,7 @@ substitutions:
   pin_trigger: GPIO5
   pin_echo: GPIO6
   #pin_sgp4x_address: "0x59"
-  pin_sht3xd_address: "0x44"
+  address_sht3xd: "0x44"
   #address_bme680: "0x76"
   #bme680_temp_offset: "2.5"
 
@@ -152,9 +138,9 @@ script:
       - lambda: |-
           ESP_LOGD("debug", "Checking conditions for moving gantry...");
           ESP_LOGD("debug", "Cola detected state: %s", id(${area_id}_cola_detected${suffix}).state.c_str());
-          ESP_LOGD("debug", "Gantry position: %.2f, Min Position: %.2f", id(${area_id}_gantry_position${suffix}).state, id(${area_id}_gantry_position_min${suffix}).state);
+          ESP_LOGD("debug", "Gantry position: %.2f, Min Position: %.2f", id(${area_id}_${device_id}_position${suffix}).state, id(${area_id}_${device_id}_position_min${suffix}).state);
 
-          if (id(${area_id}_cola_detected${suffix}).state == "{\"state\": \"true\"}" && id(${area_id}_gantry_position${suffix}).state > id(${area_id}_gantry_position_min${suffix}).state) {
+          if (id(${area_id}_cola_detected${suffix}).state == "{\"state\": \"true\"}" && id(${area_id}_${device_id}_position${suffix}).state > id(${area_id}_${device_id}_position_min${suffix}).state) {
             ESP_LOGD("main", "Conditions met. Sending MQTT message to move gantry");
             id(${area_id}_publish_gantry_step_up${suffix}).execute();
           } else {
