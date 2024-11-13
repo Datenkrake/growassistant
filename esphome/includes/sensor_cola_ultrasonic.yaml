@@ -8,5 +8,5 @@ update_interval: 1s
 timeout: 2m
 filters:
 - sliding_window_moving_average:
-    window_size: 60
+    window_size: 180
     send_every: 60
