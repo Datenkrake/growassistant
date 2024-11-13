@@ -30,7 +30,15 @@ then:
                 // Calculate the error and adjustment needed
                 float error_value = ppfd_target - ppfd;
                 // if the error is large, a large divisor is used to make the adjustment less aggressive
-                float divisor = 2000;
+                float divisor = error_value * error_value / 10;
+                // the divisor is clamped to a minimum value to prevent division by zero
+                if (divisor < 3000) {
+                    divisor = 3000;
+                }
+                // the divisor is clamped to a maximum value to prevent overly small adjustment
+                if (divisor > 10000) {
+                    divisor = 10000;
+                }
                 float adjustment = ceil(error_value / divisor);  // Increase divisor for less aggressive adjustmentent
 
                 // Log the error and adjustment value
