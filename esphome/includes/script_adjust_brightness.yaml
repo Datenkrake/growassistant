@@ -29,7 +29,17 @@ then:
 
             // Calculate the error and adjustment needed
             float error_value = ppfd_target - ppfd;
-            float adjustment = error_value / 5000.0;  // Increase divisor for less aggressive adjustment
+            // if the error is large, a large divisor is used to make the adjustment less aggressive
+            float divisor = error_value * error_value;
+            // the divisor is clamped to a minimum value to prevent division by zero
+            if (divisor < 0.0001) {
+                divisor = 0.0001;
+            }
+            // the divisor is clamped to a maximum value to prevent overly small adjustment
+            if (divisor > 5000) {
+                divisor = 5000;
+            }
+            float adjustment = error_value / divisor;  // Increase divisor for less aggressive adjustment
 
             // Log the error and adjustment value
             ESP_LOGD("brightness_control", "Error Value: %.2f", error_value);
