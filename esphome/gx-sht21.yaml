@@ -33,8 +33,8 @@ substitutions:
   suffix: ""
   pin_sda: GPIO6
   pin_scl: GPIO5
-  pin_echo: GPIO2
-  pin_trigger: GPIO1
+  pin_echo: GPIO7
+  pin_trigger: GPIO8
   address_sht3xd: "0x44"
   address_bh1750: "0x23"
 
