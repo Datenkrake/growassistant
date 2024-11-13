@@ -60,7 +60,7 @@ then:
         // Log the new brightness value after clamping
         ESP_LOGD("brightness_control", "New Brightness (after clamping): %.2f", new_brightness);
 
-        id(${area_id}_${device_id}${suffix}_new_brightness_global) = new_brightness;
+        id(${area_id}_${device_id}${suffix}_new_brightness_global) = round(new_brightness, 2);
 
     - mqtt.publish:
         topic: "${area_id}/mains/light/command/switch:0"
