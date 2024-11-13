@@ -46,6 +46,8 @@ mqtt:
 
 binary_sensor:
   - !include includes/binary_sensor_door_switch.yaml
+
+sensor:
   - !include includes/sensor_mqtt_day_phase_target.yaml
 
 switch:

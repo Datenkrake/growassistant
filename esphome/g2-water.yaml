@@ -38,12 +38,6 @@ captive_portal:
 wifi:
   !include includes/wifi_default.yaml
 
-globals:
-  - id: ${area_id}_${device_id}${suffix}_door_open
-    type: bool
-    restore_value: no
-    initial_value: 'false'
-
 mqtt:
   broker: !secret mqtt_broker
   username: !secret mqtt_username
@@ -62,7 +56,7 @@ number:
   - !include includes/number_circulation_period.yaml
   - !include includes/number_circulation_duration.yaml
 
-binary_sensor:
+sensor:
   - !include includes/sensor_mqtt_day_phase_target.yaml
 
 interval:
