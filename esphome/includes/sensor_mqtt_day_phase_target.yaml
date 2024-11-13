@@ -1,0 +1,4 @@
+platform: mqtt_subscribe
+name: "Day Phase Target [${area_id}_${device_id}${suffix}]"
+id: ${area_id}_${device_id}${suffix}_day_phase_target
+topic: "${area_id}/CANOPY/dayphase_target"
