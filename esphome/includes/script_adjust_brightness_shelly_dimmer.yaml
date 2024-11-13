@@ -73,7 +73,7 @@ then:
         payload: !lambda |-
             if (id(${area_id}_${device_id}${suffix}_new_brightness_global) > 0.0) {
                 int brightness_percent = (int)(id(${area_id}_${device_id}${suffix}_new_brightness_global) * 100);
-                ESP_LOGD("mqtt_publish", "Publishing Brightness: %d%%", brightness_percent+1);
+                ESP_LOGD("mqtt_publish", "Publishing Brightness: %d%%", brightness_percent);
                 // Construct the JSON payload to turn on the light with specified brightness
                 root["id"] = 1;
                 root["src"] = "user";
@@ -81,7 +81,7 @@ then:
                 auto params = root.createNestedObject("params");
                 params["id"] = 0;
                 params["on"] = true;
-                params["brightness"] = brightness_percent+1;
+                params["brightness"] = brightness_percent;
             } else {
                 ESP_LOGD("mqtt_publish", "Turning off Light");
                 // Construct the JSON payload to turn off the light
