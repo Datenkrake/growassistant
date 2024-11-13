@@ -1,0 +1,8 @@
+platform: template
+name: "Enable at Night [${area_id}_${device_id}${suffix}]"
+id: ${area_id}_${device_id}${suffix}_enable_at_night
+optimistic: True
+state_topic: "${area_id}/${device_id}/enable_at_night"
+command_topic: "${area_id}/${device_id}/enable_at_night/set-state"
+qos: 0
+retain: True

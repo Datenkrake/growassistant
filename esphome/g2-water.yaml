@@ -20,7 +20,7 @@ esphome:
 ####################################################################
 
   area: ${area_id}
-  friendly_name: ${area_id}_WATER${suffix}
+  friendly_name: ${area_id}_${device_id}${suffix}
 
 substitutions:
   area_id: G2
@@ -38,14 +38,21 @@ captive_portal:
 wifi:
   !include includes/wifi_default.yaml
 
+globals:
+  - id: ${area_id}_${device_id}${suffix}_door_open
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+
 mqtt:
   broker: !secret mqtt_broker
   username: !secret mqtt_username
   password: !secret mqtt_password
-  topic_prefix: "${area_id}/water"
+  topic_prefix: "${area_id}/${device_id}"
 
 switch:
   - !include includes/switch_enable.yaml
+  - !include includes/switch_enable_at_night.yaml
   - !include includes/switch_circulation_pump.yaml
   - !include includes/switch_irrigation_pump.yaml
 
@@ -55,15 +62,22 @@ number:
   - !include includes/number_circulation_period.yaml
   - !include includes/number_circulation_duration.yaml
 
+binary_sensor:
+  - !include includes/sensor_mqtt_day_phase_target.yaml
+
 interval:
   # Irrigation Interval
   - interval: 1min  # This interval will check every minute
     then:
       - if:
           condition:
-            lambda: 'return id(${area_id}_${device_id}${suffix}_enable).state && (millis() / 60000) % ((int) id(${area_id}_${device_id}${suffix}_irrigation_period).state) == 0;'
+            lambda: |
+              return id(${area_id}_${device_id}${suffix}_enable).state &&
+                     id(${area_id}_${device_id}${suffix}_enable_at_night).state &&
+                     id(${area_id}_${device_id}${suffix}_day_phase_target).state &&
+                     (millis() / 60000) % ((int) id(${area_id}_${device_id}${suffix}_irrigation_period).state) == 0;
           then:
-            - switch.turn_on: ${area_id}_${device_id}${suffix}_irrigation_pump${suffix}
+            - switch.turn_on: ${area_id}_${device_id}${suffix}_irrigation_pump
             - delay: !lambda 'return (int) id(${area_id}_${device_id}${suffix}_irrigation_duration).state * 1000;'
             - switch.turn_off: ${area_id}_${device_id}${suffix}_irrigation_pump
 
