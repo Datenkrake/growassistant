@@ -47,14 +47,15 @@ then:
 
                 // Calculate new brightness value
                 new_brightness = current_brightness + adjustment;
-            }
-        }
 
-        // Ensure brightness stays between 0 and 1
-        if (new_brightness > 1.0) {
-            new_brightness = 1.0;
-        } else if (new_brightness < 0.0) {
-            new_brightness = 0.0;
+                // if new_brightness is 0, set it to 0.01 to prevent the light from turning off
+                // else, ensure that the new_brightness is clamped between 0.01 and 1.0
+                if (new_brightness < 0.01) {
+                    new_brightness = 0.01;
+                } else if (new_brightness > 1.0) {
+                    new_brightness = 1.0;
+                }
+            }
         }
 
         // Log the new brightness value after clamping
