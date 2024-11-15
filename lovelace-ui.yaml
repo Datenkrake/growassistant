@@ -1,3 +1,7 @@
+resources:
+  - url: /local/decluttering-card.js
+    type: module
+
 # Include the decluttering template in your Lovelace configuration
 decluttering_templates:
   dash_home_1x_vertical-stack:
