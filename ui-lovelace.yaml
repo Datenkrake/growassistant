@@ -1,0 +1,26 @@
+resources:
+  - url: /local/community/decluttering-card/decluttering-card.js
+    type: module
+    
+decluttering_templates:
+  dash_home_1x_vertical-stack:
+    default:
+      group_name_lower: g1
+    card:
+      type: vertical-stack
+      cards:
+        - type: entities
+          title: '[[group_name_lower]]_CANOPY'
+          entities:
+            - entity: sensor.[[group_name_lower]]_canopy_humidity_[[group_name_lower]]_canopy
+              
+
+views:
+  - title: GALLERY
+    path: gallery
+    cards:
+      - type: custom:decluttering-card
+        template: dash_home_1x_vertical-stack
+        variables:
+          group_name_lower: g2
+    icon: mdi:gradient-vertical
