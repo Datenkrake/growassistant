@@ -42,7 +42,7 @@ mqtt:
   broker: !secret mqtt_broker
   username: !secret mqtt_username
   password: !secret mqtt_password
-  topic_prefix: auto/${area_id}/${device_id}"
+  topic_prefix: "auto/${area_id}/${device_id}"
   log_topic: "debug/${area_id}/${device_id}"
 
 # PWM controlled LED on GPIO8
@@ -69,7 +69,7 @@ sensor:
   - !include includes/sensor_gantry_ultrasonic.yaml
 
 text_sensor:
-  - !include includes/text_sensor_cola_detected.yaml
+  - !include includes/text_sensor_mqtt_cola_detected.yaml
 
 interval:
   - interval: 60min
