@@ -5,5 +5,5 @@ pin:
     inverted: true
 name: "Door Switch [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_water_door_switch
-state_topic: "${area_id}/door_switch/${device_id}"
+state_topic: "${area_id}/door_switch/state/${device_id}"
 device_class: door
