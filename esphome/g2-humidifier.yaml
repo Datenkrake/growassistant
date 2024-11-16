@@ -42,12 +42,6 @@ output:
     pin: ${pin_humidifier_pwm_output}
     id: ${area_id}_${device_id}${suffix}_pwm_output
     period: 10s
-  # G2 Humidifier HW Specific - GPIO21 is door switch GND, it is always on
-  - platform: gpio
-    pin: ${pin_door_switch_gnd}
-    id: ${area_id}_${device_id}${suffix}_door_switch
-    inverted: true
-    restore_mode: ALWAYS_ON
 
 fan:
   - platform: speed
@@ -71,6 +65,12 @@ binary_sensor:
 
 switch:
   - !include includes/switch_enable.yaml
+    # G2 Humidifier HW Specific - GPIO21 is door switch GND, it is always on
+  - platform: gpio
+    pin: ${pin_door_switch_gnd}
+    id: ${area_id}_${device_id}${suffix}_door_switch_gnd
+    restore_mode: ALWAYS_ON  # GPIO21 is always on
+
 
 globals:
   - id: ${area_id}_${device_id}${suffix}_door_open
