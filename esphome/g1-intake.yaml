@@ -117,6 +117,15 @@ interval:
   - interval: 60s
     then:
       - script.execute: update_intake_fan_speed
+  - interval: 60s 
+    then:
+      - script.execute: pubish_intake_fan_speed
 
 script:
 - !include includes/script_update_intake_fan_speed.yaml
+
+- id: pubish_intake_fan_speed
+  then:
+    - mqtt.publish:
+        topic: "${area_id}/fan/speed/${device_id}"
+        payload: !lambda 'return id(${area_id}_${device_id}${suffix}_fan1_pwm_value);'

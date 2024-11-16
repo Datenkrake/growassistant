@@ -120,6 +120,20 @@ interval:
   - interval: 10s
     then:
       - script.execute: update_exhaust_fan_speed
+  - interval: 60s
+    then:
+      - script.execute: publish_fan_speed
 
 script:
   - !include includes/script_update_exhaust_fan_speed.yaml
+
+  - id: ${area_id}_${device_id}${suffix}_publish_fan1_speed
+    then:
+      - mqtt.publish:
+          topic: "${area_id}/fan/speed/${device_id}"
+          payload: !lambda 'return id(${area_id}_${device_id}${suffix}_fan1_pwm_value).value;'
+  - id: ${area_id}_${device_id}${suffix}_publish_fan2_speed
+    then:
+      - mqtt.publish:
+          topic: "${area_id}/fan/speed/${device_id}"
+          payload: !lambda 'return id(${area_id}_${device_id}${suffix}_fan2_pwm_value).value;'
