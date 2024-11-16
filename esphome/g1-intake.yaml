@@ -128,4 +128,4 @@ script:
   then:
     - mqtt.publish:
         topic: "${area_id}/fan/speed/${device_id}"
-        payload: !lambda 'return id(${area_id}_${device_id}${suffix}_fan1_pwm_value).value;'
+        payload: !lambda 'return id(${area_id}_${device_id}${suffix}_fan1_pwm_value);'
