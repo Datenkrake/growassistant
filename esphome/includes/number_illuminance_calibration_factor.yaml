@@ -2,7 +2,7 @@ platform: template
 name: "Illuminance Calibration Factor [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_illuminance_calibration_factor
 state_topic: "${area_id}/illuminance_calibration_factor/state/${device_id}"
-command_topic: "${area_id}/illuminance_calibration_factor/state/${device_id}"/set
+command_topic: "${area_id}/illuminance_calibration_factor/state/${device_id}/set"
 optimistic: true
 initial_value: 3.0
 min_value: 0.1
