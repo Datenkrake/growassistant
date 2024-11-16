@@ -42,7 +42,8 @@ mqtt:
   broker: !secret mqtt_broker
   username: !secret mqtt_username
   password: !secret mqtt_password
-  topic_prefix: "${area_id}/water"
+  topic_prefix: "${area_id}/${device_id}"
+  log_topic: "debug/${area_id}/${device_id}"
 
 binary_sensor:
   - !include includes/binary_sensor_door_switch.yaml

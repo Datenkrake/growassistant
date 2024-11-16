@@ -20,7 +20,7 @@ esphome:
 ####################################################################
 
   area: ${area_id}
-  friendly_name: ${area_id}_QBAR${suffix}
+  friendly_name: ${area_id}_${device_id}${suffix}
 
 substitutions:
   area_id: G1
@@ -45,7 +45,8 @@ mqtt:
   broker: !secret mqtt_broker
   username: !secret mqtt_username
   password: !secret mqtt_password
-  topic_prefix: "${area_id}/light"
+  topic_prefix: "${area_id}/${device_id}"
+  log_topic: "debug/${area_id}/${device_id}"
 
 # PWM controlled LED on GPIO8
 output:
@@ -59,5 +60,5 @@ light:
   - platform: monochromatic
     output: ${area_id}_${device_id}${suffix}_led_pwm
     name: "Full Spectrum [${area_id}${suffix}]"
-    state_topic: "${area_id}/light/full_spectrum/state"
-    command_topic: "${area_id}/light/full_spectrum/set-state"
+    state_topic: "${area_id}/full_spectrum/state/${device_id}"
+    command_topic: "${area_id}/full_spectrum/state/${device_id}/set"

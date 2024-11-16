@@ -1,6 +1,6 @@
 platform: mqtt_subscribe
 name: "Canopy Full Spectrum Brightness [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_full_spectrum_brightness
-topic: "${area_id}/CANOPY/full_spectrum_brightness"
+topic: "${area_id}/full_spectrum_brightness/CANOPY"
 unit_of_measurement: "%"
 qos: 1

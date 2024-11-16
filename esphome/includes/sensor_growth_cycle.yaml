@@ -1,7 +1,7 @@
 platform: template
 name: "Growth Cycle [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_growth_cycle
-state_topic: "${area_id}/${device_id}/growth_cycle"
+state_topic: "${area_id}/growth_cycle/${device_id}"
 update_interval: 60s
 lambda: |-
     time_t now = id(mqtt_time).now().timestamp;

@@ -56,7 +56,7 @@ then:
     id(${area_id}_${device_id}${suffix}_new_brightness_global) = new_brightness;
 
 - mqtt.publish:
-    topic: "${area_id}/light/full_spectrum/set-state"
+    topic: "${area_id}/full_spectrum/set-state/QBAR"
     payload: !lambda |-
         if (id(${area_id}_${device_id}${suffix}_new_brightness_global) > 0.0 && id(${area_id}_${device_id}${suffix}_dayphase_target).state) {
             ESP_LOGD("mqtt_publish", "Publishing Brightness ON: %d", (int)(id(${area_id}_${device_id}${suffix}_new_brightness_global) * 255));

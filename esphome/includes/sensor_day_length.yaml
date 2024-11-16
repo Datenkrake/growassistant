@@ -2,7 +2,7 @@
 platform: template
 name: "Day Length [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_day_length
-state_topic: "${area_id}/day_length"
+state_topic: "${area_id}/day_length/${device_id}"
 unit_of_measurement: "hours"
 update_interval: 60s
 lambda: |-

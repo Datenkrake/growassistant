@@ -1,8 +1,8 @@
 platform: template
 name: "Sweep Duration [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_sweep_duration
-state_topic: "${area_id}/${device_id}/fan_sweep_duration"
-command_topic: "${area_id}/${device_id}/fan_sweep_duration/set-state"
+state_topic: "${area_id}/fan_sweep_duration/${device_id}"
+command_topic: "${area_id}/fan_sweep_duration/set-state/${device_id}"
 optimistic: true
 initial_value: 60
 min_value: 1

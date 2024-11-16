@@ -1,4 +1,4 @@
 platform: mqtt_subscribe
 name: "Growth Cycle [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_growth_cycle
-topic: "${area_id}/CANOPY/growth_cycle"
+topic: "${area_id}/growth_cycle/CANOPY"

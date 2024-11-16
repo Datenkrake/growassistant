@@ -2,24 +2,24 @@ platform: bme68x_bsec2
 temperature:
     name: "Temperature [${area_id}_${device_id}${suffix}]"
     id: ${area_id}_${device_id}${suffix}_temperature
-    state_topic: "${area_id}/${device_id}/temperature"
+    state_topic: "${area_id}/temperature/${device_id}"
 pressure:
     name: "Pressure [${area_id}_${device_id}${suffix}]"
     id: ${area_id}_${device_id}${suffix}_pressure
-    state_topic: "${area_id}/${device_id}/pressure"
+    state_topic: "${area_id}/pressure/${device_id}"
 humidity:
     name: "Humidity [${area_id}_${device_id}${suffix}]"
     id: ${area_id}_${device_id}${suffix}_humidity
-    state_topic: "${area_id}/${device_id}/humidity"
+    state_topic: "${area_id}/humidity/${device_id}"
 iaq:
     name: "IAQ [${area_id}_${device_id}${suffix}]"
     id: ${area_id}_${device_id}${suffix}_iaq
-    state_topic: "${area_id}/${device_id}/iaq"
+    state_topic: "${area_id}/iaq/${device_id}"
 co2_equivalent:
     name: "CO2e [${area_id}_${device_id}${suffix}]"
     id: ${area_id}_${device_id}${suffix}_co2e
-    state_topic: "${area_id}/${device_id}/co2e"
+    state_topic: "${area_id}/co2e/${device_id}"
 breath_voc_equivalent:
     name: "bVOCe [${area_id}_${device_id}${suffix}]"
     id: ${area_id}_${device_id}${suffix}_bvoce
-    state_topic: "${area_id}/${device_id}/bvoce"
+    state_topic: "${area_id}/bvoce/${device_id}"

@@ -2,10 +2,10 @@ platform: sht3xd
 temperature:
     name: "Temperature [${area_id}_${device_id}${suffix}]"
     id: ${area_id}_${device_id}${suffix}_temperature
-    state_topic: "${area_id}/${device_id}/temperature"
+    state_topic: "${area_id}/temperature/${device_id}"
 humidity:
     name: "Humidity [${area_id}_${device_id}${suffix}]"
     id: ${area_id}_${device_id}${suffix}_humidity
-    state_topic: "${area_id}/${device_id}/humidity"
+    state_topic: "${area_id}/humidity/${device_id}"
 address: ${address_sht3xd}
 update_interval: 30s

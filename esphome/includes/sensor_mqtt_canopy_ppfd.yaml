@@ -1,4 +1,4 @@
 platform: mqtt_subscribe
 name: "Canopy PPFD [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_canopy_ppfd
-topic: "${area_id}/CANOPY/ppfd"
+topic: "${area_id}/ppfd/CANOPY"

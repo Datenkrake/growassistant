@@ -1,5 +1,5 @@
 platform: mqtt_subscribe
 name: "Gantry RH Target [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_gantry_rh_target
-topic: "${area_id}/GANTRY/rh_target"
+topic: "${area_id}/rh_target/GANTRY"
 unit_of_measurement: "%"

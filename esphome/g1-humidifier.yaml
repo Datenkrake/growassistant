@@ -47,12 +47,10 @@ fan:
     output: ${area_id}_${device_id}${suffix}_pwm_output
     name: "Humidifier [${area_id}_${device_id}${suffix}]"
     id: ${area_id}_${device_id}${suffix}_humidifier
-    state_topic: "${area_id}/${device_id}/fan/vapor/state"
-    speed_state_topic: "${area_id}/${device_id}/fan/vapor/speed"
-    speed_level_state_topic: "${area_id}/${device_id}/fan/vapor/level"
-    command_topic: "${area_id}/${device_id}/fan/vapor/set_state"
-    speed_command_topic: "${area_id}/${device_id}/fan/vapor/set_speed"
-    speed_level_command_topic: "${area_id}/${device_id}/fan/vapor/set_level"
+    state_topic: "${area_id}/fan/state/${device_id}"
+    speed_state_topic: "${area_id}/fan/speed/${device_id}"
+    command_topic: "${area_id}/${device_id}/fan/state/${device_id}/set"
+    speed_command_topic: "${area_id}/fan/speed/${device_id}/set"
     speed_count: 100  # Set the speed steps (0-100%)
 
 sensor:
@@ -75,8 +73,9 @@ mqtt:
   username: !secret mqtt_username
   password: !secret mqtt_password
   topic_prefix: "${area_id}/${device_id}"
+  log_topic: "debug/${area_id}/${device_id}"
   on_message:
-    - topic: ${area_id}/door_switch
+    - topic: ${area_id}/door_switch/#
       then:
         - lambda: |-
             if (strcmp(x.c_str(), "ON") == 0) {

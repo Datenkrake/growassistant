@@ -59,7 +59,7 @@ mqtt:
   topic_prefix: "${area_id}/${device_id}"
   log_topic: "debug/${area_id}/${device_id}"
   on_message:
-    - topic: ${area_id}/door_switch
+    - topic: ${area_id}/door_switch/#
       then:
         - lambda: |-
             if (strcmp(x.c_str(), "ON") == 0) {

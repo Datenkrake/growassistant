@@ -1,8 +1,8 @@
 platform: template
 name: "Fan Speed Min [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_fan_speed_min
-state_topic: "${area_id}/${device_id}/fan_speed_min"
-command_topic: "${area_id}/${device_id}/fan_speed_min/set-state"
+state_topic: "${area_id}/fan_speed_min/${device_id}"
+command_topic: "${area_id}/fan_speed_min/set-state/${device_id}"
 optimistic: True
 initial_value: 60.0
 min_value: 0.0

@@ -1,6 +1,6 @@
 platform: mqtt_subscribe
 name: "Canopy Humidity [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_canopy_humidity
-topic: "${area_id}/CANOPY/humidity"
+topic: "${area_id}/humidity/CANOPY"
 unit_of_measurement: "%"
 qos: 1

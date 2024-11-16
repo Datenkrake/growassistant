@@ -1,8 +1,8 @@
 platform: template
 name: "DLI Vegetative Start [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_dli_vegetative_start
-state_topic: "${area_id}/${device_id}/dli_vegetative_start"
-command_topic: "${area_id}/${device_id}/dli_vegetative_start/set-state"
+state_topic: "${area_id}/dli_vegetative_start/${device_id}"
+command_topic: "${area_id}/dli_vegetative_start/set-state/${device_id}"
 optimistic: True
 initial_value: 10
 min_value: 1

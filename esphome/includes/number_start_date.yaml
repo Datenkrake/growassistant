@@ -1,8 +1,8 @@
 platform: template
 name: "Start Date (Epoch) [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_start_date
-state_topic: "${area_id}/${device_id}/start_date"
-command_topic: "${area_id}/${device_id}/start_date/set-state"
+state_topic: "${area_id}/start_date/${device_id}"
+command_topic: "${area_id}/start_date/set-state/${device_id}"
 optimistic: True
 min_value: 0
 max_value: 2147483647  # Maximum Unix timestamp

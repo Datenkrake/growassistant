@@ -59,8 +59,9 @@ mqtt:
   username: !secret mqtt_username
   password: !secret mqtt_password
   topic_prefix: "${area_id}/${device_id}"
+  log_topic: "debug/${area_id}/${device_id}"
   on_message:
-    - topic: ${area_id}/door_switch
+    - topic: ${area_id}/door_switch/#
       then:
         - lambda: |-
             if (strcmp(x.c_str(), "ON") == 0) {
@@ -88,10 +89,19 @@ fan:
     output: ${area_id}_${device_id}${suffix}_fan1_pwm
     name: "Wind"
     id: ${area_id}_${device_id}${suffix}_fan1
+    state_topic: "${area_id}/fan/state/${device_id}"
+    speed_state_topic: "${area_id}/fan/speed/${device_id}"
+    command_topic: "${area_id}/${device_id}/fan/state/${device_id}/set"
+    speed_command_topic: "${area_id}/fan/speed/${device_id}/set"
+
   - platform: speed
     output: ${area_id}_${device_id}${suffix}_fan2_pwm
     name: "Wind"
     id: ${area_id}_${device_id}${suffix}_fan2
+    state_topic: "${area_id}/fan/state/${device_id}"
+    speed_state_topic: "${area_id}/fan/speed/${device_id}"
+    command_topic: "${area_id}/${device_id}/fan/state/${device_id}/set"
+    speed_command_topic: "${area_id}/fan/speed/${device_id}/set"
 
 i2c:
   !include includes/i2c_bus_a.yaml

@@ -1,5 +1,5 @@
 platform: mqtt_subscribe
 name: "Canopy Temperature [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_canopy_temperature
-topic: "${area_id}/CANOPY/temperature"
+topic: "${area_id}/temperature/CANOPY"
 unit_of_measurement: "°C"

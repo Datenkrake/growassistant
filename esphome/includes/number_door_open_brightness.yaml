@@ -1,7 +1,7 @@
 platform: template
 name: "Door Open Brightness [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_door_open_brightness
-state_topic: "${area_id}/${device_id}/door_open_brightness"
+state_topic: "${area_id}/door_open_brightness/${device_id}"
 optimistic: True
 min_value: 0
 max_value: 1

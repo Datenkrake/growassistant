@@ -1,7 +1,7 @@
 platform: template
 name: "Day Phase Target [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_dayphase_target
-state_topic: "${area_id}/dayphase_target_${device_id}"
+state_topic: "${area_id}/dayphase_target/${device_id}"
 lambda: |-
     // Get the current timestamp
     time_t now = id(mqtt_time).now().timestamp;

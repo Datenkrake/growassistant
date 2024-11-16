@@ -1,8 +1,8 @@
 platform: template
 name: "DLI Vegetative End [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_dli_vegetative_end
-state_topic: "${area_id}/${device_id}/dli_vegetative_end"
-command_topic: "${area_id}/${device_id}/dli_vegetative_end/set-state"
+state_topic: "${area_id}/dli_vegetative_end/${device_id}"
+command_topic: "${area_id}/dli_vegetative_end/set-state/${device_id}"
 optimistic: True
 initial_value: 20
 min_value: 1

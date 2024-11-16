@@ -1,8 +1,8 @@
 platform: template
 name: "Irrigation Period [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_irrigation_period
-state_topic: "${area_id}/${device_id}/irrigation_period"
-command_topic: "${area_id}/${device_id}/irrigation_period/set-state"
+state_topic: "${area_id}/irrigation_period/${device_id}"
+command_topic: "${area_id}/irrigation_period/set-state/${device_id}"
 optimistic: True
 initial_value: 60
 min_value: 1

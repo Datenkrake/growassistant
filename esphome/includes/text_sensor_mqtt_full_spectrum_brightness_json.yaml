@@ -1,7 +1,7 @@
 platform: mqtt_subscribe
 name: "Full Spectrum Brightness JSON [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_current_brightness_text_sensor  # Make sure this ID matches
-topic: "${area_id}/light/full_spectrum/state"
+topic: "${area_id}/full_spectrum/state/#"
 on_value:
     then:
         - lambda: |-

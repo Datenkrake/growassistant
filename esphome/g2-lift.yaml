@@ -52,7 +52,8 @@ mqtt:
   broker: !secret mqtt_broker
   username: !secret mqtt_username
   password: !secret mqtt_password
-  topic_prefix: "${area_id}/"${device_id}"
+  topic_prefix: "${area_id}/${device_id}"
+  log_topic: "debug/${area_id}/${device_id}"
 
 stepper:
   - platform: a4988

@@ -1,8 +1,8 @@
 platform: template
 name: "Day Length Generative [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_day_length_generative
-state_topic: "${area_id}/${device_id}/day_length_generative"
-command_topic: "${area_id}/${device_id}/day_length_generative/set-state"
+state_topic: "${area_id}/day_length_generative/${device_id}"
+command_topic: "${area_id}/day_length_generative/set-state/${device_id}"
 optimistic: True
 initial_value: 12
 min_value: 0
