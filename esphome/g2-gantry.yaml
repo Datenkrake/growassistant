@@ -65,9 +65,9 @@ mqtt:
       then:
         - lambda: |-
             if (strcmp(x.c_str(), "ON") == 0) {
-              id(${area_id}_${device_id}${suffix}_door_open${suffix}) = true;
+              id(${area_id}_${device_id}${suffix}_door_open) = true;
             } else if (strcmp(x.c_str(), "OFF") == 0) {
-              id(${area_id}_${device_id}${suffix}_door_open${suffix}) = false;
+              id(${area_id}_${device_id}${suffix}_door_open) = false;
             }
             id(update_wind_fan_speed).execute();
 
@@ -150,7 +150,9 @@ script:
           ESP_LOGD("debug", "Cola detected state: %s", id(${area_id}_${device_id}${suffix}_cola_detected).state.c_str());
           ESP_LOGD("debug", "Gantry position: %.2f, Min Position: %.2f", id(${area_id}_${device_id}${suffix}_position).state, id(${area_id}_${device_id}${suffix}_position_min).state);
 
-          if (id(${area_id}_${device_id}${suffix}_cola_detected).state == "true" && id(${area_id}_${device_id}${suffix}_position).state > id(${area_id}_${device_id}${suffix}_position_min).state) {
+          if (id(${area_id}_${device_id}${suffix}_cola_detected).state == "true" && 
+              id(${area_id}_${device_id}${suffix}_position).state > id(${area_id}_${device_id}${suffix}_position_min).state &&
+              id(${area_id}_${device_id}${suffix}_door_open) == false) {
             ESP_LOGD("main", "Conditions met. Sending MQTT message to move gantry");
             id(${area_id}_${device_id}${suffix}_publish_gantry_step_up).execute();
           } else {
