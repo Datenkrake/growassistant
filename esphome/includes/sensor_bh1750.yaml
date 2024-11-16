@@ -1,7 +1,7 @@
 platform: bh1750
 name: "Illuminance [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_illuminance
-state_topic: "${area_id}/illuminance/${device_id}"
+state_topic: "${area_id}/illuminance/state/${device_id}"
 address: ${address_bh1750}
 update_interval: 1s
 i2c_id: bus_a

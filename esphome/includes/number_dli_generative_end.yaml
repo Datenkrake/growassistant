@@ -1,8 +1,8 @@
 platform: template
 name: "DLI Generative End [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_dli_generative_end
-state_topic: "${area_id}/dli_generative_end/${device_id}"
-command_topic: "${area_id}/dli_generative_end/set-state/${device_id}"
+state_topic: "${area_id}/dli_generative_end/state/${device_id}"
+command_topic: "${area_id}/dli_generative_end/state/${device_id}/set"
 optimistic: True
 initial_value: 30
 min_value: 1

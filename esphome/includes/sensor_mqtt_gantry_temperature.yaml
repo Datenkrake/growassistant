@@ -1,6 +1,6 @@
 platform: mqtt_subscribe
 name: "Gantry Temperature [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_gantry_temperature
-topic: "${area_id}/temperature/GANTRY"
+topic: "${area_id}/temperature/state/GANTRY"
 unit_of_measurement: "°C"
 qos: 1

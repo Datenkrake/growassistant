@@ -1,11 +1,11 @@
 platform: sgp4x
 voc:
   name: "VOC Index [${area_id}_${device_id}${suffix}]"
-  state_topic: "${area_id}/voc_index/${device_id}"
+  state_topic: "${area_id}/voc_index/state/${device_id}"
   id: ${area_id}_${device_id}${suffix}_voc_index
 nox:
   name: "NOx Index [${area_id}_${device_id}${suffix}]"
-  state_topic: "${area_id}/nox_index/${device_id}"
+  state_topic: "${area_id}/nox_index/state/${device_id}"
   id: ${area_id}_${device_id}${suffix}_nox_index
 compensation:
   humidity_source: ${area_id}_${device_id}${suffix}_humidity

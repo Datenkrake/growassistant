@@ -1,7 +1,7 @@
 platform: template
 name: "VPD [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_vpd
-state_topic: "${area_id}/vpd/${device_id}"
+state_topic: "${area_id}/vpd/state/${device_id}"
 unit_of_measurement: "kPa"
 update_interval: 30s
 accuracy_decimals: 2

@@ -1,4 +1,4 @@
 platform: mqtt_subscribe
 name: "Canopy DLI [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_canopy_dli
-topic: "${area_id}/dli/CANOPY"
+topic: "${area_id}/dli/state/CANOPY"

@@ -1,7 +1,7 @@
 platform: template
 name: "PPFD [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_ppfd
-state_topic: "${area_id}/ppfd/${device_id}"
+state_topic: "${area_id}/ppfd/state/${device_id}"
 unit_of_measurement: "µmol/m²/s"
 update_interval: 1s
 lambda: |

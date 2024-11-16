@@ -1,7 +1,7 @@
 id: mqtt_publish_cola_detected_true
 then:
 - mqtt.publish:
-    topic: "${area_id}/cola_detected/${device_id}"
+    topic: "${area_id}/cola_detected/state/${device_id}"
     payload: !lambda |-
         ESP_LOGD("mqtt_publish", "Publishing Cola Detected: true");
-        return std::string("{\"state\": \"true\"}");
+        return "true";

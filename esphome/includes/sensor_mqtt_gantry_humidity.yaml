@@ -1,5 +1,5 @@
 platform: mqtt_subscribe
 name: "Gantry Humidity [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_gantry_humidity
-topic: "${area_id}/humidity/GANTRY"
+topic: "${area_id}/humidity/state/GANTRY"
 unit_of_measurement: "%"

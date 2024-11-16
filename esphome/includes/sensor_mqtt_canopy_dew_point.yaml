@@ -1,4 +1,4 @@
 platform: mqtt_subscribe
 name: "Canopy Dew Point [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_canopy_dew_point
-topic: "${area_id}/dew_point/CANOPY"
+topic: "${area_id}/dew_point/state/CANOPY"

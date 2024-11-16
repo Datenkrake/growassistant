@@ -1,7 +1,7 @@
 platform: template
 name: "DLI Target [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_dli_target
-state_topic: "${area_id}/dli_target/${device_id}"
+state_topic: "${area_id}/dli_target/state/${device_id}"
 unit_of_measurement: "mol/m²/day"
 update_interval: 60s
 lambda: |

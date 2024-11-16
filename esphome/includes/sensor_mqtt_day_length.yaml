@@ -1,4 +1,4 @@
 platform: mqtt_subscribe
 name: "Day Length [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_day_length
-topic: "${area_id}/day_length/CANOPY"
+topic: "${area_id}/day_length/state/CANOPY"

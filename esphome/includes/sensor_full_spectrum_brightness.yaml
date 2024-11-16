@@ -1,5 +1,5 @@
 platform: template
 name: "Full Spectrum Brightness [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_full_spectrum_brightness
-state_topic: "${area_id}/full_spectrum_brightness/${device_id}"
+state_topic: "${area_id}/full_spectrum_brightness/state/${device_id}"
 accuracy_decimals: 2

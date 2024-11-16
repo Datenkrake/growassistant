@@ -1,8 +1,8 @@
 platform: template
 name: "VPD Target [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_vpd_target
-state_topic: "${area_id}/vpd_target/${device_id}"
-command_topic: "${area_id}/vpd_target/set-state/${device_id}"
+state_topic: "${area_id}/vpd_target/state/${device_id}"
+command_topic: "${area_id}/vpd_target/state/${device_id}/set"
 optimistic: true
 initial_value: 1.0
 min_value: 0.0

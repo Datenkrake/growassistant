@@ -1,8 +1,8 @@
 platform: template
 name: "Day Length Vegetative [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_day_length_vegetative
-state_topic: "${area_id}/day_length_vegetative/${device_id}"
-command_topic: "${area_id}/day_length_vegetative/set-state/${device_id}"
+state_topic: "${area_id}/day_length_vegetative/state/${device_id}"
+command_topic: "${area_id}/day_length_vegetative/state/${device_id}/set"
 optimistic: True
 initial_value: 18
 min_value: 0

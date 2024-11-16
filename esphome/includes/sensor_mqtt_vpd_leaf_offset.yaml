@@ -1,6 +1,6 @@
 platform: mqtt_subscribe
 name: "VPD Leaf Offset [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_vpd_leaf_offset
-topic: "${area_id}/vpd_leaf_offset/CANOPY"
+topic: "${area_id}/vpd_leaf_offset/state/CANOPY"
 unit_of_measurement: "°C"
 qos: 1

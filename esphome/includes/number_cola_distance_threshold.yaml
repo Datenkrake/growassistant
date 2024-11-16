@@ -1,8 +1,8 @@
 platform: template
 name: "Cola Distance Threshold [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_cola_distance_threshold 
-state_topic: "${area_id}/cola_distance_threshold/${device_id}"
-command_topic: "${area_id}//cola_distance_threshold/set-state/${device_id}"
+state_topic: "${area_id}/cola_distance_threshold/state/${device_id}"
+command_topic: "${area_id}/cola_distance_threshold/state/${device_id}/set"
 optimistic: true
 initial_value: 0.3
 min_value: 0.0

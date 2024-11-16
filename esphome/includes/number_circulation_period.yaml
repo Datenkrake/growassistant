@@ -1,8 +1,8 @@
 platform: template
 name: "Circulation Period [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_circulation_period
-state_topic: "${area_id}/circulation_period/${device_id}"
-command_topic: "${area_id/circulation_period/set-state/${device_id}"
+state_topic: "${area_id}/circulation_period/state/${device_id}"
+command_topic: "${area_id/circulation_period/state/${device_id}/set"
 optimistic: True
 initial_value: 60
 min_value: 1

@@ -52,8 +52,16 @@ mqtt:
   broker: !secret mqtt_broker
   username: !secret mqtt_username
   password: !secret mqtt_password
-  topic_prefix: "${area_id}/${device_id}"
+  topic_prefix: "auto/${area_id}/${device_id}"
   log_topic: "debug/${area_id}/${device_id}"
+  on_message: 
+    topic: "G2/cola_detected/state/#"
+    then:
+      - if:
+          condition:
+            lambda: 'return x == "true";'
+          then:
+            - switch.turn_on: ${area_id}_${device_id}${suffix}_step_up
 
 stepper:
   - platform: a4988

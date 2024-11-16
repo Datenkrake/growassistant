@@ -1,6 +1,6 @@
 platform: mqtt_subscribe
 name: "Gantry VPD [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_gantry_vpd
-topic: "${area_id}/vpd/GANTRY"
+topic: "${area_id}/vpd/state/GANTRY"
 unit_of_measurement: "kPa"
 qos: 1

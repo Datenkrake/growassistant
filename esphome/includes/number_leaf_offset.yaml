@@ -1,8 +1,8 @@
 platform: template
 name: "VPD Leaf Offset [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_vpd_leaf_offset
-state_topic: "${area_id}/vpd_leaf_offset/${device_id}"
-command_topic: "${area_id}/vpd_leaf_offset/set-state/${device_id}"
+state_topic: "${area_id}/vpd_leaf_offset/state/${device_id}"
+command_topic: "${area_id}/vpd_leaf_offset/state/${device_id}/set"
 optimistic: true
 initial_value: -2.0
 min_value: -10.0

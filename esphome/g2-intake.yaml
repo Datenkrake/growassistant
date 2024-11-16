@@ -54,7 +54,7 @@ mqtt:
   broker: !secret mqtt_broker
   username: !secret mqtt_username
   password: !secret mqtt_password
-  topic_prefix: "${area_id}/${device_id}"
+  topic_prefix: "auto/${area_id}/${device_id}"
   log_topic: "debug/${area_id}/${device_id}"
   on_message:
     - topic: ${area_id}/door_switch/#

@@ -1,7 +1,7 @@
 platform: template
 name: "RH Target [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_gantry_rh_target
-state_topic: "${area_id}/gantry_rh_target/${device_id}"
+state_topic: "${area_id}/gantry_rh_target/state/${device_id}"
 unit_of_measurement: "%"
 update_interval: 30s
 lambda: |

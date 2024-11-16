@@ -3,7 +3,7 @@ trigger_pin: ${pin_trigger}
 echo_pin: ${pin_echo}
 name: "Cola Distance [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_cola_distance
-state_topic: "${area_id}/cola_distance/${device_id}"
+state_topic: "${area_id}/cola_distance/state/${device_id}"
 update_interval: 1s
 timeout: 2m
 filters:
