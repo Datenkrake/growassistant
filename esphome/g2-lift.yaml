@@ -20,7 +20,7 @@ esphome:
 ####################################################################
 
   area: ${area_id}
-  friendly_name: ${area_id}_LIFT${suffix}
+  friendly_name: ${area_id}_${device_id}${suffix}
 
 substitutions:
   area_id: G2
@@ -39,11 +39,11 @@ wifi:
   !include includes/wifi_default.yaml
 
 globals:
-  - id: ${area_id}_fan_speed_step${suffix}
+  - id: ${area_id}_${device_id}${suffix}_fan_speed_step
     type: int
     restore_value: no
     initial_value: '0'
-  - id: ${area_id}_door_open${suffix}
+  - id: ${area_id}_${device_id}${suffix}_door_open
     type: bool
     restore_value: no
     initial_value: 'false'
@@ -52,7 +52,7 @@ mqtt:
   broker: !secret mqtt_broker
   username: !secret mqtt_username
   password: !secret mqtt_password
-  topic_prefix: "${area_id}/lift"
+  topic_prefix: "${area_id}/"${device_id}"
 
 stepper:
   - platform: a4988
@@ -78,22 +78,22 @@ switch:
     turn_on_action:
       # Move 150 steps forward
       - stepper.report_position:
-          id: ${area_id}_lift_stepper${suffix}
+          id: ${area_id}_${device_id}${suffix}_lift_stepper
           position: 0
       - stepper.set_target:
-          id: ${area_id}_lift_stepper${suffix}
+          id: ${area_id}_${device_id}${suffix}_lift_stepper
           target: 32000
 
   - platform: template
     name: "Step Up [${area_id}${suffix}]"
-    id: ${area_id}_step_up
+    id: ${area_id}_${device_id}${suffix}_step_up
     turn_on_action:
       # Move 150 steps forward
       - stepper.report_position:
-          id: ${area_id}_lift_stepper${suffix}
+          id: ${area_id}_${device_id}${suffix}_lift_stepper
           position: 0
       - stepper.set_target:
-          id: ${area_id}_lift_stepper${suffix}
+          id: ${area_id}_${device_id}${suffix}_lift_stepper
           target: -32000
   
   # HHL = 8x mixrostepping, HHH = 16x

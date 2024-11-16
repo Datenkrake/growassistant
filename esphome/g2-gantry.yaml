@@ -119,7 +119,7 @@ number:
 text_sensor:
   - platform: mqtt_subscribe
     name: "Canopy Cola Detected [${area_id}${suffix}]"
-    id: ${area_id}_cola_detected${suffix}
+    id: ${area_id}_${device_id}${suffix}_cola_detected
     topic: "${area_id}/CANOPY/sensor/cola_detected"
 
 interval:
@@ -150,7 +150,7 @@ script:
   - id: ${area_id}_publish_gantry_step_up${suffix}
     then:
       - mqtt.publish:
-          topic: "${area_id}/lift/switch/g2_step_up/set-state"
+          topic: "${area_id}/LIFT/switch/g2_step_up/set-state"
           payload: "ON"
 
 
