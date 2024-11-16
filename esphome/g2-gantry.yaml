@@ -130,7 +130,7 @@ text_sensor:
   - platform: mqtt_subscribe
     name: "Canopy Cola Detected [${area_id}${suffix}]"
     id: ${area_id}_${device_id}${suffix}_cola_detected
-    topic: "${area_id}/CANOPY/sensor/cola_detected"
+    topic: "${area_id}/cola_detected/CANOPY"
 
 interval:
   - interval: 60s
@@ -147,17 +147,17 @@ script:
     then:
       - lambda: |-
           ESP_LOGD("debug", "Checking conditions for moving gantry...");
-          ESP_LOGD("debug", "Cola detected state: %s", id(${area_id}_cola_detected${suffix}).state.c_str());
-          ESP_LOGD("debug", "Gantry position: %.2f, Min Position: %.2f", id(${area_id}_${device_id}_position${suffix}).state, id(${area_id}_${device_id}_position_min${suffix}).state);
+          ESP_LOGD("debug", "Cola detected state: %s", id(${area_id}_${device_id}${suffix}_cola_detected${suffix}).state.c_str());
+          ESP_LOGD("debug", "Gantry position: %.2f, Min Position: %.2f", id(${area_id}_${device_id}${suffix}_position${suffix}).state, id(${area_id}_${device_id}${suffix}_position_min${suffix}).state);
 
-          if (id(${area_id}_cola_detected${suffix}).state == "{\"state\": \"true\"}" && id(${area_id}_${device_id}_position${suffix}).state > id(${area_id}_${device_id}_position_min${suffix}).state) {
+          if (id(${area_id}_cola_detected${suffix}).state == "{\"state\": \"true\"}" && id(${area_id}_${device_id}${suffix}_position${suffix}).state > id(${area_id}_${device_id}${suffix}_position_min${suffix}).state) {
             ESP_LOGD("main", "Conditions met. Sending MQTT message to move gantry");
-            id(${area_id}_publish_gantry_step_up${suffix}).execute();
+            id(${area_id}_${device_id}${suffix}_publish_gantry_step_up).execute();
           } else {
             ESP_LOGD("main", "Conditions not met. Skipping...");
           }
 
-  - id: ${area_id}_publish_gantry_step_up${suffix}
+  - id: ${area_id}_${device_id}${suffix}_publish_gantry_step_up
     then:
       - mqtt.publish:
           topic: "${area_id}/LIFT/switch/g2_step_up/set-state"

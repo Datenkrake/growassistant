@@ -57,7 +57,7 @@ mqtt:
 
 stepper:
   - platform: a4988
-    id: ${area_id}_lift_stepper${suffix}
+    id: ${area_id}_${device_id}${suffix}_stepper
     step_pin: GPIO6       # STEP pin
     dir_pin: GPIO5        # DIR pin
     max_speed: 2000 steps/s
@@ -79,10 +79,10 @@ switch:
     turn_on_action:
       # Move 150 steps forward
       - stepper.report_position:
-          id: ${area_id}_${device_id}${suffix}_lift_stepper
+          id: ${area_id}_${device_id}${suffix}_stepper
           position: 0
       - stepper.set_target:
-          id: ${area_id}_${device_id}${suffix}_lift_stepper
+          id: ${area_id}_${device_id}${suffix}_stepper
           target: 32000
 
   - platform: template
@@ -91,10 +91,10 @@ switch:
     turn_on_action:
       # Move 150 steps forward
       - stepper.report_position:
-          id: ${area_id}_${device_id}${suffix}_lift_stepper
+          id: ${area_id}_${device_id}${suffix}_stepper
           position: 0
       - stepper.set_target:
-          id: ${area_id}_${device_id}${suffix}_lift_stepper
+          id: ${area_id}_${device_id}${suffix}_stepper
           target: -32000
   
   # HHL = 8x mixrostepping, HHH = 16x
