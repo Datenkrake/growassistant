@@ -72,7 +72,7 @@ text_sensor:
   - !include includes/text_sensor_mqtt_cola_detected.yaml
 
 interval:
-  - interval: 60s
+  - interval: 60min
     then:
       - lambda: |-
           ESP_LOGD("debug", "Checking conditions for moving gantry...");
