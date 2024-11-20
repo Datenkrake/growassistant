@@ -89,8 +89,6 @@ interval:
   - interval: 60s
     then:
       - script.execute: update_humidifier_speed
-  - interval: 60s
-    then:
       - script.execute: pubish_humidifier_speed
 
 script:
@@ -101,4 +99,4 @@ script:
       - mqtt.publish:
           topic: "${area_id}/fan/speed/${device_id}"
           payload: !lambda |-
-            return id(${area_id}_${device_id}${suffix}_humidifier).speed();
+            return std::to_string(id(${area_id}_${device_id}${suffix}_humidifier).speed);

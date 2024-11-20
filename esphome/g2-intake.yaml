@@ -109,8 +109,6 @@ interval:
   - interval: 60s
     then:
       - script.execute: update_intake_fan_speed
-  - interval: 60s
-    then:
       - script.execute: publish_intake_fan_speed
 
 script:
@@ -120,4 +118,5 @@ script:
   then:
     - mqtt.publish:
         topic: "${area_id}/fan/speed/${device_id}"
-        payload: !lambda 'return id(${area_id}_${device_id}${suffix}_fan1_pwm_value);'
+        payload: !lambda 'return std::to_string(id(${area_id}_${device_id}${suffix}_intake_fan).speed);'
+

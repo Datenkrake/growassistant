@@ -1,16 +1,6 @@
 id: update_humidifier_speed
 then:
   - lambda: |-
-      // Define minimum interval between adjustments (e.g., 60 seconds)
-      static unsigned long last_adjust_time = 0;
-      unsigned long current_time = millis();
-      const unsigned long adjust_interval = 60000;  // 60,000 ms = 60 seconds
-
-      if (current_time - last_adjust_time < adjust_interval) {
-        ESP_LOGD("humidifier", "Adjustment too soon. Skipping speed change.");
-        return;
-      }
-
       // Check if the door is open
       bool door_open = id(${area_id}_${device_id}${suffix}_door_open);
       ESP_LOGD("humidifier", "Checking door status: %s", door_open ? "OPEN" : "CLOSED");
@@ -69,7 +59,7 @@ then:
         int current_speed = id(${area_id}_${device_id}${suffix}_humidifier).speed;
         
         // Validate current_speed, ensure it is within 0-100%
-        if (current_speed < 0 || current_speed > 100) {
+        if (current_speed < 0 || current_speed > 99) {
           ESP_LOGW("humidifier", "Invalid current_speed (%d%%). Resetting to 0%%.", current_speed);
           current_speed = 0;
           id(${area_id}_${device_id}${suffix}_humidifier).speed = current_speed;
@@ -89,14 +79,12 @@ then:
           int new_speed = std::min(current_speed + error, 100);
           id(${area_id}_${device_id}${suffix}_humidifier).speed = new_speed;
           ESP_LOGD("humidifier", "RH target > current RH by > %.2f%%. Increasing speed to %d%%", min_rh_diff, new_speed);
-          last_adjust_time = current_time;
         } else if (error < -min_rh_diff) {
           // Decrease speed by (abs(error) * 2), ensuring it doesn't go below 0%
           int adjustment = std::abs(error) * 2;
           int new_speed = std::max(current_speed - adjustment, 0);
           id(${area_id}_${device_id}${suffix}_humidifier).speed = new_speed;
           ESP_LOGD("humidifier", "RH target < current RH by > %.2f%%. Decreasing speed to %d%%", min_rh_diff, new_speed);
-          last_adjust_time = current_time;
         } else {
           ESP_LOGD("humidifier", "RH difference within ±%.2f%%. No speed adjustment needed.", min_rh_diff);
         }

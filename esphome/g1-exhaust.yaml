@@ -117,11 +117,9 @@ number:
   - !include includes/number_fan_speed_max.yaml
 
 interval:
-  - interval: 10s
-    then:
-      - script.execute: update_exhaust_fan_speed
   - interval: 60s
     then:
+      - script.execute: update_exhaust_fan_speed
       - script.execute: ${area_id}_${device_id}${suffix}_publish_fan1_speed
 
 script:

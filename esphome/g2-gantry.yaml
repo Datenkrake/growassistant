@@ -136,6 +136,7 @@ interval:
   - interval: 60s
     then:
       - script.execute: update_wind_fan_speed
+      - script.execute: ${area_id}_${device_id}${suffix}_publish_fan1_speed
   - interval: 60min
     then:
       - script.execute: update_gantry_height
@@ -169,5 +170,4 @@ script:
     then:
       - mqtt.publish:
           topic: "${area_id}/fan/speed/${device_id}"
-          payload: !lambda |-
-            return id(${area_id}_${device_id}${suffix}_fan1).speed();
+          payload: !lambda 'return std::to_string(id(${area_id}_${device_id}${suffix}_fan1).speed);'

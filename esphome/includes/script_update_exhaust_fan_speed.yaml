@@ -27,14 +27,19 @@ then:
         float rh_target = id(${area_id}_${device_id}${suffix}_canopy_rh_target).state;
 
         // Use canopy data if available
-        if (!isnan(id(${area_id}_${device_id}${suffix}_gantry_temperature).state)) {
+        if (isnan(temperature) && !isnan(id(${area_id}_${device_id}${suffix}_canopy_temperature).state)) {
             temperature = id(${area_id}_${device_id}${suffix}_gantry_temperature).state;
         }
-        if (!isnan(id(${area_id}_${device_id}${suffix}_canopy_humidity).state)) {
-            humidity = id(${area_id}_${device_id}${suffix}_gantry_humidity).state;
+        if (isnan(humidity) && !isnan(id(${area_id}_${device_id}${suffix}_canopy_humidity).state)) {
+            humidity = id(${area_id}_${device_id}${suffix}_canopy_humidity).state;
         }
-        if (!isnan(id(${area_id}_${device_id}${suffix}_gantry_rh_target).state)) {
+        if (isnan(rh_target) && !isnan(id(${area_id}_${device_id}${suffix}_gantry_rh_target).state)) {
             rh_target = id(${area_id}_${device_id}${suffix}_gantry_rh_target).state;
+        }
+
+        if (isnan(temperature) || isnan(humidity) || isnan(rh_target)) {
+            ESP_LOGD("exhaust fan", "Missing data to adjust fan. Temperature %.2f%% Humidity: %.2f%%, RH Target: %.2f%%)", temperature, humidity, rh_target);
+            
         }
 
         // Get temperature max value
