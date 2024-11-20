@@ -71,22 +71,25 @@ stepper:
     max_speed: 2000 steps/s
     acceleration: 2000 #steps/s²
     deceleration: 2000 #steps/s²
-    # Optional: Sleep pin (uncomment if connected)
-    sleep_pin: 
-      pin: GPIO21
-      inverted: false
-    # Optional: Enable pin (uncomment if connected)
-    # enable_pin: GPIO4
     # Optional: Microsteps (requires additional wiring and configuration)
     # microsteps: 8 # done via MS pins on HW
     # Optional: Stepper steps per revolution (adjust based on your motor)
     # steps_per_revolution: 200
 
 switch:
+  - platform: gpio
+    name: "Stepper Enable [${area_id}${suffix}]"
+    id: ${area_id}_${device_id}${suffix}_stepper_enable
+    pin: GPIO21
+    inverted: true
+    restore_mode: ALWAYS_OFF  # Start with driver asleep
+
   - platform: template
     name: "Step Down [${area_id}${suffix}]"
-    id: ${area_id}_step_down
+    id: ${area_id}_${device_id}${suffix}_step_down
     turn_on_action:
+      - switch.turn_on: ${area_id}_${device_id}${suffix}_stepper_enable  # Wake up the driver
+      - delay: 10ms 
       # Move 150 steps forward
       - stepper.report_position:
           id: ${area_id}_${device_id}${suffix}_stepper
@@ -94,17 +97,27 @@ switch:
       - stepper.set_target:
           id: ${area_id}_${device_id}${suffix}_stepper
           target: 32000
+      - wait_until:
+          condition:
+            lambda: 'return id(${area_id}_${device_id}${suffix}_stepper).has_reached_target();'
+      - switch.turn_off: ${area_id}_${device_id}${suffix}_stepper_enable  # Wake up the driver
 
   - platform: template
     name: "Step Up [${area_id}${suffix}]"
     id: ${area_id}_${device_id}${suffix}_step_up
     turn_on_action:
+      - switch.turn_on: ${area_id}_${device_id}${suffix}_stepper_enable  # Wake up the driver
+      - delay: 10ms 
       - stepper.report_position:
           id: ${area_id}_${device_id}${suffix}_stepper
           position: 0
       - stepper.set_target:
           id: ${area_id}_${device_id}${suffix}_stepper
           target: -32000
+      - wait_until:
+          condition:
+            lambda: 'return id(${area_id}_${device_id}${suffix}_stepper).has_reached_target();'
+      - switch.turn_off: ${area_id}_${device_id}${suffix}_stepper_enable  # Wake up the driver
 
   # HHL = 8x mixrostepping, HHH = 16x
   # 8, with 80:1, 128000 steps per rotation
@@ -125,11 +138,5 @@ switch:
     pin: GPIO9
     inverted: true
     restore_mode: ALWAYS_OFF
-
-  #- platform: gpio
-  #  name: "Lift Stepper Enable [${area_id}${suffix}]"
-  #  pin: GPIO21
-  #  inverted: true  # Active LOW: true if LOW enables the driver
-  #  restore_mode: ALWAYS_OFF  # Enabled by default on boot
 
 

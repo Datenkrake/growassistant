@@ -87,6 +87,8 @@ sensor:
   ## TEMPERATURE, HUMIDITY
   - !include includes/sensor_bme68x_bsec2.yaml
   # CALCULATED SENSORS
+  ## SCHEDULE
+  - !include includes/sensor_sunrise_time_hours.yaml
   ## CLIMATE
   - !include includes/sensor_vpd.yaml
   - !include includes/sensor_rh_target.yaml
@@ -133,7 +135,7 @@ number:
   - !include includes/number_cola_distance_threshold.yaml
 
 interval:
-  - interval: 60s  # Adjust as needed
+  - interval: 300s  # Adjust as needed
     then:
       - script.execute: check_cola_distance
 

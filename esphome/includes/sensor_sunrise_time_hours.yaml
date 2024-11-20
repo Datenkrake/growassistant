@@ -1,0 +1,7 @@
+  - platform: template
+    sensors:
+      g1_canopy_sunrise_time_hours:
+        friendly_name: "G1 Canopy Sunrise Time (Hours)"
+        unit_of_measurement: 'o`clock'
+        value_template: >
+          {{ (states('number.g1_canopy_sunrise_time_seconds_from_midnight_g1_canopy') | float / 3600) | round(0) }}
