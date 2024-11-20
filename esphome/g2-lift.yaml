@@ -71,13 +71,14 @@ stepper:
     max_speed: 2000 steps/s
     acceleration: 2000 #steps/s²
     deceleration: 2000 #steps/s²
-    sleep_pin: GPIO21
+    # Optional: Sleep pin (uncomment if connected)
+    sleep_pin: 
+      pin: GPIO21
+      inverted: false
     # Optional: Enable pin (uncomment if connected)
     # enable_pin: GPIO4
-    # Optional: Sleep pin (uncomment if connected)
-    # sleep_pin: GPIO16
     # Optional: Microsteps (requires additional wiring and configuration)
-    # microsteps: 16 # done via MS pins on HW
+    # microsteps: 8 # done via MS pins on HW
     # Optional: Stepper steps per revolution (adjust based on your motor)
     # steps_per_revolution: 200
 
