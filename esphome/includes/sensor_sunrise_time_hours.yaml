@@ -1,7 +1,11 @@
-  - platform: template
-    sensors:
-      g1_canopy_sunrise_time_hours:
-        friendly_name: "G1 Canopy Sunrise Time (Hours)"
-        unit_of_measurement: 'o`clock'
-        value_template: >
-          {{ (states('number.g1_canopy_sunrise_time_seconds_from_midnight_g1_canopy') | float / 3600) | round(0) }}
+platform: template
+id: ${area_id}_${device_id}${suffix}_sunrise_time_hours
+name: "G1 Canopy Sunrise Time (Hours)"
+state_topic: "${area_id}/sunrise_time_hours/state/${device_id}"
+update_interval: 1h
+accuracy_decimals: 2
+unit_of_measurement: 'o`clock'
+lambda: |-
+  float seconds = id(${area_id}_${device_id}${suffix}_sunrise_time).state;
+  float hours = seconds / 3600;
+  return hours;

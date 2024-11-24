@@ -75,3 +75,33 @@ recorder:
   #   entities:
   #     - input_number.some_excluded_entity
 
+automation:
+  - alias: "G1 Hourly Camera Snapshot"
+    id: g1_timelapse_automation
+    trigger:
+      - trigger: time_pattern
+        minutes: 30 # Triggers at half of every hour
+    action:
+      - action: camera.snapshot
+        data:
+          entity_id: camera.g1_cam_g1_camera
+          filename: "/config/www/timelapse/G1/{{ now().strftime('%Y%m%d_%H%M%S') }}.jpg"
+      - action: camera.snapshot
+        data:
+          entity_id: camera.g1_cam_g1_camera
+          filename: "/config/www/timelapse/G1/lovelace.jpg"
+
+  - alias: "G2 Hourly Camera Snapshot"
+    id: g2_timelapse_automation
+    trigger:
+      - trigger: time_pattern
+        minutes: 30 # Triggers at half of every hour
+    action:
+      - action: camera.snapshot
+        data:
+          entity_id: camera.g2_cam_profile000_mainstream
+          filename: "/config/www/timelapse/G2/{{ now().strftime('%Y%m%d_%H%M%S') }}.jpg"
+      - action: camera.snapshot
+        data:
+          entity_id: camera.g2_cam_profile000_mainstream
+          filename: "/config/www/timelapse/G2/lovelace.jpg"

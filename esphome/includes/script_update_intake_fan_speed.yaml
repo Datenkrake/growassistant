@@ -38,14 +38,17 @@ then:
 
         // If temperature exceeds temperature max, increase fan speed
         if (temperature > _temperature_max) {
-            fan_value += 1.0;
+            fan_value += 5.0;
+            ESP_LOGD("fan", "Temperature above maximum. Increasing Fan Speed.");
         }
 
         // If humidity exceeds rh_target, increase fan speed, else decrease fan speed
         if (humidity > rh_target) {
             fan_value += 1.0;
+            ESP_LOGD("fan", "Humidity above target. Increasing Fan Speed.");
         } else {
             fan_value -= 2.0;
+            ESP_LOGD("fan", "Humidity below target. Reducing Fan Speed.");
         }
 
         // Retrieve min and max fan speeds
