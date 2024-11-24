@@ -22,6 +22,22 @@ esphome:
   area: ${area_id}
   friendly_name: ${area_id}_EXHAUST${suffix}
 
+# Note for pinout on ESP32-C3 Supermini:
+# Pin Functions
+# GPIO0 / A0 (bottom right corner in top view with USB port on the top)
+# GPIO1 / A1
+# GPIO2 / A2 (external pull-up resistor and is a boot related pin)
+# GPIO3 / A3
+# GPIO4 / A4 / SCK
+# GPIO5 / A5 / MISO
+# GPIO6 / MOSI
+# GPIO7 / SS
+# GPIO8 / SDA
+# GPIO9 / SCL (external pull-down resistor and is a boot related pin "BOOT button")
+# GPIO10
+# GPIO20 / RX
+# GPIO21 / TX
+
 substitutions:
   area_id: G1
   device_id: "EXHAUST"
