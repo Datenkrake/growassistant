@@ -147,7 +147,7 @@ number:
   - !include includes/number_illuminance_calibration_factor.yaml
   - !include includes/number_door_open_brightness.yaml
   - !include includes/number_cola_distance_threshold.yaml
-
+  !include includes/number_schedule_day_hours.yaml
 interval:
   - interval: 60s  # Adjust as needed
     then:
