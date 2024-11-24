@@ -1,4 +1,3 @@
-
 - platform: template
   name: "Day Total Hours [${area_id}_${device_id}${suffix}]"
   id: ${area_id}_${device_id}${suffix}_day_total_hours
