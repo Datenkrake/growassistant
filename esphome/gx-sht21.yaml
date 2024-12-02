@@ -107,6 +107,7 @@ sensor:
   # CALCULATED SENSORS
   ## SCHEDULE
   - !include includes/sensor_sunrise_time_hours.yaml
+  - !include includes/sensor_schedule_phase_progress.yaml
   ## CLIMATE
   - !include includes/sensor_vpd.yaml
   - !include includes/sensor_rh_target.yaml
