@@ -1,0 +1,14 @@
+platform: template
+name: "Day Total Hours [${area_id}_${device_id}${suffix}]"
+id: ${area_id}_${device_id}${suffix}_day_total_hours
+state_topic: "${area_id}/day_total_hours/state/${device_id}"
+command_topic: "${area_id}/day_total_hours/state/${device_id}/set"
+optimistic: true
+initial_value: 24.0
+min_value: 0.0
+max_value: 36.0
+step: 0.1
+mode: BOX
+unit_of_measurement: "hours"
+restore_value: True
+retain: True

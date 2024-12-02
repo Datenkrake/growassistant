@@ -150,6 +150,8 @@ number:
   - !include includes/number_door_open_brightness.yaml
   - !include includes/number_cola_distance_threshold.yaml
   - !include includes/number_schedule_day_hours.yaml
+  - !include includes/number_schedule_day_hours_total.yaml
+  
 interval:
   - interval: 300s  # Adjust as needed
     then:
