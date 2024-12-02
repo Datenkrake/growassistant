@@ -157,10 +157,10 @@ interval:
 
   - interval: 30s
     then:
-      - script.execute: adjust_brightness
+      - script.execute: adjust_brightness_shelly_dimmer
 
 script:
   - !include includes/script_check_cola_distance.yaml
   - !include includes/script_mqtt_publish_cola_detected_true.yaml
   - !include includes/script_mqtt_publish_cola_detected_false.yaml
-  - !include includes/script_adjust_brightness.yaml
+  - !include includes/script_adjust_brightness_shelly_dimmer.yaml
