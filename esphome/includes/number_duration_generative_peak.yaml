@@ -1,0 +1,14 @@
+platform: template
+name: "Time to Generative Peak (Days) [${area_id}_${device_id}${suffix}]"
+id: ${area_id}_${device_id}${suffix}_duration_generative_peak
+state_topic: "${area_id}/duration_generative_peak/state/${device_id}"
+command_topic: "${area_id}/duration_generative_peak/state/${device_id}/set"
+optimistic: True
+min_value: 0
+max_value: 365
+step: 1
+initial_value: 20
+mode: BOX
+unit_of_measurement: "days"
+restore_value: True
+retain: True
