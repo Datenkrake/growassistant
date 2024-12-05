@@ -134,7 +134,8 @@ number:
   ## CYCLE DURATIONS
   - !include includes/number_duration_vegetative.yaml
   - !include includes/number_duration_flipping.yaml
-  - !include includes/number_duration_generative.yaml
+  - !include includes/number_duration_generative.yaml 
+  - !include includes/number_duration_generative_peak.yaml
   - !include includes/number_duration_drying.yaml
   ## LIGHT INTENSITY CONFIG
   - !include includes/number_dli_vegetative_start.yaml

@@ -9,7 +9,7 @@ lambda: |
     time_t start_vegetative = (time_t) id(${area_id}_${device_id}${suffix}_start_date)->state;
     time_t start_flipping = start_vegetative + (time_t)(id(${area_id}_${device_id}${suffix}_duration_vegetative))->state * 86400;
     time_t start_generative = start_flipping + (time_t)(id(${area_id}_${device_id}${suffix}_duration_flipping))->state * 86400;
-    time_t generative_peak = start_generative + (time_t)(id(${area_id}_${device_id}${suffix}_duration_generative))->state * 69120; // 80% of flowering lead up to peak
+    time_t generative_peak = start_generative + (time_t)(id(${area_id}_${device_id}${suffix}_duration_generative_peak))->state * 86400;
     time_t start_drying = start_generative + (time_t)(id(${area_id}_${device_id}${suffix}_duration_generative))->state * 86400;
 
     if (now < start_vegetative) {
