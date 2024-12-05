@@ -95,6 +95,7 @@ i2c:
   !include includes/i2c_bus_a.yaml
 text_sensor:
   - !include includes/text_sensor_mqtt_full_spectrum_brightness_json_shelly_dimmer.yaml
+  - !include includes/sensor_schedule_phase_progress.yaml
 
 sensor:
   # PHYSICAL SENSORS

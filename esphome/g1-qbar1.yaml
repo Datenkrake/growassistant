@@ -69,13 +69,6 @@ output:
     frequency: 100 Hz 
     max_power: 0.95
 
-light:
-  - platform: monochromatic
-    output: ${area_id}_led_pwm${suffix}
-    name: "Full Spectrum [${area_id}${suffix}]"
-    state_topic: "${area_id}/full_spectrum/state/${device_id}"
-    command_topic: "${area_id}/full_spectrum/state/${device_id}/set"
-
 number:
   - !include includes/number_gantry_position_min.yaml
   - !include includes/number_gantry_position_max.yaml
@@ -83,9 +76,11 @@ number:
 # Ultrasonic sensor on GPIO9 (TRIG) and GPIO10 (ECHO)
 sensor:
   - !include includes/sensor_gantry_ultrasonic.yaml
+  - !include includes/sensor_full_spectrum_brightness.yaml
 
 text_sensor:
   - !include includes/text_sensor_mqtt_cola_detected.yaml
+  - !include includes/text_sensor_mqtt_full_spectrum_brightness_json_shelly_dimmer.yaml
 
 interval:
   - interval: 60min

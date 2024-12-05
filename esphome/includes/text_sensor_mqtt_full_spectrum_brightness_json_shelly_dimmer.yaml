@@ -1,7 +1,7 @@
 platform: mqtt_subscribe
 name: "Full Spectrum Brightness JSON [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_current_brightness_text_sensor  # Ensure this ID matches
-topic: "${area_id}/light/dimmer/rpc"
+topic: "${area_id}/light/dimmer/events/rpc"
 on_value:
     then:
         - lambda: |-
@@ -14,8 +14,8 @@ on_value:
             }
 
             // Navigate to "params" and check for "brightness"
-            if (doc["params"].containsKey("brightness")) {
-                int brightness = doc["params"]["brightness"].as<int>();
+            if (doc["params"]["light:0"].containsKey("brightness")) {
+                int brightness = doc["params"]["light:0"]["brightness"].as<int>();
 
                 // Convert brightness to a floating-point percentage and publish
                 id(${area_id}_${device_id}${suffix}_full_spectrum_brightness).publish_state(brightness / 100.0f);

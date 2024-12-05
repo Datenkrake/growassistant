@@ -21,59 +21,39 @@
 
 # This is the implementation of the sensor.
 
-sensor:
-  - platform: template
-    name: "Schedule Progress [${area_id}_${device_id}${suffix}]"
-    id: ${area_id}_${device_id}${suffix}_schedule_phase_progress
-    state_topic: "${area_id}/schedule_phase_progress/state/${device_id}"
-    optimistic: True
-    retain: True
-    restore_value: True
-    update_interval: 1h
-    lambda: |-
-      int start_date_epoch = id(${area_id}_${device_id}${suffix}_start_date_epoch_${area_id}_${device_id}).state;
-      int sunrise_time_seconds_from_midnight = id(${area_id}_${device_id}${suffix}_sunrise_time_seconds_from_midnight_${area_id}_${device_id}).state;
-      int duration_vegetative_days = id(${area_id}_${device_id}${suffix}_duration_vegetative_days_${area_id}_${device_id}).state;
-      int duration_flipping_days = id(${area_id}_${device_id}${suffix}_duration_flipping_days_${area_id}_${device_id}).state;
-      int duration_generative_days = id(${area_id}_${device_id}${suffix}_duration_generative_days_${area_id}_${device_id}).state;
-      int duration_drying_days = id(${area_id}_${device_id}${suffix}_duration_drying_days_${area_id}_${device_id}).state;
-      int current_phase = 0;
-      int days_since_start = 0;
-      int days_remaining = 0;
-      int total_days = 0;
-      int current_time = id(current_time).state;
-      int sunrise_time = start_date_epoch + sunrise_time_seconds_from_midnight;
-      int sunset_time = start_date_epoch + sunrise_time_seconds_from_midnight + 43200;
-      int current_day = (current_time - sunrise_time) / 86400;
-      int total_days_vegetative = duration_vegetative_days;
-      int total_days_flipping = duration_vegetative_days + duration_flipping_days;
-      int total_days_generative = duration_vegetative_days + duration_flipping_days + duration_generative_days;
-      int total_days_drying = duration_vegetative_days + duration_flipping_days + duration_generative_days + duration_drying_days;
-      if (current_day < total_days_vegetative) {
-        current_phase = 1;
-        days_since_start = current_day;
-        days_remaining = total_days_vegetative - current_day;
-        total_days = total_days
-        } else if (current_day < total_days_flipping) {
-        current_phase = 2;
-        days_since_start = current_day - total_days_vegetative;
-        days_remaining = total_days_flipping - current_day;
-        total_days = total_days_flipping;
-        } else if (current_day < total_days_generative) {
-        current_phase = 3;
-        days_since_start = current_day - total_days_flipping;
-        days_remaining = total_days_generative - current_day;
-        total_days = total_days_generative;
-        } else if (current_day < total_days_drying) {
-        current_phase = 4;
-        days_since_start = current_day - total_days_generative;
-        days_remaining = total_days_drying - current_day;
-        total_days = total_days_drying;
-        }
-        
-        char progress[20];
-        sprintf(progress, "V%d/%dF%d/%dG%d/%dD%d/%d", days_since_start, total_days_vegetative, days_since_start, total_days_flipping, days_since_start, total_days_generative, days_since_start, total_days_drying);
-        return progress;
+platform: template
+name: "Schedule Progress [${area_id}_${device_id}${suffix}]"
+id: ${area_id}_${device_id}${suffix}_schedule_phase_progress
+state_topic: "${area_id}/schedule_phase_progress/state/${device_id}"
+update_interval: 1h
+lambda: |-
+  int start_date_epoch = id(${area_id}_${device_id}${suffix}_start_date).state;
+  int sunrise_time_seconds_from_midnight = id(${area_id}_${device_id}${suffix}_sunrise_time).state;
+  int duration_vegetative_days = id(${area_id}_${device_id}${suffix}_duration_vegetative).state;
+  int duration_flipping_days = id(${area_id}_${device_id}${suffix}_duration_flipping).state;
+  int duration_generative_days = id(${area_id}_${device_id}${suffix}_duration_generative).state;
+  int duration_drying_days = id(${area_id}_${device_id}${suffix}_duration_drying).state;
+  int current_time = id(mqtt_time).now().timestamp;
+  int sunrise_time = start_date_epoch + sunrise_time_seconds_from_midnight;
+  int current_day = (current_time - sunrise_time) / 86400;
+  int total_days_vegetative = duration_vegetative_days;
+  int total_days_flipping = duration_vegetative_days + duration_flipping_days;
+  int total_days_generative = duration_vegetative_days + duration_flipping_days + duration_generative_days;
+  int total_days_drying = duration_vegetative_days + duration_flipping_days + duration_generative_days + duration_drying_days;
+      
+  int veg_progress = std::min(current_day, total_days_vegetative);
+  int flip_progress = std::min(std::max(0, current_day - total_days_vegetative), duration_flipping_days);
+  int gen_progress = std::min(std::max(0, current_day - total_days_flipping), duration_generative_days);
+  int dry_progress = std::min(std::max(0, current_day - total_days_generative), duration_drying_days);
 
+  char progress[100];
+  snprintf(progress, sizeof(progress), "T%d/%dV%d/%dF%d/%dG%d/%dD%d/%d",
+          current_day, total_days_drying,
+          veg_progress, duration_vegetative_days,
+          flip_progress, duration_flipping_days,
+          gen_progress, duration_generative_days,
+          dry_progress, duration_drying_days);
+
+  return std::string(progress);
 
 # End of file
