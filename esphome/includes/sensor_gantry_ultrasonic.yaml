@@ -7,9 +7,5 @@ state_topic: "${area_id}/gantry_position/state/${device_id}"
 update_interval: 0.1s
 timeout: 2m
 filters:
-- outlier:
-    window_size: 3600
-    threshold: 0.1
-    send_every: 600
 - sliding_window_moving_average:
-    window_size: 600
+    window_size: 1800

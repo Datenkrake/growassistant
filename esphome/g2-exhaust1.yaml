@@ -91,14 +91,14 @@ output:
     id: ${area_id}_${device_id}${suffix}_fan1_pwm
     frequency: 15000 Hz
     inverted: True
-    max_power: 0.8
+    max_power: ${fan1_max}
 
   - platform: ledc
     pin: ${pin_fan2_pwm}
     id: ${area_id}_${device_id}${suffix}_fan2_pwm
     frequency: 15000 Hz
     inverted: True
-    max_power: 0.5
+    max_power: ${fan2_max}
 
 fan:
   - platform: speed
@@ -145,11 +145,9 @@ number:
   - !include includes/number_fan_speed_max.yaml
 
 interval:
-  - interval: 10s
-    then:
-      - script.execute: update_exhaust_fan_speed
   - interval: 60s
     then:
+      - script.execute: update_exhaust_fan_speed
       - script.execute: ${area_id}_${device_id}${suffix}_publish_fan_speed
 
 script:
