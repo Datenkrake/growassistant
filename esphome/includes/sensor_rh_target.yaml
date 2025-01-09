@@ -11,4 +11,4 @@ lambda: |
     float LSVP = 610.78 * pow(2.71828, (LT / (LT + 237.3)) * 17.2694);
     float LVPD_TARGET = id(${area_id}_${device_id}${suffix}_vpd_target).state;
     float RH_TARGET = (LSVP - LVPD_TARGET * 1000) / ASVP * 100;
-    return roundf(RH_TARGET * 10.0) / 10.0;
+    return roundf(RH_TARGET * 100.0) / 100.0;
