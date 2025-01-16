@@ -41,7 +41,6 @@ mqtt:
     - name: "G2 PROGRESS"
       object_id: mqtt_g2_progress
       state_topic: "G2/schedule_phase_progress/state/CANOPY"
-      unit_of_measurement: ""
       value_template: "{{ value | string }}"
       force_update: true
 
