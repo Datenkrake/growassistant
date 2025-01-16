@@ -1,0 +1,8 @@
+# this file holds all mqtt entities for G1
+
+# all entities use MQTT to communicate with the broker
+# all entities are in the G1/ namespace
+
+
+#platform: mqtt
+#name: "G1 "
