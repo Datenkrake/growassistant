@@ -1,0 +1,59 @@
+
+# G2/fan/speed/EXHAUST
+mqtt:
+  sensor:
+    - name: "G2 Exhaust Fan Speed"
+      object_id: mqtt_g2_fan_speed_exhaust
+      state_topic: "G2/fan/speed/EXHAUST"
+      unit_of_measurement: "%"
+      value_template: "{{ value | int }}"
+      force_update: true
+    - name: "G2 Gantry Fan Speed"
+      object_id: mqtt_g2_fan_speed_gantry
+      state_topic: "G2/fan/speed/GANTRY"
+      unit_of_measurement: "%"
+      value_template: "{{ value | int }}"
+      force_update: true
+    - name: "G2 Intake Fan Speed"
+      object_id: mqtt_g2_fan_speed_intake
+      state_topic: "G2/fan/speed/INTAKE"
+      unit_of_measurement: "%"
+      value_template: "{{ value | int }}"
+      force_update: true
+    - name: "G2 Humidifier Speed"
+      object_id: mqtt_g2_fan_speed_humidifier
+      state_topic: "G2/fan/speed/HUMIDIFIER"
+      unit_of_measurement: "%"
+      value_template: "{{ value | int }}"
+      force_update: true
+    - name: "G2 VPD"
+      object_id: mqtt_g2_vpd
+      state_topic: "G2/vpd/state/CANOPY"
+      unit_of_measurement: "kPa"
+      value_template: "{{ value | float | round(1) }}"
+      force_update: true
+    - name: "G2 PPFD"
+      object_id: mqtt_g2_ppfd
+      state_topic: "G2/ppfd/state/CANOPY"
+      unit_of_measurement: "umol/s/m2"
+      value_template: "{{ value | int }}"
+      force_update: true
+    - name: "G2 PROGRESS"
+      object_id: mqtt_g2_progress
+      state_topic: "G2/schedule_phase_progress/state/CANOPY"
+      unit_of_measurement: ""
+      value_template: "{{ value | string }}"
+      force_update: true
+
+    - name: "G2 CANOPY TEMPERATURE"
+      object_id: mqtt_g2_temperature_canopy
+      state_topic: "G2/temperature/state/CANOPY"
+      unit_of_measurement: "°C"
+      value_template: "{{ value | float | round(1) }}"
+      force_update: true
+    - name: "G2 CANOPY HUMIDITY"
+      object_id: mqtt_g2_humidity_canopy
+      state_topic: "G2/humidity/state/CANOPY"
+      unit_of_measurement: "%"
+      value_template: "{{ value | float | round(1) }}"
+      force_update: true
