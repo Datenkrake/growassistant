@@ -67,7 +67,7 @@ then:
         ESP_LOGD("humidifier", "Current Humidifier Speed: %d%%", current_speed);
 
         // Define minimum RH difference to trigger adjustment (e.g., 1%)
-        const float min_rh_diff = 0.5;
+        const float min_rh_diff = 0.2;
 
         // Round the RH difference to the nearest integer
         int error = roundf(rh_difference);

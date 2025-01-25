@@ -4,9 +4,6 @@ then:
         // Check if the door is open
         if (id(${area_id}_${device_id}${suffix}_door_open)) {
             // Door is open; turn off both fans
-            //id(fan1_pwm).set_level(0.0);
-            //id(fan2_pwm).set_level(0.0);
-            //id(${area_id}_fan1_pwm_value${suffix}) = 0.0;
             auto call3 = id(${area_id}_${device_id}${suffix}_fan1).turn_off();
             call3.perform();
             auto call4 = id(${area_id}_${device_id}${suffix}_fan2).turn_off();
@@ -21,31 +18,32 @@ then:
         call2.perform();
 
         // Door is closed; proceed with fan speed adjustments
-        // Default to gantry data
         float temperature = id(${area_id}_${device_id}${suffix}_canopy_temperature).state;
         float humidity = id(${area_id}_${device_id}${suffix}_canopy_humidity).state;
         float rh_target = id(${area_id}_${device_id}${suffix}_canopy_rh_target).state;
 
         // Use canopy data if available
-        if (isnan(temperature) && !isnan(id(${area_id}_${device_id}${suffix}_canopy_temperature).state)) {
+        if (isnan(temperature)) {
             temperature = id(${area_id}_${device_id}${suffix}_gantry_temperature).state;
         }
-        if (isnan(humidity) && !isnan(id(${area_id}_${device_id}${suffix}_canopy_humidity).state)) {
-            humidity = id(${area_id}_${device_id}${suffix}_canopy_humidity).state;
+        if (isnan(humidity)) {
+            humidity = id(${area_id}_${device_id}${suffix}_gantry_humidity).state;
         }
-        if (isnan(rh_target) && !isnan(id(${area_id}_${device_id}${suffix}_gantry_rh_target).state)) {
+        if (isnan(rh_target)) {
             rh_target = id(${area_id}_${device_id}${suffix}_gantry_rh_target).state;
         }
 
         if (isnan(temperature) || isnan(humidity) || isnan(rh_target)) {
-            ESP_LOGD("exhaust fan", "Missing data to adjust fan. Temperature %.2f%% Humidity: %.2f%%, RH Target: %.2f%%)", temperature, humidity, rh_target);
-            
+            ESP_LOGD("exhaust fan", "Missing data to adjust fan. Temperature: %.2f°C, Humidity: %.2f%%, RH Target: %.2f%%", temperature, humidity, rh_target);
+            return;
         }
 
         // Get temperature max value
         float _temperature_max = id(${area_id}_${device_id}${suffix}_temperature_max).state;
 
         // Adjust fan speed based on conditions
+        float fan_min = id(${area_id}_${device_id}${suffix}_fan_speed_min).state;
+        float fan_max = id(${area_id}_${device_id}${suffix}_fan_speed_max).state;
         float fan_value = id(${area_id}_${device_id}${suffix}_fan1_pwm_value);
 
         // If temperature exceeds temperature max, increase fan speed
@@ -54,27 +52,33 @@ then:
             ESP_LOGD("fan", "Temperature above maximum. Increasing Fan Speed.");
         }
 
-        // If humidity exceeds rh_target, increase fan speed, else decrease fan speed
-        if (humidity > rh_target) {
-            fan_value += 1.0;
-            ESP_LOGD("fan", "Humidity above target. Increasing Fan Speed.");
+        // Define minimum RH difference to trigger adjustment
+        const float min_rh_diff = 0.2;
+        float rh_difference = rh_target - humidity;
+        int current_speed = id(${area_id}_${device_id}${suffix}_fan1).speed;
+        float new_speed = current_speed;
+
+        // Adjust exhaust fan speed based on RH comparison with hysteresis
+        if (rh_difference > min_rh_diff) {
+            // RH target > current RH: Decrease speed
+            new_speed = std::max(current_speed - roundf(rh_difference), fan_min);
+            ESP_LOGD("exhaust", "RH target > current RH by > %.2f%%. Decreasing speed to %.2f%%", min_rh_diff, new_speed);
+        } else if (rh_difference < -min_rh_diff) {
+            // RH target < current RH: Increase speed
+            new_speed = std::min(current_speed + roundf(std::abs(rh_difference) * 2), fan_max);
+            ESP_LOGD("exhaust", "RH target < current RH by > %.2f%%. Increasing speed to %.2f%%", min_rh_diff, new_speed);
         } else {
-            fan_value -= 2.0;
-            ESP_LOGD("fan", "Humidity below target. Reducing Fan Speed.");
+            ESP_LOGD("exhaust", "RH difference within ±%.2f%%. No speed adjustment needed.", min_rh_diff);
         }
 
-        // Retrieve min and max fan speeds
-        float fan_min = id(${area_id}_${device_id}${suffix}_fan_speed_min).state;
-        float fan_max = id(${area_id}_${device_id}${suffix}_fan_speed_max).state;
-
         // Clamp the fan value between min and max
-        fan_value = fmax(fan_min, fmin(fan_max, fan_value));
+        new_speed = std::max(fan_min, std::min(fan_max, new_speed));
 
         // Update the global fan speed value
-        id(${area_id}_${device_id}${suffix}_fan1_pwm_value) = fan_value;
+        id(${area_id}_${device_id}${suffix}_fan1_pwm_value) = new_speed;
+        id(${area_id}_${device_id}${suffix}_fan1).speed = static_cast<int>(roundf(new_speed));
+        id(${area_id}_${device_id}${suffix}_fan2).speed = static_cast<int>(roundf(new_speed));
 
-        id(${area_id}_${device_id}${suffix}_fan1).speed = fan_value;
-        id(${area_id}_${device_id}${suffix}_fan2).speed = fan_value;
+        ESP_LOGD("exhaust", "Updating fan speed to %.2f%% (Min: %.2f%%, Max: %.2f%%)", new_speed, fan_min, fan_max);
 
-        ESP_LOGD("fan", "Updating fan speed to %.2f%% (Min: %.2f%%, Max: %.2f%%)", fan_value, fan_min, fan_max);
 
