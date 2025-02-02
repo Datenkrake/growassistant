@@ -84,6 +84,15 @@ text_sensor:
   - !include includes/text_sensor_mqtt_full_spectrum_brightness_json_shelly_dimmer.yaml
 
 # Automation to move gantry up when conditions are met
+# target changed as trigger
+automation:
+  - trigger: 
+      - platform: state
+        entity_id: ${area_id}_${device_id}${suffix}_position_target
+    then:
+      - script.execute: ${area_id}_trigger_gantry_move
+
+# Automation to move gantry up when conditions are met
 interval:
   - interval: 60min
     then:
@@ -133,14 +142,16 @@ script:
           }
           // if the move condition is still met, call trigger_gantry_move
           if (id(${area_id}_${device_id}${suffix}_position_target).state > id(${area_id}_${device_id}${suffix}_position).state + 0.01 || id(${area_id}_${device_id}${suffix}_position_target).state < id(${area_id}_${device_id}${suffix}_position).state - 0.01) {
+            // delay 5 seconds before calling the next move
+            delay(5000);
             id(${area_id}_trigger_gantry_move).execute();
           }
           
   - id: ${area_id}_trigger_gantry_move
     then:
-      - delay: 5s
       - script.execute: ${area_id}_gantry_move
-
+      - delay: 5s
+    mode: single
 
 # Include the HTTP Request component
 http_request:
