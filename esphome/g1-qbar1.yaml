@@ -115,22 +115,9 @@ script:
   - id: ${area_id}_gantry_move
     then:
       - lambda: |-
-          // The rest command controls a 3d printer board using klipper. it acn only do moves up to 99 steps (1 step equals 1mm). The gantry position sensor is filtered as shown below. 
-          // A move distance shall be determined and executed in multiple rest commands of up to 99 steps and a configurable delay in seconds between the commands to avoid overloading the klipper board.
-          // The minimum position is the position where the gantry is at the top.
-          // The position sensor looks up, therefore the moves are inverted. A negative move is a down move but increases the position value.
-          // The move distance is limited to 99 steps to avoid overloading the klipper board.
-          // The delay between the rest commands is set to 5 second to avoid overloading the klipper board.
-          // If the gantry is at the top, the move distance is set to 0 and no rest command is executed. Position < min or position > max is possible due to sensor noise.
-          // If the sensor is below the min value, only negative moves are possible. If the sensor is above the max value, only positive moves are possible.
-          
           ESP_LOGD("debug", "Checking conditions for moving gantry...");
           ESP_LOGD("debug", "Cola detected state: %s", id(${area_id}_${device_id}${suffix}_cola_detected).state.c_str());
           ESP_LOGD("debug", "Gantry position: %.2f, Min Position: %.2f", id(${area_id}_${device_id}${suffix}_position).state, id(${area_id}_${device_id}${suffix}_position_min).state);
-
-          // if ${area_id}_${device_id}${suffix}_position_target is difference than ${area_id}_${device_id}${suffix}_position, move the gantry
-          // the difference needs to be larger, ir smaller, than plus, or minus, 0.01, depending on the direction of the move to account for sensor noise
-          // it also needs to be within the min and max values
           if (id(${area_id}_${device_id}${suffix}_position_target).state > id(${area_id}_${device_id}${suffix}_position).state + 0.01 && id(${area_id}_${device_id}${suffix}_position).state <= id(${area_id}_${device_id}${suffix}_position_max).state) {
             ESP_LOGD("main", "Conditions met. Calling REST endpoint to move gantry up");
             id(${area_id}_rest_move_up).execute();
@@ -140,9 +127,7 @@ script:
           } else {
             ESP_LOGD("main", "Conditions not met. Skipping...");
           }
-          // if the move condition is still met, call trigger_gantry_move
           if (id(${area_id}_${device_id}${suffix}_position_target).state > id(${area_id}_${device_id}${suffix}_position).state + 0.01 || id(${area_id}_${device_id}${suffix}_position_target).state < id(${area_id}_${device_id}${suffix}_position).state - 0.01) {
-            // delay 5 seconds before calling the next move
             delay(5000);
             id(${area_id}_trigger_gantry_move).execute();
           }
