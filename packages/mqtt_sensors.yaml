@@ -1,4 +1,3 @@
-
 mqtt:
   sensor:
 
@@ -12,139 +11,187 @@ mqtt:
       unit_of_measurement: "%"
       value_template: "{{ value | int }}"
       force_update: true
+      unique_id: mqtt_g2_fan_speed_exhaust
+
     - name: "G2 Gantry Fan Speed"
       object_id: mqtt_g2_fan_speed_gantry
       state_topic: "G2/fan/speed/GANTRY"
       unit_of_measurement: "%"
       value_template: "{{ value | int }}"
       force_update: true
+      unique_id: mqtt_g2_fan_speed_gantry
+
     - name: "G2 Intake Fan Speed"
       object_id: mqtt_g2_fan_speed_intake
       state_topic: "G2/fan/speed/INTAKE"
       unit_of_measurement: "%"
       value_template: "{{ value | int }}"
       force_update: true
+      unique_id: mqtt_g2_fan_speed_intake
+
     - name: "G2 Humidifier Fan Speed"
       object_id: mqtt_g2_fan_speed_humidifier
       state_topic: "G2/fan/speed/HUMIDIFIER"
       unit_of_measurement: "%"
       value_template: "{{ value | int }}"
       force_update: true
+      unique_id: mqtt_g2_fan_speed_humidifier
+
     - name: "G2 Canopy VPD"
       object_id: mqtt_g2_canopy_vpd
       state_topic: "G2/vpd/state/CANOPY"
       unit_of_measurement: "kPa"
       value_template: "{{ value | float | round(2) }}"
       force_update: true
+      unique_id: mqtt_g2_canopy_vpd
+
     - name: "G2 Gantry VPD"
       object_id: mqtt_g2_gantry_vpd
       state_topic: "G2/vpd/state/GANTRY"
       unit_of_measurement: "kPa"
       value_template: "{{ value | float | round(2) }}"
       force_update: true
+      unique_id: mqtt_g2_gantry_vpd
+
     - name: "G2 Intake VPD"
       object_id: mqtt_g2_intake_vpd
       state_topic: "G2/vpd/state/INTAKE"
       unit_of_measurement: "kPa"
       value_template: "{{ value | float | round(2) }}"
       force_update: true
+      unique_id: mqtt_g2_intake_vpd
+
     - name: "G2 Exhaust VPD"
       object_id: mqtt_g2_exhaust_vpd
       state_topic: "G2/vpd/state/EXHAUST"
       unit_of_measurement: "kPa"
       value_template: "{{ value | float | round(2) }}"
       force_update: true
+      unique_id: mqtt_g2_exhaust_vpd
+
     - name: "G2 Canopy Temperature"
       object_id: mqtt_g2_temperature_canopy
       state_topic: "G2/temperature/state/CANOPY"
       unit_of_measurement: "°C"
       value_template: "{{ value | float | round(1) }}"
       force_update: true
+      unique_id: mqtt_g2_temperature_canopy
+
     - name: "G2 Gantry Temperature"
       object_id: mqtt_g2_temperature_gantry
       state_topic: "G2/temperature/state/GANTRY"
       unit_of_measurement: "°C"
       value_template: "{{ value | float | round(1) }}"
       force_update: true
+      unique_id: mqtt_g2_temperature_gantry
+
     - name: "G2 Intake Temperature"
       object_id: mqtt_g2_temperature_intake
       state_topic: "G2/temperature/state/INTAKE"
       unit_of_measurement: "°C"
       value_template: "{{ value | float | round(1) }}"
       force_update: true
+      unique_id: mqtt_g2_temperature_intake
+
     - name: "G2 Exhaust Temperature"
       object_id: mqtt_g2_temperature_exhaust
       state_topic: "G2/temperature/state/EXHAUST"
       unit_of_measurement: "°C"
       value_template: "{{ value | float | round(1) }}"
       force_update: true
+      unique_id: mqtt_g2_temperature_exhaust
+
     - name: "G2 Canopy Humidity"
       object_id: mqtt_g2_humidity_canopy
       state_topic: "G2/humidity/state/CANOPY"
       unit_of_measurement: "%"
       value_template: "{{ value | float | round(1) }}"
       force_update: true
+      unique_id: mqtt_g2_humidity_canopy
+
     - name: "G2 Gantry Humidity"
       object_id: mqtt_g2_humidity_gantry
       state_topic: "G2/humidity/state/GANTRY"
       unit_of_measurement: "%"
       value_template: "{{ value | float | round(1) }}"
       force_update: true
+      unique_id: mqtt_g2_humidity_gantry
+
     - name: "G2 Intake Humidity"
       object_id: mqtt_g2_humidity_intake
       state_topic: "G2/humidity/state/INTAKE"
       unit_of_measurement: "%"
       value_template: "{{ value | float | round(1) }}"
       force_update: true
+      unique_id: mqtt_g2_humidity_intake
+
     - name: "G2 Exhaust Humidity"
       object_id: mqtt_g2_humidity_exhaust
       state_topic: "G2/humidity/state/EXHAUST"
       unit_of_measurement: "%"
       value_template: "{{ value | float | round(1) }}"
       force_update: true
+      unique_id: mqtt_g2_humidity_exhaust
+
     - name: "G2 Canopy DLI"
       object_id: mqtt_g2_dli_canopy
       state_topic: "G2/dli/state/CANOPY"
       unit_of_measurement: "mol/m2/day"
       value_template: "{{ value | float | round(1) }}"
       force_update: true
+      unique_id: mqtt_g2_dli_canopy
+
     - name: "G2 PPFD Canopy"
       object_id: mqtt_g2_ppfd_canopy
       state_topic: "G2/ppfd/state/CANOPY"
       unit_of_measurement: "μmol/m²/s"
       value_template: "{{ value | int }}"
       force_update: true
+      unique_id: mqtt_g2_ppfd_canopy
+
     - name: "G2 Plant Height"
       object_id: mqtt_g2_height
       state_topic: "G2/gantry/position"
       unit_of_measurement: "cm"
       value_template: "{{ value | float | round(1) }}"
       force_update: true
+      unique_id: mqtt_g2_height
+
     - name: "G2 Gantry Cola Distance"
       object_id: mqtt_g2_cola_distance
       state_topic: "G2/cola_distance/state/CANOPY"
       value_template: "{{ value }}"
       force_update: true
+      unique_id: mqtt_g2_cola_distance
+
     - name: "G2 Gantry Cola Detection"
       object_id: mqtt_g2_cola_detected
       state_topic: "G2/cola_detected/state/CANOPY"
       value_template: "{{ value }}"
       force_update: true
+      unique_id: mqtt_g2_cola_detected
+
     - name: "G2 Irrigation Pump"
       object_id: mqtt_g2_irrigation_pump
       state_topic: "G2/irrigation_pump/state/WATER"
       value_template: "{{ value | bool }}"
       force_update: true
+      unique_id: mqtt_g2_irrigation_pump
+
     - name: "G2 Circulation Pump"
       object_id: mqtt_g2_circulation_pump
       state_topic: "G2/circulation_pump/state/WATER"
       value_template: "{{ value | bool }}"
       force_update: true
+      unique_id: mqtt_g2_circulation_pump
+
     - name: "G2 Mains Light Output"
       object_id: mqtt_g2_mains_light_output
       state_topic: "G2/mains/light/status/switch:0"
       value_template: "{{ value_json.output }}"
       force_update: true
+      unique_id: mqtt_g2_mains_light_output
+
     - name: "G2 Mains Light Power"
       object_id: mqtt_g2_mains_light_power
       state_topic: "G2/mains/light/status/switch:0"
@@ -152,7 +199,7 @@ mqtt:
       unit_of_measurement: "W"
       device_class: power
       force_update: true
-
+      unique_id: mqtt_g2_mains_light_power
 
 ##############################################################################
 #     G1
@@ -164,41 +211,54 @@ mqtt:
       unit_of_measurement: "%"
       value_template: "{{ value | int }}"
       force_update: true
+      unique_id: mqtt_g1_fan_speed_exhaust
+
     - name: "G1 Gantry Fan Speed"
       object_id: mqtt_g1_fan_speed_gantry
       state_topic: "G1/fan/speed/GANTRY"
       unit_of_measurement: "%"
       value_template: "{{ value | int }}"
       force_update: true
+      unique_id: mqtt_g1_fan_speed_gantry
+
     - name: "G1 Intake Fan Speed"
       object_id: mqtt_g1_fan_speed_intake
       state_topic: "G1/fan/speed/INTAKE"
       unit_of_measurement: "%"
       value_template: "{{ value | int }}"
       force_update: true
+      unique_id: mqtt_g1_fan_speed_intake
+
     - name: "G1 Humidifier Speed"
       object_id: mqtt_g1_fan_speed_humidifier
       state_topic: "G1/fan/speed/HUMIDIFIER"
       unit_of_measurement: "%"
       value_template: "{{ value | int }}"
       force_update: true
+      unique_id: mqtt_g1_fan_speed_humidifier
+
     - name: "G1 VPD"
       object_id: mqtt_g1_vpd
       state_topic: "G1/vpd/state/CANOPY"
       unit_of_measurement: "kPa"
       value_template: "{{ value | float | round(1) }}"
       force_update: true
+      unique_id: mqtt_g1_vpd
+
     - name: "G1 PPFD"
       object_id: mqtt_g1_ppfd
       state_topic: "G1/ppfd/state/CANOPY"
       unit_of_measurement: "umol/s/m1"
       value_template: "{{ value | int }}"
       force_update: true
+      unique_id: mqtt_g1_ppfd
+
     - name: "G1 PROGRESS"
       object_id: mqtt_g1_progress
       state_topic: "G1/schedule_phase_progress/state/CANOPY"
       value_template: "{{ value | string }}"
       force_update: true
+      unique_id: mqtt_g1_progress
 
     - name: "G1 CANOPY TEMPERATURE"
       object_id: mqtt_g1_temperature_canopy
@@ -206,10 +266,12 @@ mqtt:
       unit_of_measurement: "°C"
       value_template: "{{ value | float | round(1) }}"
       force_update: true
+      unique_id: mqtt_g1_temperature_canopy
+
     - name: "G1 CANOPY HUMIDITY"
       object_id: mqtt_g1_humidity_canopy
       state_topic: "G1/humidity/state/CANOPY"
       unit_of_measurement: "%"
       value_template: "{{ value | float | round(1) }}"
       force_update: true
-
+      unique_id: mqtt_g1_humidity_canopy
