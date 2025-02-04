@@ -1,6 +1,15 @@
 mqtt:
-  sensor:
+  number:
+    - name: "G1 Gantry Position Target"
+      unique_id: "g1_gantry_position_target"
+      command_topic: "G1/gantry_position_target/state/QBAR/set"
+      min: 0
+      max: 1.30
+      step: 0.01
+      retain: true
+      unit_of_measurement: "m"
 
+  sensor:
 ##############################################################################
 #     G2
 ##############################################################################

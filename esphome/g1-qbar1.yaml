@@ -84,15 +84,6 @@ text_sensor:
   - !include includes/text_sensor_mqtt_full_spectrum_brightness_json_shelly_dimmer.yaml
 
 # Automation to move gantry up when conditions are met
-# target changed as trigger
-automation:
-  - trigger: 
-      - platform: state
-        entity_id: ${area_id}_${device_id}${suffix}_position_target
-    then:
-      - script.execute: ${area_id}_trigger_gantry_move
-
-# Automation to move gantry up when conditions are met
 interval:
   - interval: 60min
     then:
@@ -108,10 +99,16 @@ script:
     then:
       - http_request.get:
           url: "http://g1.local:7125/printer/gcode/script?script=move_light%20DISTANCE=10"
+      - lambda: |-
+          ESP_LOGD("http_request", "Move up request sent, ignoring potential failures.");
+
   - id: ${area_id}_rest_move_down
     then:
       - http_request.get:
           url: "http://g1.local:7125/printer/gcode/script?script=move_light%20DISTANCE=-10"
+      - lambda: |-
+          ESP_LOGD("http_request", "Move down request sent, ignoring potential failures.");
+
   - id: ${area_id}_gantry_move
     then:
       - lambda: |-
@@ -119,23 +116,22 @@ script:
           ESP_LOGD("debug", "Cola detected state: %s", id(${area_id}_${device_id}${suffix}_cola_detected).state.c_str());
           ESP_LOGD("debug", "Gantry position: %.2f, Min Position: %.2f", id(${area_id}_${device_id}${suffix}_position).state, id(${area_id}_${device_id}${suffix}_position_min).state);
           if (id(${area_id}_${device_id}${suffix}_position_target).state > id(${area_id}_${device_id}${suffix}_position).state + 0.01 && id(${area_id}_${device_id}${suffix}_position).state <= id(${area_id}_${device_id}${suffix}_position_max).state) {
-            ESP_LOGD("main", "Conditions met. Calling REST endpoint to move gantry up");
-            id(${area_id}_rest_move_up).execute();
-          } else if (id(${area_id}_${device_id}${suffix}_position_target).state < id(${area_id}_${device_id}${suffix}_position).state - 0.01 && id(${area_id}_${device_id}${suffix}_position).state >= id(${area_id}_${device_id}${suffix}_position_min).state) {
             ESP_LOGD("main", "Conditions met. Calling REST endpoint to move gantry down");
             id(${area_id}_rest_move_down).execute();
+          } else if (id(${area_id}_${device_id}${suffix}_position_target).state < id(${area_id}_${device_id}${suffix}_position).state - 0.01 && id(${area_id}_${device_id}${suffix}_position).state >= id(${area_id}_${device_id}${suffix}_position_min).state) {
+            ESP_LOGD("main", "Conditions met. Calling REST endpoint to move gantry up");
+            id(${area_id}_rest_move_up).execute();
           } else {
             ESP_LOGD("main", "Conditions not met. Skipping...");
           }
           if (id(${area_id}_${device_id}${suffix}_position_target).state > id(${area_id}_${device_id}${suffix}_position).state + 0.01 || id(${area_id}_${device_id}${suffix}_position_target).state < id(${area_id}_${device_id}${suffix}_position).state - 0.01) {
-            delay(5000);
+            delay(15000);
             id(${area_id}_trigger_gantry_move).execute();
           }
           
   - id: ${area_id}_trigger_gantry_move
     then:
       - script.execute: ${area_id}_gantry_move
-      - delay: 5s
     mode: single
 
 # Include the HTTP Request component
