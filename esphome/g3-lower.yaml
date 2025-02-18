@@ -1,0 +1,219 @@
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+#api:
+#  encryption:
+#    key: "PL+ZpVXlwzG1ULZmW6Ihfjba1TeiwUUEyO4F4OufSdw="
+
+ota:
+  - platform: esphome
+    password: "9abadbaf72933c83420c3ca7e1a2c041"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "G3-Lower Fallback Hotspot"
+    password: "vDhLUdAG528c"
+
+captive_portal:
+
+
+esphome:
+  name: g3-lower
+
+####################################################################
+# configure substitutions and friendly name
+####################################################################
+
+  area: ${area_id}
+  friendly_name: ${area_id}_${device_id}${suffix}
+
+# Note for pinout on ESP32-C3 Supermini:
+# Pin Functions
+# GPIO0 / A0 (bottom right corner in top view with USB port on the top)
+# GPIO1 / A1
+# GPIO2 / A2 (external pull-up resistor and is a boot related pin)
+# GPIO3 / A3
+# GPIO4 / A4 / SCK
+# GPIO5 / A5 / MISO
+# GPIO6 / MOSI
+# GPIO7 / SS
+# GPIO8 / SDA
+# GPIO9 / SCL (external pull-down resistor and is a boot related pin "BOOT button")
+# GPIO10
+# GPIO20 / RX
+# GPIO21 / TX
+
+substitutions:
+  area_id: G3D
+  device_id: "BRAIN"
+  suffix: ""
+  pin_sda: GPIO3
+  pin_scl: GPIO4
+  pin_fan0_pwm: GPIO6
+  pin_fan1_pwm: GPIO7
+  pin_irrigation_output: GPIO10
+  pin_humidifier: GPIO2
+  address_sht4x: "0x44"
+
+####################################################################
+# generic yaml below
+####################################################################
+mqtt:
+  broker: !secret mqtt_broker
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+  topic_prefix: "auto/${area_id}/${device_id}"
+  log_topic: "debug/${area_id}/${device_id}"
+
+time:
+  - !include includes/time_mqtt.yaml
+
+i2c:
+  !include includes/i2c_bus_a.yaml
+
+output:
+  - platform: slow_pwm
+    pin: ${pin_humidifier}
+    id: ${area_id}_${device_id}${suffix}_pwm_output
+    period: 10s
+
+fan:
+  - platform: speed
+    output: ${area_id}_${device_id}${suffix}_pwm_output
+    name: "Humidifier [${area_id}_${device_id}${suffix}]"
+    id: ${area_id}_${device_id}${suffix}_humidifier
+    speed_count: 100  # Set the speed steps (0-100%)
+    state_topic: "${area_id}/fan/state/HUMIDIFIER"
+    speed_state_topic: "${area_id}/fan/speed/HUMIDIFIER"
+    command_topic: "${area_id}/fan/state/HUMIDIFIER/set"
+    speed_command_topic: "${area_id}/fan/speed/HUMIDIFIER/set"
+
+
+sensor:
+  # PHYSICAL SENSORS
+  ## TEMPERATURE, HUMIDITY
+  - platform: sht4x
+    temperature:
+        name: "Temperature [${area_id}_${device_id}${suffix}]"
+        id: ${area_id}_${device_id}${suffix}_temperature
+        state_topic: "${area_id}/temperature/state/${device_id}"
+    humidity:
+        name: "Humidity [${area_id}_${device_id}${suffix}]"
+        id: ${area_id}_${device_id}${suffix}_humidity
+        state_topic: "${area_id}/humidity/state/${device_id}"
+    address: ${address_sht4x}
+    update_interval: 30s
+  # CALCULATED SENSORS
+  ## CLIMATE
+  - !include includes/sensor_vpd.yaml # depends on having temperature and humidity entities from a sensor
+  - !include includes/sensor_rh_target.yaml # depends on having temperature and vpd_target entities
+  # MQTT
+
+switch:
+  - !include includes/switch_enable.yaml
+  - !include includes/switch_irrigation_pump.yaml
+
+number:
+  - !include includes/number_irrigation_period.yaml
+  - !include includes/number_irrigation_duration.yaml
+  - !include includes/number_vpd_target.yaml
+  - !include includes/number_leaf_offset.yaml
+
+interval:
+  - interval: 60s
+    then:
+      - script.execute: update_humidifier_speed
+      - script.execute: publish_humidifier_speed
+  - interval: 3600s
+    then:
+      - script.execute: irrigate
+    
+
+script:
+  #- !include includes/script_update_humidifier_speed.yaml
+
+  - id: publish_humidifier_speed
+    then:
+      - mqtt.publish:
+          topic: "${area_id}/fan/speed/${device_id}"
+          payload: !lambda 'return std::to_string(id(${area_id}_${device_id}${suffix}_humidifier).speed);'
+  
+  - id: irrigate
+    then:
+      - if:
+          condition:
+            lambda: |
+              return id(${area_id}_${device_id}${suffix}_enable).state;
+          then:
+            - switch.turn_on: ${area_id}_${device_id}${suffix}_irrigation_pump
+            - delay: !lambda 'return (int) id(${area_id}_${device_id}${suffix}_irrigation_duration).state * 1000;'
+            - switch.turn_off: ${area_id}_${device_id}${suffix}_irrigation_pump
+
+  - id: update_humidifier_speed
+    then:
+      - lambda: |-
+          // Turn on the humidifier
+          auto call_on = id(${area_id}_${device_id}${suffix}_humidifier).turn_on();
+          call_on.perform();
+          ESP_LOGD("humidifier", "Turning on humidifier.");
+
+          // Retrieve RH targets
+          float rh_target = id(${area_id}_${device_id}${suffix}_rh_target).state;
+          ESP_LOGD("humidifier", "RH Target: %.2f%%", rh_target);
+
+          // Retrieve current RH
+          float rh = id(${area_id}_${device_id}${suffix}_humidity).state;
+
+          // Calculate RH difference
+          float rh_difference = rh_target - rh;
+          ESP_LOGD("humidifier", "RH difference: %.2f%%", rh_difference);
+
+          // Check if rh_target is valid
+          if (std::isnan(rh_target)) {
+            ESP_LOGW("humidifier", "RH Target is NaN. Skipping speed adjustment.");
+            return;
+          }
+
+          // Retrieve current humidifier speed
+          int current_speed = id(${area_id}_${device_id}${suffix}_humidifier).speed;
+          // Validate current_speed, ensure it is within 0-100%
+          if (current_speed < 0 || current_speed > 99) {
+            ESP_LOGW("humidifier", "Invalid current_speed (%d%%). Resetting to 0%%.", current_speed);
+            current_speed = 0;
+            id(${area_id}_${device_id}${suffix}_humidifier).speed = current_speed;
+          }
+          ESP_LOGD("humidifier", "Current Humidifier Speed: %d%%", current_speed);
+
+          // Define minimum RH difference to trigger adjustment (e.g., 1%)
+          const float min_rh_diff = 0.2;
+
+          // Round the RH difference to the nearest integer
+          int error = roundf(rh_difference);
+          ESP_LOGD("humidifier", "Rounded error: %d%%", error);
+
+          // Adjust humidifier speed based on RH comparison with hysteresis
+          if (error > min_rh_diff) {
+            // Increase speed by error, ensuring it doesn't exceed 100%
+            int new_speed = std::min(current_speed + error, 100);
+            id(${area_id}_${device_id}${suffix}_humidifier).speed = new_speed;
+            ESP_LOGD("humidifier", "RH target > current RH by > %.2f%%. Increasing speed to %d%%", min_rh_diff, new_speed);
+          } else if (error < -min_rh_diff) {
+            // Decrease speed by (abs(error) * 2), ensuring it doesn't go below 0%
+            int adjustment = std::abs(error) * 2;
+            int new_speed = std::max(current_speed - adjustment, 0);
+            id(${area_id}_${device_id}${suffix}_humidifier).speed = new_speed;
+            ESP_LOGD("humidifier", "RH target < current RH by > %.2f%%. Decreasing speed to %d%%", min_rh_diff, new_speed);
+          } else {
+            ESP_LOGD("humidifier", "RH difference within ±%.2f%%. No speed adjustment needed.", min_rh_diff);
+          }
+        

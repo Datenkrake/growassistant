@@ -61,6 +61,12 @@ mqtt:
   topic_prefix: "auto/${area_id}/${device_id}"
   log_topic: "debug/${area_id}/${device_id}"
 
+globals:
+  - id: ${area_id}_${device_id}${suffix}_pending_move
+    type: bool
+    restore_value: false
+    initial_value: 'false'
+
 # PWM controlled LED on GPIO8
 output:
   - platform: ledc
@@ -93,48 +99,53 @@ interval:
             id(${area_id}_${device_id}${suffix}_position_target).publish_state(id(${area_id}_${device_id}${suffix}_position).state - 0.01);
           }
 
-# Example rest_move_up script
+  - interval: 15s
+    then:
+      - script.execute: ${area_id}_trigger_gantry_move
+
 script:
   - id: ${area_id}_rest_move_up
     then:
       - http_request.get:
           url: "http://g1.local:7125/printer/gcode/script?script=move_light%20DISTANCE=10"
       - lambda: |-
-          ESP_LOGD("http_request", "Move up request sent, ignoring potential failures.");
+          ESP_LOGD("http_request", "Move up request sent.");
 
   - id: ${area_id}_rest_move_down
     then:
       - http_request.get:
           url: "http://g1.local:7125/printer/gcode/script?script=move_light%20DISTANCE=-10"
       - lambda: |-
-          ESP_LOGD("http_request", "Move down request sent, ignoring potential failures.");
+          ESP_LOGD("http_request", "Move down request sent.");
 
   - id: ${area_id}_gantry_move
     then:
       - lambda: |-
           ESP_LOGD("debug", "Checking conditions for moving gantry...");
-          ESP_LOGD("debug", "Cola detected state: %s", id(${area_id}_${device_id}${suffix}_cola_detected).state.c_str());
-          ESP_LOGD("debug", "Gantry position: %.2f, Min Position: %.2f", id(${area_id}_${device_id}${suffix}_position).state, id(${area_id}_${device_id}${suffix}_position_min).state);
-          if (id(${area_id}_${device_id}${suffix}_position_target).state > id(${area_id}_${device_id}${suffix}_position).state + 0.01 && id(${area_id}_${device_id}${suffix}_position).state <= id(${area_id}_${device_id}${suffix}_position_max).state) {
+          if (id(${area_id}_${device_id}${suffix}_position_target).state >
+              id(${area_id}_${device_id}${suffix}_position).state + 0.05 &&
+              id(${area_id}_${device_id}${suffix}_position).state <=
+              id(${area_id}_${device_id}${suffix}_position_max).state) {
             ESP_LOGD("main", "Conditions met. Calling REST endpoint to move gantry down");
             id(${area_id}_rest_move_down).execute();
-          } else if (id(${area_id}_${device_id}${suffix}_position_target).state < id(${area_id}_${device_id}${suffix}_position).state - 0.01 && id(${area_id}_${device_id}${suffix}_position).state >= id(${area_id}_${device_id}${suffix}_position_min).state) {
+          } else if (id(${area_id}_${device_id}${suffix}_position_target).state <
+                     id(${area_id}_${device_id}${suffix}_position).state - 0.05 &&
+                     id(${area_id}_${device_id}${suffix}_position).state >=
+                     id(${area_id}_${device_id}${suffix}_position_min).state) {
             ESP_LOGD("main", "Conditions met. Calling REST endpoint to move gantry up");
             id(${area_id}_rest_move_up).execute();
           } else {
             ESP_LOGD("main", "Conditions not met. Skipping...");
           }
-          if (id(${area_id}_${device_id}${suffix}_position_target).state > id(${area_id}_${device_id}${suffix}_position).state + 0.01 || id(${area_id}_${device_id}${suffix}_position_target).state < id(${area_id}_${device_id}${suffix}_position).state - 0.01) {
-            delay(15000);
-            id(${area_id}_trigger_gantry_move).execute();
-          }
-          
+          // Set a flag to trigger rechecking after 15 seconds without blocking the main thread.
+          id(${area_id}_${device_id}${suffix}_pending_move) = true;
+
   - id: ${area_id}_trigger_gantry_move
     then:
       - script.execute: ${area_id}_gantry_move
     mode: single
 
-# Include the HTTP Request component
 http_request:
   verify_ssl: false
   useragent: esphome/device
+
