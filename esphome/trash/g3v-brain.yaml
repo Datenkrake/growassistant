@@ -1,16 +1,11 @@
 # Enable Home Assistant API
 #api:
 #  encryption:
-#    key: "8sqEZlrTkjDFp0bb4h3RB4ARMPuGqPkUbt4u/7GmHOE="
+#    key: "mDqnqri8IqixzLdB16qmvlcDVeNiqwjynMLD7gPI0gs="
 
 ota:
   - platform: esphome
-    password: "0772ced7e23b72a0f24919c3c987d5b0"
-
-# Enable Home Assistant API
-#api:
-#  encryption:
-#    key: "mDqnqri8IqixzLdB16qmvlcDVeNiqwjynMLD7gPI0gs="
+    password: "58bc08329533f988e758dcefd581976a"
 
 esp32:
   board: esp32-c3-devkitm-1
