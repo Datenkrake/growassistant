@@ -53,6 +53,7 @@ substitutions:
   pin_fan1_pwm: GPIO21
   pin_fan2_pwm: GPIO7
   pin_humidifier: GPIO0
+  pin_heater_pwm_helper: GPIO1
   address_sht4x: "0x44"
 
 ####################################################################
@@ -72,6 +73,7 @@ mqtt:
   password: !secret mqtt_password
   topic_prefix: "auto/${area_id}/${device_id}"
   log_topic: "debug/${area_id}/${device_id}"
+  client_id: 'mqtt_client'
 
 time:
   - !include includes/time_mqtt.yaml
@@ -158,11 +160,11 @@ sensor:
     temperature:
       name: "Temperature SHT [${area_id}_${device_id}${suffix}]"
       id: ${area_id}_${device_id}${suffix}_temperature
-      state_topic: "${area_id}/temperature/state/SHT21"
+      state_topic: "${area_id}/temperature/state/CANOPY"
     humidity:
       name: "Humidity SHT [${area_id}_${device_id}${suffix}]"
       id: ${area_id}_${device_id}${suffix}_humidity
-      state_topic: "${area_id}/humidity/state/SHT21"
+      state_topic: "${area_id}/humidity/state/CANOPY"
     heater:
       name: "Heater"
     update_interval: 30s
@@ -231,6 +233,7 @@ switch:
   - !include includes/switch_enable.yaml
 
 number:
+  - !include includes/number_temperature_max.yaml
   - !include includes/number_vpd_target.yaml
   - !include includes/number_leaf_offset.yaml
   - !include includes/number_fan_speed_min.yaml
@@ -264,10 +267,8 @@ interval:
       - script.execute: update_wind_fan_speed
       - script.execute: ${area_id}_${device_id}${suffix}_publish_wind_fan_speed
       - script.execute: ${area_id}_${device_id}${suffix}_publish_exhaust_fan_speed
-
-  - interval: 30s
-    then:
       - script.execute: adjust_brightness_shelly_dimmer
+      - script.execute: update_heater
 
 globals:
   - id: ${area_id}_${device_id}${suffix}_exhaust_fan_pwm_value
@@ -305,6 +306,35 @@ script:
           topic: "${area_id}/fan/speed/${device_id}"
           payload: !lambda 'return std::to_string(id(${area_id}_${device_id}${suffix}_humidifier).speed);'
 
+  - id: update_heater
+    then:
+      - if:
+          condition:
+            lambda: |-
+              float current = id(${area_id}_${device_id}${suffix}_temperature).state;
+              float lower = id(${area_id}_${device_id}${suffix}_temperature_max).state - 1;
+              ESP_LOGD("update_heater", "Current: %.1f, Lower Threshold: %.1f", current, lower);
+              return current < lower;
+          then:
+            - mqtt.publish:
+                topic: "${area_id}/mains/heat/command/switch:0"
+                payload: "on"
+            - lambda: |-
+                ESP_LOGD("update_heater", "Heater turned ON (temp below lower threshold)");
+      - if:
+          condition:
+            lambda: |-
+              float current = id(${area_id}_${device_id}${suffix}_temperature).state;
+              float upper = id(${area_id}_${device_id}${suffix}_temperature_max).state + 1;
+              ESP_LOGD("update_heater", "Current: %.1f, Upper Threshold: %.1f", current, upper);
+              return current > upper;
+          then:
+            - mqtt.publish:
+                topic: "${area_id}/mains/heat/command/switch:0"
+                payload: "off"
+            - lambda: |-
+                ESP_LOGD("update_heater", "Heater turned OFF (temp above upper threshold)");
+
   - id: update_humidifier_speed
     then:
       - lambda: |-
@@ -335,7 +365,7 @@ script:
           // Validate current_speed, ensure it is within 0-100%
           if (current_speed < 0 || current_speed > 99) {
             ESP_LOGW("humidifier", "Invalid current_speed (%d%%). Resetting to 0%%.", current_speed);
-            current_speed = 0;
+            current_speed = 99;
             id(${area_id}_${device_id}${suffix}_humidifier).speed = current_speed;
           }
           ESP_LOGD("humidifier", "Current Humidifier Speed: %d%%", current_speed);
