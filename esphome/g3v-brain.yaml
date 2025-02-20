@@ -461,22 +461,14 @@ script:
     then:
         - lambda: |-
             float new_brightness = id(${area_id}_${device_id}${suffix}_light_percent).state;
-            // Get current brightness from the number sensor state
-            float current_brightness = id(${area_id}_${device_id}${suffix}_full_spectrum_brightness).state;
-
-            // Check if new_brightness is NaN and set to 0 if true
-            if (isnan(current_brightness)) {
-                ESP_LOGW("brightness_control", "New brightness is NaN. Setting to 0.");
-                current_brightness = 0;
-            }
-            ESP_LOGD("brightness_control", "Current Brightness: %.2f", current_brightness);
+            ESP_LOGD("brightness_control", "New Brightness: %.2f", new_brightness);
             id(${area_id}_${device_id}${suffix}_new_brightness_global) = new_brightness;
 
         - mqtt.publish:
             topic: "${area_id}/mains/light/command/switch:0"
             payload: !lambda |-
                 ESP_LOGD("brightness_control", "New Brightness Global: %.2f", id(${area_id}_${device_id}${suffix}_new_brightness_global));
-                return id(${area_id}_${device_id}${suffix}_new_brightness_global) > 0.0 ? "on" : "off";
+                return id(${area_id}_${device_id}${suffix}_dayphase_target) ? "on" : "off";
 
         - mqtt.publish_json:
             topic: "${area_id}/light/dimmer/rpc"
