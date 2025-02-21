@@ -88,14 +88,14 @@ output:
     period: 10s
 
   - platform: ledc
-    pin: ${pin_fan1_pwm}
+    pin: ${pin_fan2_pwm}
     id: ${area_id}_${device_id}${suffix}_exhaust_pwm
     frequency: 15000 Hz
     inverted: True
     max_power: 1.0
 
   - platform: ledc
-    pin: ${pin_fan2_pwm}
+    pin: ${pin_fan1_pwm}
     id: ${area_id}_${device_id}${suffix}_wind_pwm
     frequency: 15000 Hz
     inverted: True
@@ -134,29 +134,29 @@ fan:
 sensor:
   # PHYSICAL SENSORS
   ## TEMPERATURE, HUMIDITY
-  - platform: sht4x
+  - platform: sht3xd
     temperature:
         name: "Temperature SHT [${area_id}_${device_id}${suffix}]"
-        id: ${area_id}_${device_id}${suffix}_temperature_sht41
+        id: ${area_id}_${device_id}${suffix}_temperature
         state_topic: "${area_id}/temperature/state/SHT"
     humidity:
         name: "Humidity SHT [${area_id}_${device_id}${suffix}]"
-        id: ${area_id}_${device_id}${suffix}_humidity_sht41
+        id: ${area_id}_${device_id}${suffix}_humidity
         state_topic: "${area_id}/humidity/state/SHT"
     address: ${address_sht4x}
     update_interval: 30s
-  - platform: aht10
-    variant: AHT10
-    address: 0x38
-    temperature:
-      name: "Temperature AHT [${area_id}_${device_id}${suffix}]"
-      id: ${area_id}_${device_id}${suffix}_temperature
-      state_topic: "${area_id}/temperature/state/${device_id}"
-    humidity:
-      name: "Humidity AHT [${area_id}_${device_id}${suffix}]"
-      id: ${area_id}_${device_id}${suffix}_humidity
-      state_topic: "${area_id}/humidity/state/${device_id}"
-    update_interval: 30s
+  # - platform: aht10
+  #   variant: AHT10
+  #   address: 0x38
+  #   temperature:
+  #     name: "Temperature AHT [${area_id}_${device_id}${suffix}]"
+  #     id: ${area_id}_${device_id}${suffix}_temperature
+  #     state_topic: "${area_id}/temperature/state/${device_id}"
+  #   humidity:
+  #     name: "Humidity AHT [${area_id}_${device_id}${suffix}]"
+  #     id: ${area_id}_${device_id}${suffix}_humidity
+  #     state_topic: "${area_id}/humidity/state/${device_id}"
+  #   update_interval: 30s
   # CALCULATED SENSORS
   ## CLIMATE
   - !include includes/sensor_vpd.yaml # depends on having temperature and humidity entities from a sensor
