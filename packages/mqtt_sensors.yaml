@@ -1,5 +1,17 @@
 mqtt:
+  switch:
+    - name: "G3V Irrigation Enable (BRAIN)"
+      state_topic: "G3D/enable/state/BRAIN"
+      command_topic: "G3D/enable/state/BRAIN/set"
+      unique_id: mqtt_g3d_enable_brain
+      payload_on: "ON"
+      payload_off: "OFF"
+      value_template: "{{ value }}"
+
   number:
+    ##############################################################################
+    #     G1
+    ##############################################################################
     - name: "G1 Gantry Position Target"
       unique_id: "g1_gantry_position_target"
       command_topic: "G1/gantry_position_target/state/QBAR/set"
@@ -9,10 +21,158 @@ mqtt:
       retain: true
       unit_of_measurement: "m"
 
+    ##############################################################################
+    #     G3D
+    ##############################################################################
+    - name: "G3V Irrigatino Duration"
+      unique_id: "mqtt_g3d_irrigation_duration"
+      command_topic: "G3D/irrigation_duration/state/BRAIN/set"
+      min: 0
+      max: 100
+      step: 1
+      retain: true
+      unit_of_measurement: "s"
+
+    - name: "G3V Irrigatino Period"
+      unique_id: "mqtt_g3d_irrigation_duration"
+      command_topic: "G3D/irrigation_period/state/BRAIN/set"
+      min: 0
+      max: 360
+      step: 1
+      retain: true
+      unit_of_measurement: "m"
+
+    ##############################################################################
+    #     G3V
+    ##############################################################################
+
+    - name: "G3V VPD Target (BRAIN)"
+      state_topic: "G3V/vpd_target/state/BRAIN"
+      command_topic: "G3V/vpd_target/state/BRAIN/set"
+      unique_id: mqtt_g3v_vpd_target_brain
+      unit_of_measurement: "kPa"
+      value_template: "{{ value | float | round(2) }}"
+      min: 0
+      max: 2
+      step: 0.1
+      retain: true
+
+    - name: "G3V Light Percent (BRAIN)"
+      state_topic: "G3V/light_percent/state/BRAIN"
+      command_topic: "G3V/light_percent/state/BRAIN/set"
+      unique_id: mqtt_g3v_light_percent_brain
+      unit_of_measurement: "%"
+      value_template: "{{ value | float | round(1) }}"
+      min: 0
+      max: 0.70
+      step: 0.01
+      retain: true
+
   sensor:
-##############################################################################
-#     G2
-##############################################################################
+    ##############################################################################
+    #     G3D
+    ##############################################################################
+
+    ##############################################################################
+    #     G3V
+    ##############################################################################
+
+    - name: "G3V Canopy Temperature"
+      object_id: mqtt_g3v_temperature_canopy
+      unique_id: mqtt_g3v_temperature_canopy
+      state_topic: "G3V/temperature/state/CANOPY"
+      unit_of_measurement: "°C"
+      value_template: "{{ value | float | round(1) }}"
+      force_update: true
+
+    - name: "G3V Enable (BRAIN)"
+      object_id: mqtt_g3v_enable_brain
+      unique_id: mqtt_g3v_enable_brain
+      state_topic: "G3V/enable/state/BRAIN"
+      value_template: "{{ value }}"
+      force_update: true
+
+    - name: "G3V Fan Speed (EXHAUST)"
+      object_id: mqtt_g3v_fan_speed_exhaust
+      unique_id: mqtt_g3v_fan_speed_exhaust
+      state_topic: "G3V/fan/speed/EXHAUST"
+      unit_of_measurement: "%"
+      value_template: "{{ value | float | round(0) }}"
+      force_update: true
+
+    - name: "G3V Fan Speed (HUMIDIFIER)"
+      object_id: mqtt_g3v_fan_speed_humidifier
+      unique_id: mqtt_g3v_fan_speed_humidifier
+      state_topic: "G3V/fan/speed/HUMIDIFIER"
+      unit_of_measurement: "%"
+      value_template: "{{ value | float | round(0) }}"
+      force_update: true
+
+    - name: "G3V Fan Speed (WIND)"
+      object_id: mqtt_g3v_fan_speed_wind
+      unique_id: mqtt_g3v_fan_speed_wind
+      state_topic: "G3V/fan/speed/WIND"
+      unit_of_measurement: "%"
+      value_template: "{{ value | float | round(0) }}"
+      force_update: true
+
+    - name: "G3V Canopy Humidity"
+      object_id: mqtt_g3v_humidity_canopy
+      unique_id: mqtt_g3v_humidity_canopy
+      state_topic: "G3V/humidity/state/CANOPY"
+      unit_of_measurement: "%"
+      value_template: "{{ value | float | round(1) }}"
+      force_update: true
+
+    - name: "G3V Light Percent (BRAIN)"
+      object_id: mqtt_g3v_light_percent_brain
+      unique_id: mqtt_g3v_light_percent_brain
+      state_topic: "G3V/light_percent/state/BRAIN"
+      unit_of_measurement: "%"
+      value_template: "{{ value | float | round(1) }}"
+      force_update: true
+
+    - name: "G3V Mains Heat"
+      object_id: mqtt_g3v_mains_heat
+      unique_id: mqtt_g3v_mains_heat
+      state_topic: "G3V/mains/heat/command/switch:0"
+      value_template: "{{ value }}"
+      force_update: true
+
+    - name: "G3V RH Target (BRAIN)"
+      object_id: mqtt_g3v_rh_target_brain
+      unique_id: mqtt_g3v_rh_target_brain
+      state_topic: "G3V/rh_target/state/BRAIN"
+      unit_of_measurement: "%"
+      value_template: "{{ value | float | round(1) }}"
+      force_update: true
+
+    - name: "G3V Sunrise Time (BRAIN)"
+      object_id: mqtt_g3v_sunrise_time_brain
+      unique_id: mqtt_g3v_sunrise_time_brain
+      state_topic: "G3V/sunrise_time/state/BRAIN"
+      value_template: "{{ value }}"
+      force_update: true
+
+    - name: "G3V VPD (BRAIN)"
+      object_id: mqtt_g3v_vpd_brain
+      unique_id: mqtt_g3v_vpd_brain
+      state_topic: "G3V/vpd/state/BRAIN"
+      unit_of_measurement: "kPa"
+      value_template: "{{ value | float | round(2) }}"
+      force_update: true
+
+    - name: "G3V VPD Target (BRAIN)"
+      object_id: mqtt_g3v_vpd_target_brain
+      unique_id: mqtt_g3v_vpd_target_brain
+      state_topic: "G3V/vpd_target/state/BRAIN"
+      unit_of_measurement: "kPa"
+      value_template: "{{ value | float | round(2) }}"
+      force_update: true
+
+    ##############################################################################
+    #     G2
+    ##############################################################################
 
     - name: "G2 Exhaust Fan Speed"
       object_id: mqtt_g2_fan_speed_exhaust
@@ -210,9 +370,9 @@ mqtt:
       force_update: true
       unique_id: mqtt_g2_mains_light_power
 
-##############################################################################
-#     G1
-##############################################################################
+    ##############################################################################
+    #     G1
+    ##############################################################################
 
     - name: "G1 Exhaust Fan Speed"
       object_id: mqtt_g1_fan_speed_exhaust
