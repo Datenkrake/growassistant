@@ -1,0 +1,103 @@
+# A bind value of 0.0.0.0 means any network this computer can access
+# You can chage this to a specfic network e.g. "192.168.1.101" here
+# Or to no networks e.g. this computer only "127.0.0.1"
+bind = "0.0.0.0"
+
+# Default port is 8554 but you can change it by uncommenting the following
+bind_port = 8556
+
+# Uncomment the following and supply a path to a valid PEM
+# to activate TLS encryption.
+# The PEM should contain the certificate and the private key
+# If TLS is activated you must connect with "rtsps://" and not "rtsp://"
+# certificate = "/path/to/pem/with/cert/and/key"
+
+# Choose if the client is required to provide a certificate signed by the server's CA.
+# none|requested|required - default none
+# tls_client_auth = "required"
+
+# You can password protect the rtsp server mount points by adding users
+# like the following me and someone. If you do not add [[users]]
+# then anyone can connect without a password or username
+# To access such a stream try using a url such as "rtsp://me:mepass@192.168.1.101/driveway"
+
+# [[users]]
+# name = "me"
+# pass = "mepass"
+#
+# [[users]]
+# name = "someone"
+# pass = "someonepass"
+
+# Uncomment to enable MQTT
+#[mqtt]
+#mqtt.broker_addr = "localhost"
+#mqtt.port = 1883
+#mqtt.credentials = ["growassistant", "growassistant"]
+
+
+[[cameras]]
+name = "G3"
+username = "growassistant"
+password = ".n7@cTVT9b-7D6KRasx3"
+address = "192.168.1.99:9000"
+# MQTT Discovery: https://www.home-assistant.io/integrations/mqtt/#mqtt-discovery
+# mqtt.discovery.topic = "homeassistant" # Uncomment to enable
+# If using discovery, _ characters are replaced with spaces in the name and title case is applied
+# mqtt.discovery.features = ["floodlight"] # Uncomment if this camera has a spotlight/floodlight
+
+# If you use a battery camera: **Instead** of an `address` supply the uid
+# as follows
+# uid = "ABCD01234567890EFG"
+
+# By default any of the users can connect (or anyone at all if no users are specfied)
+# You can uncomment the following to permit only specfic users
+# permitted_users = [ "me" ]
+
+# By default "both" "mainStream" and "subStream" are connected
+# If your device has user connection limits try a single stream instead.
+# stream = "mainStream"
+
+# By default neolink will use any means to connect to the camera
+# from a UID
+# This include relaying via reolink servers
+# This variable `discovery` controls the method of UID discovery
+# - Possible values
+# "relay" # Any means including connecting and transmitting through reolink
+# "map" # Register our local ip address with reolink and ask the camera to connect to us but don't relay data through reolink
+# "remote" # Register our local ip address with reolink but only permit same network connections (useful if broadcast is not possible)
+# "local" # Do not contact reolink servers at all. Rely soley on local UDP broadcast based discovery
+#
+# "cellular" # Cellular camera only support Relay and Map to speed up connecting to them this option will skip the local/remote
+#
+# discovery = "relay"
+
+# Certain types of camera emit status messages (such as battery levels)
+#
+# By default we hide these status messages from the user but you can instead requst that
+# they be printed to stdout using print_format
+#
+# Valid values are:
+# - None
+# - Human
+# - Xml
+#
+# print_format = "None"
+
+
+#[[cameras]]
+#name = "storage shed"
+#username = "admin"
+#password = "987654321"
+#address = "192.168.1.245:9000"
+# If you use a battery camera: **Instead** of an `address` supply the uid
+# as follows
+# uid = "ABCD01234567890EFG"
+
+# If you use an NVR that relays several camera connections you can choose which
+# camera to connect to with by setting the `channel_id`
+#
+# By default channel_id = 0. Eg the first connected camera on the device
+# **Note**: that unlike in the official client the numbering starts from 0 not 1.
+# An 8 channel NVR would have channels 0 through 7
+# channel_id = 0

@@ -130,43 +130,29 @@ fan:
 sensor:
   # PHYSICAL SENSORS
   ## TEMPERATURE, HUMIDITY
-  # - platform: sht4x
-  #   temperature:
-  #       name: "Temperature SHT [${area_id}_${device_id}${suffix}]"
-  #       id: ${area_id}_${device_id}${suffix}_temperature_sht41
-  #       state_topic: "${area_id}/temperature/state/SHT41"
-  #   humidity:
-  #       name: "Humidity SHT [${area_id}_${device_id}${suffix}]"
-  #       id: ${area_id}_${device_id}${suffix}_humidity_sht41
-  #       state_topic: "${area_id}/humidity/state/SHT41"
-  #   address: ${address_sht4x}
-  #   update_interval: 30s
-  # - platform: aht10
-  #   variant: AHT10
-  #   address: 0x38
-  #   temperature:
-  #     name: "Temperature AHT [${area_id}_${device_id}${suffix}]"
-  #     id: ${area_id}_${device_id}${suffix}_temperature
-  #     state_topic: "${area_id}/temperature/state/${device_id}"
-  #   humidity:
-  #     name: "Humidity AHT [${area_id}_${device_id}${suffix}]"
-  #     id: ${area_id}_${device_id}${suffix}_humidity
-  #     state_topic: "${area_id}/humidity/state/${device_id}"
-  #   update_interval: 30s
-  # Example configuration entry
   - platform: htu21d
     model: htu21d
     temperature:
       name: "Temperature SHT [${area_id}_${device_id}${suffix}]"
       id: ${area_id}_${device_id}${suffix}_temperature
       state_topic: "${area_id}/temperature/state/CANOPY"
+      filters:
+        - sliding_window_moving_average:
+            window_size: 30
+            send_every: 10
     humidity:
       name: "Humidity SHT [${area_id}_${device_id}${suffix}]"
       id: ${area_id}_${device_id}${suffix}_humidity
       state_topic: "${area_id}/humidity/state/CANOPY"
+      filters:
+        - sliding_window_moving_average:
+            window_size: 30
+            send_every: 10
     heater:
       name: "Heater"
-    update_interval: 30s
+    update_interval: 1s  
+    
+    
   # CALCULATED SENSORS
   ## CLIMATE
   - !include includes/sensor_vpd.yaml # depends on having temperature and humidity entities from a sensor
@@ -467,7 +453,7 @@ script:
             topic: "${area_id}/mains/light/command/switch:0"
             payload: !lambda |-
                 ESP_LOGD("brightness_control", "New Brightness Global: %.2f", id(${area_id}_${device_id}${suffix}_new_brightness_global));
-                return id(${area_id}_${device_id}${suffix}_dayphase_target) ? "on" : "off";
+                return id(${area_id}_${device_id}${suffix}_dayphase_target).state ? "on" : "off";
 
         - mqtt.publish_json:
             topic: "${area_id}/light/dimmer/rpc"

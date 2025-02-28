@@ -19,7 +19,6 @@ mqtt:
       max: 1.30
       step: 0.01
       retain: true
-      unit_of_measurement: "m"
 
     ##############################################################################
     #     G3D
@@ -45,13 +44,12 @@ mqtt:
     ##############################################################################
     #     G3V
     ##############################################################################
-
     - name: "G3V VPD Target (BRAIN)"
       state_topic: "G3V/vpd_target/state/BRAIN"
       command_topic: "G3V/vpd_target/state/BRAIN/set"
       unique_id: mqtt_g3v_vpd_target_brain
       unit_of_measurement: "kPa"
-      value_template: "{{ value | float | round(2) }}"
+      value_template: "{{ (value | float | round(2)) if (value | float) == (value | float) else 0 }}"
       min: 0
       max: 2
       step: 0.1
@@ -62,7 +60,7 @@ mqtt:
       command_topic: "G3V/light_percent/state/BRAIN/set"
       unique_id: mqtt_g3v_light_percent_brain
       unit_of_measurement: "%"
-      value_template: "{{ value | float | round(1) }}"
+      value_template: "{{ (value | float | round(1)) if (value | float) == (value | float) else 0 }}"
       min: 0
       max: 0.70
       step: 0.01
@@ -72,17 +70,17 @@ mqtt:
     ##############################################################################
     #     G3D
     ##############################################################################
+    # (No G3D sensors defined in this snippet)
 
     ##############################################################################
     #     G3V
     ##############################################################################
-
     - name: "G3V Canopy Temperature"
       object_id: mqtt_g3v_temperature_canopy
       unique_id: mqtt_g3v_temperature_canopy
       state_topic: "G3V/temperature/state/CANOPY"
       unit_of_measurement: "°C"
-      value_template: "{{ value | float | round(1) }}"
+      value_template: "{{ (value | float | round(1)) if (value | float) == (value | float) else 0 }}"
       force_update: true
 
     - name: "G3V Enable (BRAIN)"
@@ -97,7 +95,7 @@ mqtt:
       unique_id: mqtt_g3v_fan_speed_exhaust
       state_topic: "G3V/fan/speed/EXHAUST"
       unit_of_measurement: "%"
-      value_template: "{{ value | float | round(0) }}"
+      value_template: "{{ (value | float | round(0)) if (value | float) == (value | float) else 0 }}"
       force_update: true
 
     - name: "G3V Fan Speed (HUMIDIFIER)"
@@ -105,7 +103,7 @@ mqtt:
       unique_id: mqtt_g3v_fan_speed_humidifier
       state_topic: "G3V/fan/speed/HUMIDIFIER"
       unit_of_measurement: "%"
-      value_template: "{{ value | float | round(0) }}"
+      value_template: "{{ (value | float | round(0)) if (value | float) == (value | float) else 0 }}"
       force_update: true
 
     - name: "G3V Fan Speed (WIND)"
@@ -113,7 +111,7 @@ mqtt:
       unique_id: mqtt_g3v_fan_speed_wind
       state_topic: "G3V/fan/speed/WIND"
       unit_of_measurement: "%"
-      value_template: "{{ value | float | round(0) }}"
+      value_template: "{{ (value | float | round(0)) if (value | float) == (value | float) else 0 }}"
       force_update: true
 
     - name: "G3V Canopy Humidity"
@@ -121,7 +119,7 @@ mqtt:
       unique_id: mqtt_g3v_humidity_canopy
       state_topic: "G3V/humidity/state/CANOPY"
       unit_of_measurement: "%"
-      value_template: "{{ value | float | round(1) }}"
+      value_template: "{{ (value | float | round(1)) if (value | float) == (value | float) else 0 }}"
       force_update: true
 
     - name: "G3V Light Percent (BRAIN)"
@@ -129,7 +127,7 @@ mqtt:
       unique_id: mqtt_g3v_light_percent_brain
       state_topic: "G3V/light_percent/state/BRAIN"
       unit_of_measurement: "%"
-      value_template: "{{ value | float | round(1) }}"
+      value_template: "{{ (value | float | round(1)) if (value | float) == (value | float) else 0 }}"
       force_update: true
 
     - name: "G3V Mains Heat"
@@ -144,7 +142,7 @@ mqtt:
       unique_id: mqtt_g3v_rh_target_brain
       state_topic: "G3V/rh_target/state/BRAIN"
       unit_of_measurement: "%"
-      value_template: "{{ value | float | round(1) }}"
+      value_template: "{{ (value | float | round(1)) if (value | float) == (value | float) else 0 }}"
       force_update: true
 
     - name: "G3V Sunrise Time (BRAIN)"
@@ -159,7 +157,7 @@ mqtt:
       unique_id: mqtt_g3v_vpd_brain
       state_topic: "G3V/vpd/state/BRAIN"
       unit_of_measurement: "kPa"
-      value_template: "{{ value | float | round(2) }}"
+      value_template: "{{ (value | float | round(2)) if (value | float) == (value | float) else 0 }}"
       force_update: true
 
     - name: "G3V VPD Target (BRAIN)"
@@ -167,18 +165,17 @@ mqtt:
       unique_id: mqtt_g3v_vpd_target_brain
       state_topic: "G3V/vpd_target/state/BRAIN"
       unit_of_measurement: "kPa"
-      value_template: "{{ value | float | round(2) }}"
+      value_template: "{{ (value | float | round(2)) if (value | float) == (value | float) else 0 }}"
       force_update: true
 
     ##############################################################################
     #     G2
     ##############################################################################
-
     - name: "G2 Exhaust Fan Speed"
       object_id: mqtt_g2_fan_speed_exhaust
       state_topic: "G2/fan/speed/EXHAUST"
       unit_of_measurement: "%"
-      value_template: "{{ value | int }}"
+      value_template: "{{ (value | int) if (value | float) == (value | float) else 0 }}"
       force_update: true
       unique_id: mqtt_g2_fan_speed_exhaust
 
@@ -186,7 +183,7 @@ mqtt:
       object_id: mqtt_g2_fan_speed_gantry
       state_topic: "G2/fan/speed/GANTRY"
       unit_of_measurement: "%"
-      value_template: "{{ value | int }}"
+      value_template: "{{ (value | int) if (value | float) == (value | float) else 0 }}"
       force_update: true
       unique_id: mqtt_g2_fan_speed_gantry
 
@@ -194,7 +191,7 @@ mqtt:
       object_id: mqtt_g2_fan_speed_intake
       state_topic: "G2/fan/speed/INTAKE"
       unit_of_measurement: "%"
-      value_template: "{{ value | int }}"
+      value_template: "{{ (value | int) if (value | float) == (value | float) else 0 }}"
       force_update: true
       unique_id: mqtt_g2_fan_speed_intake
 
@@ -202,7 +199,7 @@ mqtt:
       object_id: mqtt_g2_fan_speed_humidifier
       state_topic: "G2/fan/speed/HUMIDIFIER"
       unit_of_measurement: "%"
-      value_template: "{{ value | int }}"
+      value_template: "{{ (value | int) if (value | float) == (value | float) else 0 }}"
       force_update: true
       unique_id: mqtt_g2_fan_speed_humidifier
 
@@ -210,7 +207,7 @@ mqtt:
       object_id: mqtt_g2_canopy_vpd
       state_topic: "G2/vpd/state/CANOPY"
       unit_of_measurement: "kPa"
-      value_template: "{{ value | float | round(2) }}"
+      value_template: "{{ (value | float | round(2)) if (value | float) == (value | float) else 0 }}"
       force_update: true
       unique_id: mqtt_g2_canopy_vpd
 
@@ -218,7 +215,7 @@ mqtt:
       object_id: mqtt_g2_gantry_vpd
       state_topic: "G2/vpd/state/GANTRY"
       unit_of_measurement: "kPa"
-      value_template: "{{ value | float | round(2) }}"
+      value_template: "{{ (value | float | round(2)) if (value | float) == (value | float) else 0 }}"
       force_update: true
       unique_id: mqtt_g2_gantry_vpd
 
@@ -226,7 +223,7 @@ mqtt:
       object_id: mqtt_g2_intake_vpd
       state_topic: "G2/vpd/state/INTAKE"
       unit_of_measurement: "kPa"
-      value_template: "{{ value | float | round(2) }}"
+      value_template: "{{ (value | float | round(2)) if (value | float) == (value | float) else 0 }}"
       force_update: true
       unique_id: mqtt_g2_intake_vpd
 
@@ -234,7 +231,7 @@ mqtt:
       object_id: mqtt_g2_exhaust_vpd
       state_topic: "G2/vpd/state/EXHAUST"
       unit_of_measurement: "kPa"
-      value_template: "{{ value | float | round(2) }}"
+      value_template: "{{ (value | float | round(2)) if (value | float) == (value | float) else 0 }}"
       force_update: true
       unique_id: mqtt_g2_exhaust_vpd
 
@@ -242,7 +239,7 @@ mqtt:
       object_id: mqtt_g2_temperature_canopy
       state_topic: "G2/temperature/state/CANOPY"
       unit_of_measurement: "°C"
-      value_template: "{{ value | float | round(1) }}"
+      value_template: "{{ (value | float | round(1)) if (value | float) == (value | float) else 0 }}"
       force_update: true
       unique_id: mqtt_g2_temperature_canopy
 
@@ -250,7 +247,7 @@ mqtt:
       object_id: mqtt_g2_temperature_gantry
       state_topic: "G2/temperature/state/GANTRY"
       unit_of_measurement: "°C"
-      value_template: "{{ value | float | round(1) }}"
+      value_template: "{{ (value | float | round(1)) if (value | float) == (value | float) else 0 }}"
       force_update: true
       unique_id: mqtt_g2_temperature_gantry
 
@@ -258,7 +255,7 @@ mqtt:
       object_id: mqtt_g2_temperature_intake
       state_topic: "G2/temperature/state/INTAKE"
       unit_of_measurement: "°C"
-      value_template: "{{ value | float | round(1) }}"
+      value_template: "{{ (value | float | round(1)) if (value | float) == (value | float) else 0 }}"
       force_update: true
       unique_id: mqtt_g2_temperature_intake
 
@@ -266,7 +263,7 @@ mqtt:
       object_id: mqtt_g2_temperature_exhaust
       state_topic: "G2/temperature/state/EXHAUST"
       unit_of_measurement: "°C"
-      value_template: "{{ value | float | round(1) }}"
+      value_template: "{{ (value | float | round(1)) if (value | float) == (value | float) else 0 }}"
       force_update: true
       unique_id: mqtt_g2_temperature_exhaust
 
@@ -274,7 +271,7 @@ mqtt:
       object_id: mqtt_g2_humidity_canopy
       state_topic: "G2/humidity/state/CANOPY"
       unit_of_measurement: "%"
-      value_template: "{{ value | float | round(1) }}"
+      value_template: "{{ (value | float | round(1)) if (value | float) == (value | float) else 0 }}"
       force_update: true
       unique_id: mqtt_g2_humidity_canopy
 
@@ -282,7 +279,7 @@ mqtt:
       object_id: mqtt_g2_humidity_gantry
       state_topic: "G2/humidity/state/GANTRY"
       unit_of_measurement: "%"
-      value_template: "{{ value | float | round(1) }}"
+      value_template: "{{ (value | float | round(1)) if (value | float) == (value | float) else 0 }}"
       force_update: true
       unique_id: mqtt_g2_humidity_gantry
 
@@ -290,7 +287,7 @@ mqtt:
       object_id: mqtt_g2_humidity_intake
       state_topic: "G2/humidity/state/INTAKE"
       unit_of_measurement: "%"
-      value_template: "{{ value | float | round(1) }}"
+      value_template: "{{ (value | float | round(1)) if (value | float) == (value | float) else 0 }}"
       force_update: true
       unique_id: mqtt_g2_humidity_intake
 
@@ -298,7 +295,7 @@ mqtt:
       object_id: mqtt_g2_humidity_exhaust
       state_topic: "G2/humidity/state/EXHAUST"
       unit_of_measurement: "%"
-      value_template: "{{ value | float | round(1) }}"
+      value_template: "{{ (value | float | round(1)) if (value | float) == (value | float) else 0 }}"
       force_update: true
       unique_id: mqtt_g2_humidity_exhaust
 
@@ -306,7 +303,7 @@ mqtt:
       object_id: mqtt_g2_dli_canopy
       state_topic: "G2/dli/state/CANOPY"
       unit_of_measurement: "mol/m2/day"
-      value_template: "{{ value | float | round(1) }}"
+      value_template: "{{ (value | float | round(1)) if (value | float) == (value | float) else 0 }}"
       force_update: true
       unique_id: mqtt_g2_dli_canopy
 
@@ -314,7 +311,7 @@ mqtt:
       object_id: mqtt_g2_ppfd_canopy
       state_topic: "G2/ppfd/state/CANOPY"
       unit_of_measurement: "μmol/m²/s"
-      value_template: "{{ value | int }}"
+      value_template: "{{ (value | int) if (value | float) == (value | float) else 0 }}"
       force_update: true
       unique_id: mqtt_g2_ppfd_canopy
 
@@ -322,7 +319,7 @@ mqtt:
       object_id: mqtt_g2_height
       state_topic: "G2/gantry/position"
       unit_of_measurement: "cm"
-      value_template: "{{ value | float | round(1) }}"
+      value_template: "{{ (value | float | round(1)) if (value | float) == (value | float) else 0 }}"
       force_update: true
       unique_id: mqtt_g2_height
 
@@ -364,7 +361,7 @@ mqtt:
     - name: "G2 Mains Light Power"
       object_id: mqtt_g2_mains_light_power
       state_topic: "G2/mains/light/status/switch:0"
-      value_template: "{{ value_json.apower }}"
+      value_template: "{{ (value_json.apower | float) if (value_json.apower | float) == (value_json.apower | float) else 0 }}"
       unit_of_measurement: "W"
       device_class: power
       force_update: true
@@ -373,12 +370,11 @@ mqtt:
     ##############################################################################
     #     G1
     ##############################################################################
-
     - name: "G1 Exhaust Fan Speed"
       object_id: mqtt_g1_fan_speed_exhaust
       state_topic: "G1/fan/speed/EXHAUST"
       unit_of_measurement: "%"
-      value_template: "{{ value | int }}"
+      value_template: "{{ (value | int) if (value | float) == (value | float) else 0 }}"
       force_update: true
       unique_id: mqtt_g1_fan_speed_exhaust
 
@@ -386,7 +382,7 @@ mqtt:
       object_id: mqtt_g1_fan_speed_gantry
       state_topic: "G1/fan/speed/GANTRY"
       unit_of_measurement: "%"
-      value_template: "{{ value | int }}"
+      value_template: "{{ (value | int) if (value | float) == (value | float) else 0 }}"
       force_update: true
       unique_id: mqtt_g1_fan_speed_gantry
 
@@ -394,7 +390,7 @@ mqtt:
       object_id: mqtt_g1_fan_speed_intake
       state_topic: "G1/fan/speed/INTAKE"
       unit_of_measurement: "%"
-      value_template: "{{ value | int }}"
+      value_template: "{{ (value | int) if (value | float) == (value | float) else 0 }}"
       force_update: true
       unique_id: mqtt_g1_fan_speed_intake
 
@@ -402,7 +398,7 @@ mqtt:
       object_id: mqtt_g1_fan_speed_humidifier
       state_topic: "G1/fan/speed/HUMIDIFIER"
       unit_of_measurement: "%"
-      value_template: "{{ value | int }}"
+      value_template: "{{ (value | int) if (value | float) == (value | float) else 0 }}"
       force_update: true
       unique_id: mqtt_g1_fan_speed_humidifier
 
@@ -410,7 +406,7 @@ mqtt:
       object_id: mqtt_g1_vpd
       state_topic: "G1/vpd/state/CANOPY"
       unit_of_measurement: "kPa"
-      value_template: "{{ value | float | round(1) }}"
+      value_template: "{{ (value | float | round(1)) if (value | float) == (value | float) else 0 }}"
       force_update: true
       unique_id: mqtt_g1_vpd
 
@@ -418,7 +414,7 @@ mqtt:
       object_id: mqtt_g1_ppfd
       state_topic: "G1/ppfd/state/CANOPY"
       unit_of_measurement: "umol/s/m1"
-      value_template: "{{ value | int }}"
+      value_template: "{{ (value | int) if (value | float) == (value | float) else 0 }}"
       force_update: true
       unique_id: mqtt_g1_ppfd
 
@@ -433,7 +429,7 @@ mqtt:
       object_id: mqtt_g1_temperature_canopy
       state_topic: "G1/temperature/state/CANOPY"
       unit_of_measurement: "°C"
-      value_template: "{{ value | float | round(1) }}"
+      value_template: "{{ (value | float | round(1)) if (value | float) == (value | float) else 0 }}"
       force_update: true
       unique_id: mqtt_g1_temperature_canopy
 
@@ -441,6 +437,6 @@ mqtt:
       object_id: mqtt_g1_humidity_canopy
       state_topic: "G1/humidity/state/CANOPY"
       unit_of_measurement: "%"
-      value_template: "{{ value | float | round(1) }}"
+      value_template: "{{ (value | float | round(1)) if (value | float) == (value | float) else 0 }}"
       force_update: true
       unique_id: mqtt_g1_humidity_canopy

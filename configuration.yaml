@@ -1,6 +1,6 @@
 # Include the sensors/combined-sensors.yaml file
-#template: 
-  #- !include sensors/combined-sensors.yaml
+#template:
+#- !include sensors/combined-sensors.yaml
 
 # template: !include_dir_merge_list templates/
 
@@ -21,9 +21,14 @@ frontend:
     - /hacsfiles/lovelace-multiline-text-input-card/lovelace-multiline-text-input-card.js
     - /hacsfiles/flex-horseshoe-card/flex-horseshoe-card.js
 
+camera:
+  - platform: ffmpeg
+    name: G3-Cam
+    input: rtsp://localhost:8556/G3/main
+    
 #lovelace:
 #  mode: yaml
-  
+
 #input_boolean: !include entities/input_bools.yaml
 #input_number: !include entities/input_numbers.yaml
 #input_datetime: !include entities/input_datetime.yaml
@@ -105,6 +110,3 @@ automation:
         data:
           entity_id: camera.g2_cam_profile000_mainstream
           filename: "/config/www/timelapse/G2/lovelace.jpg"
-
-
-
