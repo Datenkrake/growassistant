@@ -52,7 +52,7 @@ esp32_camera:
   idle_framerate: 0.1 fps
   resolution: 1600x1200
   jpeg_quality: 10
-  vertical_flip: true
+  vertical_flip: false
   horizontal_mirror: true
   contrast: 0
   brightness: 0

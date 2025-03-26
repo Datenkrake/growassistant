@@ -23,8 +23,13 @@ frontend:
 
 camera:
   - platform: ffmpeg
-    name: G3-Cam
-    input: rtsp://localhost:8556/G3/main
+    name: G3V-Cam
+    input: rtsp://localhost:8554/G3V/main
+  
+  - platform: ffmpeg
+    name: G3D-Cam
+    input: rtsp://localhost:8554/G3D/main
+    
     
 #lovelace:
 #  mode: yaml
