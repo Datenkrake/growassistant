@@ -15,6 +15,7 @@ mqtt:
     - name: "G1 Gantry Position Target"
       unique_id: "g1_gantry_position_target"
       command_topic: "G1/gantry_position_target/state/QBAR/set"
+      state_topic: "G1/gantry_position_target/state/QBAR"
       min: 0
       max: 1.30
       step: 0.01

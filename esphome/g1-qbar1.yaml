@@ -91,15 +91,20 @@ text_sensor:
 
 # Automation to move gantry up when conditions are met
 interval:
-  - interval: 60min
+  - interval: 15min
     then:
       - lambda: |-
           // if cola is detected, set the target position to position - 0.01
-          if (id(${area_id}_${device_id}${suffix}_cola_detected).state == "ON") {
-            id(${area_id}_${device_id}${suffix}_position_target).publish_state(id(${area_id}_${device_id}${suffix}_position).state - 0.01);
+          ESP_LOGD("cola detection", "Cola detected: %s", id(${area_id}_${device_id}${suffix}_cola_detected).state.c_str());
+          if (id(${area_id}_${device_id}${suffix}_cola_detected).state == "true") {
+            float new_position = id(${area_id}_${device_id}${suffix}_position).state - 0.1;
+            new_position = std::round(new_position * 100.0f) / 100.0f;
+            id(${area_id}_${device_id}${suffix}_position_target).publish_state(new_position);
+            // Optionally log immediately after publishing (if state propagation is synchronous)
+            ESP_LOGD("cola detection", "Published target position: %.2f", id(${area_id}_${device_id}${suffix}_position_target).state);
           }
 
-  - interval: 15s
+  - interval: 30s
     then:
       - script.execute: ${area_id}_trigger_gantry_move
 
@@ -121,21 +126,23 @@ script:
   - id: ${area_id}_gantry_move
     then:
       - lambda: |-
-          ESP_LOGD("debug", "Checking conditions for moving gantry...");
+          ESP_LOGD("gantry move", "Checking conditions for moving gantry...");
+          ESP_LOGD("gantry move", "Target position: %.2f", id(${area_id}_${device_id}${suffix}_position_target).state);
+          ESP_LOGD("gantry move", "Current position: %.2f", id(${area_id}_${device_id}${suffix}_position).state);
           if (id(${area_id}_${device_id}${suffix}_position_target).state >
               id(${area_id}_${device_id}${suffix}_position).state + 0.05 &&
               id(${area_id}_${device_id}${suffix}_position).state <=
               id(${area_id}_${device_id}${suffix}_position_max).state) {
-            ESP_LOGD("main", "Conditions met. Calling REST endpoint to move gantry down");
+            ESP_LOGD("gantry move", "Conditions met. Calling REST endpoint to move gantry down");
             id(${area_id}_rest_move_down).execute();
           } else if (id(${area_id}_${device_id}${suffix}_position_target).state <
                      id(${area_id}_${device_id}${suffix}_position).state - 0.05 &&
                      id(${area_id}_${device_id}${suffix}_position).state >=
                      id(${area_id}_${device_id}${suffix}_position_min).state) {
-            ESP_LOGD("main", "Conditions met. Calling REST endpoint to move gantry up");
+            ESP_LOGD("gantry move", "Conditions met. Calling REST endpoint to move gantry up");
             id(${area_id}_rest_move_up).execute();
           } else {
-            ESP_LOGD("main", "Conditions not met. Skipping...");
+            ESP_LOGD("gantry move", "Conditions not met. Skipping...");
           }
           // Set a flag to trigger rechecking after 15 seconds without blocking the main thread.
           id(${area_id}_${device_id}${suffix}_pending_move) = true;
