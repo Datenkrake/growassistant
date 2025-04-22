@@ -115,13 +115,21 @@ interval:
   - interval: 60s
     then:
       - script.execute: update_humidifier_speed
-      - script.execute: pubish_humidifier_speed
+      - script.execute: publish_humidifier_speed
+      - script.execute: publish_humidifier_speed_govee
 
 script:
   - !include includes/script_update_humidifier_speed.yaml
 
-  - id: pubish_humidifier_speed
+  - id: publish_humidifier_speed
     then:
       - mqtt.publish:
           topic: "${area_id}/fan/speed/${device_id}"
           payload: !lambda 'return std::to_string(id(${area_id}_${device_id}${suffix}_humidifier).speed);'
+
+
+  - id: publish_humidifier_speed_govee
+    then:
+      - mqtt.publish:
+          topic: "gv2mqtt/humidifier/1A9FD4ADFC831770/set-target"
+          payload: !lambda 'return std::to_string(id(${area_id}_${device_id}${suffix}_canopy_rh_target) + id(${area_id}_${device_id}${suffix}_humidifier).speed);'
