@@ -132,4 +132,9 @@ script:
     then:
       - mqtt.publish:
           topic: "gv2mqtt/humidifier/1A9FD4ADFC831770/set-target"
-          payload: !lambda 'return std::to_string(id(${area_id}_${device_id}${suffix}_canopy_rh_target) + id(${area_id}_${device_id}${suffix}_humidifier).speed);'
+          payload: !lambda |-
+            float rh_target = id(${area_id}_${device_id}${suffix}_canopy_rh_target).state;
+            int speed = id(${area_id}_${device_id}${suffix}_humidifier).speed;
+            int result = static_cast<int>(rh_target + speed - 10);
+            return std::to_string(result);
+
