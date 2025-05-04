@@ -136,5 +136,7 @@ script:
             float rh_target = id(${area_id}_${device_id}${suffix}_canopy_rh_target).state;
             int speed = id(${area_id}_${device_id}${suffix}_humidifier).speed;
             int result = static_cast<int>(rh_target + speed - 10);
+            if (result < 40) result = 40;
+            if (result > 80) result = 80;
             return std::to_string(result);
 
