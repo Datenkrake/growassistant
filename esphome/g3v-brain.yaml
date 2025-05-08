@@ -248,6 +248,7 @@ interval:
     then:
       - script.execute: update_humidifier_speed
       - script.execute: publish_humidifier_speed
+      - script.execute: publish_humidifier_speed_govee
       - script.execute: update_exhaust_fan_speed
       - script.execute: update_wind_fan_speed
       - script.execute: ${area_id}_${device_id}${suffix}_publish_wind_fan_speed
@@ -479,3 +480,16 @@ script:
                     params["id"] = 0;
                     params["on"] = false;
                 }
+
+
+  - id: publish_humidifier_speed_govee
+    then:
+      - mqtt.publish:
+          topic: "gv2mqtt/humidifier/15271091A84F5950/set-target"
+          payload: !lambda |-
+            float rh_target = id(${area_id}_${device_id}${suffix}_rh_target).state;
+            int speed = id(${area_id}_${device_id}${suffix}_humidifier).speed;
+            int result = static_cast<int>(rh_target + speed - 10);
+            if (result < 40) result = 40;
+            if (result > 80) result = 80;
+            return std::to_string(result);
