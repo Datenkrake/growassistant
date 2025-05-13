@@ -41,23 +41,22 @@ then:
         id(${area_id}_${device_id}${suffix}_target_temp) = target_temp;
         id(${area_id}_${device_id}${suffix}_target_humidity) = target_humidity;
 
-        // Temperature control
-        if (temperature < target_temp - temperature_hystheresis) {
-            // too cold → turn off cooling, maybe turn on heater
-            id(heater_should_be_on) = true;
-            id(condenser_should_be_on) = false;
-        } else if (temperature > target_temp + temperature_hystheresis) {
-            // too hot → turn on cooling, turn off heater
-            id(heater_should_be_on) = false;
-            id(condenser_should_be_on) = true;
-        } else {
-            // within temp band → decide based on humidity
-            id(heater_should_be_on) = false;
-            id(condenser_should_be_on) = (humidity > target_humidity + humidity_hystheresis);
-        }
+        bool temp_low = temperature < target_temp - temperature_hystheresis;
+        bool temp_high = temperature > target_temp + temperature_hystheresis;
+        bool rh_high = humidity > target_humidity + humidity_hystheresis;
 
+        ESP_LOGD("adjust_fridge", "Temp: %.1f (Target: %.1f ±%d)", temperature, target_temp, temperature_hystheresis);
+        ESP_LOGD("adjust_fridge", "RH: %.1f%% (Target: %.1f%% ±%d)", humidity, target_humidity, humidity_hystheresis);
+
+        // Heater logic: only if temp is low
+        id(heater_should_be_on) = temp_low;
+
+        // Fridge logic: ON if temp too high or RH too high
+        id(condenser_should_be_on) = temp_high || (!temp_high && !temp_low && rh_high);
+
+        // Logging
         ESP_LOGD("adjust_fridge", "Heater should be ON: %s", id(heater_should_be_on) ? "true" : "false");
-        ESP_LOGD("adjust_fridge", "Condenser should be ON: %s", id(condenser_should_be_on) ? "true" : "false");
+        ESP_LOGD("adjust_fridge", "Fridge should be ON: %s", id(condenser_should_be_on) ? "true" : "false");
 
     - mqtt.publish:
         topic: "G3D/mains/command/switch:0"
