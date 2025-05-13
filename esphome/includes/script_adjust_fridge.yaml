@@ -41,8 +41,20 @@ then:
         id(${area_id}_${device_id}${suffix}_target_temp) = target_temp;
         id(${area_id}_${device_id}${suffix}_target_humidity) = target_humidity;
 
-        id(heater_should_be_on) = (temperature < target_temp - temperature_hystheresis);
-        id(condenser_should_be_on) = (humidity > target_humidity + humidity_hystheresis);
+        // Temperature control
+        if (temperature < target_temp - temperature_hystheresis) {
+            // too cold → turn off cooling, maybe turn on heater
+            id(heater_should_be_on) = true;
+            id(condenser_should_be_on) = false;
+        } else if (temperature > target_temp + temperature_hystheresis) {
+            // too hot → turn on cooling, turn off heater
+            id(heater_should_be_on) = false;
+            id(condenser_should_be_on) = true;
+        } else {
+            // within temp band → decide based on humidity
+            id(heater_should_be_on) = false;
+            id(condenser_should_be_on) = (humidity > target_humidity + humidity_hystheresis);
+        }
 
         ESP_LOGD("adjust_fridge", "Heater should be ON: %s", id(heater_should_be_on) ? "true" : "false");
         ESP_LOGD("adjust_fridge", "Condenser should be ON: %s", id(condenser_should_be_on) ? "true" : "false");
