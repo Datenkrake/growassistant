@@ -81,6 +81,32 @@ time:
 i2c:
   !include includes/i2c_bus_a.yaml
 
+globals:
+  - id: heater_should_be_on
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+  - id: condenser_should_be_on
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+  - id: ${area_id}_${device_id}${suffix}_exhaust_fan_pwm_value
+    type: float
+    restore_value: no
+    initial_value: '0.0'
+  - id: ${area_id}_${device_id}${suffix}_fan_speed_step
+    type: int
+    restore_value: no
+    initial_value: '0'
+  - id: G3D_BRAIN_target_temp
+    type: float
+    restore_value: no
+    initial_value: '0.0'
+  - id: G3D_BRAIN_target_humidity
+    type: float
+    restore_value: no
+    initial_value: '0.0'
+
 output:
   - platform: slow_pwm
     pin: ${pin_humidifier}
@@ -159,55 +185,40 @@ sensor:
   #   update_interval: 30s
   # CALCULATED SENSORS
   ## CLIMATE
-  - !include includes/sensor_vpd.yaml # depends on having temperature and humidity entities from a sensor
-  - !include includes/sensor_rh_target.yaml # depends on having temperature and vpd_target entities
-  # MQTT
+  - platform: template
+    name: "VPD [${area_id}_${device_id}${suffix}]"
+    id: ${area_id}_${device_id}${suffix}_vpd
+    state_topic: "${area_id}/vpd/state/${device_id}"
+    unit_of_measurement: "kPa"
+    update_interval: 10s
+    accuracy_decimals: 2
+    lambda: |
+        float LT = id(${area_id}_${device_id}${suffix}_temperature).state;
+        float rh = id(${area_id}_${device_id}${suffix}_humidity).state;
+        float ASVP = 610.78 * exp((LT / (LT + 237.3)) * 17.2694);
+        float LSVP = 610.78 * exp((LT / (LT + 237.3)) * 17.2694);
+        float LVPD = (LSVP - (ASVP * (rh / 100.0))) / 1000.0;
+        return LVPD;
 
 switch:
   - !include includes/switch_enable.yaml
   - !include includes/switch_irrigation_pump.yaml
 
 number:
+  - !include includes/number_start_date.yaml
   - !include includes/number_irrigation_period.yaml
   - !include includes/number_irrigation_duration.yaml
-  - !include includes/number_vpd_target.yaml
-  - !include includes/number_leaf_offset.yaml
-  - !include includes/number_fan_speed_min.yaml
-  - !include includes/number_fan_speed_max.yaml
-  - !include includes/number_wind_sweep_duration.yaml
-
 interval:
   - interval: 60s
     then:
-      - script.execute: update_humidifier_speed
-      - script.execute: publish_humidifier_speed
-      - script.execute: update_exhaust_fan_speed
-      - script.execute: update_wind_fan_speed
-      - script.execute: ${area_id}_${device_id}${suffix}_publish_wind_fan_speed
       - script.execute: ${area_id}_${device_id}${suffix}_publish_exhaust_fan_speed
+      - script.execute: adjust_fridge
   - interval: 3600s
     then:
       - script.execute: irrigate
     
-globals:
-  - id: ${area_id}_${device_id}${suffix}_exhaust_fan_pwm_value
-    type: float
-    restore_value: no
-    initial_value: '0.0'
-  - id: ${area_id}_${device_id}${suffix}_fan_speed_step
-    type: int
-    restore_value: no
-    initial_value: '0'
-
 script:
-  #- !include includes/script_update_humidifier_speed.yaml
-  #- !include includes/script_update_exhaust_fan_speed.yaml
-
-  - id: ${area_id}_${device_id}${suffix}_publish_wind_fan_speed
-    then:
-      - mqtt.publish:
-          topic: "${area_id}/fan/speed/WIND"
-          payload: !lambda 'return std::to_string(id(${area_id}_${device_id}${suffix}_wind).speed);'
+  - !include includes/script_adjust_fridge.yaml
 
   - id: ${area_id}_${device_id}${suffix}_publish_exhaust_fan_speed
     then:
@@ -215,12 +226,6 @@ script:
           topic: "${area_id}/fan/speed/EXHAUST"
           payload: !lambda 'return std::to_string(id(${area_id}_${device_id}${suffix}_exhaust).speed);'
 
-  - id: publish_humidifier_speed
-    then:
-      - mqtt.publish:
-          topic: "${area_id}/fan/speed/HUMIDIFIER"
-          payload: !lambda 'return std::to_string(id(${area_id}_${device_id}${suffix}_humidifier).speed);'
-  
   - id: irrigate
     then:
       - if:
@@ -231,125 +236,3 @@ script:
             - switch.turn_on: ${area_id}_${device_id}${suffix}_irrigation_pump
             - delay: !lambda 'return (int) id(${area_id}_${device_id}${suffix}_irrigation_duration).state * 1000;'
             - switch.turn_off: ${area_id}_${device_id}${suffix}_irrigation_pump
-
-  - id: update_humidifier_speed
-    then:
-      - lambda: |-
-          // Turn on the humidifier
-          auto call_on = id(${area_id}_${device_id}${suffix}_humidifier).turn_on();
-          call_on.perform();
-          ESP_LOGD("humidifier", "Turning on humidifier.");
-
-          // Retrieve RH targets
-          float rh_target = id(${area_id}_${device_id}${suffix}_rh_target).state;
-          ESP_LOGD("humidifier", "RH Target: %.2f%%", rh_target);
-
-          // Retrieve current RH
-          float rh = id(${area_id}_${device_id}${suffix}_humidity).state;
-
-          // Calculate RH difference
-          float rh_difference = rh_target - rh;
-          ESP_LOGD("humidifier", "RH difference: %.2f%%", rh_difference);
-
-          // Check if rh_target is valid
-          if (std::isnan(rh_target)) {
-            ESP_LOGW("humidifier", "RH Target is NaN. Skipping speed adjustment.");
-            return;
-          }
-
-          // Retrieve current humidifier speed
-          int current_speed = id(${area_id}_${device_id}${suffix}_humidifier).speed;
-          // Validate current_speed, ensure it is within 0-100%
-          if (current_speed < 0 || current_speed > 99) {
-            ESP_LOGW("humidifier", "Invalid current_speed (%d%%). Resetting to 0%%.", current_speed);
-            current_speed = 0;
-            id(${area_id}_${device_id}${suffix}_humidifier).speed = current_speed;
-          }
-          ESP_LOGD("humidifier", "Current Humidifier Speed: %d%%", current_speed);
-
-          // Define minimum RH difference to trigger adjustment (e.g., 1%)
-          const float min_rh_diff = 0.2;
-
-          // Round the RH difference to the nearest integer
-          int error = roundf(rh_difference);
-          ESP_LOGD("humidifier", "Rounded error: %d%%", error);
-
-          // Adjust humidifier speed based on RH comparison with hysteresis
-          if (error > min_rh_diff) {
-            // Increase speed by error, ensuring it doesn't exceed 100%
-            int new_speed = std::min(current_speed + error, 100);
-            id(${area_id}_${device_id}${suffix}_humidifier).speed = new_speed;
-            ESP_LOGD("humidifier", "RH target > current RH by > %.2f%%. Increasing speed to %d%%", min_rh_diff, new_speed);
-          } else if (error < -min_rh_diff) {
-            // Decrease speed by (abs(error) * 2), ensuring it doesn't go below 0%
-            int adjustment = std::abs(error) * 2;
-            int new_speed = std::max(current_speed - adjustment, 0);
-            id(${area_id}_${device_id}${suffix}_humidifier).speed = new_speed;
-            ESP_LOGD("humidifier", "RH target < current RH by > %.2f%%. Decreasing speed to %d%%", min_rh_diff, new_speed);
-          } else {
-            ESP_LOGD("humidifier", "RH difference within ±%.2f%%. No speed adjustment needed.", min_rh_diff);
-          }
-        
-  - id: update_exhaust_fan_speed
-    then:
-      - lambda: |-
-          auto call1 = id(${area_id}_${device_id}${suffix}_exhaust).turn_on();
-          call1.perform();
-
-          float temperature = id(${area_id}_${device_id}${suffix}_temperature).state;
-          float humidity = id(${area_id}_${device_id}${suffix}_humidity).state;
-          float rh_target = id(${area_id}_${device_id}${suffix}_rh_target).state;
-
-          // Adjust fan speed based on conditions
-          float fan_min = id(${area_id}_${device_id}${suffix}_fan_speed_min).state;
-          float fan_max = id(${area_id}_${device_id}${suffix}_fan_speed_max).state;
-          float fan_value = id(${area_id}_${device_id}${suffix}_exhaust_fan_pwm_value);
-
-          // Define minimum RH difference to trigger adjustment
-          const float min_rh_diff = 0.2;
-          float rh_difference = rh_target - humidity;
-          int current_speed = id(${area_id}_${device_id}${suffix}_exhaust).speed;
-          float new_speed = current_speed;
-
-          // Adjust exhaust fan speed based on RH comparison with hysteresis
-          if (rh_difference > min_rh_diff) {
-              // RH target > current RH: Decrease speed
-              new_speed = std::max(current_speed - roundf(rh_difference), fan_min);
-              ESP_LOGD("exhaust", "RH target > current RH by > %.2f%%. Decreasing speed to %.2f%%", min_rh_diff, new_speed);
-          } else if (rh_difference < -min_rh_diff) {
-              // RH target < current RH: Increase speed
-              new_speed = std::min(current_speed + roundf(std::abs(rh_difference) * 2), fan_max);
-              ESP_LOGD("exhaust", "RH target < current RH by > %.2f%%. Increasing speed to %.2f%%", min_rh_diff, new_speed);
-          } else {
-              ESP_LOGD("exhaust", "RH difference within ±%.2f%%. No speed adjustment needed.", min_rh_diff);
-          }
-
-          // Clamp the fan value between min and max
-          new_speed = std::max(fan_min, std::min(fan_max, new_speed));
-
-          // Update the global fan speed value
-          id(${area_id}_${device_id}${suffix}_exhaust_fan_pwm_value) = new_speed;
-          id(${area_id}_${device_id}${suffix}_exhaust).speed = static_cast<int>(roundf(new_speed));
-
-          ESP_LOGD("exhaust", "Updating fan speed to %.2f%% (Min: %.2f%%, Max: %.2f%%)", new_speed, fan_min, fan_max);
-
-  - id: update_wind_fan_speed
-    then:
-      - lambda: |-
-          auto call1 = id(${area_id}_${device_id}${suffix}_wind).turn_on();
-          call1.perform();
-
-          int step = id(${area_id}_${device_id}${suffix}_fan_speed_step);
-          int duration = id(${area_id}_${device_id}${suffix}_sweep_duration).state; // Duration in minutes
-          float min_speed = id(${area_id}_${device_id}${suffix}_fan_speed_min).state;
-          float max_speed = id(${area_id}_${device_id}${suffix}_fan_speed_max).state;
-
-          // Calculate the fan speed by linearly interpolating from min to max over 60 steps (1 hour)
-          float fan_speed = min_speed + (max_speed - min_speed) * (step / (float)duration);
-
-          // Increment the step counter, reset after 60 minutes
-          id(${area_id}_${device_id}${suffix}_fan_speed_step) = (step + 1) % duration;
-
-          // Set the fan speeds to the calculated value
-          id(${area_id}_${device_id}${suffix}_wind).speed = fan_speed;
-          ESP_LOGD("fan", "Updating fan speed to %.2f%%", fan_speed);

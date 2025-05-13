@@ -1,0 +1,57 @@
+id: adjust_fridge
+then:
+    - lambda: |-
+        ESP_LOGD("adjust_fridge", "Starting fridge adjustment...");
+
+        std::vector<int> durations = {24, 48, 72};  // hours
+        std::vector<float> temperatures = {25.0, 23.0, 20.0};
+        std::vector<float> humidities = {55.0, 48.0, 43.0};
+
+        int temperature_hystheresis = 1;
+        int humidity_hystheresis = 1;
+
+        int start_date = id(${area_id}_${device_id}${suffix}_start_date).state;
+        int now = id(mqtt_time).timestamp_now();
+        int elapsed_hours = (now - start_date) / 3600;
+
+        ESP_LOGD("adjust_fridge", "Elapsed hours: %d", elapsed_hours);
+
+        int phase = 0;
+        int cumulative_hours = 0;
+        for (size_t i = 0; i < durations.size(); i++) {
+        cumulative_hours += durations[i];
+        if (elapsed_hours < cumulative_hours) {
+            phase = i;
+            break;
+        }
+        if (i == durations.size() - 1) {
+            phase = i;
+        }
+        }
+
+        float target_temp = temperatures[phase];
+        float target_humidity = humidities[phase];
+        float temperature = id(${area_id}_${device_id}${suffix}_temperature).state;
+        float humidity = id(${area_id}_${device_id}${suffix}_humidity).state;
+
+        ESP_LOGD("adjust_fridge", "Phase: %d", phase);
+        ESP_LOGD("adjust_fridge", "Target Temp: %.1f °C | Current Temp: %.1f °C", target_temp, temperature);
+        ESP_LOGD("adjust_fridge", "Target Humidity: %.1f %% | Current Humidity: %.1f %%", target_humidity, humidity);
+
+        id(${area_id}_${device_id}${suffix}_target_temp) = target_temp;
+        id(${area_id}_${device_id}${suffix}_target_humidity) = target_humidity;
+
+        id(heater_should_be_on) = (temperature < target_temp - temperature_hystheresis);
+        id(condenser_should_be_on) = (humidity > target_humidity + humidity_hystheresis);
+
+        ESP_LOGD("adjust_fridge", "Heater should be ON: %s", id(heater_should_be_on) ? "true" : "false");
+        ESP_LOGD("adjust_fridge", "Condenser should be ON: %s", id(condenser_should_be_on) ? "true" : "false");
+
+    - mqtt.publish:
+        topic: "G3D/mains/command/switch:0"
+        payload: !lambda |-
+            return id(heater_should_be_on) ? "on" : "off";
+    - mqtt.publish:
+        topic: "G3D/mains/command/switch:1"
+        payload: !lambda |-
+            return id(condenser_should_be_on) ? "on" : "off";

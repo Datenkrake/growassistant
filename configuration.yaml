@@ -30,6 +30,9 @@ camera:
     name: G3D-Cam
     input: rtsp://192.168.1.158:8554/G3D/main
     
+  - platform: generic
+    name: G3VCAM
+    stream_source: "http://192.168.1.158:1984/stream.html?src=camera1"
     
 #lovelace:
 #  mode: yaml

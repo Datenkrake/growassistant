@@ -1,0 +1,25 @@
+api:
+  listen: ":1984"
+
+ffmpeg:
+  bin: "ffmpeg"
+
+log:
+  format: "color"
+  level: "info"
+  output: "stdout"
+  time: "UNIXMS"
+
+rtsp:
+  listen: ":8556"
+  default_query: "video&audio"
+
+srtp:
+  listen: ":8446"
+
+webrtc:
+  listen: ":8555/tcp"
+
+streams:
+  camera1: rtsp://192.168.1.158:8554/G3V/main
+  camera2: rtsp://192.168.1.158:8554/G3D/main
