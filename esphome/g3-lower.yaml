@@ -57,12 +57,10 @@ substitutions:
   area_id: G3D
   device_id: "BRAIN"
   suffix: ""
-  pin_sda: GPIO3
-  pin_scl: GPIO4
-  pin_fan1_pwm: GPIO6
-  pin_fan2_pwm: GPIO7
-  pin_irrigation_output: GPIO10
-  pin_humidifier: GPIO2
+  pin_sda: GPIO6
+  pin_scl: GPIO7
+  pin_fan1_pwm: GPIO9
+  pin_irrigation_output: GPIO5
   address_sht4x: "0x44"
 
 ####################################################################
@@ -108,37 +106,15 @@ globals:
     initial_value: '0.0'
 
 output:
-  - platform: slow_pwm
-    pin: ${pin_humidifier}
-    id: ${area_id}_${device_id}${suffix}_pwm_output
-    period: 10s
-
-  - platform: ledc
-    pin: ${pin_fan2_pwm}
-    id: ${area_id}_${device_id}${suffix}_exhaust_pwm
-    frequency: 15000 Hz
-    inverted: True
-    max_power: 1.0
-
   - platform: ledc
     pin: ${pin_fan1_pwm}
-    id: ${area_id}_${device_id}${suffix}_wind_pwm
+    id: ${area_id}_${device_id}${suffix}_exhaust_pwm
     frequency: 15000 Hz
     inverted: True
     max_power: 1.0
 
 
 fan:
-  - platform: speed
-    output: ${area_id}_${device_id}${suffix}_pwm_output
-    name: "Humidifier [${area_id}_${device_id}${suffix}]"
-    id: ${area_id}_${device_id}${suffix}_humidifier
-    speed_count: 100  # Set the speed steps (0-100%)
-    state_topic: "${area_id}/fan/state/HUMIDIFIER"
-    speed_state_topic: "${area_id}/fan/speed/HUMIDIFIER"
-    command_topic: "${area_id}/fan/state/HUMIDIFIER/set"
-    speed_command_topic: "${area_id}/fan/speed/HUMIDIFIER/set"
-
   - platform: speed
     output: ${area_id}_${device_id}${suffix}_exhaust_pwm
     name: "Exhaust [${area_id}${suffix}]"
@@ -147,15 +123,6 @@ fan:
     speed_state_topic: "${area_id}/fan/speed/EXHAUST"
     command_topic: "${area_id}/${device_id}/fan/state/EXHAUST/set"
     speed_command_topic: "${area_id}/fan/speed/EXHAUST/set"
-
-  - platform: speed
-    output: ${area_id}_${device_id}${suffix}_wind_pwm
-    name: "Wind [${area_id}${suffix}]"
-    id: ${area_id}_${device_id}${suffix}_wind
-    state_topic: "${area_id}/fan/state/WIND"
-    speed_state_topic: "${area_id}/fan/speed/WIND"
-    command_topic: "${area_id}/${device_id}/fan/state/WIND/set"
-    speed_command_topic: "${area_id}/fan/speed/WIND/set"
 
 sensor:
   # PHYSICAL SENSORS
@@ -171,18 +138,6 @@ sensor:
         state_topic: "${area_id}/humidity/state/SHT"
     address: ${address_sht4x}
     update_interval: 30s
-  # - platform: aht10
-  #   variant: AHT10
-  #   address: 0x38
-  #   temperature:
-  #     name: "Temperature AHT [${area_id}_${device_id}${suffix}]"
-  #     id: ${area_id}_${device_id}${suffix}_temperature
-  #     state_topic: "${area_id}/temperature/state/${device_id}"
-  #   humidity:
-  #     name: "Humidity AHT [${area_id}_${device_id}${suffix}]"
-  #     id: ${area_id}_${device_id}${suffix}_humidity
-  #     state_topic: "${area_id}/humidity/state/${device_id}"
-  #   update_interval: 30s
   # CALCULATED SENSORS
   ## CLIMATE
   - platform: template
@@ -199,6 +154,8 @@ sensor:
         float LSVP = 610.78 * exp((LT / (LT + 237.3)) * 17.2694);
         float LVPD = (LSVP - (ASVP * (rh / 100.0))) / 1000.0;
         return LVPD;
+    
+  - !include includes/sensor_dew_point.yaml
 
 switch:
   - !include includes/switch_enable.yaml

@@ -1,68 +1,65 @@
 id: adjust_fridge
 then:
-    - lambda: |-
-        ESP_LOGD("adjust_fridge", "Starting fridge adjustment...");
+- lambda: |-
+    ESP_LOGD("adjust_fridge", "Starting fridge adjustment with dew-point control...");
 
-        std::vector<int> durations = {24, 48, 72};  // hours
-        std::vector<float> temperatures = {25.0, 23.0, 20.0};
-        std::vector<float> humidities = {55.0, 48.0, 43.0};
+    // Define a 5-stage drying profile: durations (hours) and corresponding targets
+    std::vector<int> durations = {96, 192, 0};  // last '0' indefinite until snap
+    std::vector<float> temp_targets = {20.0, 20.0, 15.0};
+    std::vector<float> dew_targets  = {12.0, 12.5, 8.0};  // desired max dew-point
 
-        int temperature_hystheresis = 1;
-        int humidity_hystheresis = 1;
+    float delta_T   = 0.5;  // hysteresis band ±0.5 °C
+    float dew_margin = 2.0; // minimum dew-point depression margin
 
-        int start_date = id(${area_id}_${device_id}${suffix}_start_date).state;
-        int now = id(mqtt_time).timestamp_now();
-        int elapsed_hours = (now - start_date) / 3600;
+    // Compute elapsed time since start
+    int start_ts = id(${area_id}_${device_id}${suffix}_start_date).state;
+    int now      = id(mqtt_time).timestamp_now();
+    int hours    = (now - start_ts) / 3600;
 
-        ESP_LOGD("adjust_fridge", "Elapsed hours: %d", elapsed_hours);
-
-        int phase = 0;
-        int cumulative_hours = 0;
-        for (size_t i = 0; i < durations.size(); i++) {
-        cumulative_hours += durations[i];
-        if (elapsed_hours < cumulative_hours) {
-            phase = i;
-            break;
+    // Determine current phase
+    int phase = 0;
+    int cum   = 0;
+    for (size_t i = 0; i < durations.size(); i++) {
+        cum += durations[i];
+        if (hours < cum || i == durations.size() - 1) {
+        phase = i;
+        break;
         }
-        if (i == durations.size() - 1) {
-            phase = i;
-        }
-        }
+    }
 
-        float target_temp = temperatures[phase];
-        float target_humidity = humidities[phase];
-        float temperature = id(${area_id}_${device_id}${suffix}_temperature).state;
-        float humidity = id(${area_id}_${device_id}${suffix}_humidity).state;
+    // Read sensors and targets
+    float T     = id(${area_id}_${device_id}${suffix}_temperature).state;
+    float dew_pt = id(${area_id}_${device_id}${suffix}_dew_point).state;
+    float T_set  = temp_targets[phase];
+    float dew_set = dew_targets[phase];
 
-        ESP_LOGD("adjust_fridge", "Phase: %d", phase);
-        ESP_LOGD("adjust_fridge", "Target Temp: %.1f °C | Current Temp: %.1f °C", target_temp, temperature);
-        ESP_LOGD("adjust_fridge", "Target Humidity: %.1f %% | Current Humidity: %.1f %%", target_humidity, humidity);
+    ESP_LOGD("adjust_fridge", "Phase %d: T_set=%.1f °C, dew_set=%.1f °C", phase, T_set, dew_set);
+    ESP_LOGD("adjust_fridge", "Current T=%.1f °C, dew_pt=%.1f °C", T, dew_pt);
 
-        id(${area_id}_${device_id}${suffix}_target_temp) = target_temp;
-        id(${area_id}_${device_id}${suffix}_target_humidity) = target_humidity;
+    // Evaluate conditions
+    bool too_cold     = T <  (T_set - delta_T);
+    bool too_hot      = T >  (T_set + delta_T);
+    bool dew_risky    = (T - dew_pt) < dew_margin;
+    bool dew_too_high = dew_pt > dew_set;
 
-        bool temp_low = temperature < target_temp - temperature_hystheresis;
-        bool temp_high = temperature > target_temp + temperature_hystheresis;
-        bool rh_high = humidity > target_humidity + humidity_hystheresis;
+    ESP_LOGD("adjust_fridge", "Hysteresis band [%.1f-%.1f], dew_margin=%.1f", T_set - delta_T, T_set + delta_T, dew_margin);
 
-        ESP_LOGD("adjust_fridge", "Temp: %.1f (Target: %.1f ±%d)", temperature, target_temp, temperature_hystheresis);
-        ESP_LOGD("adjust_fridge", "RH: %.1f%% (Target: %.1f%% ±%d)", humidity, target_humidity, humidity_hystheresis);
+    // Control logic
+    // Heater when too cold
+    id(heater_should_be_on) = too_cold;
+    // Condenser when too hot AND dew safe AND dew-point below target
+    id(condenser_should_be_on) = too_hot && !dew_risky && !dew_too_high;
 
-        // Heater logic: only if temp is low
-        id(heater_should_be_on) = temp_low;
+    ESP_LOGD("adjust_fridge", "Heater: %s, Condenser: %s", 
+                id(heater_should_be_on) ? "ON" : "OFF", 
+                id(condenser_should_be_on) ? "ON" : "OFF");
 
-        // Fridge logic: ON if temp too high or RH too high
-        id(condenser_should_be_on) = temp_high || (!temp_high && !temp_low && rh_high);
+- mqtt.publish:
+    topic: "G3D/mains/command/switch:0"
+    payload: !lambda |-
+        return id(heater_should_be_on) ? "on" : "off";
 
-        // Logging
-        ESP_LOGD("adjust_fridge", "Heater should be ON: %s", id(heater_should_be_on) ? "true" : "false");
-        ESP_LOGD("adjust_fridge", "Fridge should be ON: %s", id(condenser_should_be_on) ? "true" : "false");
-
-    - mqtt.publish:
-        topic: "G3D/mains/command/switch:0"
-        payload: !lambda |-
-            return id(heater_should_be_on) ? "on" : "off";
-    - mqtt.publish:
-        topic: "G3D/mains/command/switch:1"
-        payload: !lambda |-
-            return id(condenser_should_be_on) ? "on" : "off";
+- mqtt.publish:
+    topic: "G3D/mains/command/switch:1"
+    payload: !lambda |-
+        return id(condenser_should_be_on) ? "on" : "off";

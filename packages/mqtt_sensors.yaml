@@ -24,7 +24,18 @@ mqtt:
     ##############################################################################
     #     G3D
     ##############################################################################
-    - name: "G3V Irrigatino Duration"
+
+    - name: "G3D Cycle Start"
+      unique_id: "mqtt_g3d_start_date"
+      command_topic: "G3D/start_date/state/BRAIN/set"
+      min: 0
+      max: 9999999999
+      step: 1
+      retain: true
+      unit_of_measurement: "s"
+
+    ######## G3V opn G3D
+    - name: "G3V Irrigation Duration"
       unique_id: "mqtt_g3d_irrigation_duration"
       command_topic: "G3D/irrigation_duration/state/BRAIN/set"
       min: 0
@@ -33,7 +44,7 @@ mqtt:
       retain: true
       unit_of_measurement: "s"
 
-    - name: "G3V Irrigatino Period"
+    - name: "G3V Irrigation Period"
       unique_id: "mqtt_g3d_irrigation_duration"
       command_topic: "G3D/irrigation_period/state/BRAIN/set"
       min: 0
@@ -71,7 +82,29 @@ mqtt:
     ##############################################################################
     #     G3D
     ##############################################################################
-    # (No G3D sensors defined in this snippet)
+    - name: "G3D Temperature"
+      object_id: mqtt_g3d_temperature
+      unique_id: mqtt_g3d_temperature
+      state_topic: "G3D/temperature/state/SHT"
+      unit_of_measurement: "°C"
+      value_template: "{{ (value | float | round(1)) if (value | float) == (value | float) else 0 }}"
+      force_update: true
+
+    - name: "G3D Humidity"
+      object_id: mqtt_g3d_humiditiy
+      unique_id: mqtt_g3d_humiditiy
+      state_topic: "G3D/humidity/state/SHT"
+      unit_of_measurement: "%"
+      value_template: "{{ (value | float | round(1)) if (value | float) == (value | float) else 0 }}"
+      force_update: true
+
+    - name: "G3D VPD"
+      object_id: mqtt_g3d_vpd
+      unique_id: mqtt_g3d_vpd
+      state_topic: "G3D/vpd/state/BRAIN"
+      unit_of_measurement: "kPa"
+      value_template: "{{ (value | float | round(2)) if (value | float) == (value | float) else 0 }}"
+      force_update: true
 
     ##############################################################################
     #     G3V
