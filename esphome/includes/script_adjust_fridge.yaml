@@ -1,17 +1,17 @@
 id: adjust_fridge
 then:
 - lambda: |-
-    ESP_LOGD("adjust_fridge", "Starting fridge adjustment with controlled drying profile, anti-chatter, and undershoot guard...");
+    ESP_LOGD("adjust_fridge", "Starting fridge adjustment with controlled drying profile, anti-chatter, undershoot guard, and dew-risk priority...");
 
     // 3-stage drying profile: durations (hours) and targets
     std::vector<int> durations     = {96, 192, 0};        // 96h, 192h, then indefinite
-    std::vector<float> temp_targets = {20.0, 20.0, 15.0};  // °C targets
-    std::vector<float> dew_targets  = {12.0, 12.5, 8.0};   // max dew-point °C
+    std::vector<float> temp_targets = {20.0, 20.0, 15.0};  // °C targets per phase
+    std::vector<float> dew_targets  = {12.0, 12.5, 8.0};   // max dew-point °C per phase
 
     float delta_T         = 0.5;               // ±0.5 °C hysteresis
-    float dew_margin      = 2.0;               // min dew-point depression
+    float dew_margin      = 2.0;               // minimum dew-point depression
     float max_undershoot  = 1.0;               // max °C allowed below lower band
-    unsigned long burst_duration      = 5 * 60 * 1000;  // 5 min condenser burst
+    unsigned long burst_duration       = 5 * 60 * 1000;  // 5 min condenser burst
     unsigned long recovery_min_duration = 2 * 60 * 1000; // 2 min heater recovery
 
     // Time since profile start
@@ -51,9 +51,23 @@ then:
     static unsigned long recovery_start = 0;
     static bool recovery_active = false;
 
-    // Control logic with undershoot guard
-    if (dew_too_high && allow_burst) {
-        // Dew-point high and undershoot safe: condenser burst
+    // Control logic: prioritize dew-risk recovery
+    if (dew_risky) {
+        // Dew depression too low: heat for recovery
+        if (!recovery_active) { recovery_active = true; recovery_start = millis(); }
+        if (millis() - recovery_start < recovery_min_duration) {
+        id(heater_should_be_on) = true;
+        id(condenser_should_be_on) = false;
+        ESP_LOGD("adjust_fridge","Edge: dew_risky -> heater recovery (%lu ms)", millis() - recovery_start);
+        } else {
+        recovery_active = false;
+        id(heater_should_be_on) = false;
+        id(condenser_should_be_on) = false;
+        ESP_LOGD("adjust_fridge","Recovery complete, idle");
+        }
+
+    } else if (dew_too_high && allow_burst) {
+        // Dew too high & undershoot safe: condenser burst
         if (!dew_burst_active) { dew_burst_active = true; dew_burst_start = millis(); }
         id(condenser_should_be_on) = (millis() - dew_burst_start) < burst_duration;
         if (!id(condenser_should_be_on)) dew_burst_active = false;
@@ -61,37 +75,17 @@ then:
         ESP_LOGD("adjust_fridge","Edge: dew_too_high & safe undershoot -> condenser burst");
 
     } else if (dew_too_high && !allow_burst) {
-        // Dew-point high but too cold: suspend burst, heat to raise temperature
+        // Dew too high but too cold: suspend burst, heat
         id(condenser_should_be_on) = false;
         id(heater_should_be_on)    = true;
         ESP_LOGD("adjust_fridge","Edge: dew_too_high but undershoot limit reached -> heater ON");
 
     } else if (too_cold) {
-        // Too cold: heat if dew OK, else idle
-        if (dew_too_high) {
-        id(heater_should_be_on) = false;
+        // Temperature too cold: heat if dew OK
         id(condenser_should_be_on) = false;
-        ESP_LOGD("adjust_fridge","Edge: too_cold & dew_too_high -> idle");
-        } else {
-        id(heater_should_be_on) = true;
-        id(condenser_should_be_on) = false;
-        ESP_LOGD("adjust_fridge","Edge: too_cold -> heater ON");
-        }
+        id(heater_should_be_on)    = !dew_too_high;
+        ESP_LOGD("adjust_fridge","Edge: too_cold -> heater %s", id(heater_should_be_on)?"ON":"OFF");
         recovery_active = false;
-
-    } else if (dew_risky) {
-        // Mid-band dew-risk: heater for recovery
-        if (!recovery_active) { recovery_active = true; recovery_start = millis(); }
-        if (millis() - recovery_start < recovery_min_duration) {
-        id(heater_should_be_on) = true;
-        id(condenser_should_be_on) = false;
-        ESP_LOGD("adjust_fridge","Edge: dew_risky -> heater recovery (%%lu ms)", millis()-recovery_start);
-        } else {
-        recovery_active = false;
-        id(heater_should_be_on) = false;
-        id(condenser_should_be_on) = false;
-        ESP_LOGD("adjust_fridge","Recovery complete, idle");
-        }
 
     } else {
         // Normal: cool if too hot

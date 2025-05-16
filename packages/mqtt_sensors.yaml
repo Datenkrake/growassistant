@@ -106,6 +106,13 @@ mqtt:
       value_template: "{{ (value | float | round(2)) if (value | float) == (value | float) else 0 }}"
       force_update: true
 
+    - name: "G3D Dew Point"
+      object_id: mqtt_g3d_dew_point
+      unique_id: mqtt_g3d_dew_point
+      state_topic: "G3D/dew_point/state/BRAIN"
+      unit_of_measurement: "°C"
+      value_template: "{{ (value | float | round(2)) if (value | float) == (value | float) else 0 }}"
+      force_update: true
     ##############################################################################
     #     G3V
     ##############################################################################
