@@ -1,58 +1,98 @@
 id: adjust_fridge
 then:
 - lambda: |-
-    ESP_LOGD("adjust_fridge", "Starting fridge adjustment with dew-point control...");
+    ESP_LOGD("adjust_fridge", "Starting fridge adjustment with controlled drying profile and anti-chatter...");
 
-    // Define a 5-stage drying profile: durations (hours) and corresponding targets
-    std::vector<int> durations = {96, 192, 0};  // last '0' indefinite until snap
-    std::vector<float> temp_targets = {20.0, 20.0, 15.0};
-    std::vector<float> dew_targets  = {12.0, 12.5, 8.0};  // desired max dew-point
+    // 3-stage drying profile: durations (hours) and targets
+    std::vector<int> durations     = {96, 192, 0};        // 96h, 192h, then indefinite
+    std::vector<float> temp_targets = {20.0, 20.0, 15.0};  // °C targets
+    std::vector<float> dew_targets  = {12.0, 12.5, 8.0};   // max dew-point °C
 
-    float delta_T   = 0.5;  // hysteresis band ±0.5 °C
-    float dew_margin = 2.0; // minimum dew-point depression margin
+    float delta_T      = 0.5;               // ±0.5 °C hysteresis
+    float dew_margin   = 2.0;               // min dew-point depression
+    unsigned long burst_duration      = 5 * 60 * 1000;  // 5 min condenser burst
+    unsigned long recovery_min_duration = 2 * 60 * 1000; // 2 min minimum heater recovery
 
-    // Compute elapsed time since start
+    // Time since profile start
     int start_ts = id(${area_id}_${device_id}${suffix}_start_date).state;
-    int now      = id(mqtt_time).timestamp_now();
-    int hours    = (now - start_ts) / 3600;
+    int now_ts   = id(mqtt_time).timestamp_now();
+    int hours    = (now_ts - start_ts) / 3600;
 
-    // Determine current phase
-    int phase = 0;
-    int cum   = 0;
-    for (size_t i = 0; i < durations.size(); i++) {
+    // Determine phase
+    int phase = 0; int cum = 0;
+    for (size_t i = 0; i < durations.size(); ++i) {
         cum += durations[i];
-        if (hours < cum || i == durations.size() - 1) {
-        phase = i;
-        break;
-        }
+        if (hours < cum || i == durations.size() - 1) { phase = i; break; }
     }
 
     // Read sensors and targets
-    float T     = id(${area_id}_${device_id}${suffix}_temperature).state;
-    float dew_pt = id(${area_id}_${device_id}${suffix}_dew_point).state;
-    float T_set  = temp_targets[phase];
+    float T       = id(${area_id}_${device_id}${suffix}_temperature).state;
+    float dew_pt  = id(${area_id}_${device_id}${suffix}_dew_point).state;
+    float T_set   = temp_targets[phase];
     float dew_set = dew_targets[phase];
 
-    ESP_LOGD("adjust_fridge", "Phase %d: T_set=%.1f °C, dew_set=%.1f °C", phase, T_set, dew_set);
-    ESP_LOGD("adjust_fridge", "Current T=%.1f °C, dew_pt=%.1f °C", T, dew_pt);
+    ESP_LOGD("adjust_fridge", "Phase %d: T_set=%.1f°C, dew_set=%.1f°C", phase, T_set, dew_set);
+    ESP_LOGD("adjust_fridge", "Current T=%.2f°C, dew_pt=%.2f°C", T, dew_pt);
 
-    // Evaluate conditions
+    // Condition flags
     bool too_cold     = T <  (T_set - delta_T);
     bool too_hot      = T >  (T_set + delta_T);
     bool dew_risky    = (T - dew_pt) < dew_margin;
     bool dew_too_high = dew_pt > dew_set;
 
-    ESP_LOGD("adjust_fridge", "Hysteresis band [%.1f-%.1f], dew_margin=%.1f", T_set - delta_T, T_set + delta_T, dew_margin);
+    ESP_LOGD("adjust_fridge", "Band[%.2f-%.2f], dew_margin=%.2f", T_set - delta_T, T_set + delta_T, dew_margin);
 
-    // Control logic
-    // Heater when too cold
-    id(heater_should_be_on) = too_cold;
-    // Condenser when too hot AND dew safe AND dew-point below target
-    id(condenser_should_be_on) = too_hot && !dew_risky && !dew_too_high;
+    // Static timers for bursts and recovery
+    static unsigned long dew_burst_start = 0;
+    static bool dew_burst_active = false;
+    static unsigned long recovery_start = 0;
+    static bool recovery_active = false;
 
-    ESP_LOGD("adjust_fridge", "Heater: %s, Condenser: %s", 
-                id(heater_should_be_on) ? "ON" : "OFF", 
-                id(condenser_should_be_on) ? "ON" : "OFF");
+    // Control logic with anti-chatter
+    if (dew_too_high) {
+        // Dew-point high: condenser burst
+        if (!dew_burst_active) { dew_burst_active = true; dew_burst_start = millis(); }
+        id(condenser_should_be_on) = (millis() - dew_burst_start) < burst_duration;
+        if (!id(condenser_should_be_on)) dew_burst_active = false;
+        id(heater_should_be_on) = false;
+        ESP_LOGD("adjust_fridge","Edge: dew_too_high -> condenser burst");
+
+    } else if (too_cold) {
+        // Too cold: heat if dew OK, suspend if dew too high
+        if (dew_too_high) {
+        id(heater_should_be_on) = false;
+        id(condenser_should_be_on) = false;
+        ESP_LOGD("adjust_fridge","Edge: too_cold & dew_too_high -> idle");
+        } else {
+        id(heater_should_be_on) = true;
+        id(condenser_should_be_on) = false;
+        ESP_LOGD("adjust_fridge","Edge: too_cold -> heater ON");
+        }
+        // Cancel any ongoing recovery on new too_cold
+        recovery_active = false;
+
+    } else if (dew_risky) {
+        // Dew-risk mid-band: maintain heater for minimum recovery
+        if (!recovery_active) { recovery_active = true; recovery_start = millis(); }
+        if (millis() - recovery_start < recovery_min_duration) {
+        id(heater_should_be_on) = true;
+        id(condenser_should_be_on) = false;
+        ESP_LOGD("adjust_fridge","Edge: dew_risky -> heater recovery (%%lu ms)", millis()-recovery_start);
+        } else {
+        recovery_active = false;
+        id(heater_should_be_on) = false;
+        id(condenser_should_be_on) = false;
+        ESP_LOGD("adjust_fridge","Recovery complete, idle");
+        }
+
+    } else {
+        // Normal: cool if too hot
+        id(heater_should_be_on) = false;
+        id(condenser_should_be_on) = too_hot;
+        ESP_LOGD("adjust_fridge","Normal control -> heater=%s, condenser=%s",
+                id(heater_should_be_on)?"ON":"OFF",
+                id(condenser_should_be_on)?"ON":"OFF");
+    }
 
 - mqtt.publish:
     topic: "G3D/mains/command/switch:0"
