@@ -60,6 +60,7 @@ substitutions:
   pin_sda: GPIO6
   pin_scl: GPIO7
   pin_fan1_pwm: GPIO9
+  pin_fan2_pwm: GPIO8
   pin_irrigation_output: GPIO5
   address_sht4x: "0x44"
 
@@ -112,17 +113,30 @@ output:
     frequency: 15000 Hz
     inverted: True
     max_power: 1.0
-
+  - platform: ledc
+    pin: ${pin_fan2_pwm}
+    id: ${area_id}_${device_id}${suffix}_circulation_pwm
+    frequency: 15000 Hz
+    inverted: True
+    max_power: 1.0
 
 fan:
   - platform: speed
     output: ${area_id}_${device_id}${suffix}_exhaust_pwm
-    name: "Exhaust [${area_id}${suffix}]"
+    name: "Exhaust Fan [${area_id}${suffix}]"
     id: ${area_id}_${device_id}${suffix}_exhaust
     state_topic: "${area_id}/fan/state/EXHAUST"
     speed_state_topic: "${area_id}/fan/speed/EXHAUST"
     command_topic: "${area_id}/${device_id}/fan/state/EXHAUST/set"
     speed_command_topic: "${area_id}/fan/speed/EXHAUST/set"
+  - platform: speed
+    output: ${area_id}_${device_id}${suffix}_circulation_pwm
+    name: "Circulation Fan [${area_id}${suffix}]"
+    id: ${area_id}_${device_id}${suffix}_circulation
+    state_topic: "${area_id}/fan/state/CIRCULATION"
+    speed_state_topic: "${area_id}/fan/speed/CIRCULATION"
+    command_topic: "${area_id}/${device_id}/fan/state/CIRCULATION/set"
+    speed_command_topic: "${area_id}/fan/speed/CIRCULATION/set"
 
 sensor:
   # PHYSICAL SENSORS
@@ -132,12 +146,26 @@ sensor:
         name: "Temperature SHT [${area_id}_${device_id}${suffix}]"
         id: ${area_id}_${device_id}${suffix}_temperature
         state_topic: "${area_id}/temperature/state/SHT"
+        filters:
+          - median:
+              window_size: 5  # Adjust as needed to remove outliers
+              send_every: 1
+          - sliding_window_moving_average:
+              window_size: 10  # 10 samples at 1s intervals = 10s average
+              send_every: 1
     humidity:
         name: "Humidity SHT [${area_id}_${device_id}${suffix}]"
         id: ${area_id}_${device_id}${suffix}_humidity
         state_topic: "${area_id}/humidity/state/SHT"
+        filters:
+          - median:
+              window_size: 5  # Adjust as needed to remove outliers
+              send_every: 1
+          - sliding_window_moving_average:
+              window_size: 10  # 10 samples at 1s intervals = 10s average
+              send_every: 1
     address: ${address_sht4x}
-    update_interval: 30s
+    update_interval: 1s
   # CALCULATED SENSORS
   ## CLIMATE
   - platform: template
@@ -166,10 +194,12 @@ number:
   - !include includes/number_irrigation_period.yaml
   - !include includes/number_irrigation_duration.yaml
 interval:
+  - interval: 10s
+    then:
+      - script.execute: adjust_fridge
   - interval: 60s
     then:
       - script.execute: ${area_id}_${device_id}${suffix}_publish_exhaust_fan_speed
-      - script.execute: adjust_fridge
   - interval: 3600s
     then:
       - script.execute: irrigate

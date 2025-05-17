@@ -3,7 +3,7 @@ name: "Dew Point [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_dew_point
 state_topic: "${area_id}/dew_point/state/${device_id}"
 unit_of_measurement: "°C"
-update_interval: 30s
+update_interval: 1s
 lambda: |
     float T = id(${area_id}_${device_id}${suffix}_temperature).state;
     float RH = id(${area_id}_${device_id}${suffix}_humidity).state;

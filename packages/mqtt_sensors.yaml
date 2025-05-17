@@ -34,7 +34,23 @@ mqtt:
       retain: true
       unit_of_measurement: "s"
 
-    ######## G3V opn G3D
+    - name: "G3D Circulation Fan"
+      object_id: mqtt_g3d_fan_speed_circulation
+      unique_id: mqtt_g3d_fan_speed_circulation
+      state_topic: "G3D/fan/speed/CIRCULATION"
+      command_topic: "G3D/fan/speed/CIRCULATION/set"
+      unit_of_measurement: "%"
+      value_template: "{{ (value | float | round(0)) if (value | float) == (value | float) else 0 }}"
+
+    - name: "G3D Exhaust fan"
+      object_id: mqtt_g3d_fan_speed_exhaust
+      unique_id: mqtt_g3d_fan_speed_exhaust
+      state_topic: "G3D/fan/speed/EXHAUST"
+      command_topic: "G3D/fan/speed/EXHAUST/set"
+      unit_of_measurement: "%"
+      value_template: "{{ (value | float | round(0)) if (value | float) == (value | float) else 0 }}"
+
+    ######## G3V on G3D
     - name: "G3V Irrigation Duration"
       unique_id: "mqtt_g3d_irrigation_duration"
       command_topic: "G3D/irrigation_duration/state/BRAIN/set"
@@ -113,6 +129,25 @@ mqtt:
       unit_of_measurement: "°C"
       value_template: "{{ (value | float | round(2)) if (value | float) == (value | float) else 0 }}"
       force_update: true
+    
+    - name: "G3D Mains Heater Power"
+      object_id: mqtt_g3d_mains_heater_power
+      state_topic: "G3D/mains/status/switch:0"
+      value_template: "{{ (value_json.apower | float) if (value_json.apower | float) == (value_json.apower | float) else 0 }}"
+      unit_of_measurement: "W"
+      device_class: power
+      force_update: true
+      unique_id: mqtt_g3d_mains_heater_power
+    
+
+    - name: "G3D Mains Condenser Power"
+      object_id: mqtt_g3d_mains_condenser_power
+      state_topic: "G3D/mains/status/switch:1"
+      value_template: "{{ (value_json.apower | float) if (value_json.apower | float) == (value_json.apower | float) else 0 }}"
+      unit_of_measurement: "W"
+      device_class: power
+      force_update: true
+      unique_id: mqtt_g3d_mains_condensor_power
     ##############################################################################
     #     G3V
     ##############################################################################
