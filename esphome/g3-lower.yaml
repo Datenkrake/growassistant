@@ -129,6 +129,11 @@ fan:
     speed_state_topic: "${area_id}/fan/speed/EXHAUST"
     command_topic: "${area_id}/${device_id}/fan/state/EXHAUST/set"
     speed_command_topic: "${area_id}/fan/speed/EXHAUST/set"
+    restore_mode: ALWAYS_ON  # Options: ALWAYS_OFF, ALWAYS_ON, RESTORE_DEFAULT_OFF, RESTORE_DEFAULT_ON, RESTORE_INVERTED_DEFAULT_OFF, RESTORE_INVERTED_DEFAULT_ON
+    on_turn_on:
+      - fan.turn_on:
+          id: ${area_id}_${device_id}${suffix}_exhaust
+          speed: 80
   - platform: speed
     output: ${area_id}_${device_id}${suffix}_circulation_pwm
     name: "Circulation Fan [${area_id}${suffix}]"
@@ -137,6 +142,12 @@ fan:
     speed_state_topic: "${area_id}/fan/speed/CIRCULATION"
     command_topic: "${area_id}/${device_id}/fan/state/CIRCULATION/set"
     speed_command_topic: "${area_id}/fan/speed/CIRCULATION/set"
+    restore_mode: ALWAYS_ON  # Options: ALWAYS_OFF, ALWAYS_ON, RESTORE_DEFAULT_OFF, RESTORE_DEFAULT_ON, RESTORE_INVERTED_DEFAULT_OFF, RESTORE_INVERTED_DEFAULT_ON
+    on_turn_on:
+      - fan.turn_on:
+          id: ${area_id}_${device_id}${suffix}_exhaust
+          speed: 50
+    
 
 sensor:
   # PHYSICAL SENSORS
@@ -223,3 +234,5 @@ script:
             - switch.turn_on: ${area_id}_${device_id}${suffix}_irrigation_pump
             - delay: !lambda 'return (int) id(${area_id}_${device_id}${suffix}_irrigation_duration).state * 1000;'
             - switch.turn_off: ${area_id}_${device_id}${suffix}_irrigation_pump
+
+
