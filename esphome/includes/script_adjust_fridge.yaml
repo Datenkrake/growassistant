@@ -1,9 +1,9 @@
 id: adjust_fridge
 then:
 - lambda: |-
-    ESP_LOGD("adjust_fridge", "Starting fridge adjustment with cure-phase hold logic...");
+    ESP_LOGD("############################adjust_fridge", "Starting fridge adjustment with staged dew recovery and post-dew heating...");
 
-    // Drying profile: durations and targets (user-configurable length)
+    // Drying profile: durations and targets
     std::vector<int> durations     = {96, 192, 0};
     std::vector<float> temp_targets = {20.0, 20.0, 15.0};
     std::vector<float> dew_targets  = {12.0, 12.5, 8.0};
@@ -11,78 +11,126 @@ then:
     float delta_T         = 0.5;  // hysteresis band
     float heat_cap_offset = 2.0;  // max °C above set-point for heating
     float dew_margin      = 2.0;  // min dew-point depression
+    float min_temp_bump   = -2.0;  // max °C to temporarily raise setpoints if margin can't be reached
+    float max_temp_bump   = 5.0;  // max °C to temporarily raise setpoints if margin can't be reached
 
-    // Determine phase index
+    // Determine current phase index
     int start_ts = id(${area_id}_${device_id}${suffix}_start_date).state;
     int now_ts   = id(mqtt_time).timestamp_now();
     int hours    = (now_ts - start_ts) / 3600;
-    int phase = 0;
-    int cum = 0;
+    int phase = 0, cum = 0;
     for (size_t i = 0; i < durations.size(); ++i) {
       cum += durations[i];
-      if (hours < cum || i == durations.size() - 1) { phase = i; break; }
+      if (hours < cum || i == durations.size() - 1) {
+        phase = i; break;
+      }
     }
     bool last_phase = (phase == durations.size() - 1);
 
+    // Read sensors and setpoints
     float T      = id(${area_id}_${device_id}${suffix}_temperature).state;
     float dew_pt = id(${area_id}_${device_id}${suffix}_dew_point).state;
-    float T_set  = temp_targets[phase];
-    float dew_set= dew_targets[phase];
+    float T_set_orig  = temp_targets[phase];
+    float dew_set_orig= dew_targets[phase];
+    float T_set = T_set_orig;
+    float dew_set = dew_set_orig;
+
+    // --- New: Dew Margin Autotune ---
+    if ((T_set - dew_pt) < (T_set - dew_set)) {
+      // Increase both setpoints together up to the margin, limited by max_temp_bump
+      id(G3D_TEMP_BUMP) = id(G3D_TEMP_BUMP) + 0.01;
+      if(id(G3D_TEMP_BUMP) > max_temp_bump) {
+        id(G3D_TEMP_BUMP) = max_temp_bump;
+      }
+      T_set   = T_set_orig + id(G3D_TEMP_BUMP);
+      dew_set = dew_set_orig + id(G3D_TEMP_BUMP);
+      ESP_LOGW("############################adjust_fridge", "Autotune: Bumping T_set and dew_set by %.1f°C to maintain dew margin (hardware/payload limit?)", id(G3D_TEMP_BUMP));
+    }
+    else {
+      // Decrease both setpoints together down to the margin, limited by min_temp_bump
+      id(G3D_TEMP_BUMP) = id(G3D_TEMP_BUMP) - 0.01;
+      if(id(G3D_TEMP_BUMP) < min_temp_bump) {
+        id(G3D_TEMP_BUMP) = min_temp_bump;
+      }
+      T_set   = T_set_orig + id(G3D_TEMP_BUMP);
+      dew_set = dew_set_orig + id(G3D_TEMP_BUMP);
+      ESP_LOGW("############################adjust_fridge", "Autotune: Bumping T_set and dew_set by %.1f°C to maintain dew margin (hardware/payload limit?)", id(G3D_TEMP_BUMP));
+      
+    }
 
     bool dew_risky    = (T - dew_pt) < dew_margin;
     bool dew_too_high = dew_pt > dew_set;
 
-    ESP_LOGD("adjust_fridge", "Phase %d/%d: T_set=%.1f°C, dew_set=%.1f°C, T=%.2f°C, dew_pt=%.2f°C, last_phase=%s", 
-             phase, durations.size()-1, T_set, dew_set, T, dew_pt, last_phase?"Y":"N");
+    ESP_LOGD("############################adjust_fridge", "Phase %d/%d: T_set=%.1f°C, dew_set=%.1f°C, T=%.2f°C, dew_pt=%.2f°C (bump=%.1f)", 
+             phase, durations.size()-1, T_set, dew_set, T, dew_pt, id(G3D_TEMP_BUMP));
 
-    // 1) Dew-risk recovery: dehumidify + heat based on depression only
-    if (dew_risky) {
-      id(condenser_should_be_on) = true;
-      id(heater_should_be_on)    = (T < T_set + heat_cap_offset);
-      ESP_LOGD("adjust_fridge", "Dew-risk recovery: heater=%s, condenser=ON", id(heater_should_be_on)?"ON":"OFF");
+    // Stateful flag for post-dew heating
+    static bool post_dew_heat = false;
 
-    // 2) Dew-point too high: dehumidify only, no heating
-    } else if (dew_too_high) {
+    // Stage1: Dew above target
+    if (dew_too_high && !post_dew_heat) {
+      post_dew_heat = false;
       id(condenser_should_be_on) = true;
       id(heater_should_be_on)    = false;
-      ESP_LOGD("adjust_fridge", "Dew-point high: condenser=ON, heater=OFF");
+      ESP_LOGD("############################adjust_fridge", "Stage1: Dew high → condenser=ON, heater=OFF");
+      return;
+    }
 
-    } else if (!last_phase) {
-      // 2) Regular temp hysteresis for non-cure phases
+    // Arm post-dew heating when dew recovered
+    if (!dew_too_high && !post_dew_heat) {
+      post_dew_heat = true;
+      ESP_LOGD("############################adjust_fridge", "Stage2 armed: dew recovered → post-dew heating next");
+    }
+
+    // Stage2: Post-dew heating until T_set, continue even if dew point rises above set, pause only if dew margin is violated
+    if (post_dew_heat) {
+      if (dew_risky) {
+        // Pause heating if depression too low
+        id(condenser_should_be_on) = true;
+        id(heater_should_be_on)    = false;
+        ESP_LOGD("############################adjust_fridge", "Stage2 paused: dew risk → condenser=ON, heater=OFF");
+        return;
+      }
+      if (T < T_set) {
+        id(condenser_should_be_on) = true;
+        id(heater_should_be_on)    = true;
+        ESP_LOGD("############################adjust_fridge", "Stage2: Post-dew heat → condenser=ON, heater=ON");
+        return;
+      }
+      // Completed heating to set
+      post_dew_heat = false;
+      id(condenser_should_be_on) = true;
+      id(heater_should_be_on)    = false;
+      ESP_LOGD("############################adjust_fridge", "Post-dew heating complete → condenser stays ON, heater OFF");
+      return;
+    }
+
+    // Stage3: Regular temperature hysteresis (drying phases)
+    if (!last_phase) {
       if (T > T_set + delta_T) {
         id(condenser_should_be_on) = true;
         id(heater_should_be_on)    = false;
-        ESP_LOGD("adjust_fridge", "Too hot: condenser=ON, heater=OFF");
+        ESP_LOGD("############################adjust_fridge", "Stage3: Too hot → condenser=ON");
       } else if (T < T_set - delta_T) {
-        id(condenser_should_be_on) = true;
+        id(condenser_should_be_on) = false;
         id(heater_should_be_on)    = (T < T_set + heat_cap_offset);
-        ESP_LOGD("adjust_fridge", "Too cold: heater=%s, condenser=ON", id(heater_should_be_on)?"ON":"OFF");
-      } else {
-      // 3) Cure/storage phase: dehumidify on dew risk/high and maintain temperature with condenser hysteresis
-      if (dew_risky || dew_too_high) {
-        id(condenser_should_be_on) = true;
-        id(heater_should_be_on)    = false;  // no heat during cure unless dew recovery (handled above)
-        ESP_LOGD("adjust_fridge", "Cure dew recovery: condenser=ON");
-      } else if (T > T_set + delta_T) {
-        id(condenser_should_be_on) = true;
-        id(heater_should_be_on)    = false;
-        ESP_LOGD("adjust_fridge", "Cure too hot: condenser=ON");
-      } else if (T < T_set - delta_T) {
-        id(condenser_should_be_on) = false;
-        id(heater_should_be_on)    = false;
-        ESP_LOGD("adjust_fridge", "Cure too cold: no heat, condenser=OFF");
+        ESP_LOGD("############################adjust_fridge", "Stage3: Too cold → heater=%s", id(heater_should_be_on)?"ON":"OFF");
       } else {
         id(condenser_should_be_on) = false;
         id(heater_should_be_on)    = false;
-        ESP_LOGD("adjust_fridge", "Cure within band: idle condenser and heater");
+        ESP_LOGD("############################adjust_fridge", "Stage3: Within band → idle");
       }
-    }
 
     } else {
-      // 3) Cure/storage phase: only dehumidify on dew risk/high, never actively heat
-      id(condenser_should_be_on) = false;
-      id(heater_should_be_on)    = false;
-      ESP_LOGD("adjust_fridge", "Cure hold: idle (no heat)");
+      // Stage4: Cure phase – maintain with condenser hysteresis, no heating
+      if (T > T_set + delta_T) {
+        id(condenser_should_be_on) = true;
+        ESP_LOGD("############################adjust_fridge", "Stage4: Cure too hot → condenser=ON");
+      } else {
+        id(condenser_should_be_on) = false;
+        ESP_LOGD("############################adjust_fridge", "Stage4: Cure within band → idle condenser");
+      }
+      id(heater_should_be_on) = false;
     }
 
 - mqtt.publish:
