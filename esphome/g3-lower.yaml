@@ -150,7 +150,7 @@ fan:
     on_turn_on:
       - fan.turn_on:
           id: ${area_id}_${device_id}${suffix}_exhaust
-          speed: 50
+          speed: 35
     
 
 sensor:
