@@ -11,4 +11,4 @@ lambda: |
     float b = 237.7;
     float alpha = ((a * T) / (b + T)) + log(RH / 100.0);
     float dew_point = (b * alpha) / (a - alpha);
-    return roundf(dew_point * 10.0) / 10.0;
+    return roundf(dew_point * 100.0) / 100.0;
