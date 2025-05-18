@@ -54,7 +54,7 @@ then:
       }
       T_set   = T_set_orig + id(G3D_TEMP_BUMP);
       dew_set = dew_set_orig + id(G3D_TEMP_BUMP);
-      ESP_LOGW("############################adjust_fridge", "Autotune: Bumping T_set and dew_set by %.2f°C to maintain dew margin (hardware/payload limit?)", id(G3D_TEMP_BUMP));
+      ESP_LOGW("############################adjust_fridge", "Autotune: Reducing T_set and dew_set by %.2f°C to reduce temperature (hardware/payload limit?)", id(G3D_TEMP_BUMP));
       
     }
 
