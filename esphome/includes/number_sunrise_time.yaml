@@ -7,7 +7,7 @@ optimistic: True
 min_value: 0
 max_value: 86400  # Maximum seconds in a day
 step: 1
-initial_value: 28800
+initial_value: 39600
 mode: BOX
 unit_of_measurement: "seconds"
 restore_value: True

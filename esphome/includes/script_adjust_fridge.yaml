@@ -54,9 +54,9 @@ then:
         id(heater_should_be_on)    = false;
         ESP_LOGD("adjust_fridge", "Too hot: condenser=ON, heater=OFF");
       } else if (T < T_set - delta_T) {
-        id(condenser_should_be_on) = false;
+        id(condenser_should_be_on) = true;
         id(heater_should_be_on)    = (T < T_set + heat_cap_offset);
-        ESP_LOGD("adjust_fridge", "Too cold: heater=%s, condenser=OFF", id(heater_should_be_on)?"ON":"OFF");
+        ESP_LOGD("adjust_fridge", "Too cold: heater=%s, condenser=ON", id(heater_should_be_on)?"ON":"OFF");
       } else {
       // 3) Cure/storage phase: dehumidify on dew risk/high and maintain temperature with condenser hysteresis
       if (dew_risky || dew_too_high) {
@@ -69,7 +69,7 @@ then:
         ESP_LOGD("adjust_fridge", "Cure too hot: condenser=ON");
       } else if (T < T_set - delta_T) {
         id(condenser_should_be_on) = false;
-        id(heater_should_be_on)    = false;  // no heating in storage phase
+        id(heater_should_be_on)    = false;
         ESP_LOGD("adjust_fridge", "Cure too cold: no heat, condenser=OFF");
       } else {
         id(condenser_should_be_on) = false;
