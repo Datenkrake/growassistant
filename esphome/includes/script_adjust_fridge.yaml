@@ -36,7 +36,7 @@ then:
     float dew_set = dew_set_orig;
 
     // --- New: Dew Margin Autotune ---
-    if ((T_set - dew_pt) < (T_set - dew_set)) {
+    if ((T - dew_pt) < (T_set - dew_set)) {
       // Increase both setpoints together up to the margin, limited by max_temp_bump
       id(G3D_TEMP_BUMP) = id(G3D_TEMP_BUMP) + 0.01;
       if(id(G3D_TEMP_BUMP) > max_temp_bump) {
