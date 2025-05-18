@@ -107,8 +107,9 @@ globals:
     initial_value: '0.0'
   - id: G3D_TEMP_BUMP
     type: float
-    restore_value: no
+    restore_value: yes
     initial_value: '0.0'
+    
 output:
   - platform: ledc
     pin: ${pin_fan1_pwm}
