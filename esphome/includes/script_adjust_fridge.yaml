@@ -8,10 +8,12 @@ then:
     std::vector<float> temp_targets = {20.0, 20.0, 15.0};
     std::vector<float> dew_targets  = {12.0, 12.5, 8.0};
 
-    float delta_T         = 0.5;  // hysteresis band
-    float dew_margin_min  = 2.0;  // min dew-point depression
-    float min_temp_bump   = -0.5;  // min °C to temporarily decrease setpoints if set point dew margin can be reached
-    float max_temp_bump   = 5.0;  // max °C to temporarily raise setpoints if set point dew margin can't be reached
+    float delta_T             = 0.5;  // hysteresis band
+    float dew_margin_min      = 2.0;  // min dew-point depression
+    float min_temp_bump       = -0.5;  // min °C to temporarily decrease setpoints if set point dew margin can be reached
+    float max_temp_bump       = 5.0;  // max °C to temporarily raise setpoints if set point dew margin can't be reached
+    float temp_bump_step_up   = 0.005;  // °C to temporarily raise setpoints if set point dew margin can't be reached
+    float temp_bump_step_down = 0.01;  // °C to temporarily reduce setpoints if set point dew margin can be reached
 
     // Determine current phase index
     int start_ts = id(${area_id}_${device_id}${suffix}_start_date).state;
@@ -37,7 +39,7 @@ then:
     // --- New: Dew Margin Autotune ---
     if ((T - dew_pt) < (T_set - dew_set)) {
       // Increase both setpoints together up to the margin, limited by max_temp_bump
-      id(G3D_TEMP_BUMP) = id(G3D_TEMP_BUMP) + 0.01;
+      id(G3D_TEMP_BUMP) = id(G3D_TEMP_BUMP) + temp_bump_step_up;
       if(id(G3D_TEMP_BUMP) > max_temp_bump) {
         id(G3D_TEMP_BUMP) = max_temp_bump;
       }
@@ -47,7 +49,7 @@ then:
     }
     else {
       // Decrease both setpoints together down to the margin, limited by min_temp_bump
-      id(G3D_TEMP_BUMP) = id(G3D_TEMP_BUMP) - 0.01;
+      id(G3D_TEMP_BUMP) = id(G3D_TEMP_BUMP) - temp_bump_step_down;
       if(id(G3D_TEMP_BUMP) < min_temp_bump) {
         id(G3D_TEMP_BUMP) = min_temp_bump;
       }
