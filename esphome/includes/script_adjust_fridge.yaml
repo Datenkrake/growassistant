@@ -9,10 +9,9 @@ then:
     std::vector<float> dew_targets  = {12.0, 12.5, 8.0};
 
     float delta_T         = 0.5;  // hysteresis band
-    float heat_cap_offset = 2.0;  // max °C above set-point for heating
-    float dew_margin      = 2.0;  // min dew-point depression
-    float min_temp_bump   = -2.0;  // max °C to temporarily raise setpoints if margin can't be reached
-    float max_temp_bump   = 5.0;  // max °C to temporarily raise setpoints if margin can't be reached
+    float dew_margin_min  = 2.0;  // min dew-point depression
+    float min_temp_bump   = -0.5;  // min °C to temporarily decrease setpoints if set point dew margin can be reached
+    float max_temp_bump   = 5.0;  // max °C to temporarily raise setpoints if set point dew margin can't be reached
 
     // Determine current phase index
     int start_ts = id(${area_id}_${device_id}${suffix}_start_date).state;
@@ -58,7 +57,7 @@ then:
       
     }
 
-    bool dew_risky    = (T - dew_pt) < dew_margin;
+    bool dew_risky    = (T - dew_pt) < dew_margin_min;
     bool dew_too_high = dew_pt > dew_set;
 
     ESP_LOGD("############################adjust_fridge", "Phase %d/%d: T_set=%.1f°C, dew_set=%.1f°C, T=%.2f°C, dew_pt=%.2f°C (bump=%.1f)", 
@@ -105,7 +104,7 @@ then:
       return;
     }
 
-    // Stage3: Regular temperature hysteresis (drying phases)
+    // Stage3: Regular temperature hysteresis, used if dew point is in range (drying phases)
     if (!last_phase) {
       if (T > T_set + delta_T) {
         id(condenser_should_be_on) = true;
@@ -113,7 +112,7 @@ then:
         ESP_LOGD("############################adjust_fridge", "Stage3: Too hot → condenser=ON");
       } else if (T < T_set - delta_T) {
         id(condenser_should_be_on) = false;
-        id(heater_should_be_on)    = (T < T_set + heat_cap_offset);
+        id(heater_should_be_on)    = true;
         ESP_LOGD("############################adjust_fridge", "Stage3: Too cold → heater=%s", id(heater_should_be_on)?"ON":"OFF");
       } else {
         id(condenser_should_be_on) = false;
