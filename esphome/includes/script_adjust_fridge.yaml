@@ -4,14 +4,14 @@ then:
     ESP_LOGD("############################adjust_fridge", "Starting fridge adjustment with staged dew recovery and post-dew heating...");
 
     // Drying profile: durations and targets in degree Celsius
-    std::vector<int> durations     = {96, 192, 0};
+    std::vector<int> durations     = {120, 192, 0};
     std::vector<float> temp_targets = {20.0, 20.0, 15.0};
     std::vector<float> dew_targets  = {12.0, 12.5, 8.0};
 
     // Drying profile: Parameters
     float delta_T             = 0.5;    // hysteresis band
     float dew_margin_min      = 2.0;    // min dew-point depression
-    float min_temp_bump       = -0.5;   // min °C to temporarily decrease setpoints if set point dew margin can be reached
+    float min_temp_bump       = 0.0;   // min °C to temporarily decrease setpoints if set point dew margin can be reached
     float max_temp_bump       = 5.0;    // max °C to temporarily raise setpoints if set point dew margin can't be reached
     float dew_set_bump_factor = 0.1;    // Dew Set Point is not bumped as much as temp set point, ensure dew point can be reached initially
     float temp_bump_step_up   = 0.001;  // °C to temporarily raise setpoints, if set point dew margin can't be reached
