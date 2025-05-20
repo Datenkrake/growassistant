@@ -3,17 +3,19 @@ then:
 - lambda: |-
     ESP_LOGD("############################adjust_fridge", "Starting fridge adjustment with staged dew recovery and post-dew heating...");
 
-    // Drying profile: durations and targets
+    // Drying profile: durations and targets in degree Celsius
     std::vector<int> durations     = {96, 192, 0};
     std::vector<float> temp_targets = {20.0, 20.0, 15.0};
     std::vector<float> dew_targets  = {12.0, 12.5, 8.0};
 
-    float delta_T             = 0.5;  // hysteresis band
-    float dew_margin_min      = 2.0;  // min dew-point depression
-    float min_temp_bump       = -0.5;  // min °C to temporarily decrease setpoints if set point dew margin can be reached
-    float max_temp_bump       = 5.0;  // max °C to temporarily raise setpoints if set point dew margin can't be reached
-    float temp_bump_step_up   = 0.005;  // °C to temporarily raise setpoints if set point dew margin can't be reached
-    float temp_bump_step_down = 0.01;  // °C to temporarily reduce setpoints if set point dew margin can be reached
+    // Drying profile: Parameters
+    float delta_T             = 0.5;    // hysteresis band
+    float dew_margin_min      = 2.0;    // min dew-point depression
+    float min_temp_bump       = -0.5;   // min °C to temporarily decrease setpoints if set point dew margin can be reached
+    float max_temp_bump       = 5.0;    // max °C to temporarily raise setpoints if set point dew margin can't be reached
+    float dew_set_bump_factor = 0.1;    // Dew Set Point is not bumped as much as temp set point, ensure dew point can be reached initially
+    float temp_bump_step_up   = 0.001;  // °C to temporarily raise setpoints, if set point dew margin can't be reached
+    float temp_bump_step_down = 0.1;    // °C to temporarily reduce setpoints, if set point dew margin can be reached
 
     // Determine current phase index
     int start_ts = id(${area_id}_${device_id}${suffix}_start_date).state;
@@ -26,6 +28,7 @@ then:
         phase = i; break;
       }
     }
+    // Check if the current phase is the last phase. We treat the last phase special later.
     bool last_phase = (phase == durations.size() - 1);
 
     // Read sensors and setpoints
@@ -35,19 +38,28 @@ then:
     float dew_set_orig= dew_targets[phase];
     float T_set = T_set_orig;
     float dew_set = dew_set_orig;
+    float dew_margin = T - dew_pt;
+    float dew_margin_target = T_set - dew_set;
 
-    // --- New: Dew Margin Autotune ---
-    if ((T - dew_pt) < (T_set - dew_set)) {
-      // Increase both setpoints together up to the margin, limited by max_temp_bump
+    // Check stuff used later
+    bool dew_margin_ok = dew_margin > dew_margin_target;
+    bool dew_risky    = (T - dew_pt) < dew_margin_min;
+
+    // --- Dew Margin Autotune ---
+    // Underpowered thermoelectric fridges can benefit from deviting up in temperature to make condensation more efficient in the beginning.
+    if (!dew_margin_ok) {
+      // Temperature and dew point are closer than they should be, RH is higher than it should be
+      // Increase both setpoints together one step, limited by max_temp_bump
       id(G3D_TEMP_BUMP) = id(G3D_TEMP_BUMP) + temp_bump_step_up;
       if(id(G3D_TEMP_BUMP) > max_temp_bump) {
         id(G3D_TEMP_BUMP) = max_temp_bump;
       }
       T_set   = T_set_orig + id(G3D_TEMP_BUMP);
-      dew_set = dew_set_orig + id(G3D_TEMP_BUMP);
-      ESP_LOGW("############################adjust_fridge", "Autotune: Bumping T_set and dew_set by %.2f°C to maintain dew margin (hardware/payload limit?)", id(G3D_TEMP_BUMP));
+      dew_set = dew_set_orig + id(G3D_TEMP_BUMP) * dew_set_bump_factor;
+      ESP_LOGW("############################ adjust_fridge", "Autotune: Increased T_set bump. NOW: %.3f°C", id(G3D_TEMP_BUMP));
     }
     else {
+      // Temperature and dew point are further than they should be, RH is lower than it should be
       // Decrease both setpoints together down to the margin, limited by min_temp_bump
       id(G3D_TEMP_BUMP) = id(G3D_TEMP_BUMP) - temp_bump_step_down;
       if(id(G3D_TEMP_BUMP) < min_temp_bump) {
@@ -55,81 +67,109 @@ then:
       }
       T_set   = T_set_orig + id(G3D_TEMP_BUMP);
       dew_set = dew_set_orig + id(G3D_TEMP_BUMP);
-      ESP_LOGW("############################adjust_fridge", "Autotune: Bumping T_set and dew_set by %.2f°C to reduce temperature (hardware/payload reserve?)", id(G3D_TEMP_BUMP));
-      
+      ESP_LOGW("############################ adjust_fridge", "Autotune: Decreased T_set bump. NOW: %.3f°C", id(G3D_TEMP_BUMP));
     }
 
-    bool dew_risky    = (T - dew_pt) < dew_margin_min;
-    bool dew_too_high = dew_pt > dew_set;
+    // Check stuff used later
+    bool dew_too_high = dew_pt > (dew_set + delta_T);
+    bool dew_too_low = dew_pt < (dew_set - delta_T);
+    bool temp_too_low = T < (T_set - delta_T);
+    bool temp_too_high = T > (T_set + delta_T);
 
-    ESP_LOGD("############################adjust_fridge", "Phase %d/%d: T_set=%.1f°C, dew_set=%.1f°C, T=%.2f°C, dew_pt=%.2f°C (bump=%.1f)", 
-             phase, durations.size()-1, T_set, dew_set, T, dew_pt, id(G3D_TEMP_BUMP));
+    ESP_LOGD("############################ adjust_fridge", "Phase %d/%d: T_set=%.2f°C, dew_set=%.2f°C, T=%.2f°C, dew_pt=%.2f°C, dew_margin=%.2f°C, dew_margin_target=%.2f°C  (bump=%.3f, T_set_orig=%.2f°C,)", 
+             phase, durations.size()-1, T_set, dew_set, T, dew_pt, dew_margin, dew_margin_target, id(G3D_TEMP_BUMP), T_set_orig);
 
     // Stateful flag for post-dew heating
     static bool post_dew_heat = false;
 
+    // Stages include return statements, so the order is giving priority.
+
     // Stage1: Dew above target
+    // The dew point is too high. At the set temperature, the RH will be high. Highest Priority is to reduce the dew point by dehumidifying.
     if (dew_too_high && !post_dew_heat) {
       post_dew_heat = false;
       id(condenser_should_be_on) = true;
       id(heater_should_be_on)    = false;
-      ESP_LOGD("############################adjust_fridge", "Stage1: Dew high → condenser=ON, heater=OFF");
+      ESP_LOGD("############################ adjust_fridge", "Stage1: Dew high → condenser=ON, heater=OFF");
       return;
     }
 
+    // This code is only executed if the dew point is below the dew point set value.
     // Arm post-dew heating when dew recovered
     if (!dew_too_high && !post_dew_heat) {
       post_dew_heat = true;
-      ESP_LOGD("############################adjust_fridge", "Stage2 armed: dew recovered → post-dew heating next");
+      ESP_LOGD("############################ adjust_fridge", "Stage2 armed: dew recovered → post-dew heating next");
     }
 
     // Stage2: Post-dew heating until T_set, continue even if dew point rises above set, pause only if dew margin is violated
+    // Temperature is the second highest priority. Heating all the way to T_set works better than heating only until dew point raises above set value.
     if (post_dew_heat) {
       if (dew_risky) {
-        // Pause heating if depression too low
+        // Pause heating if depression too low. Change of plans, no heating, dehumidifying instead.
         id(condenser_should_be_on) = true;
         id(heater_should_be_on)    = false;
-        ESP_LOGD("############################adjust_fridge", "Stage2 paused: dew risk → condenser=ON, heater=OFF");
+        ESP_LOGD("############################ adjust_fridge", "Stage2 paused: dew risk → condenser=ON, heater=OFF");
         return;
       }
-      if (T < T_set) {
+      if (temp_too_low && dew_margin_ok ) {
+        // if temperature and dew point are below set value and dew is not risky, it means passive humidifaction is needed. E.g. a sponge
+        id(condenser_should_be_on) = false;
+        id(heater_should_be_on)    = false;
+        ESP_LOGD("############################ adjust_fridge", "Stage2: Low and Low → condenser=OFF, heater=OFF");
+        return;
+      }
+      if (temp_too_low && dew_too_high) {
+        // if dew is too high, dehumidify
         id(condenser_should_be_on) = true;
         id(heater_should_be_on)    = true;
-        ESP_LOGD("############################adjust_fridge", "Stage2: Post-dew heat → condenser=ON, heater=ON");
+        ESP_LOGD("############################ adjust_fridge", "Stage2: Post-dew heat → condenser=ON, heater=ON");
+        return;
+      }
+      if (temp_too_low) {
+        // dew must be too low if this code runs
+        id(condenser_should_be_on) = false;
+        id(heater_should_be_on)    = true;
+        ESP_LOGD("############################ adjust_fridge", "Stage2: Post-dew heat → condenser=OFF, heater=ON");
         return;
       }
       // Completed heating to set
       post_dew_heat = false;
-      id(condenser_should_be_on) = true;
+      if (!dew_margin_ok) {
+        id(condenser_should_be_on) = true;
+        id(heater_should_be_on)    = false;
+        ESP_LOGD("############################ adjust_fridge", "Post-dew heating complete, dew margin low → condenser=ON");
+        return;
+      }
       id(heater_should_be_on)    = false;
-      ESP_LOGD("############################adjust_fridge", "Post-dew heating complete → condenser stays ON, heater OFF");
+      ESP_LOGD("############################ adjust_fridge", "Post-dew heating complete");
       return;
     }
 
+
     // Stage3: Regular temperature hysteresis, used if dew point is in range (drying phases)
     if (!last_phase) {
-      if (T > T_set + delta_T) {
+      if (temp_too_high) {
         id(condenser_should_be_on) = true;
         id(heater_should_be_on)    = false;
-        ESP_LOGD("############################adjust_fridge", "Stage3: Too hot → condenser=ON");
-      } else if (T < T_set - delta_T) {
+        ESP_LOGD("############################ adjust_fridge", "Stage3: Too hot → condenser=ON");
+      } else if (temp_too_low) {
         id(condenser_should_be_on) = false;
         id(heater_should_be_on)    = true;
-        ESP_LOGD("############################adjust_fridge", "Stage3: Too cold → heater=%s", id(heater_should_be_on)?"ON":"OFF");
+        ESP_LOGD("############################ adjust_fridge", "Stage3: Too cold → heater=%s", id(heater_should_be_on)?"ON":"OFF");
       } else {
         id(condenser_should_be_on) = false;
         id(heater_should_be_on)    = false;
-        ESP_LOGD("############################adjust_fridge", "Stage3: Within band → idle");
+        ESP_LOGD("############################ adjust_fridge", "Stage3: Within band → idle");
       }
 
     } else {
-      // Stage4: Cure phase – maintain with condenser hysteresis, no heating
-      if (T > T_set + delta_T) {
+      // Stage4: Cure phase – maintain with condenser hysteresis, no heating, passive humidification needed, e.g. a sponge
+      if (temp_too_high) {
         id(condenser_should_be_on) = true;
-        ESP_LOGD("############################adjust_fridge", "Stage4: Cure too hot → condenser=ON");
+        ESP_LOGD("############################ adjust_fridge", "Stage4: Cure too hot → condenser=ON");
       } else {
         id(condenser_should_be_on) = false;
-        ESP_LOGD("############################adjust_fridge", "Stage4: Cure within band → idle condenser");
+        ESP_LOGD("############################ adjust_fridge", "Stage4: Cure within band → condenser=OFF");
       }
       id(heater_should_be_on) = false;
     }

@@ -403,11 +403,11 @@ script:
           // Adjust exhaust fan speed based on RH comparison with hysteresis
           if (rh_difference > min_rh_diff) {
               // RH target > current RH: Decrease speed
-              new_speed = std::max(current_speed - roundf(rh_difference), fan_min);
+              new_speed = std::max(current_speed - roundf(std::abs(rh_difference) * 2), fan_min);
               ESP_LOGD("exhaust", "RH target > current RH by > %.2f%%. Decreasing speed to %.2f%%", min_rh_diff, new_speed);
           } else if (rh_difference < -min_rh_diff) {
               // RH target < current RH: Increase speed
-              new_speed = std::min(current_speed + roundf(std::abs(rh_difference) * 2), fan_max);
+              new_speed = std::min(current_speed + roundf(std::abs(rh_difference) * 0.5), fan_max);
               ESP_LOGD("exhaust", "RH target < current RH by > %.2f%%. Increasing speed to %.2f%%", min_rh_diff, new_speed);
           } else {
               ESP_LOGD("exhaust", "RH difference within ±%.2f%%. No speed adjustment needed.", min_rh_diff);
@@ -430,8 +430,10 @@ script:
 
           int step = id(${area_id}_${device_id}${suffix}_fan_speed_step);
           int duration = id(${area_id}_${device_id}${suffix}_sweep_duration).state; // Duration in minutes
-          float min_speed = id(${area_id}_${device_id}${suffix}_fan_speed_min).state;
-          float max_speed = id(${area_id}_${device_id}${suffix}_fan_speed_max).state;
+          //float min_speed = id(${area_id}_${device_id}${suffix}_fan_speed_min).state;
+          float min_speed = 50;
+          //float max_speed = id(${area_id}_${device_id}${suffix}_fan_speed_max).state;
+          float max_speed = 80;
 
           // Calculate the fan speed by linearly interpolating from min to max over 60 steps (1 hour)
           float fan_speed = min_speed + (max_speed - min_speed) * (step / (float)duration);
