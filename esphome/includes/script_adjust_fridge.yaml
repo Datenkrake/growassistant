@@ -5,7 +5,7 @@ then:
 
     // Drying profile: durations and targets in degree Celsius
     std::vector<int> durations     = {120, 192, 0};
-    std::vector<float> temp_targets = {20.0, 20.0, 15.0};
+    std::vector<float> temp_targets = {20.0, 19.0, 15.0};
     std::vector<float> dew_targets  = {12.0, 12.5, 8.0};
 
     // Drying profile: Parameters
@@ -16,7 +16,12 @@ then:
     float dew_set_bump_factor = 0.1;    // Dew Set Point is not bumped as much as temp set point, ensure dew point can be reached initially
     float temp_bump_step_up   = 0.001;  // °C to temporarily raise setpoints, if set point dew margin can't be reached
     float temp_bump_step_down = 0.1;    // °C to temporarily reduce setpoints, if set point dew margin can be reached
-
+    float fan_speed_default   = 35;   // Default circulation fan speed. Will change based on dew margin though.
+    float fan_speed_dew_risky = 4;
+    float fan_speed_last_phase = 12;
+    float fan_speed_dew_margin_nok = 6;
+    float fan_speed_dew_margin_ok = 2;
+    
     // Determine current phase index
     int start_ts = id(${area_id}_${device_id}${suffix}_start_date).state;
     int now_ts   = id(mqtt_time).timestamp_now();
@@ -78,6 +83,25 @@ then:
 
     ESP_LOGD("############################ adjust_fridge", "Phase %d/%d: T_set=%.2f°C, dew_set=%.2f°C, T=%.2f°C, dew_pt=%.2f°C, dew_margin=%.2f°C, dew_margin_target=%.2f°C  (bump=%.3f, T_set_orig=%.2f°C,)", 
              phase, durations.size()-1, T_set, dew_set, T, dew_pt, dew_margin, dew_margin_target, id(G3D_TEMP_BUMP), T_set_orig);
+
+    float fan_speed = fan_speed_default;  // safe condition
+    // Circulation Fan Setting
+    if (dew_risky) {
+      // Active dehumidification → full speed
+      fan_speed = fan_speed_dew_risky;
+    } else if (last_phase) {
+      fan_speed = fan_speed_last_phase;
+    } else if (!dew_margin_ok) {
+      // Dangerous margin → very high circulation
+      fan_speed = fan_speed_dew_margin_nok;
+    } else if (dew_margin_ok) {
+      fan_speed = fan_speed_dew_margin_ok;
+    }
+
+    auto call = id(${area_id}_${device_id}${suffix}_circulation).turn_on();
+    call.set_speed(fan_speed);
+    call.perform();
+    ESP_LOGD("adjust_fridge", "Circulation fan set to speed: %.2f (dew_margin: %.2f)", fan_speed, dew_margin);
 
     // Stateful flag for post-dew heating
     static bool post_dew_heat = false;

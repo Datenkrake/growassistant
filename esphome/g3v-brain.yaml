@@ -204,13 +204,13 @@ binary_sensor:
         }
 
         // Log the important time values
-        //ESP_LOGD("day_phase_target", "Current Time: %ld", now);
-        //ESP_LOGD("day_phase_target", "Midnight Today: %ld", midnight_today);
-        //ESP_LOGD("day_phase_target", "Midnight Yesterday: %ld", midnight_yesterday);
-        //ESP_LOGD("day_phase_target", "Sunrise Yesterday: %ld", sunrise_yesterday);
-        //ESP_LOGD("day_phase_target", "Sunrise Today: %ld", sunrise_today);
-        //ESP_LOGD("day_phase_target", "Day Length (seconds): %d", day_length_seconds);
-        //ESP_LOGD("day_phase_target", "Is it day phase? %s", is_day ? "Yes" : "No");
+        ESP_LOGD("day_phase_target", "Current Time: %ld", now);
+        ESP_LOGD("day_phase_target", "Midnight Today: %ld", midnight_today);
+        ESP_LOGD("day_phase_target", "Midnight Yesterday: %ld", midnight_yesterday);
+        ESP_LOGD("day_phase_target", "Sunrise Yesterday: %ld", sunrise_yesterday);
+        ESP_LOGD("day_phase_target", "Sunrise Today: %ld", sunrise_today);
+        ESP_LOGD("day_phase_target", "Day Length (seconds): %d", day_length_seconds);
+        ESP_LOGD("day_phase_target", "Is it day phase? %s", is_day ? "Yes" : "No");
 
         return is_day;
 
