@@ -134,6 +134,7 @@ fan:
     command_topic: "${area_id}/${device_id}/fan/state/EXHAUST/set"
     speed_command_topic: "${area_id}/fan/speed/EXHAUST/set"
     restore_mode: ALWAYS_ON  # Options: ALWAYS_OFF, ALWAYS_ON, RESTORE_DEFAULT_OFF, RESTORE_DEFAULT_ON, RESTORE_INVERTED_DEFAULT_OFF, RESTORE_INVERTED_DEFAULT_ON
+    speed_count: 100
     on_turn_on:
       - fan.turn_on:
           id: ${area_id}_${device_id}${suffix}_exhaust
@@ -147,6 +148,7 @@ fan:
     command_topic: "${area_id}/${device_id}/fan/state/CIRCULATION/set"
     speed_command_topic: "${area_id}/fan/speed/CIRCULATION/set"
     restore_mode: ALWAYS_ON  # Options: ALWAYS_OFF, ALWAYS_ON, RESTORE_DEFAULT_OFF, RESTORE_DEFAULT_ON, RESTORE_INVERTED_DEFAULT_OFF, RESTORE_INVERTED_DEFAULT_ON
+    speed_count: 100
     on_turn_on:
       - fan.turn_on:
           id: ${area_id}_${device_id}${suffix}_exhaust
