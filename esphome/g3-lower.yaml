@@ -114,13 +114,13 @@ output:
   - platform: ledc
     pin: ${pin_fan1_pwm}
     id: ${area_id}_${device_id}${suffix}_exhaust_pwm
-    frequency: 15000 Hz
+    frequency: 25000 Hz
     inverted: True
     max_power: 1.0
   - platform: ledc
     pin: ${pin_fan2_pwm}
     id: ${area_id}_${device_id}${suffix}_circulation_pwm
-    frequency: 15000 Hz
+    frequency: 25000 Hz
     inverted: True
     max_power: 1.0
 
