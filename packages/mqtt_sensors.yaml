@@ -7,6 +7,14 @@ mqtt:
       payload_on: "ON"
       payload_off: "OFF"
       value_template: "{{ value }}"
+    
+    - name: "G3V Irrigation Pump"
+      object_id: mqtt_g3_irrigation_pump
+      state_topic: "G3D/irrigation_pump/state/WATER"
+      command_topic: "G3D/irrigation_pump/state/WATER/set"
+      value_template: "{{ value | bool }}"
+      force_update: true
+      unique_id: mqtt_g3d_irrigation_pump
 
   number:
     ##############################################################################

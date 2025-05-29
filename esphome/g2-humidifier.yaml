@@ -127,16 +127,28 @@ script:
           topic: "${area_id}/fan/speed/${device_id}"
           payload: !lambda 'return std::to_string(id(${area_id}_${device_id}${suffix}_humidifier).speed);'
 
-
   - id: publish_humidifier_speed_govee
     then:
-      - mqtt.publish:
-          topic: "gv2mqtt/humidifier/1A9FD4ADFC831770/set-target"
-          payload: !lambda |-
-            float rh_target = id(${area_id}_${device_id}${suffix}_canopy_rh_target).state;
-            int speed = id(${area_id}_${device_id}${suffix}_humidifier).speed;
-            int result = static_cast<int>(rh_target + speed - 20);
-            if (result < 40) result = 40;
-            if (result > 80) result = 80;
-            return std::to_string(result);
-
+      - if:
+          condition:
+            lambda: |-
+                float rh_target = id(${area_id}_${device_id}${suffix}_canopy_rh_target).state;
+                int speed = id(${area_id}_${device_id}${suffix}_humidifier).speed;
+                int result = static_cast<int>(rh_target + speed - 20);
+                if (speed == 0) result = false;
+                if (result < 40) result = false;
+                else result = true;
+                return result;
+          then:
+            - mqtt.publish:
+                topic: "gv2mqtt/humidifier/1A9FD4ADFC831770/set-target"
+                payload: !lambda |-
+                  float rh_target = id(${area_id}_${device_id}${suffix}_canopy_rh_target).state;
+                  int speed = id(${area_id}_${device_id}${suffix}_humidifier).speed;
+                  int result = static_cast<int>(rh_target + speed - 20);
+                  if (result > 80) result = 80;
+                  return std::to_string(result);
+          else:
+            - mqtt.publish:
+                topic: "gv2mqtt/switch/1A9FD4ADFC831770/command/powerSwitch"
+                payload: 'OFF'

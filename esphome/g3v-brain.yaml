@@ -483,15 +483,28 @@ script:
                     params["on"] = false;
                 }
 
-
   - id: publish_humidifier_speed_govee
     then:
-      - mqtt.publish:
-          topic: "gv2mqtt/humidifier/15271091A84F5950/set-target"
-          payload: !lambda |-
-            float rh_target = id(${area_id}_${device_id}${suffix}_rh_target).state;
-            int speed = id(${area_id}_${device_id}${suffix}_humidifier).speed;
-            int result = static_cast<int>(rh_target + speed - 20);
-            if (result < 40) result = 40;
-            if (result > 80) result = 80;
-            return std::to_string(result);
+      - if:
+          condition:
+            lambda: |-
+                float rh_target = id(${area_id}_${device_id}${suffix}_rh_target).state;
+                int speed = id(${area_id}_${device_id}${suffix}_humidifier).speed;
+                int result = static_cast<int>(rh_target + speed - 20);
+                if (speed == 0) result = false;
+                if (result < 40) result = false;
+                else result = true;
+                return result;
+          then:
+            - mqtt.publish:
+                topic: "gv2mqtt/humidifier/15271091A84F5950/set-target"
+                payload: !lambda |-
+                  float rh_target = id(${area_id}_${device_id}${suffix}_rh_target).state;
+                  int speed = id(${area_id}_${device_id}${suffix}_humidifier).speed;
+                  int result = static_cast<int>(rh_target + speed - 20);
+                  if (result > 80) result = 80;
+                  return std::to_string(result);
+          else:
+            - mqtt.publish:
+                topic: "gv2mqtt/switch/15271091A84F5950/command/powerSwitch"
+                payload: 'OFF'
