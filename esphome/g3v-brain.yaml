@@ -431,9 +431,9 @@ script:
           int step = id(${area_id}_${device_id}${suffix}_fan_speed_step);
           int duration = id(${area_id}_${device_id}${suffix}_sweep_duration).state; // Duration in minutes
           //float min_speed = id(${area_id}_${device_id}${suffix}_fan_speed_min).state;
-          float min_speed = 50;
+          float min_speed = 30;
           //float max_speed = id(${area_id}_${device_id}${suffix}_fan_speed_max).state;
-          float max_speed = 80;
+          float max_speed = 60;
 
           // Calculate the fan speed by linearly interpolating from min to max over 60 steps (1 hour)
           float fan_speed = min_speed + (max_speed - min_speed) * (step / (float)duration);

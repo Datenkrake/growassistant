@@ -7,13 +7,12 @@ mqtt:
       payload_on: "ON"
       payload_off: "OFF"
       value_template: "{{ value }}"
-    
+
     - name: "G3V Irrigation Pump"
       object_id: mqtt_g3_irrigation_pump
       state_topic: "G3D/irrigation_pump/state/WATER"
       command_topic: "G3D/irrigation_pump/state/WATER/set"
       value_template: "{{ value | bool }}"
-      force_update: true
       unique_id: mqtt_g3d_irrigation_pump
 
   number:
@@ -30,31 +29,31 @@ mqtt:
       retain: true
 
     ##############################################################################
-    #     G3D
+    #     D1
     ##############################################################################
 
-    - name: "G3D Cycle Start"
-      unique_id: "mqtt_g3d_start_date"
-      command_topic: "G3D/start_date/state/BRAIN/set"
+    - name: "D1 Cycle Start"
+      unique_id: "mqtt_d1_start_date"
+      command_topic: "D1/start_date/state/FRIDGE/set"
       min: 0
       max: 9999999999
       step: 1
       retain: true
       unit_of_measurement: "s"
 
-    - name: "G3D Circulation Fan"
-      object_id: mqtt_g3d_fan_speed_circulation
-      unique_id: mqtt_g3d_fan_speed_circulation
-      state_topic: "G3D/fan/speed/CIRCULATION"
-      command_topic: "G3D/fan/speed/CIRCULATION/set"
+    - name: "D1 Circulation Fan"
+      object_id: mqtt_g1_fan_speed_circulation
+      unique_id: mqtt_g1_fan_speed_circulation
+      state_topic: "D1/fan/speed/CIRCULATION"
+      command_topic: "D1/fan/speed/CIRCULATION/set"
       unit_of_measurement: "%"
       value_template: "{{ (value | float | round(0)) if (value | float) == (value | float) else 0 }}"
 
-    - name: "G3D Exhaust fan"
-      object_id: mqtt_g3d_fan_speed_exhaust
-      unique_id: mqtt_g3d_fan_speed_exhaust
-      state_topic: "G3D/fan/speed/EXHAUST"
-      command_topic: "G3D/fan/speed/EXHAUST/set"
+    - name: "D1 Exhaust fan"
+      object_id: mqtt_g1_fan_speed_exhaust
+      unique_id: mqtt_g1_fan_speed_exhaust
+      state_topic: "D1/fan/speed/EXHAUST"
+      command_topic: "D1/fan/speed/EXHAUST/set"
       unit_of_measurement: "%"
       value_template: "{{ (value | float | round(0)) if (value | float) == (value | float) else 0 }}"
 
@@ -96,60 +95,59 @@ mqtt:
       command_topic: "G3V/light_percent/state/BRAIN/set"
       unique_id: mqtt_g3v_light_percent_brain
       unit_of_measurement: "%"
-      value_template: "{{ (value | float | round(1)) if (value | float) == (value | float) else 0 }}"
-      min: 0
-      max: 0.70
+      value_template: "{{ (value | float | round(2)) if (value | float) == (value | float) else 0 }}"
+      min: 0.15
+      max: 0.60
       step: 0.01
       retain: true
 
   sensor:
     ##############################################################################
-    #     G3D
+    #     D1
     ##############################################################################
-    - name: "G3D Temperature"
-      object_id: mqtt_g3d_temperature
-      unique_id: mqtt_g3d_temperature
-      state_topic: "G3D/temperature/state/SHT"
+    - name: "D1 Temperature"
+      object_id: mqtt_d1_temperature
+      unique_id: mqtt_d1_temperature
+      state_topic: "D1/temperature/state/SHT"
       unit_of_measurement: "°C"
       value_template: "{{ (value | float | round(1)) if (value | float) == (value | float) else 0 }}"
       force_update: true
 
-    - name: "G3D Humidity"
-      object_id: mqtt_g3d_humiditiy
-      unique_id: mqtt_g3d_humiditiy
-      state_topic: "G3D/humidity/state/SHT"
+    - name: "D1 Humidity"
+      object_id: mqtt_d1_humiditiy
+      unique_id: mqtt_d1_humiditiy
+      state_topic: "D1/humidity/state/SHT"
       unit_of_measurement: "%"
       value_template: "{{ (value | float | round(1)) if (value | float) == (value | float) else 0 }}"
       force_update: true
 
-    - name: "G3D VPD"
-      object_id: mqtt_g3d_vpd
-      unique_id: mqtt_g3d_vpd
-      state_topic: "G3D/vpd/state/BRAIN"
+    - name: "D1 VPD"
+      object_id: mqtt_d1_vpd
+      unique_id: mqtt_d1_vpd
+      state_topic: "D1/vpd/state/FRIDGE"
       unit_of_measurement: "kPa"
       value_template: "{{ (value | float | round(2)) if (value | float) == (value | float) else 0 }}"
       force_update: true
 
-    - name: "G3D Dew Point"
-      object_id: mqtt_g3d_dew_point
-      unique_id: mqtt_g3d_dew_point
-      state_topic: "G3D/dew_point/state/BRAIN"
+    - name: "D1 Dew Point"
+      object_id: mqtt_d1_dew_point
+      unique_id: mqtt_d1_dew_point
+      state_topic: "D1/dew_point/state/FRIDGE"
       unit_of_measurement: "°C"
       value_template: "{{ (value | float | round(2)) if (value | float) == (value | float) else 0 }}"
       force_update: true
-    
-    - name: "G3D Mains Heater Power"
-      object_id: mqtt_g3d_mains_heater_power
+
+    - name: "D1 Mains Heater Power"
+      object_id: mqtt_d1_mains_heater_power
       state_topic: "G3D/mains/status/switch:0"
       value_template: "{{ (value_json.apower | float) if (value_json.apower | float) == (value_json.apower | float) else 0 }}"
       unit_of_measurement: "W"
       device_class: power
       force_update: true
       unique_id: mqtt_g3d_mains_heater_power
-    
 
-    - name: "G3D Mains Condenser Power"
-      object_id: mqtt_g3d_mains_condenser_power
+    - name: "D1 Mains Condenser Power"
+      object_id: mqtt_d1_mains_condenser_power
       state_topic: "G3D/mains/status/switch:1"
       value_template: "{{ (value_json.apower | float) if (value_json.apower | float) == (value_json.apower | float) else 0 }}"
       unit_of_measurement: "W"
@@ -211,7 +209,7 @@ mqtt:
       unique_id: mqtt_g3v_light_percent_brain
       state_topic: "G3V/light_percent/state/BRAIN"
       unit_of_measurement: "%"
-      value_template: "{{ (value | float | round(1)) if (value | float) == (value | float) else 0 }}"
+      value_template: "{{ (value | float | round(2)) if (value | float) == (value | float) else 0 }}"
       force_update: true
 
     - name: "G3V Mains Heat"

@@ -79,36 +79,6 @@ time:
 
 i2c:
   !include includes/i2c_bus_a.yaml
-
-globals:
-  - id: heater_should_be_on
-    type: bool
-    restore_value: no
-    initial_value: 'false'
-  - id: condenser_should_be_on
-    type: bool
-    restore_value: no
-    initial_value: 'false'
-  - id: ${area_id}_${device_id}${suffix}_exhaust_fan_pwm_value
-    type: float
-    restore_value: no
-    initial_value: '0.0'
-  - id: ${area_id}_${device_id}${suffix}_fan_speed_step
-    type: int
-    restore_value: no
-    initial_value: '0'
-  - id: G3D_BRAIN_target_temp
-    type: float
-    restore_value: no
-    initial_value: '0.0'
-  - id: G3D_BRAIN_target_humidity
-    type: float
-    restore_value: no
-    initial_value: '0.0'
-  - id: G3D_TEMP_BUMP
-    type: float
-    restore_value: yes
-    initial_value: '0.0'
     
 output:
   - platform: ledc
@@ -157,51 +127,6 @@ fan:
 
 sensor:
   # PHYSICAL SENSORS
-  ## TEMPERATURE, HUMIDITY
-  - platform: sht3xd
-    temperature:
-        name: "Temperature SHT [${area_id}_${device_id}${suffix}]"
-        id: ${area_id}_${device_id}${suffix}_temperature
-        state_topic: "${area_id}/temperature/state/SHT"
-        filters:
-          - median:
-              window_size: 5  # Adjust as needed to remove outliers
-              send_every: 1
-          - sliding_window_moving_average:
-              window_size: 10  # 10 samples at 1s intervals = 10s average
-              send_every: 1
-    humidity:
-        name: "Humidity SHT [${area_id}_${device_id}${suffix}]"
-        id: ${area_id}_${device_id}${suffix}_humidity
-        state_topic: "${area_id}/humidity/state/SHT"
-        filters:
-          - median:
-              window_size: 5  # Adjust as needed to remove outliers
-              send_every: 1
-          - sliding_window_moving_average:
-              window_size: 10  # 10 samples at 1s intervals = 10s average
-              send_every: 1
-    address: ${address_sht4x}
-    update_interval: 1s
-  # CALCULATED SENSORS
-  ## CLIMATE
-  - platform: template
-    name: "VPD [${area_id}_${device_id}${suffix}]"
-    id: ${area_id}_${device_id}${suffix}_vpd
-    state_topic: "${area_id}/vpd/state/${device_id}"
-    unit_of_measurement: "kPa"
-    update_interval: 10s
-    accuracy_decimals: 2
-    lambda: |
-        float LT = id(${area_id}_${device_id}${suffix}_temperature).state;
-        float rh = id(${area_id}_${device_id}${suffix}_humidity).state;
-        float ASVP = 610.78 * exp((LT / (LT + 237.3)) * 17.2694);
-        float LSVP = 610.78 * exp((LT / (LT + 237.3)) * 17.2694);
-        float LVPD = (LSVP - (ASVP * (rh / 100.0))) / 1000.0;
-        return LVPD;
-    
-  - !include includes/sensor_dew_point.yaml
-
 switch:
   - !include includes/switch_enable.yaml
   - !include includes/switch_irrigation_pump.yaml
@@ -211,9 +136,6 @@ number:
   - !include includes/number_irrigation_period.yaml
   - !include includes/number_irrigation_duration.yaml
 interval:
-  - interval: 10s
-    then:
-      - script.execute: adjust_fridge
   - interval: 60s
     then:
       - script.execute: ${area_id}_${device_id}${suffix}_publish_exhaust_fan_speed
@@ -222,8 +144,6 @@ interval:
       - script.execute: irrigate
     
 script:
-  - !include includes/script_adjust_fridge.yaml
-
   - id: ${area_id}_${device_id}${suffix}_publish_exhaust_fan_speed
     then:
       - mqtt.publish:
