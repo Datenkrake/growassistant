@@ -4,7 +4,7 @@ then:
     ESP_LOGD("############################adjust_fridge", "Starting fridge adjustment with staged dew recovery and post-dew heating...");
 
     // Drying profile: durations and targets in degree Celsius
-    std::vector<int> durations     = (96, 192, 0};
+    std::vector<int> durations     = {96, 192, 0};
     std::vector<float> temp_targets = {18.0, 18.0, 16.0};
     std::vector<float> dew_targets  = {10.0, 10.5, 9.0};
 
