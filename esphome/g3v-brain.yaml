@@ -204,13 +204,13 @@ binary_sensor:
         }
 
         // Log the important time values
-        ESP_LOGD("day_phase_target", "Current Time: %ld", now);
-        ESP_LOGD("day_phase_target", "Midnight Today: %ld", midnight_today);
-        ESP_LOGD("day_phase_target", "Midnight Yesterday: %ld", midnight_yesterday);
-        ESP_LOGD("day_phase_target", "Sunrise Yesterday: %ld", sunrise_yesterday);
-        ESP_LOGD("day_phase_target", "Sunrise Today: %ld", sunrise_today);
-        ESP_LOGD("day_phase_target", "Day Length (seconds): %d", day_length_seconds);
-        ESP_LOGD("day_phase_target", "Is it day phase? %s", is_day ? "Yes" : "No");
+        // ESP_LOGD("day_phase_target", "Current Time: %ld", now);
+        // ESP_LOGD("day_phase_target", "Midnight Today: %ld", midnight_today);
+        // ESP_LOGD("day_phase_target", "Midnight Yesterday: %ld", midnight_yesterday);
+        // ESP_LOGD("day_phase_target", "Sunrise Yesterday: %ld", sunrise_yesterday);
+        // ESP_LOGD("day_phase_target", "Sunrise Today: %ld", sunrise_today);
+        // ESP_LOGD("day_phase_target", "Day Length (seconds): %d", day_length_seconds);
+        // ESP_LOGD("day_phase_target", "Is it day phase? %s", is_day ? "Yes" : "No");
 
         return is_day;
 
@@ -386,6 +386,7 @@ script:
           call1.perform();
 
           float temperature = id(${area_id}_${device_id}${suffix}_temperature).state;
+          float temperature_max = id(${area_id}_${device_id}${suffix}_temperature_max).state;
           float humidity = id(${area_id}_${device_id}${suffix}_humidity).state;
           float rh_target = id(${area_id}_${device_id}${suffix}_rh_target).state;
 
@@ -400,8 +401,13 @@ script:
           int current_speed = id(${area_id}_${device_id}${suffix}_exhaust).speed;
           float new_speed = current_speed;
 
+          // If temperature exceeds temperature max, increase fan speed
+          if (temperature > temperature_max) {
+              new_speed += 5.0;
+              ESP_LOGD("exhaust", "Temperature above maximum. Increasing Fan Speed.");
+          }
           // Adjust exhaust fan speed based on RH comparison with hysteresis
-          if (rh_difference > min_rh_diff) {
+          else if (rh_difference > min_rh_diff) {
               // RH target > current RH: Decrease speed
               new_speed = std::max(current_speed - roundf(std::abs(rh_difference) * 2), fan_min);
               ESP_LOGD("exhaust", "RH target > current RH by > %.2f%%. Decreasing speed to %.2f%%", min_rh_diff, new_speed);
