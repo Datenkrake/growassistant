@@ -24,11 +24,11 @@ frontend:
 camera:
   - platform: ffmpeg
     name: G3V-Cam
-    input: 'rtsp://portainer.localdomain:8554/G3V/main'
+    input: 'rtsp://192.168.1.158:8554/G3V/main'
   
   - platform: ffmpeg
     name: G3D-Cam
-    input: 'rtsp://portainer.localdomain:8554/G3D/main'
+    input: 'rtsp://192.168.1.158:8554/G3D/main'
     
     
 #lovelace:

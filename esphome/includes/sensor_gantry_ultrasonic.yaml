@@ -4,8 +4,9 @@ echo_pin: ${pin_echo}
 name: "Gantry Position [${area_id}_${device_id}${suffix}]"
 id: ${area_id}_${device_id}${suffix}_position
 state_topic: "${area_id}/gantry_position/state/${device_id}"
-update_interval: 0.01s
+update_interval: 1s
+pulse_time: 20us
 timeout: 2m
 filters:
 - sliding_window_moving_average:
-    window_size: 1000
+    window_size: 10
