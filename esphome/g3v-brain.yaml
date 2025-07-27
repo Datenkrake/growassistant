@@ -130,28 +130,46 @@ fan:
 sensor:
   # PHYSICAL SENSORS
   ## TEMPERATURE, HUMIDITY
-  - platform: htu21d
-    model: htu21d
+  # - platform: htu21d
+  #   model: htu21d
+  #   temperature:
+  #     name: "Temperature SHT [${area_id}_${device_id}${suffix}]"
+  #     id: ${area_id}_${device_id}${suffix}_temperature
+  #     state_topic: "${area_id}/temperature/state/CANOPY"
+  #     filters:
+  #       - sliding_window_moving_average:
+  #           window_size: 30
+  #           send_every: 10
+  #   humidity:
+  #     name: "Humidity SHT [${area_id}_${device_id}${suffix}]"
+  #     id: ${area_id}_${device_id}${suffix}_humidity
+  #     state_topic: "${area_id}/humidity/state/CANOPY"
+  #     filters:
+  #       - sliding_window_moving_average:
+  #           window_size: 30
+  #           send_every: 10
+  #   heater:
+  #     name: "Heater"
+  #   update_interval: 1s  
+    
+  - platform: sht4x
+    id: my_sht4x
     temperature:
       name: "Temperature SHT [${area_id}_${device_id}${suffix}]"
-      id: ${area_id}_${device_id}${suffix}_temperature
       state_topic: "${area_id}/temperature/state/CANOPY"
-      filters:
-        - sliding_window_moving_average:
-            window_size: 30
-            send_every: 10
+      id: ${area_id}_${device_id}${suffix}_temperature
     humidity:
       name: "Humidity SHT [${area_id}_${device_id}${suffix}]"
-      id: ${area_id}_${device_id}${suffix}_humidity
       state_topic: "${area_id}/humidity/state/CANOPY"
-      filters:
-        - sliding_window_moving_average:
-            window_size: 30
-            send_every: 10
-    heater:
-      name: "Heater"
-    update_interval: 1s  
-    
+      id: ${area_id}_${device_id}${suffix}_humidity
+    precision: High
+    address: 0x44
+    update_interval: 1s
+
+    heater_max_duty: 0.02    # Enables heater at up to 2% duty cycle (max 0.05) :contentReference[oaicite:1]{index=1}
+    heater_power: Med       # Options: Low, Med, High :contentReference[oaicite:2]{index=2}
+    heater_time: Short      # Options: Short (100 ms) or Long (1000 ms) :contentReference[oaicite:3]{index=3}
+
     
   # CALCULATED SENSORS
   ## CLIMATE

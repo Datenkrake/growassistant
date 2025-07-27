@@ -15,6 +15,14 @@ mqtt:
       value_template: "{{ value | bool }}"
       unique_id: mqtt_g3d_irrigation_pump
 
+    - name: "G2 AUX Mains"
+      object_id: mqtt_g2_aux_mains
+      command_topic: "G2/mains/light/command/switch:0"
+      payload_on: "on"
+      payload_off: "off"
+      value_template: "{{ value }}"
+      unique_id: mqtt_g2_aux_mains
+
   number:
     ##############################################################################
     #     G1
