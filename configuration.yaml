@@ -6,6 +6,8 @@
 
 homeassistant:
   packages: !include_dir_named packages/
+  allowlist_external_dirs:
+    - /media/timelapse/ # Allow Home Assistant to access your directory
 
 # Loads default set of integrations. Do not remove.
 default_config:
@@ -24,13 +26,12 @@ frontend:
 camera:
   - platform: ffmpeg
     name: G3V-Cam
-    input: 'rtsp://192.168.1.158:8554/G3V/main'
-  
+    input: "rtsp://192.168.1.158:8554/G3V/main"
+
   - platform: ffmpeg
     name: G3D-Cam
-    input: 'rtsp://192.168.1.158:8554/G3D/main'
-    
-    
+    input: "rtsp://192.168.1.158:8554/G3D/main"
+
 #lovelace:
 #  mode: yaml
 
@@ -85,33 +86,226 @@ recorder:
   #   entities:
   #     - input_number.some_excluded_entity
 
+command_line:
+  - switch:
+      unique_id: timelapse_g1
+      name: "Timelapse G1"
+      command_timeout: 300
+      command_on: >-
+        /bin/sh -lc '
+        {
+          log="/media/timelapse/G1/min_build.log"
+          echo "=== $(date -Is) start ===" > "$log"
+          echo "Listing snapshot directory:" >> "$log"
+
+          # Remove zero-byte (empty) files
+          echo "Cleaning up zero-byte files..."
+          find "/media/timelapse/G1/snapshots/" -maxdepth 1 -type f -size 0c -delete
+
+          ls -l /media/timelapse/G1/snapshots >> "$log"
+          echo "First few files:" >> "$log"
+          ls /media/timelapse/G1/snapshots/*.jpg 2>/dev/null | head -5 >> "$log" || echo "No JPGs found" >> "$log"
+          echo "Trying ffmpeg command ..." >> "$log"
+          ffmpeg -hide_banner -loglevel error -y -pattern_type glob -framerate 25 -i "/media/timelapse/G1/snapshots/*.jpg" -c:v libx264 -pix_fmt yuv420p /media/timelapse/G1/timelapse.mp4 >> "$log" 2>&1 || echo "FFmpeg failed with code $?" >> "$log"
+        }'
+      command_off: "true"
+  - switch:
+      unique_id: timelapse_g2
+      name: "Timelapse G2"
+      command_timeout: 300
+      command_on: >-
+        /bin/sh -lc '
+        {
+          log="/media/timelapse/G2/min_build.log"
+          echo "=== $(date -Is) start ===" > "$log"
+          echo "Listing snapshot directory:" >> "$log"
+
+          # Remove zero-byte (empty) files
+          echo "Cleaning up zero-byte files..."
+          find "/media/timelapse/G2/snapshots/" -maxdepth 1 -type f -size 0c -delete
+
+          ls -l /media/timelapse/G2/snapshots >> "$log"
+          echo "First few files:" >> "$log"
+          ls /media/timelapse/G2/snapshots/*.jpg 2>/dev/null | head -5 >> "$log" || echo "No JPGs found" >> "$log"
+          echo "Trying ffmpeg command ..." >> "$log"
+          ffmpeg -hide_banner -loglevel error -y -pattern_type glob -framerate 25 -i "/media/timelapse/G2/snapshots/*.jpg" -c:v libx264 -pix_fmt yuv420p /media/timelapse/G2/timelapse.mp4 >> "$log" 2>&1 || echo "FFmpeg failed with code $?" >> "$log"
+        }'
+      command_off: "true"
+  - switch:
+      unique_id: timelapse_g30
+      name: "Timelapse G30"
+      command_timeout: 300
+      command_on: >-
+        /bin/sh -lc '
+        {
+          log="/media/timelapse/G3/min_build.log"
+          echo "=== $(date -Is) start ===" > "$log"
+          echo "Listing snapshot directory:" >> "$log"
+
+          # Remove zero-byte (empty) files
+          echo "Cleaning up zero-byte files..."
+          find "/media/timelapse/G3/snapshots0/" -maxdepth 1 -type f -size 0c -delete
+
+          ls -l /media/timelapse/G3/snapshots0 >> "$log"
+          echo "First few files:" >> "$log"
+          ls /media/timelapse/G3/snapshots0/*.jpg 2>/dev/null | head -5 >> "$log" || echo "No JPGs found" >> "$log"
+          echo "Trying ffmpeg command ..." >> "$log"
+          ffmpeg -hide_banner -loglevel error -y -pattern_type glob -framerate 25 -i "/media/timelapse/G3/snapshots0/*.jpg" -c:v libx264 -pix_fmt yuv420p /media/timelapse/G3/timelapse0.mp4 >> "$log" 2>&1 || echo "FFmpeg failed with code $?" >> "$log"
+        }'
+      command_off: "true"
+  - switch:
+      unique_id: timelapse_g31
+      name: "Timelapse G31"
+      command_timeout: 300
+      command_on: >-
+        /bin/sh -lc '
+        {
+          log="/media/timelapse/G3/min_build.log"
+          echo "=== $(date -Is) start ===" > "$log"
+          echo "Listing snapshot directory:" >> "$log"
+
+          # Remove zero-byte (empty) files
+          echo "Cleaning up zero-byte files..."
+          find "/media/timelapse/G3/snapshots1/" -maxdepth 1 -type f -size 0c -delete
+
+          ls -l /media/timelapse/G3/snapshots1 >> "$log"
+          echo "First few files:" >> "$log"
+          ls /media/timelapse/G3/snapshots1/*.jpg 2>/dev/null | head -5 >> "$log" || echo "No JPGs found" >> "$log"
+          echo "Trying ffmpeg command ..." >> "$log"
+          ffmpeg -hide_banner -loglevel error -y -pattern_type glob -framerate 25 -i "/media/timelapse/G3/snapshots1/*.jpg" -c:v libx264 -pix_fmt yuv420p /media/timelapse/G3/timelapse1.mp4 >> "$log" 2>&1 || echo "FFmpeg failed with code $?" >> "$log"
+        }'
+      command_off: "true"
+
 automation:
+  - id: create_timelapse_nightly_g1
+    alias: Create Timelapse Automation
+    trigger:
+      - trigger: time_pattern
+        minutes: 10 # Triggers at half of every hour
+    action:
+      - action: switch.turn_on
+        target:
+          entity_id: switch.timelapse_g1
+      - delay: "00:00:10"
+      - action: switch.turn_off
+        target:
+          entity_id: switch.timelapse_g1
+    mode: single
+  - id: create_timelapse_nightly_g2
+    alias: Create Timelapse Automation
+    trigger:
+      - trigger: time_pattern
+        minutes: 20 # Triggers at half of every hour
+    action:
+      - action: switch.turn_on
+        target:
+          entity_id: switch.timelapse_g2
+      - delay: "00:00:10"
+      - action: switch.turn_off
+        target:
+          entity_id: switch.timelapse_g2
+    mode: single
+  - id: create_timelapse_nightly_g30
+    alias: Create Timelapse Automation
+    trigger:
+      - trigger: time_pattern
+        minutes: 30 # Triggers at half of every hour
+    action:
+      - action: switch.turn_on
+        target:
+          entity_id: switch.timelapse_g30
+      - delay: "00:00:10"
+      - action: switch.turn_off
+        target:
+          entity_id: switch.timelapse_g30
+    mode: single
+  - id: create_timelapse_nightly_g31
+    alias: Create Timelapse Automation
+    trigger:
+      - trigger: time_pattern
+        minutes: 40 # Triggers at half of every hour
+    action:
+      - action: switch.turn_on
+        target:
+          entity_id: switch.timelapse_g31
+      - delay: "00:00:10"
+      - action: switch.turn_off
+        target:
+          entity_id: switch.timelapse_g31
+    mode: single
+
   - alias: "G1 Hourly Camera Snapshot"
     id: g1_timelapse_automation
     trigger:
       - trigger: time_pattern
         minutes: 30 # Triggers at half of every hour
+    condition:
+      - condition: state
+        entity_id: binary_sensor.g1_canopy_day_phase_target_g1_canopy
+        state: "on" # binary_sensors are "on"/"off"
     action:
       - action: camera.snapshot
         data:
           entity_id: camera.g1_cam_g1_camera
-          filename: "/config/www/timelapse/G1/{{ now().strftime('%Y%m%d_%H%M%S') }}.jpg"
+          filename: "/media/timelapse/G1/snapshots/{{ now().strftime('%Y%m%d_%H%M%S') }}.jpg"
       - action: camera.snapshot
         data:
           entity_id: camera.g1_cam_g1_camera
-          filename: "/config/www/timelapse/G1/lovelace.jpg"
+          filename: "/media/timelapse/G1/lovelace.jpg"
 
   - alias: "G2 Hourly Camera Snapshot"
     id: g2_timelapse_automation
     trigger:
       - trigger: time_pattern
         minutes: 30 # Triggers at half of every hour
+    condition:
+      - condition: state
+        entity_id: binary_sensor.g2_canopy_day_phase_target_g2_canopy
+        state: "on" # binary_sensors are "on"/"off"
     action:
       - action: camera.snapshot
         data:
           entity_id: camera.g2_cam_profile000_mainstream
-          filename: "/config/www/timelapse/G2/{{ now().strftime('%Y%m%d_%H%M%S') }}.jpg"
+          filename: "/media/timelapse/G2/snapshots/{{ now().strftime('%Y%m%d_%H%M%S') }}.jpg"
       - action: camera.snapshot
         data:
           entity_id: camera.g2_cam_profile000_mainstream
-          filename: "/config/www/timelapse/G2/lovelace.jpg"
+          filename: "/media/timelapse/G2/lovelace.jpg"
+
+  - alias: "G30 Hourly Camera Snapshot"
+    id: g30_timelapse_automation
+    trigger:
+      - trigger: time_pattern
+        minutes: 15 # Triggers at 15 of every hour
+    condition:
+      - condition: state
+        entity_id: binary_sensor.g3v_brain_day_phase_target_g3v_brain
+        state: "on" # binary_sensors are "on"/"off"
+    action:
+      - action: camera.snapshot
+        data:
+          entity_id: camera.g3v_cam
+          filename: "/media/timelapse/G3/snapshots0/{{ now().strftime('%Y%m%d_%H%M%S') }}.jpg"
+      - action: camera.snapshot
+        data:
+          entity_id: camera.g3v_cam
+          filename: "/media/timelapse/G3/lovelace.jpg"
+
+  - alias: "G31 Hourly Camera Snapshot"
+    id: g31_timelapse_automation
+    trigger:
+      - trigger: time_pattern
+        minutes: 45 # Triggers at 45 of every hour
+    condition:
+      - condition: state
+        entity_id: binary_sensor.g3v_brain_day_phase_target_g3v_brain
+        state: "on" # binary_sensors are "on"/"off"
+    action:
+      - action: camera.snapshot
+        data:
+          entity_id: camera.g3d_cam
+          filename: "/media/timelapse/G3/snapshots1/{{ now().strftime('%Y%m%d_%H%M%S') }}.jpg"
+      - action: camera.snapshot
+        data:
+          entity_id: camera.g3d_cam
+          filename: "/media/timelapse/G3/lovelace.jpg"

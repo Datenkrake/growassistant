@@ -2,8 +2,14 @@ id: adjust_brightness_shelly_dimmer
 then:
     - lambda: |-
         // Get current PPFD and target PPFD values
-        float ppfd_target = id(${area_id}_${device_id}${suffix}_ppfd_target).state;
+        float ppfd = id(${area_id}_${device_id}${suffix}_ppfd).state;float ppfd_target = id(${area_id}_${device_id}${suffix}_ppfd_target).state;
         float new_brightness = id(${area_id}_${device_id}${suffix}_door_open_brightness).state;
+        // Get the current temperature and the max temperature
+        float temperature_max = id(${area_id}_${device_id}${suffix}_temperature_max).state;
+        float temperature = id(${area_id}_${device_id}${suffix}_temperature).state;
+        // Get VPD and VPD Target
+        float vpd = id(${area_id}_${device_id}${suffix}_vpd).state;
+        float vpd_target = id(${area_id}_${device_id}${suffix}_vpd_target).state;
 
         if (ppfd_target < 0.01) {  // Using a small threshold for floating-point comparison
             // PPFD target is zero, turn off the light
@@ -18,10 +24,6 @@ then:
                     ESP_LOGW("brightness_control", "New brightness is NaN. Setting to 0.");
                     current_brightness = 0;
                 }
-
-                // Get current PPFD and target PPFD values
-                float ppfd = id(${area_id}_${device_id}${suffix}_ppfd).state;
-
                 // Log the current state of PPFD and brightness
                 ESP_LOGD("brightness_control", "Current PPFD: %.2f", ppfd);
                 ESP_LOGD("brightness_control", "Target PPFD: %.2f", ppfd_target);
@@ -47,6 +49,15 @@ then:
 
                 // Calculate new brightness value
                 new_brightness = current_brightness + adjustment;
+
+                // if temperature is above max temperature, and vpd is not below target by 0.1
+                if (temperature > temperature_max) {
+                        ESP_LOGD("brightness_control", "Temp High, checking vpd");
+                    if (vpd > vpd_target) {
+                        new_brightness = current_brightness - 0.01;
+                        ESP_LOGD("brightness_control", "Temp High, VPD ok, reducing brightness");
+                    }
+                }
 
                 // if new_brightness is 0, set it to 0.01 to prevent the light from turning off
                 // else, ensure that the new_brightness is clamped between 0.01 and 1.0
