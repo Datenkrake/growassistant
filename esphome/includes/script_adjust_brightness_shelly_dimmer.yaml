@@ -2,7 +2,8 @@ id: adjust_brightness_shelly_dimmer
 then:
     - lambda: |-
         // Get current PPFD and target PPFD values
-        float ppfd = id(${area_id}_${device_id}${suffix}_ppfd).state;float ppfd_target = id(${area_id}_${device_id}${suffix}_ppfd_target).state;
+        float ppfd = id(${area_id}_${device_id}${suffix}_ppfd).state;
+        float ppfd_target = id(${area_id}_${device_id}${suffix}_ppfd_target).state;
         float new_brightness = id(${area_id}_${device_id}${suffix}_door_open_brightness).state;
         // Get the current temperature and the max temperature
         float temperature_max = id(${area_id}_${device_id}${suffix}_temperature_max).state;
@@ -56,8 +57,13 @@ then:
                     if (vpd > vpd_target) {
                         new_brightness = current_brightness - 0.01;
                         ESP_LOGD("brightness_control", "Temp High, VPD ok, reducing brightness");
+                        if (ppfd < ppfd_target*0.7) {
+                            new_brightness = current_brightness + 0.01;
+                            ESP_LOGD("brightness_control", "Temp High, VPD ok, light dimmed a lot already, increasing brightness");
+                        }
                     }
                 }
+
 
                 // if new_brightness is 0, set it to 0.01 to prevent the light from turning off
                 // else, ensure that the new_brightness is clamped between 0.01 and 1.0

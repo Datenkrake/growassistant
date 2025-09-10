@@ -26,11 +26,11 @@ frontend:
 camera:
   - platform: ffmpeg
     name: G3V-Cam
-    input: "rtsp://192.168.1.158:8554/G3V/main"
+    input: "rtsp://neolink.localdomain:8554/G3V/main"
 
   - platform: ffmpeg
     name: G3D-Cam
-    input: "rtsp://192.168.1.158:8554/G3D/main"
+    input: "rtsp://neolink.localdomain:8554/G3D/main"
 
 #lovelace:
 #  mode: yaml
@@ -106,7 +106,7 @@ command_line:
           echo "First few files:" >> "$log"
           ls /media/timelapse/G1/snapshots/*.jpg 2>/dev/null | head -5 >> "$log" || echo "No JPGs found" >> "$log"
           echo "Trying ffmpeg command ..." >> "$log"
-          ffmpeg -hide_banner -loglevel error -y -pattern_type glob -framerate 25 -i "/media/timelapse/G1/snapshots/*.jpg" -c:v libx264 -pix_fmt yuv420p /media/timelapse/G1/timelapse.mp4 >> "$log" 2>&1 || echo "FFmpeg failed with code $?" >> "$log"
+          ffmpeg -hide_banner -loglevel error -y -pattern_type glob -framerate 25 -i "/media/timelapse/G1/snapshots/*.jpg" -filter:v "setpts=2*PTS" -c:v libx264 -pix_fmt yuv420p /media/timelapse/G1/timelapse.mp4 >> "$log" 2>&1 || echo "FFmpeg failed with code $?" >> "$log"
         }'
       command_off: "true"
   - switch:
@@ -177,62 +177,62 @@ command_line:
       command_off: "true"
 
 automation:
-  - id: create_timelapse_nightly_g1
-    alias: Create Timelapse Automation
-    trigger:
-      - trigger: time_pattern
-        minutes: 10 # Triggers at half of every hour
-    action:
-      - action: switch.turn_on
-        target:
-          entity_id: switch.timelapse_g1
-      - delay: "00:00:10"
-      - action: switch.turn_off
-        target:
-          entity_id: switch.timelapse_g1
-    mode: single
-  - id: create_timelapse_nightly_g2
-    alias: Create Timelapse Automation
-    trigger:
-      - trigger: time_pattern
-        minutes: 20 # Triggers at half of every hour
-    action:
-      - action: switch.turn_on
-        target:
-          entity_id: switch.timelapse_g2
-      - delay: "00:00:10"
-      - action: switch.turn_off
-        target:
-          entity_id: switch.timelapse_g2
-    mode: single
-  - id: create_timelapse_nightly_g30
-    alias: Create Timelapse Automation
-    trigger:
-      - trigger: time_pattern
-        minutes: 30 # Triggers at half of every hour
-    action:
-      - action: switch.turn_on
-        target:
-          entity_id: switch.timelapse_g30
-      - delay: "00:00:10"
-      - action: switch.turn_off
-        target:
-          entity_id: switch.timelapse_g30
-    mode: single
-  - id: create_timelapse_nightly_g31
-    alias: Create Timelapse Automation
-    trigger:
-      - trigger: time_pattern
-        minutes: 40 # Triggers at half of every hour
-    action:
-      - action: switch.turn_on
-        target:
-          entity_id: switch.timelapse_g31
-      - delay: "00:00:10"
-      - action: switch.turn_off
-        target:
-          entity_id: switch.timelapse_g31
-    mode: single
+  # - id: create_timelapse_nightly_g1
+  #   alias: Create Timelapse Automation
+  #   trigger:
+  #     - trigger: time_pattern
+  #       minutes: 10 # Triggers at half of every hour
+  #   action:
+  #     - action: switch.turn_on
+  #       target:
+  #         entity_id: switch.timelapse_g1
+  #     - delay: "00:00:10"
+  #     - action: switch.turn_off
+  #       target:
+  #         entity_id: switch.timelapse_g1
+  #   mode: single
+  # - id: create_timelapse_nightly_g2
+  #   alias: Create Timelapse Automation
+  #   trigger:
+  #     - trigger: time_pattern
+  #       minutes: 20 # Triggers at half of every hour
+  #   action:
+  #     - action: switch.turn_on
+  #       target:
+  #         entity_id: switch.timelapse_g2
+  #     - delay: "00:00:10"
+  #     - action: switch.turn_off
+  #       target:
+  #         entity_id: switch.timelapse_g2
+  #   mode: single
+  # - id: create_timelapse_nightly_g30
+  #   alias: Create Timelapse Automation
+  #   trigger:
+  #     - trigger: time_pattern
+  #       minutes: 30 # Triggers at half of every hour
+  #   action:
+  #     - action: switch.turn_on
+  #       target:
+  #         entity_id: switch.timelapse_g30
+  #     - delay: "00:00:10"
+  #     - action: switch.turn_off
+  #       target:
+  #         entity_id: switch.timelapse_g30
+  #   mode: single
+  # - id: create_timelapse_nightly_g31
+  #   alias: Create Timelapse Automation
+  #   trigger:
+  #     - trigger: time_pattern
+  #       minutes: 40 # Triggers at half of every hour
+  #   action:
+  #     - action: switch.turn_on
+  #       target:
+  #         entity_id: switch.timelapse_g31
+  #     - delay: "00:00:10"
+  #     - action: switch.turn_off
+  #       target:
+  #         entity_id: switch.timelapse_g31
+  #   mode: single
 
   - alias: "G1 Hourly Camera Snapshot"
     id: g1_timelapse_automation

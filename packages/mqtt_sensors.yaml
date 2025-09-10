@@ -22,6 +22,14 @@ mqtt:
       payload_off: "off"
       value_template: "{{ value }}"
       unique_id: mqtt_g2_aux_mains
+    
+    - name: "D1 Mains"
+      object_id: mqtt_d1_mains
+      command_topic: "D1/MAINS/command/switch:0"
+      payload_on: "on"
+      payload_off: "off"
+      value_template: "{{ value }}"
+      unique_id: mqtt_d1_mains
 
   number:
     ##############################################################################

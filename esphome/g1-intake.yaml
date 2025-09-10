@@ -86,6 +86,7 @@ mqtt:
               id(${area_id}_${device_id}${suffix}_door_open) = false;
             }
             id(update_intake_fan_speed).execute();
+    
 
 output:
   - platform: ledc
@@ -100,9 +101,9 @@ fan:
     name: "Intake"
     id: ${area_id}_${device_id}${suffix}_intake_fan
     state_topic: "${area_id}/fan/state/${device_id}"
-    speed_state_topic: "${area_id}/fan/speed/${device_id}"
+    speed_level_state_topic: "${area_id}/fan/speed/${device_id}"
     command_topic: "${area_id}/${device_id}/fan/state/${device_id}/set"
-    speed_command_topic: "${area_id}/fan/speed/${device_id}/set"
+    speed_level_command_topic: "${area_id}/fan/speed/${device_id}/set"
 
 i2c:
   !include includes/i2c_bus_a.yaml
