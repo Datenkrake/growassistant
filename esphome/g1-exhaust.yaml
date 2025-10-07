@@ -102,7 +102,7 @@ output:
 fan:
   - platform: speed
     output: ${area_id}_${device_id}${suffix}_fan1_pwm
-    name: "Exhaust [${area_id}${suffix}]"
+    name: "Exhaust A [${area_id}${suffix}]"
     id: ${area_id}_${device_id}${suffix}_fan1
     state_topic: "${area_id}/fan/state/${device_id}"
     speed_state_topic: "${area_id}/fan/speed/${device_id}"
@@ -111,7 +111,7 @@ fan:
 
   - platform: speed
     output: ${area_id}_${device_id}${suffix}_fan2_pwm
-    name: "Exhaust [${area_id}${suffix}]"
+    name: "Exhaust B [${area_id}${suffix}]"
     id: ${area_id}_${device_id}${suffix}_fan2
     state_topic: "${area_id}/fan/state/${device_id}"
     speed_state_topic: "${area_id}/fan/speed/${device_id}"

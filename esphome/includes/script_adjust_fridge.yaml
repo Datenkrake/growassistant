@@ -201,10 +201,10 @@ then:
     }
 
 - mqtt.publish:
-    topic: "G3D/mains/command/switch:0"
+    topic: "${area_id}/mains/command/switch:0"
     payload: !lambda |-
       return id(heater_should_be_on) ? "on" : "off";
 - mqtt.publish:
-    topic: "G3D/mains/command/switch:1"
+    topic: "${area_id}/mains/command/switch:1"
     payload: !lambda |-
       return id(condenser_should_be_on) ? "on" : "off";

@@ -11,6 +11,3 @@ optimistic: True
 mode: BOX
 restore_value: True
 retain: True
-on_value:
-    then:
-    - script.execute: ${area_id}_trigger_gantry_move
