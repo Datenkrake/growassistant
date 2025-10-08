@@ -1,10 +1,10 @@
-id: adjust_fridge
+id: adjust_freezer
 then:
 - lambda: |-
     ESP_LOGD("############################adjust_fridge", "Starting fridge adjustment with staged dew recovery and post-dew heating...");
 
     // Drying profile: durations and targets in degree Celsius
-    std::vector<int> durations     = {12, 12, 0};
+    std::vector<int> durations     = {24, 48, 0};
     std::vector<float> temp_targets = {15.0, 10.0, -20.0};
     std::vector<float> dew_targets  = {-16.0, -16.0, -30.0};
 
@@ -139,9 +139,9 @@ then:
       }
       if (temp_too_low && dew_margin_ok ) {
         // if temperature and dew point are below set value and dew is not risky, it means passive humidifaction is needed. E.g. a sponge
-        id(condenser_should_be_on) = false;
+        id(condenser_should_be_on) = true;
         id(heater_should_be_on)    = false;
-        ESP_LOGD("############################ adjust_fridge", "Stage2: Low and Low → condenser=OFF, heater=OFF");
+        ESP_LOGD("############################ adjust_fridge", "Stage2: Low and Low → condenser=ON, heater=OFF");
         return;
       }
       if (temp_too_low && dew_too_high) {
@@ -153,9 +153,9 @@ then:
       }
       if (temp_too_low) {
         // dew must be too low if this code runs
-        id(condenser_should_be_on) = false;
+        id(condenser_should_be_on) = true;
         id(heater_should_be_on)    = true;
-        ESP_LOGD("############################ adjust_fridge", "Stage2: Post-dew heat → condenser=OFF, heater=ON");
+        ESP_LOGD("############################ adjust_fridge", "Stage2: Post-dew heat → condenser=ON, heater=ON");
         return;
       }
       // Completed heating to set
@@ -179,11 +179,11 @@ then:
         id(heater_should_be_on)    = false;
         ESP_LOGD("############################ adjust_fridge", "Stage3: Too hot → condenser=ON");
       } else if (temp_too_low) {
-        id(condenser_should_be_on) = false;
+        id(condenser_should_be_on) = true;
         id(heater_should_be_on)    = true;
         ESP_LOGD("############################ adjust_fridge", "Stage3: Too cold → heater=%s", id(heater_should_be_on)?"ON":"OFF");
       } else {
-        id(condenser_should_be_on) = false;
+        id(condenser_should_be_on) = true;
         id(heater_should_be_on)    = false;
         ESP_LOGD("############################ adjust_fridge", "Stage3: Within band → idle");
       }
@@ -194,8 +194,8 @@ then:
         id(condenser_should_be_on) = true;
         ESP_LOGD("############################ adjust_fridge", "Stage4: Cure too hot → condenser=ON");
       } else {
-        id(condenser_should_be_on) = false;
-        ESP_LOGD("############################ adjust_fridge", "Stage4: Cure within band → condenser=OFF");
+        id(condenser_should_be_on) = true;
+        ESP_LOGD("############################ adjust_fridge", "Stage4: Cure within band → condenser=ON");
       }
       id(heater_should_be_on) = false;
     }
