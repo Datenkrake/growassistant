@@ -4,8 +4,8 @@ then:
     ESP_LOGD("############################adjust_fridge", "Starting fridge adjustment with staged dew recovery and post-dew heating...");
 
     // Drying profile: durations and targets in degree Celsius
-    std::vector<int> durations     = {12, 12, 0};
-    std::vector<float> temp_targets = {15.0, 10.0, -20.0};
+    std::vector<int> durations     = {96, 192, 0};
+    std::vector<float> temp_targets = {19.0, 19.0, 19.0};
     std::vector<float> dew_targets  = {-16.0, -16.0, -30.0};
 
     // Drying profile: Parameters
@@ -34,8 +34,10 @@ then:
         phase = i; break;
       }
     }
+    ESP_LOGW("############################ adjust_fridge", "Phase: ", phase);
     // Check if the current phase is the last phase. We treat the last phase special later.
     bool last_phase = (phase == durations.size() - 1);
+    ESP_LOGW("############################ adjust_fridge", "Last Phase: ", last_phase);
 
     // Read sensors and setpoints
     float T      = id(${area_id}_${device_id}${suffix}_temperature).state;
@@ -192,10 +194,10 @@ then:
       // Stage4: Cure phase – maintain with condenser hysteresis, no heating, passive humidification needed, e.g. a sponge
       if (temp_too_high) {
         id(condenser_should_be_on) = true;
-        ESP_LOGD("############################ adjust_fridge", "Stage4: Cure too hot → condenser=ON");
+        ESP_LOGD("############################ adjust_fridge", "Last Phase: Cure too hot → condenser=ON");
       } else {
         id(condenser_should_be_on) = false;
-        ESP_LOGD("############################ adjust_fridge", "Stage4: Cure within band → condenser=OFF");
+        ESP_LOGD("############################ adjust_fridge", "Last Phase: Cure within band → condenser=OFF");
       }
       id(heater_should_be_on) = false;
     }

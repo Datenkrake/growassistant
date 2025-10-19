@@ -5,7 +5,9 @@ esp32:
 
 # Enable logging
 logger:
-
+  level: WARN          # options: NONE, ERROR, WARN, INFO, DEBUG, VERBOSE
+  logs:
+    wifi: WARN
 # Enable Home Assistant API
 api:
   password: ""
@@ -59,6 +61,7 @@ substitutions:
   pin_scl: GPIO6
   pin_fan2_pwm: GPIO1
   pin_heater_pwm: GPIO0
+  pin_vac_enable: GPIO3
   address_sht4x: "0x44"
 
 
@@ -87,6 +90,10 @@ globals:
     type: bool
     restore_value: no
     initial_value: 'false'
+  - id: vac_should_be_on
+    type: bool
+    restore_value: no
+    initial_value: 'false'
   - id: ${area_id}_${device_id}${suffix}_exhaust_fan_pwm_value
     type: float
     restore_value: no
@@ -107,7 +114,11 @@ globals:
     type: float
     restore_value: yes
     initial_value: '0.0'
-    
+  - id: pump_is_running
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+
 output:
   - platform: ledc
     pin: ${pin_fan2_pwm}
@@ -121,7 +132,23 @@ output:
     frequency: 25000 Hz
     inverted: False
     max_power: 1.0
-
+  - platform: ledc
+    pin: ${pin_vac_enable}
+    id: ${area_id}_${device_id}${suffix}_vac_pwm
+    frequency: 10000 Hz
+    
+switch:
+  - platform: template
+    name: "Vacuum Pump (Static PWM with Pull‑In)"
+    id: "${area_id}_${device_id}${suffix}_vac_enable"
+    optimistic: true
+    turn_on_action:
+      - script.execute: vac_pump_pull_in
+    turn_off_action:
+      - output.set_level:
+          id: "${area_id}_${device_id}${suffix}_vac_pwm"
+          level: 0.0                 # stop PWM immediately
+      - lambda: 'id(pump_is_running) = false;'   # clear the flag
 fan:
   - platform: speed
     output: ${area_id}_${device_id}${suffix}_circulation_pwm
@@ -177,6 +204,32 @@ sensor:
               send_every: 1
     address: ${address_sht4x}
     update_interval: 1s
+  - platform: aht10
+    variant: AHT10
+    temperature:
+        name: "Temperature AHT [${area_id}_${device_id}${suffix}]"
+        id: ${area_id}_${device_id}${suffix}_temperature_aht
+        state_topic: "${area_id}/humidity/state/AHT"
+        filters:
+          - median:
+              window_size: 5  # Adjust as needed to remove outliers
+              send_every: 1
+          - sliding_window_moving_average:
+              window_size: 10  # 10 samples at 1s intervals = 10s average
+              send_every: 1
+    humidity:
+        name: "Humidity AHT [${area_id}_${device_id}${suffix}]"
+        id: ${area_id}_${device_id}${suffix}_humidity_aht
+        state_topic: "${area_id}/humidity/state/AHT"
+        filters:
+          - median:
+              window_size: 5  # Adjust as needed to remove outliers
+              send_every: 1
+          - sliding_window_moving_average:
+              window_size: 10  # 10 samples at 1s intervals = 10s average
+              send_every: 1
+    update_interval: 1s
+
   # CALCULATED SENSORS
   ## CLIMATE
   - platform: template
@@ -217,12 +270,28 @@ interval:
               return id(heater_should_be_on);
           then:
             # Heater is supposed to be ON
+            - switch.control:
+                id: ${area_id}_${device_id}${suffix}_vac_enable
+                state: false
             - fan.turn_on:
                 id: ${area_id}_${device_id}${suffix}_heater
-                speed: 75
+                speed: 80
           else:
             - fan.turn_off:
                 id: ${area_id}_${device_id}${suffix}_heater
+            - if:
+                condition:
+                  lambda: |-                     # true when heater SHOULD be on
+                    return id(vac_should_be_on);
+                then:
+                  - switch.control:
+                      id: ${area_id}_${device_id}${suffix}_vac_enable
+                      state: true
+                else:
+                  - switch.control:
+                      id: ${area_id}_${device_id}${suffix}_vac_enable
+                      state: false
+                
 
       # ------------------------------------------------------------------
       # 3️⃣ Publish the condenser state via MQTT
@@ -234,3 +303,24 @@ interval:
 
 script:
   - !include includes/script_adjust_freezer.yaml
+  - id: vac_pump_pull_in
+    mode: restart                     # restart if the user taps the switch again
+    then:
+      # ---- Guard: run burst only when pump_is_running == false ----
+      - if:
+          condition:
+            lambda: 'return !id(pump_is_running);'
+          then:
+            # 2 s at 100 % (full speed)
+            - output.set_level:
+                id: "${area_id}_${device_id}${suffix}_vac_pwm"
+                level: 1.0                 # 100 % duty → full 12 V on the pump
+            - delay: 0.5s
+
+      # ---- After the guard (whether we did the burst or not) set the steady duty ----
+      - output.set_level:
+          id: "${area_id}_${device_id}${suffix}_vac_pwm"
+          level: 0.85              # <-- your desired steady duty (0.0‑1.0)
+
+      # ---- Mark the pump as running (now we definitely have PWM > 0) ----
+      - lambda: 'id(pump_is_running) = true;'

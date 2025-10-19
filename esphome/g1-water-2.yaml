@@ -1,0 +1,106 @@
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+
+
+# Enable Home Assistant API
+api:
+  password: ""
+
+ota:
+  - platform: esphome
+    password: ""
+
+esphome:
+  name: esphome-web-f2326c
+
+####################################################################
+# configure substitutions and friendly name
+####################################################################
+
+  area: ${area_id}
+  friendly_name: ${area_id}_${device_id}${suffix}
+
+# Note for pinout on ESP32-C3 Supermini:
+# Pin Functions
+# GPIO0 / A0 (bottom right corner in top view with USB port on the top)
+# GPIO1 / A1
+# GPIO2 / A2 (external pull-up resistor and is a boot related pin)
+# GPIO3 / A3
+# GPIO4 / A4 / SCK
+# GPIO5 / A5 / MISO
+# GPIO6 / MOSI
+# GPIO7 / SS
+# GPIO8 / SDA
+# GPIO9 / SCL (external pull-down resistor and is a boot related pin "BOOT button")
+# GPIO10
+# GPIO20 / RX
+# GPIO21 / TX
+
+substitutions:
+  area_id: G1
+  device_id: "WATER"
+  suffix: ""
+  pin_door_switch: GPIO23
+  pin_irrigation_output: GPIO16
+  pin_circulation_output: GPIO17
+
+####################################################################
+# generic yaml for humidifiers below
+####################################################################
+logger:
+captive_portal:
+wifi:
+  !include includes/wifi_default.yaml
+
+mqtt:
+  broker: !secret mqtt_broker
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+  topic_prefix: "auto/${area_id}/${device_id}"
+  log_topic: "debug/${area_id}/${device_id}"
+
+switch:
+  - !include includes/switch_enable.yaml
+  - !include includes/switch_enable_at_night.yaml
+  - !include includes/switch_circulation_pump.yaml
+  - !include includes/switch_irrigation_pump.yaml
+
+binary_sensor:
+  - !include includes/binary_sensor_door_switch.yaml
+
+number:
+  - !include includes/number_irrigation_period.yaml
+  - !include includes/number_irrigation_duration.yaml
+  - !include includes/number_circulation_period.yaml
+  - !include includes/number_circulation_duration.yaml
+
+sensor:
+  - !include includes/sensor_mqtt_day_phase_target.yaml
+
+interval:
+  # Irrigation Interval
+  - interval: 1min  # This interval will check every minute
+    then:
+      - if:
+          condition:
+            lambda: |
+              return id(${area_id}_${device_id}${suffix}_enable).state &&
+                    ( !id(${area_id}_${device_id}${suffix}_enable_at_night).state || id(${area_id}_${device_id}${suffix}_day_phase_target).state ) &&
+                    ( ( millis() / 60000 ) % ((int) id(${area_id}_${device_id}${suffix}_irrigation_period).state) ) == 0;
+          then:
+            - switch.turn_on: ${area_id}_${device_id}${suffix}_irrigation_pump
+            - delay: !lambda 'return (int) id(${area_id}_${device_id}${suffix}_irrigation_duration).state * 1000;'
+            - switch.turn_off: ${area_id}_${device_id}${suffix}_irrigation_pump
+
+  # Circulation Interval
+  - interval: 1min  # This interval will check every minute
+    then:
+      - if:
+          condition:
+            lambda: 'return id(${area_id}_${device_id}${suffix}_enable).state && (millis() / 60000) % ((int) id(${area_id}_${device_id}${suffix}_circulation_period).state) == 0;'
+          then:
+            - switch.turn_on: ${area_id}_${device_id}${suffix}_circulation_pump
+            - delay: !lambda 'return (int) id(${area_id}_${device_id}${suffix}_circulation_duration).state * 60000;'
+            - switch.turn_off: ${area_id}_${device_id}${suffix}_circulation_pump

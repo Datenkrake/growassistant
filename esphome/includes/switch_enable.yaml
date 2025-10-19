@@ -6,3 +6,4 @@ state_topic: "${area_id}/enable/state/${device_id}"
 command_topic: "${area_id}/enable/state/${device_id}/set"
 qos: 0
 retain: True
+restore_mode: RESTORE_DEFAULT_ON
