@@ -6,7 +6,7 @@ then:
     // Drying profile: durations and targets in degree Celsius
     std::vector<int> durations     = {96, 192, 0};
     std::vector<float> temp_targets = {19.0, 19.0, 19.0};
-    std::vector<float> dew_targets  = {-16.0, -16.0, -30.0};
+    std::vector<float> dew_targets  = {11.0, 11.5, 11.5};
 
     // Drying profile: Parameters
     float delta_T                   =   0.25;   // hysteresis band

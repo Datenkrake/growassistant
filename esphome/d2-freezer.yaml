@@ -315,12 +315,12 @@ script:
             - output.set_level:
                 id: "${area_id}_${device_id}${suffix}_vac_pwm"
                 level: 1.0                 # 100 % duty → full 12 V on the pump
-            - delay: 0.5s
+            - delay: 0.4s
 
       # ---- After the guard (whether we did the burst or not) set the steady duty ----
       - output.set_level:
           id: "${area_id}_${device_id}${suffix}_vac_pwm"
-          level: 0.85              # <-- your desired steady duty (0.0‑1.0)
+          level: 0.8             # <-- your desired steady duty (0.0‑1.0)
 
       # ---- Mark the pump as running (now we definitely have PWM > 0) ----
       - lambda: 'id(pump_is_running) = true;'
