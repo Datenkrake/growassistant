@@ -82,6 +82,10 @@ i2c:
   !include includes/i2c_bus_a.yaml
 
 globals:
+  - id: last_phase_global
+    type: bool
+    restore_value: no
+    initial_value: 'false'
   - id: heater_should_be_on
     type: bool
     restore_value: no
@@ -267,7 +271,7 @@ interval:
       - if:
           condition:
             lambda: |-                     # true when heater SHOULD be on
-              return id(heater_should_be_on);
+              return id(heater_should_be_on) && !id(last_phase_global);
           then:
             # Heater is supposed to be ON
             - switch.control:
@@ -282,7 +286,7 @@ interval:
             - if:
                 condition:
                   lambda: |-                     # true when heater SHOULD be on
-                    return id(vac_should_be_on);
+                    return id(vac_should_be_on) && !id(last_phase_global);
                 then:
                   - switch.control:
                       id: ${area_id}_${device_id}${suffix}_vac_enable

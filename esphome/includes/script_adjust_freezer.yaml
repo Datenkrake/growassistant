@@ -36,7 +36,8 @@ then:
     }
     // Check if the current phase is the last phase. We treat the last phase special later.
     bool last_phase = (phase == durations.size() - 1);
-
+    id(last_phase_global) = last_phase;
+    ESP_LOGW("############################ adjust_fridge", "Last Phase: ", last_phase);
     // Read sensors and setpoints
     float T      = id(${area_id}_${device_id}${suffix}_temperature).state;
     float dew_pt = id(${area_id}_${device_id}${suffix}_dew_point).state;
@@ -83,7 +84,7 @@ then:
     bool temp_too_low = T < (T_set - delta_T);
     bool temp_too_high = T > (T_set + delta_T);
 
-    ESP_LOGD("############################ adjust_fridge", "Phase %d/%d: T_set=%.2f°C, dew_set=%.2f°C, T=%.2f°C, dew_pt=%.2f°C, dew_margin=%.2f°C, dew_margin_target=%.2f°C  (bump=%.3f, T_set_orig=%.2f°C,)", 
+    ESP_LOGW("############################ adjust_fridge", "Phase %d/%d: T_set=%.2f°C, dew_set=%.2f°C, T=%.2f°C, dew_pt=%.2f°C, dew_margin=%.2f°C, dew_margin_target=%.2f°C  (bump=%.3f, T_set_orig=%.2f°C,)", 
           phase, durations.size()-1, T_set, dew_set, T, dew_pt, dew_margin, dew_margin_target, id(G3D_TEMP_BUMP), T_set_orig);
 
     float fan_speed = fan_speed_default;  // safe condition
@@ -103,7 +104,7 @@ then:
     auto call = id(${area_id}_${device_id}${suffix}_circulation).turn_on();
     call.set_speed(fan_speed);
     call.perform();
-    ESP_LOGD("adjust_fridge", "Circulation fan set to speed: %.2f", fan_speed);
+    ESP_LOGW("adjust_fridge", "Circulation fan set to speed: %.2f", fan_speed);
 
     // Stage2: Post-dew heating until T_set, continue even if dew point rises above set, pause only if dew margin is violated
     // Temperature is the second highest priority. Heating all the way to T_set works better than heating only until dew point raises above set value.
@@ -118,7 +119,7 @@ then:
       id(condenser_should_be_on) = true;
       id(vac_should_be_on)    = true;
       id(heater_should_be_on)    = false;
-      ESP_LOGD("############################ adjust_fridge", "Stage1: Dew high → condenser=ON, heater=OFF");
+      ESP_LOGW("############################ adjust_fridge", "Stage1: Dew high → condenser=ON, heater=OFF");
       return;
     }
     // This code is only executed if the dew point is below the dew point set value.
@@ -134,7 +135,7 @@ then:
       id(condenser_should_be_on) = true;
       id(vac_should_be_on)    = true;
       id(heater_should_be_on)    = false;
-      ESP_LOGD("############################ adjust_fridge", "Stage2 paused: dew risk → condenser=ON, heater=OFF, vac=ON");
+      ESP_LOGW("############################ adjust_fridge", "Stage2 paused: dew risk → condenser=ON, heater=OFF, vac=ON");
       return;
       }
       if (temp_too_low && dew_margin_ok ) {
@@ -142,7 +143,7 @@ then:
       id(condenser_should_be_on) = false;
       id(vac_should_be_on)    = false;
       id(heater_should_be_on)    = true;
-      ESP_LOGD("############################ adjust_fridge", "Stage2: Low and Low → condenser=OFF, heater=ON, vac=OFF");
+      ESP_LOGW("############################ adjust_fridge", "Stage2: Low and Low → condenser=OFF, heater=ON, vac=OFF");
       return;
       }
       if (temp_too_low && dew_too_high) {
@@ -150,7 +151,7 @@ then:
       id(condenser_should_be_on) = false;
       id(vac_should_be_on)    = false;
       id(heater_should_be_on)    = true;
-      ESP_LOGD("############################ adjust_fridge", "Stage2: Post-dew heat → condenser=ON, heater=ON, vac=OFF");
+      ESP_LOGW("############################ adjust_fridge", "Stage2: Post-dew heat → condenser=ON, heater=ON, vac=OFF");
       return;
       }
       if (temp_too_low) {
@@ -158,7 +159,7 @@ then:
       id(condenser_should_be_on) = false;
       id(vac_should_be_on)    = false;
       id(heater_should_be_on)    = true;
-      ESP_LOGD("############################ adjust_fridge", "Stage2: Post-dew heat → condenser=OFF, heater=ON, vac=OFF");
+      ESP_LOGW("############################ adjust_fridge", "Stage2: Post-dew heat → condenser=OFF, heater=ON, vac=OFF");
       return;
       }
       // Completed heating to set
@@ -167,11 +168,11 @@ then:
       id(condenser_should_be_on) = true;
       id(vac_should_be_on)    = true;
       id(heater_should_be_on)    = false;
-      ESP_LOGD("############################ adjust_fridge", "Post-dew heating complete, dew margin low → condenser=ON, heater=OFF, vac=ON");
+      ESP_LOGW("############################ adjust_fridge", "Post-dew heating complete, dew margin low → condenser=ON, heater=OFF, vac=ON");
       return;
       }
       id(heater_should_be_on)    = false;
-      ESP_LOGD("############################ adjust_fridge", "Post-dew heating complete");
+      ESP_LOGW("############################ adjust_fridge", "Post-dew heating complete");
       return;
     }
 
@@ -180,16 +181,16 @@ then:
     if (temp_too_high) {
         id(condenser_should_be_on) = true;
         id(heater_should_be_on)    = false;
-        ESP_LOGD("############################ adjust_fridge", "Stage3: Too hot → condenser=ON");
+        ESP_LOGW("############################ adjust_fridge", "Stage3: Too hot → condenser=ON");
     } else if (temp_too_low) {
         id(condenser_should_be_on) = false;
         id(heater_should_be_on)    = true;
-        ESP_LOGD("############################ adjust_fridge", "Stage3: Too cold → heater=%s", id(heater_should_be_on)?"ON":"OFF");
+        ESP_LOGW("############################ adjust_fridge", "Stage3: Too cold → heater=%s", id(heater_should_be_on)?"ON":"OFF");
     } else {
         id(condenser_should_be_on) = true;
         id(vac_should_be_on)    = true;
         id(heater_should_be_on)    = false;
-        ESP_LOGD("############################ adjust_fridge", "Stage3: Within band → idle");
+        ESP_LOGW("############################ adjust_fridge", "Stage3: Within band → idle");
     }
 
 
