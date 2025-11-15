@@ -5,8 +5,8 @@ then:
 
     // Drying profile: durations and targets in degree Celsius
     std::vector<int> durations      = {24, 72, 0};
-    std::vector<float> temp_targets = {10.0, 6.0, -20.0};
-    std::vector<float> dew_targets  = {-5.0, -10.0, -25.0};
+    std::vector<float> temp_targets = {12.0, 10.0, -20.0};
+    std::vector<float> dew_targets  = {-20.0, -20.0, -25.0};
 
     // Drying profile: Parameters
     float delta_T                   =   0.25;   // hysteresis band
@@ -17,11 +17,11 @@ then:
     float bump_down_min_delta_dew   = - 0.2;
     float temp_bump_step_up         =   0.005;  // °C to temporarily raise setpoints, if set point dew margin can't be reached
     float temp_bump_step_down       =   0.005;  // °C to temporarily reduce setpoints, if set point dew margin can be reached
-    float fan_speed_default         =   70;     // Default circulation fan speed. Will change based on dew margin though.
-    float fan_speed_dew_risky       =   70;
-    float fan_speed_last_phase      =   30;
-    float fan_speed_dew_margin_nok  =   50;
-    float fan_speed_dew_margin_ok   =   30;
+    float fan_speed_default         =   100;     // Default circulation fan speed. Will change based on dew margin though.
+    float fan_speed_dew_risky       =   100;
+    float fan_speed_last_phase      =   100;
+    float fan_speed_dew_margin_nok  =   100;
+    float fan_speed_dew_margin_ok   =   100;
     
     // Determine current phase index
     int start_ts = id(${area_id}_${device_id}${suffix}_start_date).state;
