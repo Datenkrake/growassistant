@@ -53,13 +53,13 @@ then:
 
                 // if temperature is above max temperature, and vpd is not below target by 0.1
                 if (temperature > temperature_max) {
-                        ESP_LOGD("brightness_control", "Temp High, checking vpd");
+                        ESP_LOGW("brightness_control", "Temp High, checking vpd");
                     if (vpd > vpd_target) {
                         new_brightness = current_brightness - 0.01;
-                        ESP_LOGD("brightness_control", "Temp High, VPD ok, reducing brightness");
+                        ESP_LOGW("brightness_control", "Temp High, VPD ok, reducing brightness");
                         if (ppfd < ppfd_target*0.7) {
                             new_brightness = current_brightness + 0.01;
-                            ESP_LOGD("brightness_control", "Temp High, VPD ok, light dimmed a lot already, increasing brightness");
+                            ESP_LOGW("brightness_control", "Temp High, VPD ok, light dimmed a lot already, increasing brightness");
                         }
                     }
                 }

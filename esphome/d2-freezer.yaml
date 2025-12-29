@@ -98,6 +98,10 @@ globals:
     type: bool
     restore_value: no
     initial_value: 'false'
+  - id: D2_FREEZER_heater_duty_cycle
+    type: float
+    restore_value: no
+    initial_value: '0.0'
   - id: ${area_id}_${device_id}${suffix}_exhaust_fan_pwm_value
     type: float
     restore_value: no
@@ -279,7 +283,12 @@ interval:
                 state: false
             - fan.turn_on:
                 id: ${area_id}_${device_id}${suffix}_heater
-                speed: 80
+                speed: !lambda |-
+                  if (id(D2_FREEZER_heater_duty_cycle) > 0.0) {
+                    return (int)(id(D2_FREEZER_heater_duty_cycle) * 100.0);
+                  } else {
+                    return 80;  // Default speed for other phases
+                  }
           else:
             - fan.turn_off:
                 id: ${area_id}_${device_id}${suffix}_heater

@@ -99,10 +99,14 @@ switch:
     pin: GPIO21
     inverted: true
     restore_mode: ALWAYS_OFF  # Start with driver asleep
+    state_topic: "${area_id}/${device_id}/stepper_enable/state"
+    command_topic: "${area_id}/${device_id}/stepper_enable/set"
 
   - platform: template
     name: "Step Down [${area_id}${suffix}]"
     id: ${area_id}_${device_id}${suffix}_step_down
+    state_topic: "${area_id}/${device_id}/step_down/state"
+    command_topic: "${area_id}/${device_id}/step_down/set"
     turn_on_action:
       - switch.turn_on: ${area_id}_${device_id}${suffix}_stepper_enable  # Wake up the driver
       - delay: 10ms 
@@ -121,6 +125,8 @@ switch:
   - platform: template
     name: "Step Up [${area_id}${suffix}]"
     id: ${area_id}_${device_id}${suffix}_step_up
+    state_topic: "${area_id}/${device_id}/step_up/state"
+    command_topic: "${area_id}/${device_id}/step_up/set"
     turn_on_action:
       - switch.turn_on: ${area_id}_${device_id}${suffix}_stepper_enable  # Wake up the driver
       - delay: 10ms 
@@ -139,20 +145,29 @@ switch:
   # 8, with 80:1, 128000 steps per rotation
   - platform: gpio
     name: "MS1 HIGH [${area_id}${suffix}]"
+    id: ${area_id}_${device_id}${suffix}_ms1_high
     pin: GPIO20
     inverted: false
     restore_mode: ALWAYS_ON
+    state_topic: "${area_id}/${device_id}/ms1_high/state"
+    command_topic: "${area_id}/${device_id}/ms1_high/set"
 
   - platform: gpio
     name: "MS2 HIGH [${area_id}${suffix}]"
+    id: ${area_id}_${device_id}${suffix}_ms2_high
     pin: GPIO10
     inverted: false
     restore_mode: ALWAYS_ON
+    state_topic: "${area_id}/${device_id}/ms2_high/state"
+    command_topic: "${area_id}/${device_id}/ms2_high/set"
 
   - platform: gpio
     name: "MS3 LOW [${area_id}${suffix}]"
+    id: ${area_id}_${device_id}${suffix}_ms3_low
     pin: GPIO9
     inverted: true
     restore_mode: ALWAYS_OFF
+    state_topic: "${area_id}/${device_id}/ms3_low/state"
+    command_topic: "${area_id}/${device_id}/ms3_low/set"
 
 

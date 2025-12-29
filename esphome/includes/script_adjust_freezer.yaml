@@ -4,9 +4,13 @@ then:
     ESP_LOGW("############################adjust_fridge", "Starting fridge adjustment with staged dew recovery and post-dew heating...");
 
     // Drying profile: durations and targets in degree Celsius
-    std::vector<int> durations      = {24, 72, 0};
-    std::vector<float> temp_targets = {12.0, 10.0, -20.0};
-    std::vector<float> dew_targets  = {-20.0, -20.0, -25.0};
+    //std::vector<int> durations      = {24, 72, 0};
+    //std::vector<float> temp_targets = {12.0, 10.0, -20.0};
+    //std::vector<float> dew_targets  = {-20.0, -20.0, -25.0};
+
+    std::vector<int> durations      = {96, 0};
+    std::vector<float> temp_targets = {5.0, -25.0};
+    std::vector<float> dew_targets  = {-12.0, -25.0};
 
     // Drying profile: Parameters
     float delta_T                   =   0.25;   // hysteresis band
@@ -34,6 +38,87 @@ then:
         phase = i; break;
       }
     }
+
+
+    // if it is the first phase, implement phase 0 logic
+    if(phase == 0) {
+      ESP_LOGW("############################ adjust_fridge", "In phase 0, starting dew point recovery with heater duty cycle control.");
+      
+      // Phase 0: Dew point held at setpoint, heater duty cycle controlled
+      float T      = id(${area_id}_${device_id}${suffix}_temperature).state;
+      float dew_pt = id(${area_id}_${device_id}${suffix}_dew_point).state;
+      float T_set  = temp_targets[0];
+      float dew_set = dew_targets[0];
+      
+      // Vacuum pump is not used in phase 0
+      id(vac_should_be_on) = false;
+      
+      // Circulation fan for humidity removal
+      auto call = id(${area_id}_${device_id}${suffix}_circulation).turn_on();
+      call.set_speed(100.0);
+      call.perform();
+      
+      // Stage 1: Dew point recovery - Condenser ON, Heater OFF, Vacuum OFF
+      // Continue until dew point approaches setpoint
+      if (dew_pt > (dew_set + 4*delta_T)) {
+        ESP_LOGW("############################ adjust_fridge", "Phase 0 Stage 1: Recovering dew point → condenser=ON, heater=OFF");
+        id(condenser_should_be_on) = true;
+        id(heater_should_be_on) = false;
+        return;
+      }
+      
+      // Stage 2: Dew point at setpoint, control temperature with heater duty cycle
+      // Heater duty cycle increases as humidity drops (dew point margin increases)
+      // This is reached when dew has recovered (dew_pt <= -11.00)
+      ESP_LOGW("############################ adjust_fridge", "Phase 0 Stage 2: Dew at setpoint, controlling temperature");
+      
+      // Turn off condenser if dew point is good enough (below setpoint - hysteresis)
+      // This allows heater to warm up more effectively
+      if (dew_pt < (dew_set - 4*delta_T)) {
+        id(condenser_should_be_on) = false;
+      } else {
+        id(condenser_should_be_on) = true;
+      }
+      
+      // Calculate heater duty cycle based on temperature error
+      float temp_error = T_set - T;
+      float heater_duty = temp_error / 5.0;  // Scale error to duty cycle (0-1 range)
+      
+      // Check if dew point is rising too high and reduce duty proportionally
+      float dew_error = dew_pt - dew_set;
+      
+      // Clamp duty cycle between 0 and 0.8 (80% max)
+      if (heater_duty < 0.0) {
+        heater_duty = 0.0;
+        id(heater_should_be_on) = false;
+      } else if (heater_duty > 0.85) {
+        heater_duty = 0.85;
+        id(heater_should_be_on) = true;
+      } else {
+        id(heater_should_be_on) = true;  // Modulate via external PWM/duty cycle control
+      }
+
+      // If dew point rises above its setpoint, reduce heater duty proportionally
+      // For every 0.5°C above setpoint, reduce duty by ~10%
+      if (dew_error > 0.0) {
+        float reduction_factor = 1.0 - (dew_error * 0.2);  // ~20% reduction per 1°C above setpoint
+        if (reduction_factor < 0.0) {
+          reduction_factor = 0.0;  // Don't go below 0
+        }
+        heater_duty = heater_duty * reduction_factor;
+        ESP_LOGW("############################ adjust_fridge", "Phase 0 Stage 2: Dew point HIGH (%.2f°C above setpoint), reducing duty by factor %.2f", dew_error, reduction_factor);
+      }
+      
+      // Store duty cycle for handover to d2-freezer script
+      id(D2_FREEZER_heater_duty_cycle) = heater_duty;
+      
+      float dew_margin = T - dew_pt;
+      ESP_LOGW("############################ adjust_fridge", "Phase 0: T=%.2f°C, T_set=%.2f°C, dew_pt=%.2f°C, dew_set=%.2f°C, dew_margin=%.2f°C, heater_duty=%.2f%%", 
+            T, T_set, dew_pt, dew_set, dew_margin, heater_duty * 100.0);
+      return;
+    }
+
+
     // Check if the current phase is the last phase. We treat the last phase special later.
     bool last_phase = (phase == durations.size() - 1);
     id(last_phase_global) = last_phase;
