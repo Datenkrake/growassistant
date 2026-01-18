@@ -48,7 +48,7 @@ substitutions:
   pin_trigger: GPIO1
   address_bme680: "0x76"
   address_bh1750: "0x23"
-  bme680_temp_offset: "2.5"
+  bme680_temp_offset: "1.0"  
 
 ####################################################################
 # generic yaml for humidifiers below

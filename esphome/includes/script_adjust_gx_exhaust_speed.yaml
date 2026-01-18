@@ -75,7 +75,7 @@ then:
       
       // Adjust brightness
       if (should_increase) {
-          new_brightness += 1.0;  // Increase by 5%
+          new_brightness += 1.0;  // Increase by 1%
       } else if (should_decrease) {
           new_brightness -= 2.0;  // Decrease by 2% (slower decrease than increase)
       }
@@ -86,57 +86,15 @@ then:
       ESP_LOGD("gx_exhaust", "Adjusting GX exhaust: current=%.1f%%, new=%.1f%% (min=%.1f%%, max=%.1f%%)", 
                current_brightness, new_brightness, min_speed, max_speed);
       
-      // Publish to GX/EXHAUST Shelly dimmer
-      // Only publish if brightness has changed
-      if (abs(new_brightness - current_brightness) > 0.5) {
-          ESP_LOGD("gx_exhaust", "Publishing brightness change to GX/EXHAUST");
-      }
+      // Store in global for use in MQTT publish
+      id(${area_id}_${device_id}${suffix}_gx_exhaust_target_brightness) = new_brightness;
       
   - mqtt.publish_json:
       topic: "GX/EXHAUST/rpc"
       payload: !lambda |-
-          float new_brightness = id(${area_id}_${device_id}${suffix}_gx_exhaust_brightness).state;
-          float min_speed = id(${area_id}_${device_id}${suffix}_gx_exhaust_speed_min).state;
-          float max_speed = id(${area_id}_${device_id}${suffix}_gx_exhaust_speed_max).state;
+          int brightness_percent = (int)id(${area_id}_${device_id}${suffix}_gx_exhaust_target_brightness);
           
-          // Recalculate new_brightness with the same logic
-          float current_brightness = new_brightness;
-          
-          // Get G1 data
-          float g1_temp = id(${area_id}_${device_id}${suffix}_g1_temperature).state;
-          float g1_temp_max = id(${area_id}_${device_id}${suffix}_g1_temperature_max).state;
-          float g2_temp = id(${area_id}_${device_id}${suffix}_g2_temperature).state;
-          float g2_temp_max = id(${area_id}_${device_id}${suffix}_g2_temperature_max).state;
-          float g3_temp = id(${area_id}_${device_id}${suffix}_g3_temperature).state;
-          float g3_temp_max = id(${area_id}_${device_id}${suffix}_g3_temperature_max).state;
-          float g2_vpd = id(${area_id}_${device_id}${suffix}_g2_vpd).state;
-          float g2_vpd_target = id(${area_id}_${device_id}${suffix}_g2_vpd_target).state;
-          float g3_vpd = id(${area_id}_${device_id}${suffix}_g3_vpd).state;
-          float g3_vpd_target = id(${area_id}_${device_id}${suffix}_g3_vpd_target).state;
-          
-          if (isnan(current_brightness)) {
-              new_brightness = min_speed;
-          } else {
-              new_brightness = current_brightness;
-          }
-          
-          bool should_increase = false;
-          
-          if (!isnan(g1_temp) && !isnan(g1_temp_max) && g1_temp > g1_temp_max) should_increase = true;
-          if (!isnan(g2_temp) && !isnan(g2_temp_max) && g2_temp > g2_temp_max) should_increase = true;
-          if (!isnan(g3_temp) && !isnan(g3_temp_max) && g3_temp > g3_temp_max) should_increase = true;
-          if (!isnan(g2_vpd) && !isnan(g2_vpd_target) && g2_vpd < g2_vpd_target) should_increase = true;
-          if (!isnan(g3_vpd) && !isnan(g3_vpd_target) && g3_vpd < g3_vpd_target) should_increase = true;
-          
-          if (should_increase) {
-              new_brightness += 5.0;
-          } else {
-              new_brightness -= 2.0;
-          }
-          
-          new_brightness = std::max(min_speed, std::min(max_speed, new_brightness));
-          
-          int brightness_percent = (int)new_brightness;
+          ESP_LOGD("gx_exhaust", "Publishing brightness %d%% to GX/EXHAUST", brightness_percent);
           
           root["id"] = 1;
           root["src"] = "user";

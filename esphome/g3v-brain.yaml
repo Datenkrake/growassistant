@@ -297,7 +297,7 @@ interval:
       - script.execute: ${area_id}_${device_id}${suffix}_publish_exhaust_fan_speed
       - script.execute: adjust_brightness_shelly_dimmer
       - script.execute: update_heater
-  - interval: 30s
+  - interval: 120s
     then:
       - script.execute: adjust_gx_exhaust_speed
 
@@ -311,6 +311,10 @@ globals:
     restore_value: no
     initial_value: '0'
   - id: ${area_id}_${device_id}${suffix}_new_brightness_global
+    type: float
+    restore_value: no
+    initial_value: '0.0'
+  - id: ${area_id}_${device_id}${suffix}_gx_exhaust_target_brightness
     type: float
     restore_value: no
     initial_value: '0.0'
