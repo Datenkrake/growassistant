@@ -1,0 +1,5 @@
+platform: mqtt_subscribe
+name: "G2 VPD Target [${area_id}_${device_id}${suffix}]"
+id: ${area_id}_${device_id}${suffix}_g2_vpd_target
+topic: "G2/vpd_target/state/CANOPY"
+unit_of_measurement: "kPa"

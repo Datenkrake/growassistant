@@ -9,3 +9,4 @@ secrets.yaml
 home-assistant.log
 home-assistant.log.fault
 home-assistant.log.1
+venv

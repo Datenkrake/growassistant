@@ -1,0 +1,5 @@
+platform: mqtt_subscribe
+name: "GX Exhaust Status Raw [${area_id}_${device_id}${suffix}]"
+id: ${area_id}_${device_id}${suffix}_gx_exhaust_status_raw
+topic: "GX/EXHAUST/events/rpc"
+internal: true  # Hide from Home Assistant since we only use it internally

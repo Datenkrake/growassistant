@@ -1,0 +1,147 @@
+id: adjust_gx_exhaust_speed
+then:
+  - lambda: |-
+      // Get current GX exhaust brightness from MQTT sensor
+      float current_brightness = id(${area_id}_${device_id}${suffix}_gx_exhaust_brightness).state;
+      
+      // Get min and max limits
+      float min_speed = id(${area_id}_${device_id}${suffix}_gx_exhaust_speed_min).state;
+      float max_speed = id(${area_id}_${device_id}${suffix}_gx_exhaust_speed_max).state;
+      
+      // Get G1 data
+      float g1_temp = id(${area_id}_${device_id}${suffix}_g1_temperature).state;
+      float g1_temp_max = id(${area_id}_${device_id}${suffix}_g1_temperature_max).state;
+      float g1_vpd = id(${area_id}_${device_id}${suffix}_g1_vpd).state;
+      float g1_vpd_target = id(${area_id}_${device_id}${suffix}_g1_vpd_target).state;
+      
+      // Get G2 data
+      float g2_temp = id(${area_id}_${device_id}${suffix}_g2_temperature).state;
+      float g2_temp_max = id(${area_id}_${device_id}${suffix}_g2_temperature_max).state;
+      float g2_vpd = id(${area_id}_${device_id}${suffix}_g2_vpd).state;
+      float g2_vpd_target = id(${area_id}_${device_id}${suffix}_g2_vpd_target).state;
+      
+      // Get G3 data
+      float g3_temp = id(${area_id}_${device_id}${suffix}_g3_temperature).state;
+      float g3_temp_max = id(${area_id}_${device_id}${suffix}_g3_temperature_max).state;
+      float g3_vpd = id(${area_id}_${device_id}${suffix}_g3_vpd).state;
+      float g3_vpd_target = id(${area_id}_${device_id}${suffix}_g3_vpd_target).state;
+      
+      // Initialize new brightness with current value
+      float new_brightness = current_brightness;
+      
+      // Check if current_brightness is valid (not NaN)
+      if (isnan(current_brightness)) {
+          ESP_LOGW("gx_exhaust", "Current brightness is NaN. Setting to min speed.");
+          new_brightness = min_speed;
+      }
+      
+      // Control logic
+      bool should_increase = false;
+      bool should_decrease = false;
+      
+      // Check if any cabinet temperature exceeds max temperature
+      if (!isnan(g1_temp) && !isnan(g1_temp_max) && g1_temp > g1_temp_max) {
+          ESP_LOGD("gx_exhaust", "G1 temp (%.1f) > max (%.1f). Increasing speed.", g1_temp, g1_temp_max);
+          should_increase = true;
+      }
+      if (!isnan(g2_temp) && !isnan(g2_temp_max) && g2_temp > g2_temp_max) {
+          ESP_LOGD("gx_exhaust", "G2 temp (%.1f) > max (%.1f). Increasing speed.", g2_temp, g2_temp_max);
+          should_increase = true;
+      }
+      if (!isnan(g3_temp) && !isnan(g3_temp_max) && g3_temp > g3_temp_max) {
+          ESP_LOGD("gx_exhaust", "G3 temp (%.1f) > max (%.1f). Increasing speed.", g3_temp, g3_temp_max);
+          should_increase = true;
+      }
+      
+      // Check if G1, G2 or G3 VPD is below target VPD
+      if(!isnan(g1_vpd) && !isnan(g1_vpd_target) && g1_vpd < g1_vpd_target) {
+          ESP_LOGD("gx_exhaust", "G1 VPD (%.2f) < target (%.2f). Increasing speed.", g1_vpd, g1_vpd_target);
+          should_increase = true;
+      }
+      if (!isnan(g2_vpd) && !isnan(g2_vpd_target) && g2_vpd < g2_vpd_target) {
+          ESP_LOGD("gx_exhaust", "G2 VPD (%.2f) < target (%.2f). Increasing speed.", g2_vpd, g2_vpd_target);
+          should_increase = true;
+      }
+      if (!isnan(g3_vpd) && !isnan(g3_vpd_target) && g3_vpd < g3_vpd_target) {
+          ESP_LOGD("gx_exhaust", "G3 VPD (%.2f) < target (%.2f). Increasing speed.", g3_vpd, g3_vpd_target);
+          should_increase = true;
+      }
+      
+      // If none of the increase conditions are met, we should decrease
+      if (!should_increase) {
+          should_decrease = true;
+          ESP_LOGD("gx_exhaust", "No increase conditions met. Decreasing speed.");
+      }
+      
+      // Adjust brightness
+      if (should_increase) {
+          new_brightness += 1.0;  // Increase by 5%
+      } else if (should_decrease) {
+          new_brightness -= 2.0;  // Decrease by 2% (slower decrease than increase)
+      }
+      
+      // Clamp to min/max limits
+      new_brightness = std::max(min_speed, std::min(max_speed, new_brightness));
+      
+      ESP_LOGD("gx_exhaust", "Adjusting GX exhaust: current=%.1f%%, new=%.1f%% (min=%.1f%%, max=%.1f%%)", 
+               current_brightness, new_brightness, min_speed, max_speed);
+      
+      // Publish to GX/EXHAUST Shelly dimmer
+      // Only publish if brightness has changed
+      if (abs(new_brightness - current_brightness) > 0.5) {
+          ESP_LOGD("gx_exhaust", "Publishing brightness change to GX/EXHAUST");
+      }
+      
+  - mqtt.publish_json:
+      topic: "GX/EXHAUST/rpc"
+      payload: !lambda |-
+          float new_brightness = id(${area_id}_${device_id}${suffix}_gx_exhaust_brightness).state;
+          float min_speed = id(${area_id}_${device_id}${suffix}_gx_exhaust_speed_min).state;
+          float max_speed = id(${area_id}_${device_id}${suffix}_gx_exhaust_speed_max).state;
+          
+          // Recalculate new_brightness with the same logic
+          float current_brightness = new_brightness;
+          
+          // Get G1 data
+          float g1_temp = id(${area_id}_${device_id}${suffix}_g1_temperature).state;
+          float g1_temp_max = id(${area_id}_${device_id}${suffix}_g1_temperature_max).state;
+          float g2_temp = id(${area_id}_${device_id}${suffix}_g2_temperature).state;
+          float g2_temp_max = id(${area_id}_${device_id}${suffix}_g2_temperature_max).state;
+          float g3_temp = id(${area_id}_${device_id}${suffix}_g3_temperature).state;
+          float g3_temp_max = id(${area_id}_${device_id}${suffix}_g3_temperature_max).state;
+          float g2_vpd = id(${area_id}_${device_id}${suffix}_g2_vpd).state;
+          float g2_vpd_target = id(${area_id}_${device_id}${suffix}_g2_vpd_target).state;
+          float g3_vpd = id(${area_id}_${device_id}${suffix}_g3_vpd).state;
+          float g3_vpd_target = id(${area_id}_${device_id}${suffix}_g3_vpd_target).state;
+          
+          if (isnan(current_brightness)) {
+              new_brightness = min_speed;
+          } else {
+              new_brightness = current_brightness;
+          }
+          
+          bool should_increase = false;
+          
+          if (!isnan(g1_temp) && !isnan(g1_temp_max) && g1_temp > g1_temp_max) should_increase = true;
+          if (!isnan(g2_temp) && !isnan(g2_temp_max) && g2_temp > g2_temp_max) should_increase = true;
+          if (!isnan(g3_temp) && !isnan(g3_temp_max) && g3_temp > g3_temp_max) should_increase = true;
+          if (!isnan(g2_vpd) && !isnan(g2_vpd_target) && g2_vpd < g2_vpd_target) should_increase = true;
+          if (!isnan(g3_vpd) && !isnan(g3_vpd_target) && g3_vpd < g3_vpd_target) should_increase = true;
+          
+          if (should_increase) {
+              new_brightness += 5.0;
+          } else {
+              new_brightness -= 2.0;
+          }
+          
+          new_brightness = std::max(min_speed, std::min(max_speed, new_brightness));
+          
+          int brightness_percent = (int)new_brightness;
+          
+          root["id"] = 1;
+          root["src"] = "user";
+          root["method"] = "Light.Set";
+          auto params = root.createNestedObject("params");
+          params["id"] = 0;
+          params["on"] = true;
+          params["brightness"] = brightness_percent;

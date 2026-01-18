@@ -1,0 +1,19 @@
+platform: template
+name: "GX Exhaust Current Brightness [${area_id}_${device_id}${suffix}]"
+id: ${area_id}_${device_id}${suffix}_gx_exhaust_brightness
+unit_of_measurement: "%"
+lambda: |-
+  if (id(${area_id}_${device_id}${suffix}_gx_exhaust_status_raw).state != "") {
+    // Parse JSON to extract brightness value
+    std::string json_str = id(${area_id}_${device_id}${suffix}_gx_exhaust_status_raw).state;
+    size_t brightness_pos = json_str.find("\"brightness\":");
+    if (brightness_pos != std::string::npos) {
+      size_t value_start = brightness_pos + 13; // Length of "\"brightness\":"
+      size_t value_end = json_str.find_first_of(",}", value_start);
+      if (value_end != std::string::npos) {
+        std::string brightness_str = json_str.substr(value_start, value_end - value_start);
+        return std::stof(brightness_str);
+      }
+    }
+  }
+  return {};

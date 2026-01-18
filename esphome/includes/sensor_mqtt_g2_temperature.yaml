@@ -1,0 +1,5 @@
+platform: mqtt_subscribe
+name: "G2 Temperature [${area_id}_${device_id}${suffix}]"
+id: ${area_id}_${device_id}${suffix}_g2_temperature
+topic: "G2/temperature/state/CANOPY"
+unit_of_measurement: "°C"

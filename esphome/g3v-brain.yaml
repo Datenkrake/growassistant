@@ -180,6 +180,24 @@ sensor:
   - !include includes/sensor_sunrise_time_hours.yaml
   # MQTT
   - !include includes/sensor_full_spectrum_brightness.yaml
+  # MQTT SENSORS FOR GX EXHAUST CONTROL
+  ## G1 Cabinet
+  - !include includes/sensor_mqtt_g1_temperature.yaml
+  - !include includes/sensor_mqtt_g1_temperature_max.yaml
+  - !include includes/sensor_mqtt_g1_vpd.yaml
+  - !include includes/sensor_mqtt_g1_vpd_target.yaml
+  ## G2 Cabinet
+  - !include includes/sensor_mqtt_g2_temperature.yaml
+  - !include includes/sensor_mqtt_g2_temperature_max.yaml
+  - !include includes/sensor_mqtt_g2_vpd.yaml
+  - !include includes/sensor_mqtt_g2_vpd_target.yaml
+  ## G3 Cabinet
+  - !include includes/sensor_mqtt_g3_temperature.yaml
+  - !include includes/sensor_mqtt_g3_temperature_max.yaml
+  - !include includes/sensor_mqtt_g3_vpd.yaml
+  - !include includes/sensor_mqtt_g3_vpd_target.yaml
+  ## GX Exhaust current status
+  - !include includes/sensor_mqtt_gx_exhaust_brightness.yaml
 
 binary_sensor:
   # LIGHT SWITCH
@@ -232,6 +250,9 @@ binary_sensor:
 
         return is_day;
 
+text_sensor:
+  - !include includes/text_sensor_mqtt_gx_exhaust_status.yaml
+
 switch:
   - !include includes/switch_enable.yaml
 
@@ -242,6 +263,9 @@ number:
   - !include includes/number_fan_speed_min.yaml
   - !include includes/number_fan_speed_max.yaml
   - !include includes/number_wind_sweep_duration.yaml
+  ## GX EXHAUST CONTROL
+  - !include includes/number_gx_exhaust_speed_min.yaml
+  - !include includes/number_gx_exhaust_speed_max.yaml
   ## SCHEDULING
   - !include includes/number_start_date.yaml
   - !include includes/number_sunrise_time.yaml
@@ -273,6 +297,9 @@ interval:
       - script.execute: ${area_id}_${device_id}${suffix}_publish_exhaust_fan_speed
       - script.execute: adjust_brightness_shelly_dimmer
       - script.execute: update_heater
+  - interval: 30s
+    then:
+      - script.execute: adjust_gx_exhaust_speed
 
 globals:
   - id: ${area_id}_${device_id}${suffix}_exhaust_fan_pwm_value
@@ -532,3 +559,6 @@ script:
             - mqtt.publish:
                 topic: "gv2mqtt/switch/15271091A84F5950/command/powerSwitch"
                 payload: 'OFF'
+
+  # GX EXHAUST CONTROL SCRIPT
+  - !include includes/script_adjust_gx_exhaust_speed.yaml

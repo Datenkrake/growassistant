@@ -1,0 +1,5 @@
+platform: mqtt_subscribe
+name: "G1 VPD [${area_id}_${device_id}${suffix}]"
+id: ${area_id}_${device_id}${suffix}_g1_vpd
+topic: "G1/vpd/state/CANOPY"
+unit_of_measurement: "kPa"

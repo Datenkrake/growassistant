@@ -1,0 +1,5 @@
+platform: mqtt_subscribe
+name: "G2 Temperature Max [${area_id}_${device_id}${suffix}]"
+id: ${area_id}_${device_id}${suffix}_g2_temperature_max
+topic: "G2/temperature_max/state/CANOPY"
+unit_of_measurement: "°C"
