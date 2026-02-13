@@ -1,0 +1,204 @@
+id: adjust_drytower
+then:
+- lambda: |-
+    ESP_LOGW("adjust_drytower", "Starting drytower adjustment...");
+
+    // ========================================================================
+    // USER CONFIGURATION - Drying profile
+    // ========================================================================
+    // Temperature targets in degrees Celsius for each phase
+    std::vector<float> temp_targets = {15.0, 10.0};
+    std::vector<int> durations =      {24  , 0};
+    // Duration for each phase in hours (last entry must be 0 = forever)
+    
+    // ========================================================================
+    // CONTROL PARAMETERS
+    // ========================================================================
+    float temp_hysteresis       = 0.5;    // Temperature control band (±°C)
+    float temp_overshoot_max    = 2.0;    // Max overshoot before emergency fan boost
+    float heater_min_duty       = 0.0;    // Minimum heater duty cycle
+    float heater_max_duty       = 0.8;    // Maximum heater duty cycle (80%)
+    float fan_bot_min_speed     = 50.0;   // Bottom fan minimum speed when heater is on (%)
+    float fan_bot_max_speed     = 100.0;  // Bottom fan maximum speed (%)
+    float fan_top_min_speed     = 30.0;   // Top fan minimum speed (always on at 30%)
+    float fan_top_max_speed     = 100.0;  // Top fan maximum speed (%)
+    
+    // PID-like tuning parameters
+    float heater_gain           = 0.20;   // Heater response to temperature error (increased for more aggressive heating)
+    float fan_cooling_gain      = 15.0;   // Top fan response to overshoot (% per °C)
+    float temp_stable_threshold = 0.3;    // Temperature considered stable if error < this value
+    
+    // ========================================================================
+    // DETERMINE CURRENT PHASE
+    // ========================================================================
+    int start_ts = id(${area_id}_${device_id}${suffix}_start_date).state;
+    int now_ts   = id(mqtt_time).timestamp_now();
+    int hours_elapsed = (now_ts - start_ts) / 3600;
+    
+    int phase = 0;
+    int cumulative_hours = 0;
+    for (size_t i = 0; i < durations.size(); ++i) {
+      cumulative_hours += durations[i];
+      if (hours_elapsed < cumulative_hours || durations[i] == 0) {
+        phase = i;
+        break;
+      }
+    }
+    
+    bool last_phase = (phase == durations.size() - 1) || (durations[phase] == 0);
+    
+    // ========================================================================
+    // READ SENSORS
+    // ========================================================================
+    // Read both sensors (top is for display only, control uses bottom sensor)
+    float temp_top = id(${area_id}_${device_id}${suffix}_temperature_aht_top).state;
+    float temp_bot = id(${area_id}_${device_id}${suffix}_temperature_aht_bot).state;
+    float temp_current = temp_bot;  // Control based on bottom temperature only
+    
+    float humidity_top = id(${area_id}_${device_id}${suffix}_humidity_aht_top).state;
+    float humidity_bot = id(${area_id}_${device_id}${suffix}_humidity_aht_bot).state;
+    float humidity_diff = humidity_bot - humidity_top;  // RH difference (bot - top)
+    
+    float temp_target = temp_targets[phase];
+    float temp_error = temp_target - temp_current;
+    
+    ESP_LOGW("adjust_drytower", "Phase %d/%d (hrs: %d): Target=%.1f°C, T_bot=%.1f°C, Error=%.2f°C", 
+             phase, (int)durations.size()-1, hours_elapsed, temp_target, temp_current, temp_error);
+    
+    // ========================================================================
+    // HEATER CONTROL
+    // ========================================================================
+    float heater_duty = 0.0;
+    bool heater_on = false;
+    
+    if (temp_error > temp_hysteresis) {
+      // Temperature too low - need heating
+      heater_duty = temp_error * heater_gain;
+      
+      // Clamp duty cycle
+      if (heater_duty < heater_min_duty) {
+        heater_duty = heater_min_duty;
+      } else if (heater_duty > heater_max_duty) {
+        heater_duty = heater_max_duty;
+      }
+      
+      heater_on = (heater_duty > 0.01);
+      
+    } else if (temp_error < -temp_hysteresis) {
+      // Temperature too high - heater off
+      heater_on = false;
+      heater_duty = 0.0;
+      
+    } else {
+      // Within hysteresis band - smooth control near target
+      // Use proportional control but maintain higher minimum when approaching
+      heater_duty = temp_error * heater_gain;  // Full gain within hysteresis
+      
+      // When still below target, maintain minimum duty to prevent undershoot
+      if (temp_error > 0) {
+        float min_approach_duty = 0.25;  // 25% minimum when approaching from below
+        if (heater_duty < min_approach_duty) {
+          heater_duty = min_approach_duty;
+        }
+      }
+      
+      // Clamp to valid range
+      if (heater_duty < 0.0) {
+        heater_duty = 0.0;
+      } else if (heater_duty > heater_max_duty) {
+        heater_duty = heater_max_duty;
+      }
+      
+      heater_on = (heater_duty > 0.01);
+    }
+    
+    // Store heater duty cycle
+    id(D2_FREEZER_heater_duty_cycle) = heater_duty;
+    id(heater_should_be_on) = heater_on;
+    
+    ESP_LOGW("adjust_drytower", "Heater: %s, Duty=%.1f%%", heater_on ? "ON" : "OFF", heater_duty * 100.0);
+    
+    // ========================================================================
+    // BOTTOM FAN CONTROL (Intake fan - constant 75% when heater is on)
+    // ========================================================================
+    float fan_bot_speed = 0.0;
+    
+    if (heater_on) {
+      // When heater is on, run at constant 75% speed
+      fan_bot_speed = 75.0;
+    } else {
+      // Heater off - reduce fan speed
+      fan_bot_speed = 25.0;
+    }
+    
+    // Apply fan speed
+    id(${area_id}_${device_id}${suffix}_fan_bot_pwm_value) = fan_bot_speed;
+    auto call_bot = id(${area_id}_${device_id}${suffix}_fan_bot).turn_on();
+    call_bot.set_speed(fan_bot_speed);
+    call_bot.perform();
+    
+    ESP_LOGW("adjust_drytower", "Bottom Fan: %.1f%%", fan_bot_speed);
+    
+    // ========================================================================
+    // TOP FAN CONTROL (Exhaust fan - minimum 30% at all times)
+    // ========================================================================
+    float fan_top_speed = fan_top_min_speed;  // Start at minimum
+    
+    if (temp_error < -temp_hysteresis) {
+      // Temperature above target - need active cooling
+      float overshoot = -temp_error;  // Positive value
+      
+      // Increase fan speed proportionally to overshoot, starting from minimum
+      fan_top_speed = fan_top_min_speed + (overshoot * fan_cooling_gain);
+      
+      // Emergency cooling if severe overshoot
+      if (overshoot > temp_overshoot_max) {
+        fan_top_speed = fan_top_max_speed;
+        ESP_LOGW("adjust_drytower", "!!! EMERGENCY COOLING - Overshoot %.1f°C", overshoot);
+      }
+      
+    } else if (heater_on && fabs(temp_error) < temp_stable_threshold) {
+      // Temperature stable and heater running - moderate exhaust for circulation
+      fan_top_speed = 50.0;
+      
+    } else {
+      // All other cases - run at minimum speed
+      fan_top_speed = fan_top_min_speed;
+    }
+    
+    // Clamp fan speed
+    if (fan_top_speed < fan_top_min_speed) {
+      fan_top_speed = fan_top_min_speed;
+    } else if (fan_top_speed > fan_top_max_speed) {
+      fan_top_speed = fan_top_max_speed;
+    }
+    
+    // Apply fan speed with rate limiting for smooth transitions
+    float fan_top_step = 1.0;  // Max change per interval (1% for stability)
+    float fan_top_current = id(${area_id}_${device_id}${suffix}_fan_top_pwm_value);
+    float fan_top_delta = fan_top_speed - fan_top_current;
+    
+    if (fabs(fan_top_delta) > fan_top_step) {
+      // Limit rate of change
+      fan_top_speed = fan_top_current + (fan_top_delta > 0 ? fan_top_step : -fan_top_step);
+    }
+    
+    // Ensure minimum speed is maintained
+    if (fan_top_speed < fan_top_min_speed) {
+      fan_top_speed = fan_top_min_speed;
+    }
+    
+    id(${area_id}_${device_id}${suffix}_fan_top_pwm_value) = fan_top_speed;
+    
+    // Always keep fan on at minimum speed
+    auto call_top = id(${area_id}_${device_id}${suffix}_fan_top).turn_on();
+    call_top.set_speed(fan_top_speed);
+    call_top.perform();
+    
+    ESP_LOGW("adjust_drytower", "Top Fan: %.1f%%", fan_top_speed);
+    
+    // ========================================================================
+    // SUMMARY LOG
+    // ========================================================================
+    ESP_LOGW("adjust_drytower", "Summary: T_top=%.1f°C, T_bot=%.1f°C, RH_top=%.1f%%, RH_bot=%.1f%%, dRH=%.1f%%, Heater=%.0f%%, FanBot=%.0f%%, FanTop=%.0f%%", 
+             temp_top, temp_bot, humidity_top, humidity_bot, humidity_diff, heater_duty*100.0, fan_bot_speed, fan_top_speed);

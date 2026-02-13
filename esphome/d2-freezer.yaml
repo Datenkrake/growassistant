@@ -10,11 +10,9 @@ logger:
     wifi: WARN
 # Enable Home Assistant API
 api:
-  password: ""
 
 ota:
   - platform: esphome
-    password: ""
 
 wifi:
   ssid: "4"
@@ -59,10 +57,11 @@ substitutions:
   suffix: ""
   pin_sda: GPIO5
   pin_scl: GPIO6
-  pin_fan2_pwm: GPIO1
+  pin_fan_top_pwm: GPIO1
   pin_heater_pwm: GPIO0
-  pin_vac_enable: GPIO3
-  address_sht4x: "0x44"
+  pin_fan_bot_pwm: GPIO3
+  address_aht10_top: "0x38"
+  address_sht21_bot: "0x40"
 
 
 ####################################################################
@@ -90,19 +89,15 @@ globals:
     type: bool
     restore_value: no
     initial_value: 'false'
-  - id: condenser_should_be_on
-    type: bool
-    restore_value: no
-    initial_value: 'false'
-  - id: vac_should_be_on
-    type: bool
-    restore_value: no
-    initial_value: 'false'
   - id: D2_FREEZER_heater_duty_cycle
     type: float
     restore_value: no
     initial_value: '0.0'
-  - id: ${area_id}_${device_id}${suffix}_exhaust_fan_pwm_value
+  - id: ${area_id}_${device_id}${suffix}_fan_top_pwm_value
+    type: float
+    restore_value: no
+    initial_value: '0.0'
+  - id: ${area_id}_${device_id}${suffix}_fan_bot_pwm_value
     type: float
     restore_value: no
     initial_value: '0.0'
@@ -118,19 +113,11 @@ globals:
     type: float
     restore_value: no
     initial_value: '0.0'
-  - id: G3D_TEMP_BUMP
-    type: float
-    restore_value: yes
-    initial_value: '0.0'
-  - id: pump_is_running
-    type: bool
-    restore_value: no
-    initial_value: 'false'
 
 output:
   - platform: ledc
-    pin: ${pin_fan2_pwm}
-    id: ${area_id}_${device_id}${suffix}_circulation_pwm
+    pin: ${pin_fan_top_pwm}
+    id: ${area_id}_${device_id}${suffix}_fan_top_pwm
     frequency: 25000 Hz
     inverted: True
     max_power: 1.0
@@ -139,85 +126,89 @@ output:
     id: ${area_id}_${device_id}${suffix}_heater_pwm
     frequency: 25000 Hz
     inverted: False
-    max_power: 1.0
+    max_power: 0.8
   - platform: ledc
-    pin: ${pin_vac_enable}
-    id: ${area_id}_${device_id}${suffix}_vac_pwm
-    frequency: 10000 Hz
+    pin: ${pin_fan_bot_pwm}
+    id: ${area_id}_${device_id}${suffix}_fan_bot_pwm
+    frequency: 25000 Hz
     
-switch:
-  - platform: template
-    name: "Vacuum Pump (Static PWM with Pull‑In)"
-    id: "${area_id}_${device_id}${suffix}_vac_enable"
-    optimistic: true
-    turn_on_action:
-      - script.execute: vac_pump_pull_in
-    turn_off_action:
-      - output.set_level:
-          id: "${area_id}_${device_id}${suffix}_vac_pwm"
-          level: 0.0                 # stop PWM immediately
-      - lambda: 'id(pump_is_running) = false;'   # clear the flag
 fan:
   - platform: speed
-    output: ${area_id}_${device_id}${suffix}_circulation_pwm
+    output: ${area_id}_${device_id}${suffix}_fan_top_pwm
     name: "Circulation Fan [${area_id}${suffix}]"
-    id: ${area_id}_${device_id}${suffix}_circulation
-    state_topic: "${area_id}/fan/state/CIRCULATION"
-    speed_state_topic: "${area_id}/fan/speed/CIRCULATION"
-    command_topic: "${area_id}/${device_id}/fan/state/CIRCULATION/set"
-    speed_command_topic: "${area_id}/fan/speed/CIRCULATION/set"
+    id: ${area_id}_${device_id}${suffix}_fan_top
+    state_topic: "${area_id}/fan/state/FANTOP"
+    speed_state_topic: "${area_id}/fan/speed/FANTOP"
+    command_topic: "${area_id}/${device_id}/fan/state/FANTOP/set"
+    speed_command_topic: "${area_id}/fan/speed/FANTOP/set"
     restore_mode: ALWAYS_ON  # Options: ALWAYS_OFF, ALWAYS_ON, RESTORE_DEFAULT_OFF, RESTORE_DEFAULT_ON, RESTORE_INVERTED_DEFAULT_OFF, RESTORE_INVERTED_DEFAULT_ON
     speed_count: 100
     on_turn_on:
       - fan.turn_on:
-          id: ${area_id}_${device_id}${suffix}_circulation
+          id: ${area_id}_${device_id}${suffix}_fan_top
           speed: 50
 
   - platform: speed
     output: ${area_id}_${device_id}${suffix}_heater_pwm
     name: "Heater Fan [${area_id}${suffix}]"
     id: ${area_id}_${device_id}${suffix}_heater
-    state_topic: "${area_id}/fan/state/HEATER"
-    speed_state_topic: "${area_id}/fan/speed/HEATER"
-    command_topic: "${area_id}/${device_id}/fan/state/HEATER/set"
-    speed_command_topic: "${area_id}/fan/speed/HEATER/set"
+    state_topic: "${area_id}/heater/state/PTC"
+    speed_state_topic: "${area_id}/heater/speed/PTC"
+    command_topic: "${area_id}/${device_id}/heater/state/PTC/set"
+    speed_command_topic: "${area_id}/heater/speed/PTC/set"
     restore_mode: ALWAYS_OFF  # Options: ALWAYS_OFF, ALWAYS_ON, RESTORE_DEFAULT_OFF, RESTORE_DEFAULT_ON, RESTORE_INVERTED_DEFAULT_OFF, RESTORE_INVERTED_DEFAULT_ON
+    speed_count: 100
+
+  - platform: speed
+    output: ${area_id}_${device_id}${suffix}_fan_bot_pwm
+    name: "Intake Fan [${area_id}${suffix}]"
+    id: ${area_id}_${device_id}${suffix}_fan_bot
+    state_topic: "${area_id}/fan/state/FANBOT"
+    speed_state_topic: "${area_id}/fan/speed/FANBOT"
+    command_topic: "${area_id}/${device_id}/fan/state/FANBOT/set"
+    speed_command_topic: "${area_id}/fan/speed/FANBOT/set"
+    restore_mode: ALWAYS_ON  # Options: ALWAYS_OFF, ALWAYS_ON, RESTORE_DEFAULT_OFF, RESTORE_DEFAULT_ON, RESTORE_INVERTED_DEFAULT_OFF, RESTORE_INVERTED_DEFAULT_ON
     speed_count: 100
 
 sensor:
   # PHYSICAL SENSORS
   ## TEMPERATURE, HUMIDITY
   - platform: sht4x
+    i2c_id: bus_a
+    address: 0x44
     temperature:
-        name: "Temperature SHT [${area_id}_${device_id}${suffix}]"
-        id: ${area_id}_${device_id}${suffix}_temperature
-        state_topic: "${area_id}/temperature/state/SHT"
+        name: "Temperature SHT TOP [${area_id}_${device_id}${suffix}]"
+        id: ${area_id}_${device_id}${suffix}_temperature_aht_top
+        state_topic: "${area_id}/temperature/state/SHTTOP"
         filters:
           - median:
-              window_size: 5  # Adjust as needed to remove outliers
+              window_size: 5
               send_every: 1
           - sliding_window_moving_average:
-              window_size: 10  # 10 samples at 1s intervals = 10s average
+              window_size: 10
               send_every: 1
     humidity:
-        name: "Humidity SHT [${area_id}_${device_id}${suffix}]"
-        id: ${area_id}_${device_id}${suffix}_humidity
-        state_topic: "${area_id}/humidity/state/SHT"
+        name: "Humidity SHT TOP [${area_id}_${device_id}${suffix}]"
+        id: ${area_id}_${device_id}${suffix}_humidity_aht_top
+        state_topic: "${area_id}/humidity/state/SHTTOP"
         filters:
           - median:
-              window_size: 5  # Adjust as needed to remove outliers
+              window_size: 5
               send_every: 1
           - sliding_window_moving_average:
-              window_size: 10  # 10 samples at 1s intervals = 10s average
+              window_size: 10
               send_every: 1
-    address: ${address_sht4x}
+    precision: High
+    heater_max_duty: 0.0
     update_interval: 1s
-  - platform: aht10
-    variant: AHT10
+
+  - platform: htu21d
+    i2c_id: bus_a
+    address: ${address_sht21_bot}
     temperature:
-        name: "Temperature AHT [${area_id}_${device_id}${suffix}]"
-        id: ${area_id}_${device_id}${suffix}_temperature_aht
-        state_topic: "${area_id}/humidity/state/AHT"
+        name: "Temperature SHT21 [${area_id}_${device_id}${suffix}]"
+        id: ${area_id}_${device_id}${suffix}_temperature_aht_bot
+        state_topic: "${area_id}/temperature/state/SHTBOT"
         filters:
           - median:
               window_size: 5  # Adjust as needed to remove outliers
@@ -225,10 +216,31 @@ sensor:
           - sliding_window_moving_average:
               window_size: 10  # 10 samples at 1s intervals = 10s average
               send_every: 1
+          - timeout:
+              timeout: 10s
+              value: !lambda "return {};"
+        on_value:
+          then:
+            - lambda: |-
+                static float last_temp = NAN;
+                static int stuck_count = 0;
+                float current = x;
+                
+                // Check if sensor is stuck (same value for multiple readings)
+                if (!isnan(last_temp) && abs(current - last_temp) < 0.01) {
+                  stuck_count++;
+                  if (stuck_count > 30) {  // Stuck for 30 readings
+                    ESP_LOGW("sht21", "Temperature stuck at %.2f, sensor may need power cycle", current);
+                    stuck_count = 0;  // Reset counter
+                  }
+                } else {
+                  stuck_count = 0;
+                }
+                last_temp = current;
     humidity:
-        name: "Humidity AHT [${area_id}_${device_id}${suffix}]"
-        id: ${area_id}_${device_id}${suffix}_humidity_aht
-        state_topic: "${area_id}/humidity/state/AHT"
+        name: "Humidity SHT21 BOT [${area_id}_${device_id}${suffix}]"
+        id: ${area_id}_${device_id}${suffix}_humidity_aht_bot
+        state_topic: "${area_id}/humidity/state/SHTBOT"
         filters:
           - median:
               window_size: 5  # Adjust as needed to remove outliers
@@ -236,26 +248,61 @@ sensor:
           - sliding_window_moving_average:
               window_size: 10  # 10 samples at 1s intervals = 10s average
               send_every: 1
-    update_interval: 1s
+          - timeout:
+              timeout: 10s
+              value: !lambda "return {};"
+        on_value:
+          then:
+            - lambda: |-
+                static float last_rh = NAN;
+                static int stuck_count = 0;
+                float current = x;
+                
+                // Check if sensor is stuck (same value for multiple readings)
+                if (!isnan(last_rh) && abs(current - last_rh) < 0.01) {
+                  stuck_count++;
+                  if (stuck_count > 30) {  // Stuck for 30 readings
+                    ESP_LOGW("sht21", "Humidity stuck at %.2f%%, sensor may need power cycle", current);
+                    stuck_count = 0;  // Reset counter
+                  }
+                } else {
+                  stuck_count = 0;
+                }
+                last_rh = current;
+    update_interval: 3s  # Reduced from 1s to prevent sensor lockup
 
   # CALCULATED SENSORS
   ## CLIMATE
   - platform: template
-    name: "VPD [${area_id}_${device_id}${suffix}]"
-    id: ${area_id}_${device_id}${suffix}_vpd
-    state_topic: "${area_id}/vpd/state/${device_id}"
+    name: "VPD TOP [${area_id}_${device_id}${suffix}]"
+    id: ${area_id}_${device_id}${suffix}_vpd_top
+    state_topic: "${area_id}/vpd/state/TOP"
     unit_of_measurement: "kPa"
     update_interval: 10s
     accuracy_decimals: 2
     lambda: |
-        float LT = id(${area_id}_${device_id}${suffix}_temperature).state;
-        float rh = id(${area_id}_${device_id}${suffix}_humidity).state;
+        float LT = id(${area_id}_${device_id}${suffix}_temperature_aht_top).state;
+        float rh = id(${area_id}_${device_id}${suffix}_humidity_aht_top).state;
         float ASVP = 610.78 * exp((LT / (LT + 237.3)) * 17.2694);
         float LSVP = 610.78 * exp((LT / (LT + 237.3)) * 17.2694);
         float LVPD = (LSVP - (ASVP * (rh / 100.0))) / 1000.0;
         return LVPD;
-    
-  - !include includes/sensor_dew_point.yaml
+
+  - platform: template
+    name: "VPD BOT [${area_id}_${device_id}${suffix}]"
+    id: ${area_id}_${device_id}${suffix}_vpd_bot
+    state_topic: "${area_id}/vpd/state/BOT"
+    unit_of_measurement: "kPa"
+    update_interval: 10s
+    accuracy_decimals: 2
+    lambda: |
+        float LT = id(${area_id}_${device_id}${suffix}_temperature_aht_bot).state;
+        float rh = id(${area_id}_${device_id}${suffix}_humidity_aht_bot).state;
+        float ASVP = 610.78 * exp((LT / (LT + 237.3)) * 17.2694);
+        float LSVP = 610.78 * exp((LT / (LT + 237.3)) * 17.2694);
+        float LVPD = (LSVP - (ASVP * (rh / 100.0))) / 1000.0;
+        return LVPD;
+
 
 number:
   - !include includes/number_start_date.yaml
@@ -265,75 +312,27 @@ interval:
   - interval: 10s
     then:
       # ------------------------------------------------------------------
-      # 1️⃣ Run another script (e.g., to adjust the fridge)
+      # 1️⃣ Run another script (e.g., to adjust the drytower)
       # ------------------------------------------------------------------
-      - script.execute: adjust_freezer
+      - script.execute: adjust_drytower
 
       # ------------------------------------------------------------------
-      # 2️⃣ Heater control – read a global bool and set speed accordingly
+      # 2️⃣ Heater PWM control – apply duty cycle from global variable
       # ------------------------------------------------------------------
-      - if:
-          condition:
-            lambda: |-                     # true when heater SHOULD be on
-              return id(heater_should_be_on) && !id(last_phase_global);
-          then:
-            # Heater is supposed to be ON
-            - switch.control:
-                id: ${area_id}_${device_id}${suffix}_vac_enable
-                state: false
-            - fan.turn_on:
-                id: ${area_id}_${device_id}${suffix}_heater
-                speed: !lambda |-
-                  if (id(D2_FREEZER_heater_duty_cycle) > 0.0) {
-                    return (int)(id(D2_FREEZER_heater_duty_cycle) * 100.0);
-                  } else {
-                    return 80;  // Default speed for other phases
-                  }
-          else:
-            - fan.turn_off:
-                id: ${area_id}_${device_id}${suffix}_heater
-            - if:
-                condition:
-                  lambda: |-                     # true when heater SHOULD be on
-                    return id(vac_should_be_on) && !id(last_phase_global);
-                then:
-                  - switch.control:
-                      id: ${area_id}_${device_id}${suffix}_vac_enable
-                      state: true
-                else:
-                  - switch.control:
-                      id: ${area_id}_${device_id}${suffix}_vac_enable
-                      state: false
+      - lambda: |-
+          float duty = id(D2_FREEZER_heater_duty_cycle);
+          bool heater_on = id(heater_should_be_on);
+          
+          if (heater_on && duty > 0.01) {
+            // Apply duty cycle to heater PWM
+            id(${area_id}_${device_id}${suffix}_heater_pwm).set_level(duty);
+            ESP_LOGD("interval", "Heater PWM set to %.1f%%", duty * 100.0);
+          } else {
+            // Turn off heater
+            id(${area_id}_${device_id}${suffix}_heater_pwm).set_level(0.0);
+            ESP_LOGD("interval", "Heater OFF");
+          }
+
                 
-
-      # ------------------------------------------------------------------
-      # 3️⃣ Publish the condenser state via MQTT
-      # ------------------------------------------------------------------
-      - mqtt.publish:
-          topic: "${area_id}/mains/command/switch:0"
-          payload: !lambda |-
-            return id(condenser_should_be_on) ? "on" : "off";
-
 script:
-  - !include includes/script_adjust_freezer.yaml
-  - id: vac_pump_pull_in
-    mode: restart                     # restart if the user taps the switch again
-    then:
-      # ---- Guard: run burst only when pump_is_running == false ----
-      - if:
-          condition:
-            lambda: 'return !id(pump_is_running);'
-          then:
-            # 2 s at 100 % (full speed)
-            - output.set_level:
-                id: "${area_id}_${device_id}${suffix}_vac_pwm"
-                level: 1.0                 # 100 % duty → full 12 V on the pump
-            - delay: 0.4s
-
-      # ---- After the guard (whether we did the burst or not) set the steady duty ----
-      - output.set_level:
-          id: "${area_id}_${device_id}${suffix}_vac_pwm"
-          level: 0.8             # <-- your desired steady duty (0.0‑1.0)
-
-      # ---- Mark the pump as running (now we definitely have PWM > 0) ----
-      - lambda: 'id(pump_is_running) = true;'
+  - !include includes/script_adjust_drytower.yaml
